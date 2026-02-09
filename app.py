@@ -181,7 +181,9 @@ def cadastro():
             
             if r.status_code in [200, 201]:
                 flash('Loja criada com sucesso! Faça login para começar.', 'success')
-                return redirect('/admin') 
+                # --- ALTERAÇÃO AQUI: REDIRECIONA PARA O SUBDOMÍNIO DA LOJA ---
+                # Assume que o domínio base é leanttro.com
+                return redirect(f"https://{slug}.leanttro.com/admin")
             else:
                 # LOG DETALHADO DO ERRO
                 print(f"ERRO CRÍTICO DIRECTUS ({r.status_code}): {r.text}")
