@@ -570,10 +570,23 @@ def admin_salvar_produto(loja_slug):
     if not prod_id and nome:
         payload["slug"] = gerar_slug(nome) + "-" + str(uuid.uuid4())[:4]
 
+    # Upload da Imagem Principal (Destaque)
     f = request.files.get('imagem')
     if f and f.filename:
         fid = upload_file_to_directus(f)
         if fid: payload['imagem_destaque'] = fid
+
+    # Upload da Imagem 1
+    f1 = request.files.get('imagem1')
+    if f1 and f1.filename:
+        fid1 = upload_file_to_directus(f1)
+        if fid1: payload['imagem1'] = fid1
+
+    # Upload da Imagem 2
+    f2 = request.files.get('imagem2')
+    if f2 and f2.filename:
+        fid2 = upload_file_to_directus(f2)
+        if fid2: payload['imagem2'] = fid2
 
     headers = get_headers()
     try:
