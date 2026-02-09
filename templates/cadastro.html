@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crie sua Loja Grátis | Leanttro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center font-sans text-gray-800 p-4">
+
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+        
+        <div class="bg-pink-600 p-6 text-center">
+            <h1 class="text-2xl font-bold text-white mb-2">Comece Agora</h1>
+            <p class="text-pink-100 text-sm">Crie seu catálogo digital em segundos.</p>
+        </div>
+
+        <div class="p-8">
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="mb-6 p-4 rounded-lg text-sm font-medium flex items-center gap-2 {{ 'bg-green-50 text-green-700' if category == 'success' else 'bg-red-50 text-red-700' }}">
+                            <i data-lucide="{{ 'check-circle' if category == 'success' else 'alert-circle' }}" class="w-5 h-5"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" class="space-y-5">
+                
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Nome da Loja</label>
+                    <div class="relative">
+                        <i data-lucide="store" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
+                        <input type="text" name="nome" id="inputNome" required placeholder="Ex: Doce Delícia"
+                               class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition-all"
+                               onkeyup="gerarSlug()">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Seu Link (Endereço)</label>
+                    <div class="flex items-center border border-gray-200 rounded-xl bg-gray-50 overflow-hidden focus-within:ring-2 focus-within:ring-pink-500">
+                        <span class="pl-4 pr-1 text-gray-400 text-sm font-medium select-none">leanttro.com/</span>
+                        <input type="text" name="slug" id="inputSlug" required placeholder="doce-delicia"
+                               class="w-full py-3 pr-4 bg-transparent border-none focus:ring-0 outline-none font-bold text-gray-700 placeholder-gray-300 lowercase">
+                    </div>
+                    <p class="text-[10px] text-gray-400 mt-1 ml-1">Apenas letras minúsculas e traços.</p>
+                </div>
+
+                <div class="grid grid-cols-1 gap-5">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">WhatsApp (Com DDD)</label>
+                        <div class="relative">
+                            <i data-lucide="phone" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
+                            <input type="tel" name="whatsapp" required placeholder="11999999999"
+                                   class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Seu Melhor E-mail</label>
+                        <div class="relative">
+                            <i data-lucide="mail" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
+                            <input type="email" name="email" required placeholder="voce@email.com"
+                                   class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Crie uma Senha</label>
+                    <div class="relative">
+                        <i data-lucide="lock" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
+                        <input type="password" name="senha" required placeholder="••••••••"
+                               class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 flex justify-center items-center gap-2">
+                    CRIAR MINHA LOJA <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-500">Já tem uma loja?</p>
+                <a href="/admin" class="text-pink-600 font-bold hover:underline">Fazer Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Função para gerar o link (slug) automaticamente enquanto digita o nome
+        function gerarSlug() {
+            const nome = document.getElementById('inputNome').value;
+            const slugInput = document.getElementById('inputSlug');
+            
+            // Remove acentos, espaços e caracteres especiais
+            let slug = nome.toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, "") // Remove acentos
+                .replace(/\s+/g, '-')           // Espaços viram traços
+                .replace(/[^\w\-]+/g, '')       // Remove especiais
+                .replace(/\-\-+/g, '-')         // Remove traços duplicados
+                .replace(/^-+/, '')             // Remove traço do inicio
+                .replace(/-+$/, '');            // Remove traço do fim
+            
+            slugInput.value = slug;
+        }
+    </script>
+</body>
+</html>

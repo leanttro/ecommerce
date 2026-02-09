@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ loja.nome }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family={{ loja.font_titulo }}:wght@400;700&family={{ loja.font_corpo }}:wght@300;400;600&display=swap');
+        
+        :root { 
+            --primary: {{ loja.cor_primaria }}; 
+            --font-head: '{{ loja.font_titulo }}', sans-serif;
+            --font-body: '{{ loja.font_corpo }}', sans-serif;
+        }
+        
+        body { font-family: var(--font-body); }
+        h1, h2, h3, h4, .font-display { font-family: var(--font-head); }
+        .text-theme { color: var(--primary); }
+        .bg-theme { background-color: var(--primary); }
+        .border-theme { border-color: var(--primary); }
+        .hover\:bg-theme:hover { background-color: var(--primary); }
+        
+        /* ... Seus estilos CSS originais aqui (slider, modal, etc) ... */
+    </style>
+</head>
+<body class="bg-white text-gray-800 flex flex-col min-h-screen">
+
+    {% include 'components/navbar.html' %}
+
+    {% for secao in layout %}
+        
+        {% if secao == 'banner' %}
+            <section class="slider-container relative w-full h-[350px] md:h-[500px] overflow-hidden">
+                {% if loja.banner1 %}
+                <div class="absolute inset-0">
+                    <img src="{{ loja.banner1 }}" class="w-full h-full object-cover">
+                    </div>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        {% if secao == 'busca' %}
+            <div class="py-6 bg-gray-50 border-b border-gray-100">
+                <div class="container mx-auto px-4">
+                    <input type="text" placeholder="O que você procura hoje?" class="w-full p-4 rounded-full border border-gray-200 focus:border-theme outline-none text-center">
+                </div>
+            </div>
+        {% endif %}
+
+        {% if secao == 'categorias' %}
+            <section class="py-8 container mx-auto px-4">
+                <div class="flex gap-4 overflow-x-auto pb-4 category-scroll">
+                    {% for cat in categorias %}
+                    <a href="/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition">
+                        {{ cat.nome }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        {% if secao == 'produtos' %}
+            <section class="py-12 container mx-auto px-4" id="produtos">
+                <h2 class="text-3xl font-bold mb-8 text-center">Nossos Produtos</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    {% for p in produtos %}
+                        <div class="border rounded-lg overflow-hidden hover:shadow-lg transition">
+                            <a href="/produto/{{ p.slug }}">
+                                <img src="{{ p.imagem }}" class="w-full aspect-[4/5] object-cover">
+                                <div class="p-4">
+                                    <h3 class="font-bold truncate">{{ p.nome }}</h3>
+                                    <p class="text-theme font-bold text-lg">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+        
+        {% if secao == 'novidades' and novidades %}
+            {% endif %}
+
+        {% if secao == 'blog' and posts %}
+            {% endif %}
+
+    {% endfor %}
+
+    {% include 'components/footer.html' %}
+
+    <script>
+        lucide.createIcons();
+        // ... Seus scripts JS do carrinho, slider, etc ...
+    </script>
+</body>
+</html>

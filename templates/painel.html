@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel da Loja</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <nav class="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-50">
+        <span class="font-bold text-lg">Painel Admin</span>
+        <div class="flex gap-4">
+            <a href="/" target="_blank" class="text-blue-600 flex items-center gap-1"><i data-lucide="eye"></i> Ver Loja</a>
+            <a href="/logout" class="text-red-500">Sair</a>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto py-10 px-4">
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="p-4 mb-4 rounded {{ 'bg-green-100 text-green-700' if category == 'success' else 'bg-red-100 text-red-700' }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-8">
+            
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="store"></i> Identidade</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Nome da Loja</label>
+                        <input type="text" name="nome" value="{{ loja.nome }}" class="w-full border rounded p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">WhatsApp (Apenas números)</label>
+                        <input type="text" name="whatsapp" value="{{ loja.whatsapp_comercial }}" class="w-full border rounded p-2">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="palette"></i> Cores e Fontes</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Cor Principal</label>
+                        <div class="flex items-center gap-2">
+                            <input type="color" name="cor_primaria" value="{{ loja.cor_primaria }}" class="h-10 w-full cursor-pointer">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Fonte Títulos</label>
+                        <select name="font_titulo" class="w-full border rounded p-2 bg-white">
+                            <option value="Playfair Display" {% if loja.font_titulo == 'Playfair Display' %}selected{% endif %}>Playfair Display (Elegante)</option>
+                            <option value="Poppins" {% if loja.font_titulo == 'Poppins' %}selected{% endif %}>Poppins (Moderno)</option>
+                            <option value="Inter" {% if loja.font_titulo == 'Inter' %}selected{% endif %}>Inter (Limpo)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Fonte Corpo</label>
+                        <select name="font_corpo" class="w-full border rounded p-2 bg-white">
+                            <option value="Poppins" {% if loja.font_corpo == 'Poppins' %}selected{% endif %}>Poppins</option>
+                            <option value="Roboto" {% if loja.font_corpo == 'Roboto' %}selected{% endif %}>Roboto</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="layout"></i> Organização da Loja</h2>
+                <p class="text-sm text-gray-500 mb-4">Arraste os blocos para mudar a ordem na página inicial.</p>
+                
+                <input type="hidden" name="layout_order" id="layout_order_input" value="{{ loja.layout_order }}">
+                
+                <div id="sortable-list" class="space-y-2">
+                    {% for item in loja.layout_order.split(',') %}
+                    <div data-id="{{ item }}" class="bg-gray-50 p-3 border rounded flex items-center gap-3 cursor-move hover:bg-gray-100 select-none">
+                        <i data-lucide="grip-vertical" class="text-gray-400"></i>
+                        <span class="capitalize font-bold">{{ item }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="image"></i> Banners</h2>
+                
+                <div class="space-y-4">
+                    <div class="border p-4 rounded bg-gray-50">
+                        <label class="block text-sm font-bold mb-2">Banner Principal 1</label>
+                        {% if loja.banner1_url %}
+                        <img src="{{ loja.banner1_url }}" class="h-20 object-cover mb-2 rounded">
+                        {% endif %}
+                        <input type="file" name="bannerprincipal1" class="text-sm">
+                        <input type="text" name="link1" placeholder="Link (ex: /?categoria=1)" value="{{ loja.linkbannerprincipal1 }}" class="w-full mt-2 border rounded p-2 text-sm">
+                    </div>
+                    
+                    </div>
+            </div>
+
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg transition text-lg flex justify-center items-center gap-2">
+                <i data-lucide="save"></i> SALVAR ALTERAÇÕES
+            </button>
+
+        </form>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Lógica de Arrastar e Soltar (Igual ao seu login.html)
+        const el = document.getElementById('sortable-list');
+        new Sortable(el, {
+            animation: 150,
+            onEnd: function () {
+                const items = el.querySelectorAll('div[data-id]');
+                let order = [];
+                items.forEach(i => order.push(i.getAttribute('data-id')));
+                document.getElementById('layout_order_input').value = order.join(',');
+            }
+        });
+    </script>
+</body>
+</html>
