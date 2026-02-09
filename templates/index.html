@@ -87,16 +87,56 @@
                                 </div>
                             </a>
                         </div>
+                    {% else %}
+                        <div class="col-span-full text-center text-gray-400 py-10">
+                            <p>Nenhum produto cadastrado.</p>
+                        </div>
                     {% endfor %}
                 </div>
             </section>
         {% endif %}
         
         {% if secao == 'novidades' and novidades %}
-            {% endif %}
+            <section class="py-12 bg-gray-50">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-3xl font-bold mb-8 text-center">Novidades</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                         {% for p in novidades %}
+                        <div class="border rounded-lg overflow-hidden bg-white hover:shadow-lg transition">
+                            <a href="/produto/{{ p.slug }}">
+                                <img src="{{ p.imagem }}" class="w-full aspect-[4/5] object-cover">
+                                <div class="p-4">
+                                    <h3 class="font-bold truncate">{{ p.nome }}</h3>
+                                    <p class="text-theme font-bold text-lg">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        {% endif %}
 
         {% if secao == 'blog' and posts %}
-            {% endif %}
+            <section class="py-12 container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-8 text-center">Blog</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {% for post in posts %}
+                    <div class="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
+                        {% if post.capa %}
+                        <img src="{{ post.capa }}" class="w-full h-48 object-cover">
+                        {% endif %}
+                        <div class="p-6">
+                            <span class="text-xs font-bold text-gray-400 uppercase">{{ post.data }}</span>
+                            <h3 class="font-bold text-xl mt-2 mb-2">{{ post.titulo }}</h3>
+                            <p class="text-sm text-gray-600 line-clamp-3">{{ post.resumo }}</p>
+                            <a href="/blog/{{ post.slug }}" class="inline-block mt-4 text-theme font-bold text-sm">Ler mais</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
 
     {% endfor %}
 

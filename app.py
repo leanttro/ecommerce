@@ -239,7 +239,8 @@ def index():
 
     # 2. Busca Produtos
     cat_filter = request.args.get('categoria')
-    filter_str = f"&filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published"
+    # CORREÇÃO: Removemos o '&' do início para evitar query string malformada
+    filter_str = f"filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published"
     if cat_filter: filter_str += f"&filter[categoria_id][_eq]={cat_filter}"
 
     produtos = []
@@ -247,7 +248,9 @@ def index():
 
     try:
         url_prod = f"{DIRECTUS_URL}/items/produtos?{filter_str}&fields=*.*"
+        print(f"Buscando produtos: {url_prod}") # Log para debug
         r_prod = requests.get(url_prod, headers=headers)
+        
         if r_prod.status_code == 200:
             raw_prods = r_prod.json()['data']
             for p in raw_prods:
@@ -270,8 +273,11 @@ def index():
                 
                 if p.get('status_urgencia') in ['Alta Procura', 'Lancamento']:
                     novidades.append(prod_obj)
+        else:
+            print(f"Erro ao buscar produtos ({r_prod.status_code}): {r_prod.text}")
+
     except Exception as e:
-        print(f"Erro produtos: {e}")
+        print(f"Erro produtos exception: {e}")
 
     # 3. Busca Posts
     posts = []
@@ -499,13 +505,25 @@ def admin_salvar_produto():
     prod_id = request.form.get('id')
     nome = request.form.get('nome')
     
+    # CORREÇÃO: Trata categoria vazia para NULL
+    cat_id = request.form.get('categoria_id')
+    if not cat_id or cat_id == "":
+        cat_id = None
+        
+    # CORREÇÃO: Garante que preço é número
+    preco = request.form.get('preco')
+    try:
+        preco = float(preco) if preco else 0
+    except:
+        preco = 0
+
     payload = {
         "status": "published",
         "loja_id": g.loja_id,
         "nome": nome,
-        "preco": request.form.get('preco'),
+        "preco": preco,
         "descricao": request.form.get('descricao'),
-        "categoria_id": request.form.get('categoria_id')
+        "categoria_id": cat_id
     }
     
     if not prod_id and nome:
@@ -520,13 +538,19 @@ def admin_salvar_produto():
     headers = get_headers()
     try:
         if prod_id:
-            requests.patch(f"{DIRECTUS_URL}/items/produtos/{prod_id}", headers=headers, json=payload)
-            flash('Produto atualizado!', 'success')
+            r = requests.patch(f"{DIRECTUS_URL}/items/produtos/{prod_id}", headers=headers, json=payload)
         else:
-            requests.post(f"{DIRECTUS_URL}/items/produtos", headers=headers, json=payload)
+            r = requests.post(f"{DIRECTUS_URL}/items/produtos", headers=headers, json=payload)
+            
+        if r.status_code in [200, 201]:
             flash('Produto criado!', 'success')
+        else:
+            # Mostra o erro real se o banco reclamar
+            print(r.text)
+            flash(f'Erro ao salvar: {r.text}', 'error')
+
     except Exception as e:
-        flash(f'Erro ao salvar produto: {e}', 'error')
+        flash(f'Erro interno ao salvar produto: {e}', 'error')
         
     return redirect('/admin/painel')
 
