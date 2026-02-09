@@ -57,6 +57,18 @@
                             <label class="block text-sm font-bold mb-1">WhatsApp (Apenas números)</label>
                             <input type="text" name="whatsapp" value="{{ loja.whatsapp_comercial }}" class="w-full border rounded p-2">
                         </div>
+                        <div class="md:col-span-2 border-t pt-4 mt-2">
+                            <label class="block text-sm font-bold mb-2">Logo da Loja</label>
+                            <div class="flex items-center gap-4">
+                                {% if loja.logo_url %}
+                                    <div class="border rounded p-1 bg-gray-50">
+                                        <img src="{{ loja.logo_url }}" class="h-16 w-auto object-contain">
+                                    </div>
+                                {% endif %}
+                                <input type="file" name="logo" class="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100">
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">Recomendado: Imagem PNG ou JPG com fundo transparente.</p>
+                        </div>
                     </div>
                 </div>
 

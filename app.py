@@ -105,7 +105,6 @@ def identificar_loja():
                 g.loja['layout_order'] = "banner,busca,categorias,produtos,novidades,blog,footer"
             
             # Tratamento de novos campos visuais (caso não existam no banco ainda)
-            # Usa .get() com fallback para garantir que não quebre se for None
             if not g.loja.get('font_tamanho_base'): g.loja['font_tamanho_base'] = 16
             if not g.loja.get('cor_titulo'): g.loja['cor_titulo'] = "#111827"
             if not g.loja.get('cor_texto'): g.loja['cor_texto'] = "#374151"
