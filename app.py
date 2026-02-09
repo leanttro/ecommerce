@@ -124,11 +124,9 @@ def identificar_loja():
 # --- ROTA DE CADASTRO (CRIAR NOVA LOJA) ---
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
-    # Se já estiver logado como admin de alguma loja, redireciona
-    if session.get('loja_admin_id'):
-        # Se o usuário já tem cookie, redireciona pro painel dele
-        return redirect('/admin/painel')
-
+    # REMOVIDO O REDIRECIONAMENTO AUTOMÁTICO PARA EVITAR LOOP
+    # Se o usuário acessar /cadastro logado, ele apenas vê o form novamente.
+    
     if request.method == 'POST':
         nome = request.form.get('nome')
         slug_input = request.form.get('slug')
