@@ -105,6 +105,7 @@ def identificar_loja():
                 g.loja['layout_order'] = "banner,busca,categorias,produtos,novidades,blog,footer"
             
             # Tratamento de novos campos visuais (caso não existam no banco ainda)
+            # Usa .get() com fallback para garantir que não quebre se for None
             if not g.loja.get('font_tamanho_base'): g.loja['font_tamanho_base'] = 16
             if not g.loja.get('cor_titulo'): g.loja['cor_titulo'] = "#111827"
             if not g.loja.get('cor_texto'): g.loja['cor_texto'] = "#374151"
@@ -262,9 +263,15 @@ def index():
                         v_foto = get_img_url(v.get('foto')) if v.get('foto') else img
                         variantes.append({"nome": v.get('nome'), "foto": v_foto})
 
+                # GARANTIA DE FLOAT NO PREÇO
+                try:
+                    preco_float = float(p.get('preco', 0))
+                except:
+                    preco_float = 0.0
+
                 prod_obj = {
                     "id": p['id'], "nome": p['nome'], "slug": p['slug'],
-                    "preco": float(p['preco']) if p.get('preco') else 0,
+                    "preco": preco_float,
                     "imagem": img, "categoria_id": p.get('categoria_id'),
                     "variantes": variantes, "origem": p.get('origem'),
                     "urgencia": p.get('status_urgencia'), "classe_frete": p.get('classe_frete')
@@ -345,6 +352,12 @@ def produto(slug):
             for v in p['variantes']:
                 v['foto'] = get_img_url(v.get('foto')) if v.get('foto') else p['imagem_destaque']
 
+        # CONVERSÃO DE PREÇO AQUI TAMBÉM
+        try:
+            p['preco'] = float(p.get('preco', 0))
+        except:
+            p['preco'] = 0.0
+
         loja_visual = {
             **g.loja,
             "logo": get_img_url(g.loja.get('logo'))
@@ -401,9 +414,9 @@ def admin_painel():
             "nome": request.form.get('nome'),
             "whatsapp_comercial": request.form.get('whatsapp'),
             "cor_primaria": request.form.get('cor_primaria'),
-            "cor_titulo": request.form.get('cor_titulo'), # NOVO
-            "cor_texto": request.form.get('cor_texto'),   # NOVO
-            "font_tamanho_base": request.form.get('font_tamanho_base'), # NOVO
+            "cor_titulo": request.form.get('cor_titulo'), 
+            "cor_texto": request.form.get('cor_texto'),   
+            "font_tamanho_base": request.form.get('font_tamanho_base'),
             "font_titulo": request.form.get('font_titulo'),
             "font_corpo": request.form.get('font_corpo'),
             "linkbannerprincipal1": request.form.get('link1'),
@@ -437,6 +450,14 @@ def admin_painel():
             produtos = r_prod.json()['data']
             for p in produtos:
                 p['imagem_destaque'] = get_img_url(p.get('imagem_destaque'))
+                
+                # --- CORREÇÃO DO ERRO 500 (TypeError) ---
+                # O banco retorna 'preco' como string ou None. 
+                # O template usa o filtro 'format' que exige float.
+                try:
+                    p['preco'] = float(p['preco']) if p.get('preco') else 0.0
+                except:
+                    p['preco'] = 0.0
 
         # Busca Posts (resumo)
         r_post = requests.get(f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&limit=20&sort=-date_created&fields=id,titulo,date_created", headers=headers)
