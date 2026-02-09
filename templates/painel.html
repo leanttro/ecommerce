@@ -79,6 +79,10 @@
                             <label class="block text-sm font-bold mb-1">Cor Principal</label>
                             <input type="color" name="cor_primaria" value="{{ loja.cor_primaria }}" class="h-10 w-full cursor-pointer rounded">
                         </div>
+                         <div>
+                            <label class="block text-sm font-bold mb-1">Cor de Fundo (Cabeçalho/Prod)</label>
+                            <input type="color" name="cor_fundo" value="{{ loja.cor_fundo or '#ffffff' }}" class="h-10 w-full cursor-pointer rounded">
+                        </div>
                         <div>
                             <label class="block text-sm font-bold mb-1">Cor dos Títulos</label>
                             <input type="color" name="cor_titulo" value="{{ loja.cor_titulo or '#111827' }}" class="h-10 w-full cursor-pointer rounded">

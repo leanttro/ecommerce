@@ -108,6 +108,8 @@ def identificar_loja():
             if not g.loja.get('font_tamanho_base'): g.loja['font_tamanho_base'] = 16
             if not g.loja.get('cor_titulo'): g.loja['cor_titulo'] = "#111827"
             if not g.loja.get('cor_texto'): g.loja['cor_texto'] = "#374151"
+            # Default para a nova cor de fundo se não existir
+            if not g.loja.get('cor_fundo'): g.loja['cor_fundo'] = "#ffffff"
             
             g.layout_list = g.loja['layout_order'].split(',')
             
@@ -181,6 +183,7 @@ def cadastro():
             "cor_primaria": "#db2777",
             "cor_titulo": "#111827",
             "cor_texto": "#374151",
+            "cor_fundo": "#ffffff",
             "font_tamanho_base": 16,
             "font_titulo": "Poppins",
             "font_corpo": "Inter",
@@ -239,7 +242,7 @@ def index():
 
     # 2. Busca Produtos
     cat_filter = request.args.get('categoria')
-    # CORREÇÃO: Removemos o '&' do início para evitar query string malformada
+    # Remove query string malformada
     filter_str = f"filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published"
     if cat_filter: filter_str += f"&filter[categoria_id][_eq]={cat_filter}"
 
@@ -248,7 +251,7 @@ def index():
 
     try:
         url_prod = f"{DIRECTUS_URL}/items/produtos?{filter_str}&fields=*.*"
-        print(f"Buscando produtos: {url_prod}") # Log para debug
+        print(f"Buscando produtos: {url_prod}") 
         r_prod = requests.get(url_prod, headers=headers)
         
         if r_prod.status_code == 200:
@@ -414,7 +417,8 @@ def admin_painel():
             "whatsapp_comercial": request.form.get('whatsapp'),
             "cor_primaria": request.form.get('cor_primaria'),
             "cor_titulo": request.form.get('cor_titulo'), 
-            "cor_texto": request.form.get('cor_texto'),   
+            "cor_texto": request.form.get('cor_texto'),
+            "cor_fundo": request.form.get('cor_fundo'), # NOVO CAMPO
             "font_tamanho_base": request.form.get('font_tamanho_base'),
             "font_titulo": request.form.get('font_titulo'),
             "font_corpo": request.form.get('font_corpo'),
@@ -451,8 +455,6 @@ def admin_painel():
                 p['imagem_destaque'] = get_img_url(p.get('imagem_destaque'))
                 
                 # --- CORREÇÃO DO ERRO 500 (TypeError) ---
-                # O banco retorna 'preco' como string ou None. 
-                # O template usa o filtro 'format' que exige float.
                 try:
                     p['preco'] = float(p['preco']) if p.get('preco') else 0.0
                 except:
