@@ -161,7 +161,7 @@
                     <div class="p-4 flex justify-between items-center hover:bg-gray-100 transition-colors">
                         <div>
                              <h3 class="font-bold text-gray-800">{{ post.titulo }}</h3>
-                             <p class="text-xs text-gray-500">{{ post.date_created | mb_substr(0, 10) }}</p>
+                             <p class="text-xs text-gray-500">{{ post.date_created[:10] }}</p>
                         </div>
                         <div class="flex items-center gap-2">
                              <button onclick='editarPost({{ post | tojson }})' class="text-blue-500 hover:text-blue-700 p-2 hover:bg-blue-50 rounded"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
