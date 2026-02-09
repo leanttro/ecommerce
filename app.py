@@ -12,6 +12,11 @@ from werkzeug.utils import secure_filename
 load_dotenv()
 
 app = Flask(__name__)
+
+# --- CORREÇÃO DE ERRO 404 (BARRAS NA URL) ---
+# Isso faz o sistema aceitar tanto "/loja/slug" quanto "/loja/slug/"
+app.url_map.strict_slashes = False 
+
 # Em produção, defina uma SECRET_KEY fixa no .env
 app.secret_key = os.getenv("SECRET_KEY", "chave_secreta_super_segura_saas_2026")
 
