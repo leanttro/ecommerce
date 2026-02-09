@@ -25,13 +25,17 @@ CEP_ORIGEM_PADRAO = "01026000" # Fallback se a loja não tiver CEP configurado
 
 # --- FUNÇÕES AUXILIARES ---
 def get_headers():
+    return {"Authorization": f"Bearer {DIRECTUS_TOKEN}", "Content-Type": "application/json"}
+
+def get_upload_headers():
+    # Para upload não se usa Content-Type json
     return {"Authorization": f"Bearer {DIRECTUS_TOKEN}"}
 
 def get_img_url(image_id_or_obj):
     """Trata URLs de imagens vindas do Directus (ID, Objeto ou URL completa)"""
     if not image_id_or_obj: return ""
     if isinstance(image_id_or_obj, dict): return f"{DIRECTUS_URL}/assets/{image_id_or_obj.get('id')}"
-    if image_id_or_obj.startswith('http'): return image_id_or_obj
+    if isinstance(image_id_or_obj, str) and image_id_or_obj.startswith('http'): return image_id_or_obj
     return f"{DIRECTUS_URL}/assets/{image_id_or_obj}"
 
 def upload_file_to_directus(file_storage):
@@ -40,10 +44,8 @@ def upload_file_to_directus(file_storage):
         url = f"{DIRECTUS_URL}/files"
         filename = secure_filename(file_storage.filename)
         files = {'file': (filename, file_storage, file_storage.mimetype)}
-        # Importante: Directus requer multipart/form-data, não mande JSON header aqui
-        headers = {"Authorization": f"Bearer {DIRECTUS_TOKEN}"}
         
-        response = requests.post(url, headers=headers, files=files)
+        response = requests.post(url, headers=get_upload_headers(), files=files)
         
         if response.status_code in [200, 201]:
             return response.json()['data']['id']
@@ -66,14 +68,20 @@ def identificar_loja():
     host = request.headers.get('Host')
     
     # --- MODO DESENVOLVIMENTO (OPCIONAL) ---
-    # Se estiver rodando local e quiser forçar uma loja específica, descomente abaixo:
     # if "localhost" in host or "127.0.0.1" in host:
-    #     host = "loja-teste.leanttro.com" # Simula um domínio real
+    #     host = "loja-teste.leanttro.com" # Simula um domínio real para teste
     
     try:
+        # Se for rota de sistema (cadastro, admin global), não busca loja agora
+        # Mas permite que /admin seja acessado se for subdomínio
+        if request.path == '/cadastro' or request.path.startswith('/api/hook'):
+            g.loja = None
+            g.loja_id = None
+            return
+
         # Busca no Directus qual loja possui este domínio
-        # Importante: O campo 'dominio' deve existir na tabela 'lojas'
         headers = get_headers()
+        # Filtra pelo campo 'dominio'
         url = f"{DIRECTUS_URL}/items/lojas?filter[dominio][_eq]={host}&fields=*.*"
         resp = requests.get(url, headers=headers)
         
@@ -88,19 +96,20 @@ def identificar_loja():
             g.layout_list = g.loja['layout_order'].split(',')
             
         else:
-            # Se não achar a loja pelo domínio, verifica se é uma rota de sistema
-            # Se for /cadastro, permitimos passar sem loja (pois a pessoa vai criar uma)
-            if request.path == '/cadastro' or request.path.startswith('/api/'):
-                g.loja = None
-                g.loja_id = None
-                return
-
-            # Caso contrário, exibe 404 de Loja Não Encontrada
-            return render_template('404_saas.html', host=host), 404
+            # Se não achou loja, mas a pessoa está tentando acessar o /admin ou raiz
+            # e não é um domínio cadastrado, pode ser o domínio principal do SaaS
+            g.loja = None
+            g.loja_id = None
+            if request.path not in ['/cadastro', '/favicon.ico']:
+                 # Se quiser redirecionar domínios inválidos para o cadastro:
+                 # return redirect('/cadastro')
+                 pass
 
     except Exception as e:
         print(f"Erro Middleware: {e}")
-        return "Erro interno ao identificar loja. Verifique conexão com Directus.", 500
+        # Não quebra a aplicação, apenas segue sem loja
+        g.loja = None
+        g.loja_id = None
 
 
 # --- ROTA DE CADASTRO (CRIAR NOVA LOJA) ---
@@ -112,10 +121,12 @@ def cadastro():
 
     if request.method == 'POST':
         nome = request.form.get('nome')
-        # Normaliza o slug (link)
-        slug = request.form.get('slug').lower().strip().replace(' ', '-')
+        slug_input = request.form.get('slug')
+        
+        # Garante slug limpo
+        slug = slug_input.lower().strip().replace(' ', '-') if slug_input else ""
+        
         email = request.form.get('email').strip()
-        # Remove caracteres não numéricos do WhatsApp
         whatsapp = request.form.get('whatsapp', '').replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
         senha = request.form.get('senha')
 
@@ -126,34 +137,35 @@ def cadastro():
 
         # 2. Verifica se já existe (Slug/Domínio ou Email) no Directus
         headers = get_headers()
-        # Filtro OR: (dominio == slug) OU (email == email)
         filtro = f"?filter[_or][0][dominio][_eq]={slug}&filter[_or][1][email][_eq]={email}"
-        check = requests.get(f"{DIRECTUS_URL}/items/lojas{filtro}", headers=headers)
-        
-        if check.status_code == 200 and len(check.json()['data']) > 0:
-            # Identifica qual deu conflito para mensagem mais clara (opcional)
-            existing = check.json()['data'][0]
-            if existing.get('dominio') == slug:
-                flash(f'O link "{slug}" já está em uso. Escolha outro.', 'error')
-            else:
-                flash('Este e-mail já possui uma loja cadastrada.', 'error')
+        try:
+            check = requests.get(f"{DIRECTUS_URL}/items/lojas{filtro}", headers=headers)
+            if check.status_code == 200 and len(check.json()['data']) > 0:
+                existing = check.json()['data'][0]
+                if existing.get('dominio') == slug:
+                    flash(f'O link "{slug}" já está em uso. Escolha outro.', 'error')
+                else:
+                    flash('Este e-mail já possui uma loja cadastrada.', 'error')
+                return render_template('cadastro.html')
+        except Exception as e:
+            print(f"Erro ao verificar existência: {e}")
+            flash('Erro de conexão ao verificar disponibilidade.', 'error')
             return render_template('cadastro.html')
 
         # 3. Cria a Loja com Configurações Padrão
-        # Hash da senha para segurança
         senha_hash = generate_password_hash(senha)
 
         payload = {
-            "status": "published", 
+            "status": "published",  # MANTIDO CONFORME SOLICITADO
             "nome": nome,
-            "dominio": slug,          # O subdomínio vira o identificador principal
-            "slug": slug,             # Mantemos slug também por compatibilidade
+            "dominio": slug,          
+            "slug": slug,             
             "email": email,
             "whatsapp_comercial": whatsapp,
             "senha_admin": senha_hash,
             
-            # Configurações Visuais Padrão (Seed)
-            "cor_primaria": "#db2777", # Pink padrão
+            # Configurações Visuais Padrão
+            "cor_primaria": "#db2777", 
             "font_titulo": "Poppins",
             "font_corpo": "Inter",
             "layout_order": "banner,busca,categorias,produtos,novidades,footer",
@@ -164,21 +176,24 @@ def cadastro():
         }
 
         try:
+            print(f"Tentando criar loja com payload: {payload}") # LOG PARA DEBUG
             r = requests.post(f"{DIRECTUS_URL}/items/lojas", headers=headers, json=payload)
             
             if r.status_code in [200, 201]:
                 flash('Loja criada com sucesso! Faça login para começar.', 'success')
-                # Redireciona para o login da loja recém criada
-                # Nota: Em um SaaS real com subdomínios, você redirecionaria para slug.seusite.com/admin
-                # Aqui vamos mandar para o admin genérico assumindo que ele vai acessar pelo domínio correto depois
                 return redirect('/admin') 
             else:
-                print(f"Erro Directus Create: {r.text}")
-                flash('Erro ao criar loja. Tente novamente.', 'error')
+                # LOG DETALHADO DO ERRO
+                print(f"ERRO CRÍTICO DIRECTUS ({r.status_code}): {r.text}")
+                try:
+                    erro_msg = r.json().get('errors', [{'message': 'Erro desconhecido'}])[0]['message']
+                except:
+                    erro_msg = r.text
+                flash(f'Erro ao criar loja: {erro_msg}', 'error')
                 
         except Exception as e:
             print(f"Erro Exception Create: {e}")
-            flash('Erro interno de conexão.', 'error')
+            flash('Erro interno de conexão com o banco de dados.', 'error')
 
     return render_template('cadastro.html')
 
@@ -186,7 +201,9 @@ def cadastro():
 # --- ROTA: INDEX (A VITRINE DA LOJA) ---
 @app.route('/')
 def index():
-    if not g.loja: return redirect('/cadastro') # Segurança extra
+    if not g.loja: 
+        # Se acessou a raiz sem domínio de loja, manda pro cadastro
+        return redirect('/cadastro')
 
     headers = get_headers()
     
@@ -198,7 +215,7 @@ def index():
         if r_cat.status_code == 200: categorias = r_cat.json()['data']
     except: pass
 
-    # 2. Busca Produtos (com filtros)
+    # 2. Busca Produtos
     cat_filter = request.args.get('categoria')
     filter_str = f"&filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published"
     if cat_filter: filter_str += f"&filter[categoria_id][_eq]={cat_filter}"
@@ -214,7 +231,6 @@ def index():
             for p in raw_prods:
                 img = get_img_url(p.get('imagem_destaque') or p.get('imagem1'))
                 
-                # Trata Variantes
                 variantes = []
                 if p.get('variantes'):
                     for v in p['variantes']:
@@ -230,13 +246,12 @@ def index():
                 }
                 produtos.append(prod_obj)
                 
-                # Separa Novidades (Ex: Status 'Lancamento' ou 'Alta Procura')
                 if p.get('status_urgencia') in ['Alta Procura', 'Lancamento']:
                     novidades.append(prod_obj)
     except Exception as e:
         print(f"Erro produtos: {e}")
 
-    # 3. Busca Posts do Blog
+    # 3. Busca Posts
     posts = []
     try:
         url_blog = f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published&limit=3&sort=-date_created"
@@ -251,7 +266,6 @@ def index():
                 })
     except: pass
 
-    # 4. Trata URLs de imagens da loja para o template
     loja_visual = {
         **g.loja,
         "logo": get_img_url(g.loja.get('logo')),
@@ -277,30 +291,25 @@ def produto(slug):
     if not g.loja: return redirect('/cadastro')
 
     headers = get_headers()
-    # Filtra pelo slug E pela loja_id (segurança)
     url = f"{DIRECTUS_URL}/items/produtos?filter[slug][_eq]={slug}&filter[loja_id][_eq]={g.loja_id}&fields=*.*"
     r = requests.get(url, headers=headers)
     
     if r.status_code == 200 and r.json()['data']:
         p = r.json()['data'][0]
         
-        # Tratamento de dados para o template
         p['imagem_destaque'] = get_img_url(p.get('imagem_destaque'))
         p['imagem1'] = get_img_url(p.get('imagem1'))
         p['imagem2'] = get_img_url(p.get('imagem2'))
         
-        # Galeria
         galeria = [p['imagem_destaque']]
         if p.get('imagem1'): galeria.append(p['imagem1'])
         if p.get('imagem2'): galeria.append(p['imagem2'])
         p['galeria'] = galeria
 
-        # Variantes com foto
         if p.get('variantes'):
             for v in p['variantes']:
                 v['foto'] = get_img_url(v.get('foto')) if v.get('foto') else p['imagem_destaque']
 
-        # Loja visual (logo, cores)
         loja_visual = {
             **g.loja,
             "logo": get_img_url(g.loja.get('logo'))
@@ -315,17 +324,15 @@ def produto(slug):
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_login():
     if not g.loja:
-        return "Loja não identificada. Acesse pelo domínio correto.", 404
+        # Se tentar acessar /admin sem estar num subdomínio de loja
+        return redirect('/cadastro')
 
-    # Se já estiver logado nesta loja, vai pro painel
     if session.get('loja_admin_id') == g.loja_id:
         return redirect('/admin/painel')
 
     if request.method == 'POST':
         senha = request.form.get('senha')
         
-        # Verifica Hash da senha salva no Directus
-        # g.loja['senha_admin'] deve ser o hash
         if g.loja.get('senha_admin') and check_password_hash(g.loja['senha_admin'], senha):
             session['loja_admin_id'] = g.loja_id
             session.permanent = True
@@ -342,12 +349,10 @@ def admin_login():
 def admin_painel():
     if not g.loja: return redirect('/')
     
-    # Segurança: Garante que está logado NA LOJA ATUAL
     if session.get('loja_admin_id') != g.loja_id:
         return redirect('/admin')
 
     if request.method == 'POST':
-        # 1. Uploads de Imagens
         files_map = {}
         for key in ['logo', 'bannerprincipal1', 'bannerprincipal2', 'bannermenor1', 'bannermenor2']:
             f = request.files.get(key)
@@ -355,7 +360,6 @@ def admin_painel():
                 fid = upload_file_to_directus(f)
                 if fid: files_map[key] = fid
 
-        # 2. Dados de Texto e Configuração
         payload = {
             "nome": request.form.get('nome'),
             "whatsapp_comercial": request.form.get('whatsapp'),
@@ -364,14 +368,11 @@ def admin_painel():
             "font_corpo": request.form.get('font_corpo'),
             "linkbannerprincipal1": request.form.get('link1'),
             "linkbannerprincipal2": request.form.get('link2'),
-            # O Sortable.js do front manda a string ordenada aqui
             "layout_order": request.form.get('layout_order') 
         }
         
-        # Mescla uploads com dados
         payload.update(files_map)
 
-        # 3. Salva no Directus
         try:
             requests.patch(f"{DIRECTUS_URL}/items/lojas/{g.loja_id}", 
                         headers=get_headers(), 
@@ -382,7 +383,6 @@ def admin_painel():
         
         return redirect('/admin/painel')
 
-    # Trata imagens para preview no painel
     loja_visual = {
         **g.loja,
         "logo_url": get_img_url(g.loja.get('logo')),
@@ -401,19 +401,14 @@ def recuperar_senha():
     if request.method == 'POST':
         email = request.form.get('email')
         
-        # Verifica se o email bate com o cadastro da loja atual
         if email == g.loja.get('email'):
             token = str(uuid.uuid4())
             expiracao = (datetime.now() + timedelta(hours=1)).isoformat()
             
-            # Salva token no Directus
             requests.patch(f"{DIRECTUS_URL}/items/lojas/{g.loja_id}", 
                          headers=get_headers(),
                          json={'reset_token': token, 'reset_expires': expiracao})
             
-            # --- ENVIO DE E-MAIL ---
-            # Aqui você integraria SMTP ou API (Resend, SendGrid)
-            # Como fallback, printamos no console para teste
             link = f"https://{request.headers.get('Host')}/nova-senha/{token}"
             print(f"--- LINK RECUPERAÇÃO: {link} ---")
             
@@ -425,7 +420,6 @@ def recuperar_senha():
 
 @app.route('/nova-senha/<token>', methods=['GET', 'POST'])
 def nova_senha(token):
-    # Busca qual loja tem esse token
     r = requests.get(f"{DIRECTUS_URL}/items/lojas?filter[reset_token][_eq]={token}", headers=get_headers())
     data = r.json().get('data')
     
@@ -434,13 +428,10 @@ def nova_senha(token):
     
     loja_alvo = data[0]
 
-    # (Opcional) Validar expiração aqui se tiver campo reset_expires
-
     if request.method == 'POST':
         nova = request.form.get('senha')
         hash_senha = generate_password_hash(nova)
         
-        # Atualiza senha e limpa token
         requests.patch(f"{DIRECTUS_URL}/items/lojas/{loja_alvo['id']}", 
                      headers=get_headers(),
                      json={'senha_admin': hash_senha, 'reset_token': None, 'reset_expires': None})
@@ -451,11 +442,9 @@ def nova_senha(token):
     return render_template('nova_senha.html', token=token)
 
 
-# --- API FRETE (MOCK/PLACEHOLDER) ---
+# --- API FRETE ---
 @app.route('/api/calcular-frete', methods=['POST'])
 def api_frete():
-    # Aqui entraria a lógica do SuperFrete
-    # Retornamos JSON vazio para o front não quebrar
     return jsonify([]) 
 
 
