@@ -3,7 +3,6 @@ import requests
 import os
 import json
 import uuid
-import traceback
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,13 +12,12 @@ from werkzeug.utils import secure_filename
 load_dotenv()
 
 app = Flask(__name__)
-# Define a chave secreta (use uma fixa no .env para produção)
-app.secret_key = os.getenv("SECRET_KEY", "chave_secreta_padrao_dev_123")
+# Em produção, defina uma SECRET_KEY fixa no .env
+app.secret_key = os.getenv("SECRET_KEY", "chave_secreta_super_segura_saas_2026")
 
 # --- CONFIGURAÇÕES GERAIS ---
 # Remove barra final da URL para evitar erros de concatenação
-# Se não houver variável, usa localhost como fallback seguro para não quebrar
-DIRECTUS_URL = os.getenv("DIRECTUS_URL", "http://172.17.0.1:8055").rstrip('/')
+DIRECTUS_URL = os.getenv("DIRECTUS_URL", "https://api2.leanttro.com").rstrip('/')
 DIRECTUS_TOKEN = os.getenv("DIRECTUS_TOKEN", "") 
 SUPERFRETE_TOKEN = os.getenv("SUPERFRETE_TOKEN", "")
 SUPERFRETE_URL = os.getenv("SUPERFRETE_URL", "https://api.superfrete.com/api/v0/calculator")
@@ -67,52 +65,42 @@ def identificar_loja():
     # Pega o domínio que o usuário digitou (ex: doces.leanttro.com)
     host = request.headers.get('Host')
     
-    # --- MODO DESENVOLVIMENTO (DEBUG) ---
-    # Descomente a linha abaixo se quiser forçar um domínio localmente
-    # host = "lojavirtual.leanttro.com" 
+    # --- MODO DESENVOLVIMENTO (OPCIONAL) ---
+    # Se estiver rodando local e quiser forçar uma loja específica, descomente abaixo:
+    # if "localhost" in host or "127.0.0.1" in host:
+    #     host = "loja-teste.leanttro.com" # Simula um domínio real
     
     try:
         # Busca no Directus qual loja possui este domínio
+        # Importante: O campo 'dominio' deve existir na tabela 'lojas'
         headers = get_headers()
-        
-        # LOG DE DEBUG (Aparecerá nos logs do Dokploy)
-        # Isso ajuda a saber se o Python está conseguindo falar com o Directus
-        print(f"[DEBUG] Tentando conectar Directus em: {DIRECTUS_URL} buscando host: {host}", flush=True)
-        
         url = f"{DIRECTUS_URL}/items/lojas?filter[dominio][_eq]={host}&fields=*.*"
+        resp = requests.get(url, headers=headers)
         
-        # Timeout de 5s para não travar o servidor se o Directus estiver fora
-        resp = requests.get(url, headers=headers, timeout=5)
-        
-        if resp.status_code == 200:
-            data = resp.json().get('data', [])
-            if len(data) > 0:
-                g.loja = data[0]
-                g.loja_id = g.loja['id']
-                
-                # Tratamento de Layout e Configs Visuais (Fallback se vazio)
-                if not g.loja.get('layout_order'):
-                    g.loja['layout_order'] = "banner,busca,categorias,produtos,novidades,blog,footer"
-                
-                g.layout_list = g.loja['layout_order'].split(',')
-            else:
-                # Se não achar a loja pelo domínio, verifica se é uma rota de sistema (cadastro)
-                if request.path == '/cadastro' or request.path.startswith('/api/'):
-                    g.loja = None
-                    g.loja_id = None
-                    return
-                # Caso contrário, exibe 404
-                g.loja = None
-                return render_template('404_saas.html', host=host), 404
+        if resp.status_code == 200 and len(resp.json()['data']) > 0:
+            g.loja = resp.json()['data'][0]
+            g.loja_id = g.loja['id']
+            
+            # Tratamento de Layout e Configs Visuais (Fallback se vazio)
+            if not g.loja.get('layout_order'):
+                g.loja['layout_order'] = "banner,busca,categorias,produtos,novidades,blog,footer"
+            
+            g.layout_list = g.loja['layout_order'].split(',')
+            
         else:
-            print(f"[ERRO DIRECTUS] Status: {resp.status_code} | Msg: {resp.text}")
-            return f"Erro de comunicação com o Banco de Dados (Directus): {resp.status_code}", 500
+            # Se não achar a loja pelo domínio, verifica se é uma rota de sistema
+            # Se for /cadastro, permitimos passar sem loja (pois a pessoa vai criar uma)
+            if request.path == '/cadastro' or request.path.startswith('/api/'):
+                g.loja = None
+                g.loja_id = None
+                return
+
+            # Caso contrário, exibe 404 de Loja Não Encontrada
+            return render_template('404_saas.html', host=host), 404
 
     except Exception as e:
-        # Imprime o erro completo no Log do Dokploy
-        print("--- ERRO CRÍTICO NO MIDDLEWARE ---")
-        traceback.print_exc()
-        return f"Erro interno de conexão: {str(e)} | URL Directus: {DIRECTUS_URL}", 500
+        print(f"Erro Middleware: {e}")
+        return "Erro interno ao identificar loja. Verifique conexão com Directus.", 500
 
 
 # --- ROTA DE CADASTRO (CRIAR NOVA LOJA) ---
@@ -140,55 +128,57 @@ def cadastro():
         headers = get_headers()
         # Filtro OR: (dominio == slug) OU (email == email)
         filtro = f"?filter[_or][0][dominio][_eq]={slug}&filter[_or][1][email][_eq]={email}"
+        check = requests.get(f"{DIRECTUS_URL}/items/lojas{filtro}", headers=headers)
         
-        try:
-            check = requests.get(f"{DIRECTUS_URL}/items/lojas{filtro}", headers=headers)
+        if check.status_code == 200 and len(check.json()['data']) > 0:
+            # Identifica qual deu conflito para mensagem mais clara (opcional)
+            existing = check.json()['data'][0]
+            if existing.get('dominio') == slug:
+                flash(f'O link "{slug}" já está em uso. Escolha outro.', 'error')
+            else:
+                flash('Este e-mail já possui uma loja cadastrada.', 'error')
+            return render_template('cadastro.html')
+
+        # 3. Cria a Loja com Configurações Padrão
+        # Hash da senha para segurança
+        senha_hash = generate_password_hash(senha)
+
+        payload = {
+            "status": "published", 
+            "nome": nome,
+            "dominio": slug,          # O subdomínio vira o identificador principal
+            "slug": slug,             # Mantemos slug também por compatibilidade
+            "email": email,
+            "whatsapp_comercial": whatsapp,
+            "senha_admin": senha_hash,
             
-            if check.status_code == 200 and len(check.json()['data']) > 0:
-                # Identifica qual deu conflito
-                existing = check.json()['data'][0]
-                if existing.get('dominio') == slug:
-                    flash(f'O link "{slug}" já está em uso. Escolha outro.', 'error')
-                else:
-                    flash('Este e-mail já possui uma loja cadastrada.', 'error')
-                return render_template('cadastro.html')
+            # Configurações Visuais Padrão (Seed)
+            "cor_primaria": "#db2777", # Pink padrão
+            "font_titulo": "Poppins",
+            "font_corpo": "Inter",
+            "layout_order": "banner,busca,categorias,produtos,novidades,footer",
+            
+            # Placeholders
+            "linkbannerprincipal1": "#",
+            "linkbannerprincipal2": "#"
+        }
 
-            # 3. Cria a Loja com Configurações Padrão
-            senha_hash = generate_password_hash(senha)
-
-            payload = {
-                "status": "published", 
-                "nome": nome,
-                "dominio": slug,          # O subdomínio vira o identificador principal
-                "slug": slug,             # Mantemos slug também por compatibilidade
-                "email": email,
-                "whatsapp_comercial": whatsapp,
-                "senha_admin": senha_hash,
-                
-                # Configurações Visuais Padrão (Seed)
-                "cor_primaria": "#db2777", # Pink padrão
-                "font_titulo": "Poppins",
-                "font_corpo": "Inter",
-                "layout_order": "banner,busca,categorias,produtos,novidades,footer",
-                
-                # Placeholders
-                "linkbannerprincipal1": "#",
-                "linkbannerprincipal2": "#"
-            }
-
+        try:
             r = requests.post(f"{DIRECTUS_URL}/items/lojas", headers=headers, json=payload)
             
             if r.status_code in [200, 201]:
                 flash('Loja criada com sucesso! Faça login para começar.', 'success')
-                # Manda pro admin genérico. O usuário deve acessar pelo domínio correto depois.
+                # Redireciona para o login da loja recém criada
+                # Nota: Em um SaaS real com subdomínios, você redirecionaria para slug.seusite.com/admin
+                # Aqui vamos mandar para o admin genérico assumindo que ele vai acessar pelo domínio correto depois
                 return redirect('/admin') 
             else:
                 print(f"Erro Directus Create: {r.text}")
                 flash('Erro ao criar loja. Tente novamente.', 'error')
-
+                
         except Exception as e:
             print(f"Erro Exception Create: {e}")
-            flash(f'Erro interno: {str(e)}', 'error')
+            flash('Erro interno de conexão.', 'error')
 
     return render_template('cadastro.html')
 
@@ -196,7 +186,7 @@ def cadastro():
 # --- ROTA: INDEX (A VITRINE DA LOJA) ---
 @app.route('/')
 def index():
-    if not g.loja: return redirect('/cadastro') # Se não tiver loja identificada, manda criar
+    if not g.loja: return redirect('/cadastro') # Segurança extra
 
     headers = get_headers()
     
@@ -325,7 +315,7 @@ def produto(slug):
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_login():
     if not g.loja:
-        return "Loja não identificada. Acesse pelo domínio correto (ex: seunome.leanttro.com).", 404
+        return "Loja não identificada. Acesse pelo domínio correto.", 404
 
     # Se já estiver logado nesta loja, vai pro painel
     if session.get('loja_admin_id') == g.loja_id:
@@ -336,24 +326,12 @@ def admin_login():
         
         # Verifica Hash da senha salva no Directus
         # g.loja['senha_admin'] deve ser o hash
-        senha_banco = g.loja.get('senha_admin')
-        
-        if senha_banco:
-            # Tenta verificar hash ou texto puro (fallback para senhas antigas)
-            is_valid = False
-            try:
-                is_valid = check_password_hash(senha_banco, senha)
-            except:
-                is_valid = (senha_banco == senha) # Fallback inseguro temporário
-                
-            if is_valid:
-                session['loja_admin_id'] = g.loja_id
-                session.permanent = True
-                return redirect('/admin/painel')
-            else:
-                flash('Senha incorreta', 'error')
+        if g.loja.get('senha_admin') and check_password_hash(g.loja['senha_admin'], senha):
+            session['loja_admin_id'] = g.loja_id
+            session.permanent = True
+            return redirect('/admin/painel')
         else:
-            flash('Erro de configuração: Loja sem senha definida.', 'error')
+            flash('Senha incorreta', 'error')
     
     loja_visual = {**g.loja, "logo": get_img_url(g.loja.get('logo'))}
     return render_template('login_admin.html', loja=loja_visual)
@@ -434,11 +412,12 @@ def recuperar_senha():
                          json={'reset_token': token, 'reset_expires': expiracao})
             
             # --- ENVIO DE E-MAIL ---
-            # Simulando envio. Em produção, use SMTP real.
+            # Aqui você integraria SMTP ou API (Resend, SendGrid)
+            # Como fallback, printamos no console para teste
             link = f"https://{request.headers.get('Host')}/nova-senha/{token}"
             print(f"--- LINK RECUPERAÇÃO: {link} ---")
             
-            flash('Link de recuperação enviado para seu e-mail (Verifique o Spam).', 'success')
+            flash('Link de recuperação enviado para seu e-mail.', 'success')
         else:
             flash('E-mail não corresponde ao cadastro desta loja.', 'error')
             
@@ -454,6 +433,8 @@ def nova_senha(token):
         return "Link inválido ou expirado.", 400
     
     loja_alvo = data[0]
+
+    # (Opcional) Validar expiração aqui se tiver campo reset_expires
 
     if request.method == 'POST':
         nova = request.form.get('senha')
@@ -473,7 +454,8 @@ def nova_senha(token):
 # --- API FRETE (MOCK/PLACEHOLDER) ---
 @app.route('/api/calcular-frete', methods=['POST'])
 def api_frete():
-    # Retorna JSON vazio para o front não quebrar enquanto você não configura o SuperFrete
+    # Aqui entraria a lógica do SuperFrete
+    # Retornamos JSON vazio para o front não quebrar
     return jsonify([]) 
 
 
@@ -485,5 +467,4 @@ def logout():
 
 # --- INICIALIZAÇÃO ---
 if __name__ == '__main__':
-    # Roda na porta 5000 acessível externamente
     app.run(host='0.0.0.0', port=5000)
