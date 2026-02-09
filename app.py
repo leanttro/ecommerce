@@ -15,9 +15,13 @@ app = Flask(__name__)
 # Em produção, defina uma SECRET_KEY fixa no .env
 app.secret_key = os.getenv("SECRET_KEY", "chave_secreta_super_segura_saas_2026")
 
+# --- CONFIGURAÇÃO DE DOMÍNIO BASE ---
+# Define qual é o domínio principal do SaaS para montar os subdomínios
+DOMINIO_BASE = "leanttro.com"
+
 # --- CONFIGURAÇÃO DE COOKIE GLOBAL (PARA LOGIN FUNCIONAR NOS SUBDOMÍNIOS) ---
 # Isso permite que o login feito em 'lojavirtual.leanttro.com' valha para 'cliente.leanttro.com'
-app.config['SESSION_COOKIE_DOMAIN'] = '.leanttro.com'
+app.config['SESSION_COOKIE_DOMAIN'] = f'.{DOMINIO_BASE}'
 app.config['SESSION_COOKIE_NAME'] = 'leanttro_session'
 
 # --- CONFIGURAÇÕES GERAIS ---
@@ -84,9 +88,9 @@ def identificar_loja():
             g.loja_id = None
             return
 
-        # Busca no Directus qual loja possui este domínio
+        # Busca no Directus qual loja possui este domínio (EXATO)
         headers = get_headers()
-        # Filtra pelo campo 'dominio'
+        # Filtra pelo campo 'dominio' que deve ser igual ao Host
         url = f"{DIRECTUS_URL}/items/lojas?filter[dominio][_eq]={host}&fields=*.*"
         resp = requests.get(url, headers=headers)
         
@@ -136,6 +140,9 @@ def cadastro():
         whatsapp = request.form.get('whatsapp', '').replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
         senha = request.form.get('senha')
 
+        # --- CORREÇÃO: MONTA O DOMÍNIO COMPLETO ---
+        dominio_completo = f"{slug}.{DOMINIO_BASE}"
+
         # 1. Validações Básicas
         if not all([nome, slug, email, whatsapp, senha]):
             flash('Preencha todos os campos obrigatórios.', 'error')
@@ -143,12 +150,13 @@ def cadastro():
 
         # 2. Verifica se já existe (Slug/Domínio ou Email) no Directus
         headers = get_headers()
-        filtro = f"?filter[_or][0][dominio][_eq]={slug}&filter[_or][1][email][_eq]={email}"
+        # Verifica se já existe esse domínio completo ou o email
+        filtro = f"?filter[_or][0][dominio][_eq]={dominio_completo}&filter[_or][1][email][_eq]={email}"
         try:
             check = requests.get(f"{DIRECTUS_URL}/items/lojas{filtro}", headers=headers)
             if check.status_code == 200 and len(check.json()['data']) > 0:
                 existing = check.json()['data'][0]
-                if existing.get('dominio') == slug:
+                if existing.get('dominio') == dominio_completo:
                     flash(f'O link "{slug}" já está em uso. Escolha outro.', 'error')
                 else:
                     flash('Este e-mail já possui uma loja cadastrada.', 'error')
@@ -164,7 +172,7 @@ def cadastro():
         payload = {
             "status": "published",  # MANTIDO CONFORME SOLICITADO
             "nome": nome,
-            "dominio": slug,          
+            "dominio": dominio_completo,  # SALVANDO O DOMÍNIO COMPLETO (ex: loja.leanttro.com)
             "slug": slug,             
             "email": email,
             "whatsapp_comercial": whatsapp,
@@ -198,7 +206,7 @@ def cadastro():
                 flash('Loja criada com sucesso!', 'success')
                 
                 # --- REDIRECIONA DIRETO PARA O PAINEL DO NOVO DOMÍNIO ---
-                return redirect(f"https://{slug}.leanttro.com/admin/painel")
+                return redirect(f"https://{dominio_completo}/admin/painel")
             else:
                 # LOG DETALHADO DO ERRO
                 print(f"ERRO CRÍTICO DIRECTUS ({r.status_code}): {r.text}")
