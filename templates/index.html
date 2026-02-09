@@ -37,7 +37,7 @@
         .border-theme { border-color: var(--primary); }
         .hover\:bg-theme:hover { background-color: var(--primary); }
         
-        /* Aplica cor de fundo personalizada */
+        /* Aplica cor de fundo personalizada ao Navbar e Seção de Produtos */
         .custom-bg { background-color: var(--color-bg); }
         .custom-title-color { color: var(--color-title); }
         
@@ -46,7 +46,7 @@
             overflow: hidden;
             white-space: nowrap;
             background: var(--primary);
-            color: var(--color-text);
+            color: var(--color-text); /* Cor do texto pedido */
             height: 30px;
             display: flex;
             align-items: center;
@@ -79,7 +79,7 @@
         
     </style>
 </head>
-<body class="custom-bg flex flex-col min-h-screen">
+<body class="bg-white flex flex-col min-h-screen">
 
     {% if loja.frase1 or loja.frase2 or loja.frase3 %}
     <div class="ticker-wrap">
@@ -128,7 +128,7 @@
 
     {% for secao in layout %}
         
-        {% if secao == 'banner' and not loja.ocultar_banner %}
+        {% if secao == 'banner' %}
             <section class="slider-container relative w-full h-[350px] md:h-[500px] overflow-hidden">
                 {% if loja.banner1 %}
                 <div class="absolute inset-0">
@@ -138,7 +138,7 @@
             </section>
         {% endif %}
 
-        {% if secao == 'busca' and not loja.ocultar_busca %}
+        {% if secao == 'busca' %}
             <div class="py-6 bg-gray-50 border-b border-gray-100">
                 <div class="container mx-auto px-4">
                     <form action="/" method="GET">
@@ -148,115 +148,109 @@
             </div>
         {% endif %}
 
-        {% if secao == 'banners_menores' and not loja.ocultar_banners_menores %}
-        <section class="w-full custom-bg py-8">
-            <div class="container mx-auto px-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {% if loja.bannermenor1 %}
-                    <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-xl hover:opacity-90 transition">
-                        <img src="{{ loja.bannermenor1 }}" class="w-full h-auto object-cover">
-                    </a>
-                    {% endif %}
-                    {% if loja.bannermenor2 %}
-                    <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-xl hover:opacity-90 transition">
-                        <img src="{{ loja.bannermenor2 }}" class="w-full h-auto object-cover">
-                    </a>
-                    {% endif %}
-                </div>
+        {% if loja.bannermenor1 or loja.bannermenor2 %}
+        <section class="py-8 container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% if loja.bannermenor1 %}
+                <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-xl hover:opacity-90 transition">
+                    <img src="{{ loja.bannermenor1 }}" class="w-full h-auto object-cover">
+                </a>
+                {% endif %}
+                {% if loja.bannermenor2 %}
+                <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-xl hover:opacity-90 transition">
+                    <img src="{{ loja.bannermenor2 }}" class="w-full h-auto object-cover">
+                </a>
+                {% endif %}
             </div>
         </section>
         {% endif %}
 
-        {% if secao == 'categorias' and not loja.ocultar_categorias %}
-            <section class="w-full custom-bg py-4" id="categorias">
-                <div class="container mx-auto px-4">
-                    <h2 class="text-xl font-bold mb-2 custom-title-color px-2">{{ loja.titulo_categorias or '' }}</h2>
-                    <div class="flex gap-4 overflow-x-auto pb-2 category-scroll">
-                        <a href="/" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color font-bold bg-white/50">
-                            Todos
-                        </a>
-                        
-                        {% for cat in categorias %}
-                        <a href="/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color bg-white/50">
-                            {{ cat.nome }}
-                        </a>
-                        {% endfor %}
-                    </div>
+        {% if secao == 'categorias' %}
+            <section class="py-4 container mx-auto px-4 custom-bg" id="categorias">
+                <div class="flex gap-4 overflow-x-auto pb-2 category-scroll">
+                    <a href="/" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color font-bold bg-white/50">
+                        Todos
+                    </a>
+                    
+                    {% for cat in categorias %}
+                    <a href="/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color bg-white/50">
+                        {{ cat.nome }}
+                    </a>
+                    {% endfor %}
                 </div>
             </section>
         {% endif %}
 
-        {% if secao == 'produtos' and not loja.ocultar_produtos %}
-            <section class="w-full custom-bg pt-6 pb-12" id="produtos">
-                <div class="container mx-auto px-4 relative">
-                    
-                    <div class="flex justify-between items-center mb-4 px-2">
-                        <h2 class="text-3xl font-bold custom-title-color">{{ loja.titulo_produtos or 'Nossos Produtos' }}</h2>
-                        <button onclick="toggleLayout()" class="p-2 border rounded-full hover:bg-gray-100 text-gray-600 transition" title="Mudar visualização">
-                            <i id="layout-icon" data-lucide="grid" class="w-5 h-5"></i>
-                        </button>
-                    </div>
-
-                    <div class="relative group">
-                        
-                        <button onclick="scrollCarousel(-1)" id="btn-prev" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition hidden md:flex">
-                            <i data-lucide="chevron-left" class="w-6 h-6 text-gray-700"></i>
-                        </button>
-
-                        <div id="products-container" class="flex gap-6 overflow-x-auto snap-x scroll-smooth pb-4 hide-scroll">
-                            {% for p in produtos %}
-                                <div class="min-w-[160px] md:min-w-[200px] border rounded-lg overflow-hidden hover:shadow-lg transition bg-white relative snap-start">
-                                    {% if p.estoque == 0 %}
-                                        <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded z-10">
-                                            INDISPONÍVEL
-                                        </div>
-                                    {% endif %}
-
-                                    <a href="/produto/{{ p.slug }}">
-                                        <img src="{{ p.imagem }}" class="w-full aspect-square object-cover {{ 'opacity-50' if p.estoque == 0 }}">
-                                        <div class="p-4 text-center"> 
-                                            <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight">{{ p.nome }}</h3>
-                                            
-                                            {% if p.consulte %}
-                                                <p class="text-blue-600 font-bold text-lg mt-1 text-center">Consulte-nos</p>
-                                            {% elif p.estoque == 0 %}
-                                                <p class="text-gray-400 font-bold text-sm mt-1 text-center">Sem Estoque</p>
-                                            {% else %}
-                                                <p class="text-theme font-bold text-lg mt-1 text-center">R$ {{ "%.2f"|format(p.preco) }}</p>
-                                            {% endif %}
-                                        </div>
-                                    </a>
-                                </div>
-                            {% else %}
-                                <div class="col-span-full text-center text-gray-400 py-10 w-full">
-                                    <p>Nenhum produto encontrado.</p>
-                                </div>
-                            {% endfor %}
-                        </div>
-
-                        <button onclick="scrollCarousel(1)" id="btn-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition flex">
-                            <i data-lucide="chevron-right" class="w-6 h-6 text-gray-700"></i>
-                        </button>
-                    </div>
+        {% if secao == 'produtos' %}
+            <section class="pt-6 pb-12 container mx-auto px-4 custom-bg relative" id="produtos">
+                
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <h2 class="text-3xl font-bold custom-title-color">Nossos Produtos</h2>
+                    <button onclick="toggleLayout()" class="p-2 border rounded-full hover:bg-gray-100 text-gray-600 transition" title="Mudar visualização">
+                        <i id="layout-icon" data-lucide="grid" class="w-5 h-5"></i>
+                    </button>
                 </div>
+
+                <div class="relative group">
+                    
+                    <button onclick="scrollCarousel(-1)" id="btn-prev" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition hidden md:flex">
+                        <i data-lucide="chevron-left" class="w-6 h-6 text-gray-700"></i>
+                    </button>
+
+                    <div id="products-container" class="flex gap-6 overflow-x-auto snap-x scroll-smooth pb-4 hide-scroll">
+                        {% for p in produtos %}
+                            <div class="min-w-[160px] md:min-w-[250px] border rounded-lg overflow-hidden hover:shadow-lg transition bg-white relative snap-start">
+                                {% if p.estoque == 0 %}
+                                    <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded z-10">
+                                        INDISPONÍVEL
+                                    </div>
+                                {% endif %}
+
+                                <a href="/produto/{{ p.slug }}">
+                                    <img src="{{ p.imagem }}" class="w-full aspect-[4/5] object-cover {{ 'opacity-50' if p.estoque == 0 }}">
+                                    <div class="p-4">
+                                        <h3 class="font-bold truncate custom-title-color">{{ p.nome }}</h3>
+                                        
+                                        {% if p.consulte %}
+                                            <p class="text-blue-600 font-bold text-lg">Consulte-nos</p>
+                                        {% elif p.estoque == 0 %}
+                                            <p class="text-gray-400 font-bold text-sm">Sem Estoque</p>
+                                        {% else %}
+                                            <p class="text-theme font-bold text-lg">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="col-span-full text-center text-gray-400 py-10 w-full">
+                                <p>Nenhum produto encontrado.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <button onclick="scrollCarousel(1)" id="btn-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition flex">
+                        <i data-lucide="chevron-right" class="w-6 h-6 text-gray-700"></i>
+                    </button>
+                </div>
+
             </section>
         {% endif %}
         
-        {% if secao == 'novidades' and novidades and not loja.ocultar_novidades %}
+        {% if secao == 'novidades' and novidades %}
             <section class="py-12 bg-gray-50">
                 <div class="container mx-auto px-4">
-                    <h2 class="text-3xl font-bold mb-8 text-center">{{ loja.titulo_novidades or 'Novidades' }}</h2>
+                    <h2 class="text-3xl font-bold mb-8 text-center">Novidades</h2>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                          {% for p in novidades %}
                         <div class="border rounded-lg overflow-hidden bg-white hover:shadow-lg transition">
                             <a href="/produto/{{ p.slug }}">
-                                <img src="{{ p.imagem }}" class="w-full aspect-square object-cover">
-                                <div class="p-4 text-center">
-                                    <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight">{{ p.nome }}</h3>
+                                <img src="{{ p.imagem }}" class="w-full aspect-[4/5] object-cover">
+                                <div class="p-4">
+                                    <h3 class="font-bold truncate">{{ p.nome }}</h3>
                                     {% if p.consulte %}
-                                        <p class="text-blue-600 font-bold text-lg mt-1 text-center">Consulte-nos</p>
+                                        <p class="text-blue-600 font-bold text-lg">Consulte-nos</p>
                                     {% else %}
-                                        <p class="text-theme font-bold text-lg mt-1 text-center">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                        <p class="text-theme font-bold text-lg">R$ {{ "%.2f"|format(p.preco) }}</p>
                                     {% endif %}
                                 </div>
                             </a>
@@ -267,9 +261,9 @@
             </section>
         {% endif %}
 
-        {% if secao == 'blog' and posts and not loja.ocultar_blog %}
+        {% if secao == 'blog' and posts %}
             <section class="py-12 container mx-auto px-4">
-                <h2 class="text-3xl font-bold mb-8 text-center custom-title-color">{{ loja.titulo_blog or 'Blog' }}</h2>
+                <h2 class="text-3xl font-bold mb-8 text-center custom-title-color">Blog</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {% for post in posts %}
                     <div class="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
@@ -340,7 +334,15 @@
 
     <script>
         lucide.createIcons();
+        
+        let selectedColor = null;
+        let selectedPhoto = null;
         const lojaPhone = "55{{ loja.whatsapp_comercial }}";
+
+        // --- FUNÇÕES VISUAIS ---
+        function changeImage(src) {
+            document.getElementById('main-image').src = src;
+        }
 
         // --- LÓGICA DO LAYOUT (CARROSSEL VS GRADE) ---
         let isCarousel = true;
@@ -353,30 +355,27 @@
             isCarousel = !isCarousel;
             if(isCarousel) {
                 // Modo Carrossel
-                if(container) container.className = "flex gap-6 overflow-x-auto snap-x scroll-smooth pb-4 hide-scroll";
-                if(btnPrev) btnPrev.style.display = "flex";
-                if(btnNext) btnNext.style.display = "flex";
+                container.className = "flex gap-6 overflow-x-auto snap-x scroll-smooth pb-4 hide-scroll";
+                btnPrev.style.display = "flex";
+                btnNext.style.display = "flex";
                 // Troca ícone para Grid (sugerindo que ao clicar vira grid)
-                if(iconLayout) {
-                    iconLayout.innerHTML = '<rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>'; 
-                    lucide.createIcons();
-                }
+                if(iconLayout) iconLayout.innerHTML = '<rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>'; 
+                // Recriar ícone pois o innerHTML quebra o svg do lucide
+                lucide.createIcons();
             } else {
                 // Modo Grade
-                if(container) container.className = "grid grid-cols-2 md:grid-cols-4 gap-6";
-                if(btnPrev) btnPrev.style.display = "none";
-                if(btnNext) btnNext.style.display = "none";
+                container.className = "grid grid-cols-2 md:grid-cols-4 gap-6";
+                btnPrev.style.display = "none";
+                btnNext.style.display = "none";
                 // Troca ícone para Lista/Carrossel
-                if(iconLayout) {
-                    iconLayout.innerHTML = '<path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path>';
-                    lucide.createIcons();
-                }
+                if(iconLayout) iconLayout.innerHTML = '<path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path>';
+                lucide.createIcons();
             }
         }
 
         function scrollCarousel(direction) {
-            const scrollAmount = 300; 
-            if(container) container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+            const scrollAmount = 300; // Tamanho do scroll
+            container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
         }
 
         // --- LÓGICA DO CARRINHO (MESMA DA INDEX) ---
@@ -409,11 +408,15 @@
 
         function addToCartPage(product) {
             let final = { ...product };
-            
-            // Na index não seleciona variante visualmente, então adiciona o padrão
-            final.nome_exibicao = product.nome;
-            final.imagem = product.imagem; 
-            final.cart_id = `${product.id}-padrao`;
+            if (selectedColor) {
+                final.nome_exibicao = `${product.nome} (${selectedColor})`;
+                final.imagem = selectedPhoto;
+                final.cart_id = `${product.id}-${selectedColor}`;
+            } else {
+                final.nome_exibicao = product.nome;
+                final.imagem = product.galeria[0];
+                final.cart_id = `${product.id}-padrao`;
+            }
 
             const idx = cart.findIndex(i => i.cart_id === final.cart_id);
             if (idx > -1) cart[idx].qtd++; else { final.qtd = 1; cart.push(final); }
@@ -440,46 +443,40 @@
                 countBadge.classList.toggle('hidden', totalQtd === 0);
             }
 
-            if(container) {
-                container.innerHTML = '';
-                let total = 0;
+            container.innerHTML = '';
+            let total = 0;
+            
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 opacity-50"><i data-lucide="shopping-bag" class="w-12 h-12 mx-auto mb-2"></i><p class="text-sm">Sua sacola está vazia.</p></div>`;
+            }
+
+            cart.forEach((item, i) => {
+                // Se item tem preço, soma. Se não (consulte), preço é 0
+                let itemPrice = item.consulte ? 0 : (item.preco || 0);
+                total += itemPrice * item.qtd;
                 
-                if (cart.length === 0) {
-                    container.innerHTML = `<div class="text-center py-10 opacity-50"><i data-lucide="shopping-bag" class="w-12 h-12 mx-auto mb-2"></i><p class="text-sm">Sua sacola está vazia.</p></div>`;
-                }
+                let priceDisplay = item.consulte ? "Sob Consulta" : `R$ ${(itemPrice * item.qtd).toFixed(2).replace('.',',')}`;
 
-                cart.forEach((item, i) => {
-                    // Se item tem preço, soma. Se não (consulte), preço é 0
-                    let itemPrice = item.consulte ? 0 : (item.preco || 0);
-                    total += itemPrice * item.qtd;
-                    
-                    let priceDisplay = item.consulte ? "Sob Consulta" : `R$ ${(itemPrice * item.qtd).toFixed(2).replace('.',',')}`;
-
-                    container.innerHTML += `
-                        <div class="flex gap-4 border-b border-gray-100 pb-4 last:border-0">
-                            <img src="${item.imagem}" class="w-16 h-16 object-cover rounded-md bg-gray-100 border border-gray-200">
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-bold text-xs text-gray-800 line-clamp-2 leading-snug mb-1">${item.nome_exibicao}</h4>
-                                <div class="flex justify-between items-center mt-2">
-                                    <span class="text-theme font-bold text-sm">${priceDisplay}</span>
-                                    <div class="flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-1 border border-gray-200">
-                                        <button onclick="changeQty(${i}, -1)" class="w-5 h-5 flex items-center justify-center text-gray-500 font-bold">-</button>
-                                        <span class="text-xs font-bold text-gray-800 w-4 text-center">${item.qtd}</span>
-                                        <button onclick="changeQty(${i}, 1)" class="w-5 h-5 flex items-center justify-center text-gray-500 font-bold">+</button>
-                                        <div class="w-px h-3 bg-gray-300 mx-1"></div>
-                                        <button onclick="removeFromCart(${i})" class="text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
-                                    </div>
+                container.innerHTML += `
+                    <div class="flex gap-4 border-b border-gray-100 pb-4 last:border-0">
+                        <img src="${item.imagem}" class="w-16 h-16 object-cover rounded-md bg-gray-100 border border-gray-200">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-xs text-gray-800 line-clamp-2 leading-snug mb-1">${item.nome_exibicao}</h4>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-theme font-bold text-sm">${priceDisplay}</span>
+                                <div class="flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-1 border border-gray-200">
+                                    <button onclick="changeQty(${i}, -1)" class="w-5 h-5 flex items-center justify-center text-gray-500 font-bold">-</button>
+                                    <span class="text-xs font-bold text-gray-800 w-4 text-center">${item.qtd}</span>
+                                    <button onclick="changeQty(${i}, 1)" class="w-5 h-5 flex items-center justify-center text-gray-500 font-bold">+</button>
+                                    <div class="w-px h-3 bg-gray-300 mx-1"></div>
+                                    <button onclick="removeFromCart(${i})" class="text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
                                 </div>
                             </div>
-                        </div>`;
-                });
-                if(totalEl) totalEl.innerText = "R$ " + total.toFixed(2).replace('.', ',');
-                lucide.createIcons();
-            }
-        }
-
-        function finalizingNoZap() {
-            finalizarNoZap();
+                        </div>
+                    </div>`;
+            });
+            totalEl.innerText = "R$ " + total.toFixed(2).replace('.', ',');
+            lucide.createIcons();
         }
 
         function finalizarNoZap() {
