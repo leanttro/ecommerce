@@ -45,6 +45,33 @@
         
         .modal-overlay { background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
         
+        /* Ticker CSS */
+        .ticker-wrap {
+            overflow: hidden;
+            white-space: nowrap;
+            background: var(--primary);
+            color: var(--color-text);
+            height: 30px;
+            display: flex;
+            align-items: center;
+        }
+        .ticker {
+            display: inline-block;
+            animation: ticker 30s linear infinite;
+            padding-left: 100%;
+        }
+        .ticker span {
+            display: inline-block;
+            padding: 0 40px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
         /* Ajustes para o conteúdo da descrição */
         .prose { 
             line-height: 1.8; 
@@ -56,10 +83,23 @@
 </head>
 <body class="custom-bg flex flex-col min-h-screen">
 
-    <nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg">
-        <div class="container mx-auto px-4 h-20 flex items-center justify-between">
+    {% if loja.frase1 or loja.frase2 or loja.frase3 %}
+    <div class="ticker-wrap">
+        <div class="ticker">
+            {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+            {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
+            {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
+            {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+            {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
+            {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg py-4 md:py-0">
+        <div class="container mx-auto px-4 min-h-[80px] flex flex-col md:flex-row items-center justify-between">
             
-            <a href="/" class="flex items-center gap-2">
+            <a href="/" class="flex items-center gap-2 mb-2 md:mb-0">
                 {% if loja.logo %}
                     <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="h-12 w-auto object-contain">
                 {% else %}
@@ -166,17 +206,17 @@
         </div>
     </section>
 
-    <footer class="bg-gray-900 text-gray-400 py-12 mt-auto" id="footer">
+    <footer class="bg-theme text-white py-12 mt-auto" style="background-color: var(--primary);" id="footer">
         <div class="container mx-auto px-4 text-center">
-            <h4 class="text-white font-bold text-lg mb-4">{{ loja.nome }}</h4>
-            <p class="text-sm mb-6">Todos os direitos reservados.</p>
+            <h4 class="font-bold text-lg mb-4">{{ loja.nome }}</h4>
+            <p class="text-sm mb-6 opacity-80">Todos os direitos reservados.</p>
             
             <div class="flex justify-center gap-4 text-sm">
-                <a href="#" class="hover:text-white">Política de Privacidade</a>
-                <a href="#" class="hover:text-white">Termos de Uso</a>
+                <a href="#" class="hover:underline">Política de Privacidade</a>
+                <a href="#" class="hover:underline">Termos de Uso</a>
             </div>
 
-            <div class="mt-8 pt-8 border-t border-gray-800">
+            <div class="mt-8 pt-8 border-t border-white/20">
                 <a href="/admin" class="text-xs font-bold uppercase tracking-widest hover:text-white flex items-center justify-center gap-2">
                     <i data-lucide="lock" class="w-3 h-3"></i> Área do Lojista
                 </a>

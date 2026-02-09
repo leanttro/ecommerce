@@ -242,9 +242,17 @@ def index():
 
     # 2. Busca Produtos
     cat_filter = request.args.get('categoria')
-    # Remove query string malformada
+    busca_query = request.args.get('busca') # NOVA BUSCA
+    
+    # Inicia filtro
     filter_str = f"filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published"
-    if cat_filter: filter_str += f"&filter[categoria_id][_eq]={cat_filter}"
+    
+    if cat_filter: 
+        filter_str += f"&filter[categoria_id][_eq]={cat_filter}"
+        
+    if busca_query:
+        # Filtro de busca por nome (case insensitive se o banco suportar, senão contains)
+        filter_str += f"&filter[nome][_icontains]={busca_query}"
 
     produtos = []
     novidades = []
@@ -418,12 +426,17 @@ def admin_painel():
             "cor_primaria": request.form.get('cor_primaria'),
             "cor_titulo": request.form.get('cor_titulo'), 
             "cor_texto": request.form.get('cor_texto'),
-            "cor_fundo": request.form.get('cor_fundo'), # NOVO CAMPO
+            "cor_fundo": request.form.get('cor_fundo'),
             "font_tamanho_base": request.form.get('font_tamanho_base'),
             "font_titulo": request.form.get('font_titulo'),
             "font_corpo": request.form.get('font_corpo'),
             "linkbannerprincipal1": request.form.get('link1'),
             "linkbannerprincipal2": request.form.get('link2'),
+            "linkbannermenor1": request.form.get('linkbannermenor1'), # NOVO
+            "linkbannermenor2": request.form.get('linkbannermenor2'), # NOVO
+            "frase1": request.form.get('frase1'), # NOVO
+            "frase2": request.form.get('frase2'), # NOVO
+            "frase3": request.form.get('frase3'), # NOVO
             "layout_order": request.form.get('layout_order') 
         }
         
@@ -447,8 +460,8 @@ def admin_painel():
         r_cat = requests.get(f"{DIRECTUS_URL}/items/categorias?filter[loja_id][_eq]={g.loja_id}&sort=sort", headers=headers)
         if r_cat.status_code == 200: categorias = r_cat.json()['data']
 
-        # Busca Produtos (resumo)
-        r_prod = requests.get(f"{DIRECTUS_URL}/items/produtos?filter[loja_id][_eq]={g.loja_id}&limit=50&sort=-date_created&fields=id,nome,preco,imagem_destaque", headers=headers)
+        # Busca Produtos (resumo + campos para edição)
+        r_prod = requests.get(f"{DIRECTUS_URL}/items/produtos?filter[loja_id][_eq]={g.loja_id}&limit=100&sort=-date_created&fields=*.*", headers=headers)
         if r_prod.status_code == 200: 
             produtos = r_prod.json()['data']
             for p in produtos:
@@ -470,7 +483,9 @@ def admin_painel():
         **g.loja,
         "logo_url": get_img_url(g.loja.get('logo')),
         "banner1_url": get_img_url(g.loja.get('bannerprincipal1')),
-        "banner2_url": get_img_url(g.loja.get('bannerprincipal2'))
+        "banner2_url": get_img_url(g.loja.get('bannerprincipal2')),
+        "bannermenor1_url": get_img_url(g.loja.get('bannermenor1')),
+        "bannermenor2_url": get_img_url(g.loja.get('bannermenor2'))
     }
 
     return render_template('painel.html', 
@@ -561,16 +576,11 @@ def admin_salvar_produto():
     try:
         if prod_id:
             r = requests.patch(f"{DIRECTUS_URL}/items/produtos/{prod_id}", headers=headers, json=payload)
+            flash('Produto atualizado!', 'success')
         else:
             r = requests.post(f"{DIRECTUS_URL}/items/produtos", headers=headers, json=payload)
-            
-        if r.status_code in [200, 201]:
             flash('Produto criado!', 'success')
-        else:
-            # Mostra o erro real se o banco reclamar
-            print(r.text)
-            flash(f'Erro ao salvar: {r.text}', 'error')
-
+            
     except Exception as e:
         flash(f'Erro interno ao salvar produto: {e}', 'error')
         

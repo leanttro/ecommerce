@@ -73,6 +73,24 @@
                 </div>
 
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="message-square"></i> Frases em Destaque (Faixa no Topo)</h2>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold mb-1">Frase 1</label>
+                            <input type="text" name="frase1" value="{{ loja.frase1 }}" placeholder="Ex: Entregamos para todo o Brasil" class="w-full border rounded p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-1">Frase 2</label>
+                            <input type="text" name="frase2" value="{{ loja.frase2 }}" placeholder="Ex: Frete Grátis nas compras acima de R$ 200" class="w-full border rounded p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-1">Frase 3</label>
+                            <input type="text" name="frase3" value="{{ loja.frase3 }}" placeholder="Ex: Parcelamos em até 12x" class="w-full border rounded p-2">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="palette"></i> Aparência & Cores</h2>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
@@ -147,6 +165,25 @@
                             <input type="file" name="bannerprincipal2" class="text-sm">
                             <input type="text" name="link2" placeholder="Link (ex: /?categoria=2)" value="{{ loja.linkbannerprincipal2 }}" class="w-full mt-2 border rounded p-2 text-sm">
                         </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="border p-4 rounded bg-gray-50">
+                                <label class="block text-sm font-bold mb-2">Banner Menor 1</label>
+                                {% if loja.bannermenor1_url %}
+                                <img src="{{ loja.bannermenor1_url }}" class="h-20 object-cover mb-2 rounded">
+                                {% endif %}
+                                <input type="file" name="bannermenor1" class="text-sm">
+                                <input type="text" name="linkbannermenor1" placeholder="Link" value="{{ loja.linkbannermenor1 }}" class="w-full mt-2 border rounded p-2 text-sm">
+                            </div>
+                            <div class="border p-4 rounded bg-gray-50">
+                                <label class="block text-sm font-bold mb-2">Banner Menor 2</label>
+                                {% if loja.bannermenor2_url %}
+                                <img src="{{ loja.bannermenor2_url }}" class="h-20 object-cover mb-2 rounded">
+                                {% endif %}
+                                <input type="file" name="bannermenor2" class="text-sm">
+                                <input type="text" name="linkbannermenor2" placeholder="Link" value="{{ loja.linkbannermenor2 }}" class="w-full mt-2 border rounded p-2 text-sm">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -160,7 +197,7 @@
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="package"></i> Meus Produtos</h2>
-                    <button onclick="toggleModal('modal-produto')" class="bg-pink-600 text-white px-4 py-2 rounded font-bold text-sm hover:bg-pink-700">+ Novo Produto</button>
+                    <button onclick="toggleModal('modal-produto'); document.getElementById('form-produto').reset(); document.getElementById('prod_id').value = '';" class="bg-pink-600 text-white px-4 py-2 rounded font-bold text-sm hover:bg-pink-700">+ Novo Produto</button>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -181,7 +218,8 @@
                                 </td>
                                 <td class="p-3 font-medium">{{ p.nome }}</td>
                                 <td class="p-3">R$ {{ "%.2f"|format(p.preco or 0) }}</td>
-                                <td class="p-3 text-right">
+                                <td class="p-3 text-right flex gap-2 justify-end">
+                                    <button onclick='editarProduto({{ p|tojson }})' class="text-blue-500 hover:underline text-xs">Editar</button>
                                     <a href="/admin/produto/excluir/{{ p.id }}" onclick="return confirm('Excluir este produto?')" class="text-red-500 hover:underline text-xs">Excluir</a>
                                 </td>
                             </tr>
@@ -195,20 +233,21 @@
 
             <div id="modal-produto" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
                 <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-                    <h3 class="font-bold text-lg mb-4">Adicionar Produto</h3>
-                    <form action="/admin/produto/salvar" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    <h3 class="font-bold text-lg mb-4">Produto</h3>
+                    <form id="form-produto" action="/admin/produto/salvar" method="POST" enctype="multipart/form-data" class="space-y-4">
+                        <input type="hidden" name="id" id="prod_id">
                         <div>
                             <label class="block text-xs font-bold uppercase mb-1">Nome do Produto</label>
-                            <input type="text" name="nome" required class="w-full border rounded p-2">
+                            <input type="text" name="nome" id="prod_nome" required class="w-full border rounded p-2">
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold uppercase mb-1">Preço (R$)</label>
-                                <input type="number" step="0.01" name="preco" required class="w-full border rounded p-2">
+                                <input type="number" step="0.01" name="preco" id="prod_preco" required class="w-full border rounded p-2">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold uppercase mb-1">Categoria</label>
-                                <select name="categoria_id" class="w-full border rounded p-2 bg-white">
+                                <select name="categoria_id" id="prod_categoria" class="w-full border rounded p-2 bg-white">
                                     <option value="">Selecione...</option>
                                     {% for c in categorias %}
                                     <option value="{{ c.id }}">{{ c.nome }}</option>
@@ -217,12 +256,12 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">Imagem Principal</label>
+                            <label class="block text-xs font-bold uppercase mb-1">Imagem Principal (Nova)</label>
                             <input type="file" name="imagem" class="w-full text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase mb-1">Descrição</label>
-                            <textarea name="descricao" rows="4" class="w-full border rounded p-2"></textarea>
+                            <textarea name="descricao" id="prod_descricao" rows="4" class="w-full border rounded p-2"></textarea>
                         </div>
                         <div class="flex gap-2 justify-end pt-4">
                             <button type="button" onclick="toggleModal('modal-produto')" class="px-4 py-2 border rounded text-gray-600">Cancelar</button>
@@ -338,6 +377,19 @@
             const el = document.getElementById(id);
             if(el.classList.contains('hidden')) el.classList.remove('hidden');
             else el.classList.add('hidden');
+        }
+
+        // Função para preencher o modal de edição
+        function editarProduto(prod) {
+            // Preenche os campos
+            document.getElementById('prod_id').value = prod.id;
+            document.getElementById('prod_nome').value = prod.nome;
+            document.getElementById('prod_preco').value = prod.preco;
+            document.getElementById('prod_descricao').value = prod.descricao || '';
+            document.getElementById('prod_categoria').value = prod.categoria_id || '';
+            
+            // Abre o modal
+            toggleModal('modal-produto');
         }
 
         // Drag and Drop (Config)
