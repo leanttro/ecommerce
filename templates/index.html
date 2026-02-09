@@ -37,7 +37,7 @@
         .border-theme { border-color: var(--primary); }
         .hover\:bg-theme:hover { background-color: var(--primary); }
         
-        /* Aplica cor de fundo personalizada ao Navbar e Seção de Produtos */
+        /* Aplica cor de fundo personalizada */
         .custom-bg { background-color: var(--color-bg); }
         .custom-title-color { color: var(--color-title); }
         
@@ -46,7 +46,7 @@
             overflow: hidden;
             white-space: nowrap;
             background: var(--primary);
-            color: var(--color-text); /* Cor do texto pedido */
+            color: var(--color-text);
             height: 30px;
             display: flex;
             align-items: center;
@@ -149,91 +149,95 @@
         {% endif %}
 
         {% if secao == 'banners_menores' and not loja.ocultar_banners_menores %}
-        <section class="py-8 container mx-auto px-4 custom-bg">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {% if loja.bannermenor1 %}
-                <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-xl hover:opacity-90 transition">
-                    <img src="{{ loja.bannermenor1 }}" class="w-full h-auto object-cover">
-                </a>
-                {% endif %}
-                {% if loja.bannermenor2 %}
-                <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-xl hover:opacity-90 transition">
-                    <img src="{{ loja.bannermenor2 }}" class="w-full h-auto object-cover">
-                </a>
-                {% endif %}
+        <section class="w-full custom-bg py-8">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% if loja.bannermenor1 %}
+                    <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-xl hover:opacity-90 transition">
+                        <img src="{{ loja.bannermenor1 }}" class="w-full h-auto object-cover">
+                    </a>
+                    {% endif %}
+                    {% if loja.bannermenor2 %}
+                    <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-xl hover:opacity-90 transition">
+                        <img src="{{ loja.bannermenor2 }}" class="w-full h-auto object-cover">
+                    </a>
+                    {% endif %}
+                </div>
             </div>
         </section>
         {% endif %}
 
         {% if secao == 'categorias' and not loja.ocultar_categorias %}
-            <section class="py-4 container mx-auto px-4 custom-bg" id="categorias">
-                <h2 class="text-xl font-bold mb-2 custom-title-color px-2">{{ loja.titulo_categorias or '' }}</h2>
-                <div class="flex gap-4 overflow-x-auto pb-2 category-scroll">
-                    <a href="/" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color font-bold bg-white/50">
-                        Todos
-                    </a>
-                    
-                    {% for cat in categorias %}
-                    <a href="/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color bg-white/50">
-                        {{ cat.nome }}
-                    </a>
-                    {% endfor %}
+            <section class="w-full custom-bg py-4" id="categorias">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-xl font-bold mb-2 custom-title-color px-2">{{ loja.titulo_categorias or '' }}</h2>
+                    <div class="flex gap-4 overflow-x-auto pb-2 category-scroll">
+                        <a href="/" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color font-bold bg-white/50">
+                            Todos
+                        </a>
+                        
+                        {% for cat in categorias %}
+                        <a href="/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color bg-white/50">
+                            {{ cat.nome }}
+                        </a>
+                        {% endfor %}
+                    </div>
                 </div>
             </section>
         {% endif %}
 
         {% if secao == 'produtos' and not loja.ocultar_produtos %}
-            <section class="pt-6 pb-12 container mx-auto px-4 custom-bg relative" id="produtos">
-                
-                <div class="flex justify-between items-center mb-4 px-2">
-                    <h2 class="text-3xl font-bold custom-title-color">{{ loja.titulo_produtos or 'Nossos Produtos' }}</h2>
-                    <button onclick="toggleLayout()" class="p-2 border rounded-full hover:bg-gray-100 text-gray-600 transition" title="Mudar visualização">
-                        <i id="layout-icon" data-lucide="grid" class="w-5 h-5"></i>
-                    </button>
-                </div>
-
-                <div class="relative group">
+            <section class="w-full custom-bg pt-6 pb-12" id="produtos">
+                <div class="container mx-auto px-4 relative">
                     
-                    <button onclick="scrollCarousel(-1)" id="btn-prev" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition hidden md:flex">
-                        <i data-lucide="chevron-left" class="w-6 h-6 text-gray-700"></i>
-                    </button>
-
-                    <div id="products-container" class="flex gap-6 overflow-x-auto snap-x scroll-smooth pb-4 hide-scroll">
-                        {% for p in produtos %}
-                            <div class="min-w-[160px] md:min-w-[250px] border rounded-lg overflow-hidden hover:shadow-lg transition bg-white relative snap-start">
-                                {% if p.estoque == 0 %}
-                                    <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded z-10">
-                                        INDISPONÍVEL
-                                    </div>
-                                {% endif %}
-
-                                <a href="/produto/{{ p.slug }}">
-                                    <img src="{{ p.imagem }}" class="w-full aspect-[4/5] object-cover {{ 'opacity-50' if p.estoque == 0 }}">
-                                    <div class="p-4">
-                                        <h3 class="font-bold truncate custom-title-color">{{ p.nome }}</h3>
-                                        
-                                        {% if p.consulte %}
-                                            <p class="text-blue-600 font-bold text-lg">Consulte-nos</p>
-                                        {% elif p.estoque == 0 %}
-                                            <p class="text-gray-400 font-bold text-sm">Sem Estoque</p>
-                                        {% else %}
-                                            <p class="text-theme font-bold text-lg">R$ {{ "%.2f"|format(p.preco) }}</p>
-                                        {% endif %}
-                                    </div>
-                                </a>
-                            </div>
-                        {% else %}
-                            <div class="col-span-full text-center text-gray-400 py-10 w-full">
-                                <p>Nenhum produto encontrado.</p>
-                            </div>
-                        {% endfor %}
+                    <div class="flex justify-between items-center mb-4 px-2">
+                        <h2 class="text-3xl font-bold custom-title-color">{{ loja.titulo_produtos or 'Nossos Produtos' }}</h2>
+                        <button onclick="toggleLayout()" class="p-2 border rounded-full hover:bg-gray-100 text-gray-600 transition" title="Mudar visualização">
+                            <i id="layout-icon" data-lucide="grid" class="w-5 h-5"></i>
+                        </button>
                     </div>
 
-                    <button onclick="scrollCarousel(1)" id="btn-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition flex">
-                        <i data-lucide="chevron-right" class="w-6 h-6 text-gray-700"></i>
-                    </button>
-                </div>
+                    <div class="relative group">
+                        
+                        <button onclick="scrollCarousel(-1)" id="btn-prev" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition hidden md:flex">
+                            <i data-lucide="chevron-left" class="w-6 h-6 text-gray-700"></i>
+                        </button>
 
+                        <div id="products-container" class="flex gap-6 overflow-x-auto snap-x scroll-smooth pb-4 hide-scroll">
+                            {% for p in produtos %}
+                                <div class="min-w-[160px] md:min-w-[200px] border rounded-lg overflow-hidden hover:shadow-lg transition bg-white relative snap-start">
+                                    {% if p.estoque == 0 %}
+                                        <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded z-10">
+                                            INDISPONÍVEL
+                                        </div>
+                                    {% endif %}
+
+                                    <a href="/produto/{{ p.slug }}">
+                                        <img src="{{ p.imagem }}" class="w-full aspect-square object-cover {{ 'opacity-50' if p.estoque == 0 }}">
+                                        <div class="p-4 text-center"> <h3 class="font-bold truncate custom-title-color text-sm">{{ p.nome }}</h3>
+                                            
+                                            {% if p.consulte %}
+                                                <p class="text-blue-600 font-bold text-lg mt-1">Consulte-nos</p>
+                                            {% elif p.estoque == 0 %}
+                                                <p class="text-gray-400 font-bold text-sm mt-1">Sem Estoque</p>
+                                            {% else %}
+                                                <p class="text-theme font-bold text-lg mt-1">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="col-span-full text-center text-gray-400 py-10 w-full">
+                                    <p>Nenhum produto encontrado.</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <button onclick="scrollCarousel(1)" id="btn-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition flex">
+                            <i data-lucide="chevron-right" class="w-6 h-6 text-gray-700"></i>
+                        </button>
+                    </div>
+                </div>
             </section>
         {% endif %}
         
@@ -245,13 +249,13 @@
                          {% for p in novidades %}
                         <div class="border rounded-lg overflow-hidden bg-white hover:shadow-lg transition">
                             <a href="/produto/{{ p.slug }}">
-                                <img src="{{ p.imagem }}" class="w-full aspect-[4/5] object-cover">
-                                <div class="p-4">
+                                <img src="{{ p.imagem }}" class="w-full aspect-square object-cover">
+                                <div class="p-4 text-center">
                                     <h3 class="font-bold truncate">{{ p.nome }}</h3>
                                     {% if p.consulte %}
-                                        <p class="text-blue-600 font-bold text-lg">Consulte-nos</p>
+                                        <p class="text-blue-600 font-bold text-lg mt-1">Consulte-nos</p>
                                     {% else %}
-                                        <p class="text-theme font-bold text-lg">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                        <p class="text-theme font-bold text-lg mt-1">R$ {{ "%.2f"|format(p.preco) }}</p>
                                     {% endif %}
                                 </div>
                             </a>
