@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | {{ loja.nome }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: {{ loja.cor_primaria or '#db2777' }};
+        }
+        .bg-theme { background-color: var(--primary); }
+        .text-theme { color: var(--primary); }
+        .ring-theme:focus { --tw-ring-color: var(--primary); }
+        .border-theme:focus { border-color: var(--primary); }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen flex items-center justify-center p-4 font-sans text-gray-800">
+
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-gray-100">
+        
+        <div class="p-8 text-center bg-gray-50/50 border-b border-gray-100">
+            {% if loja.logo %}
+                <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="h-16 mx-auto object-contain mb-4">
+            {% else %}
+                <div class="h-16 w-16 bg-theme rounded-full flex items-center justify-center mx-auto mb-4 text-white">
+                    <i data-lucide="shopping-bag" class="w-8 h-8"></i>
+                </div>
+            {% endif %}
+            <h2 class="text-2xl font-bold text-gray-900">Área do Lojista</h2>
+            <p class="text-sm text-gray-500 mt-2">Digite sua senha para gerenciar a loja <br><strong class="text-theme">{{ loja.nome }}</strong></p>
+        </div>
+
+        <div class="p-8">
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="mb-6 p-4 rounded-lg flex items-center gap-3 text-sm font-medium
+                        {{ 'bg-green-50 text-green-700 border border-green-100' if category == 'success' else 'bg-red-50 text-red-700 border border-red-100' }}">
+                        <i data-lucide="{{ 'check-circle' if category == 'success' else 'alert-circle' }}" class="w-5 h-5"></i>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="/admin" class="space-y-6">
+                <div>
+                    <label for="senha" class="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Senha de Acesso</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="lock" class="h-5 w-5 text-gray-400"></i>
+                        </div>
+                        <input type="password" name="senha" id="senha" required placeholder="••••••••"
+                               class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 ring-theme border-theme transition-all">
+                    </div>
+                </div>
+
+                <button type="submit" 
+                        class="w-full bg-theme text-white font-bold py-3.5 px-4 rounded-xl shadow-lg hover:opacity-90 transition-all transform active:scale-95 flex justify-center items-center gap-2">
+                    <i data-lucide="log-in" class="w-5 h-5"></i> ENTRAR NO PAINEL
+                </button>
+            </form>
+
+            <div class="mt-8 text-center">
+                <a href="/recuperar-senha" class="text-xs text-gray-400 hover:text-theme transition font-medium">
+                    Esqueceu sua senha?
+                </a>
+            </div>
+        </div>
+        
+        <div class="bg-gray-50 py-4 text-center border-t border-gray-100">
+            <a href="/" class="text-xs text-gray-500 hover:text-gray-800 flex items-center justify-center gap-1 transition">
+                <i data-lucide="arrow-left" class="w-3 h-3"></i> Voltar para a Loja
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
