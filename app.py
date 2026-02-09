@@ -15,6 +15,11 @@ app = Flask(__name__)
 # Em produção, defina uma SECRET_KEY fixa no .env
 app.secret_key = os.getenv("SECRET_KEY", "chave_secreta_super_segura_saas_2026")
 
+# --- CONFIGURAÇÃO DE COOKIE GLOBAL (PARA LOGIN FUNCIONAR NOS SUBDOMÍNIOS) ---
+# Isso permite que o login feito em 'lojavirtual.leanttro.com' valha para 'cliente.leanttro.com'
+app.config['SESSION_COOKIE_DOMAIN'] = '.leanttro.com'
+app.config['SESSION_COOKIE_NAME'] = 'leanttro_session'
+
 # --- CONFIGURAÇÕES GERAIS ---
 # Remove barra final da URL para evitar erros de concatenação
 DIRECTUS_URL = os.getenv("DIRECTUS_URL", "https://api2.leanttro.com").rstrip('/')
@@ -117,6 +122,7 @@ def identificar_loja():
 def cadastro():
     # Se já estiver logado como admin de alguma loja, redireciona
     if session.get('loja_admin_id'):
+        # Se o usuário já tem cookie, redireciona pro painel dele
         return redirect('/admin/painel')
 
     if request.method == 'POST':
@@ -180,10 +186,19 @@ def cadastro():
             r = requests.post(f"{DIRECTUS_URL}/items/lojas", headers=headers, json=payload)
             
             if r.status_code in [200, 201]:
-                flash('Loja criada com sucesso! Faça login para começar.', 'success')
-                # --- ALTERAÇÃO AQUI: REDIRECIONA PARA O SUBDOMÍNIO DA LOJA ---
-                # Assume que o domínio base é leanttro.com
-                return redirect(f"https://{slug}.leanttro.com/admin")
+                data = r.json().get('data')
+                novo_id = data['id']
+                
+                # --- LOGIN AUTOMÁTICO ---
+                # Como configuramos SESSION_COOKIE_DOMAIN = '.leanttro.com',
+                # essa sessão será válida no subdomínio.
+                session['loja_admin_id'] = novo_id
+                session.permanent = True
+                
+                flash('Loja criada com sucesso!', 'success')
+                
+                # --- REDIRECIONA DIRETO PARA O PAINEL DO NOVO DOMÍNIO ---
+                return redirect(f"https://{slug}.leanttro.com/admin/painel")
             else:
                 # LOG DETALHADO DO ERRO
                 print(f"ERRO CRÍTICO DIRECTUS ({r.status_code}): {r.text}")
@@ -293,19 +308,27 @@ def produto(slug):
     if not g.loja: return redirect('/cadastro')
 
     headers = get_headers()
+    # Fields *.* garante que pegamos campos relacionais e todos os campos personalizados
     url = f"{DIRECTUS_URL}/items/produtos?filter[slug][_eq]={slug}&filter[loja_id][_eq]={g.loja_id}&fields=*.*"
     r = requests.get(url, headers=headers)
     
     if r.status_code == 200 and r.json()['data']:
         p = r.json()['data'][0]
         
+        # Tratamento de Imagens conforme seu Data Model
         p['imagem_destaque'] = get_img_url(p.get('imagem_destaque'))
         p['imagem1'] = get_img_url(p.get('imagem1'))
         p['imagem2'] = get_img_url(p.get('imagem2'))
         
-        galeria = [p['imagem_destaque']]
+        galeria = []
+        if p.get('imagem_destaque'): galeria.append(p['imagem_destaque'])
         if p.get('imagem1'): galeria.append(p['imagem1'])
         if p.get('imagem2'): galeria.append(p['imagem2'])
+        
+        # Se não tiver nenhuma imagem, usa um placeholder ou vazio
+        if not galeria:
+            galeria = ["https://placehold.co/600x600?text=Sem+Imagem"]
+            
         p['galeria'] = galeria
 
         if p.get('variantes'):
@@ -351,6 +374,7 @@ def admin_login():
 def admin_painel():
     if not g.loja: return redirect('/')
     
+    # Validação de Segurança
     if session.get('loja_admin_id') != g.loja_id:
         return redirect('/admin')
 
