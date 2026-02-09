@@ -7,6 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-btn.active { border-bottom: 2px solid #db2777; color: #db2777; font-weight: bold; }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
@@ -18,114 +23,320 @@
         </div>
     </nav>
 
-    <div class="max-w-4xl mx-auto py-10 px-4">
+    <div class="max-w-5xl mx-auto py-6 px-4">
         
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             {% for category, message in messages %}
-              <div class="p-4 mb-4 rounded {{ 'bg-green-100 text-green-700' if category == 'success' else 'bg-red-100 text-red-700' }}">
+              <div class="p-4 mb-4 rounded flex items-center gap-2 {{ 'bg-green-100 text-green-700' if category == 'success' else 'bg-red-100 text-red-700' }}">
+                <i data-lucide="{{ 'check' if category == 'success' else 'alert-circle' }}" class="w-5 h-5"></i>
                 {{ message }}
               </div>
             {% endfor %}
           {% endif %}
         {% endwith %}
 
-        <form method="POST" enctype="multipart/form-data" class="space-y-8">
-            
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="store"></i> Identidade</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-bold mb-1">Nome da Loja</label>
-                        <input type="text" name="nome" value="{{ loja.nome }}" class="w-full border rounded p-2">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold mb-1">WhatsApp (Apenas números)</label>
-                        <input type="text" name="whatsapp" value="{{ loja.whatsapp_comercial }}" class="w-full border rounded p-2">
-                    </div>
-                </div>
-            </div>
+        <div class="flex border-b border-gray-200 mb-6 bg-white rounded-t-lg px-4 overflow-x-auto">
+            <button onclick="switchTab('config')" class="tab-btn active px-6 py-4 text-gray-500 hover:text-gray-700 whitespace-nowrap">Configurações</button>
+            <button onclick="switchTab('produtos')" class="tab-btn px-6 py-4 text-gray-500 hover:text-gray-700 whitespace-nowrap">Produtos</button>
+            <button onclick="switchTab('categorias')" class="tab-btn px-6 py-4 text-gray-500 hover:text-gray-700 whitespace-nowrap">Categorias</button>
+            <button onclick="switchTab('blog')" class="tab-btn px-6 py-4 text-gray-500 hover:text-gray-700 whitespace-nowrap">Blog</button>
+        </div>
 
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="palette"></i> Cores e Fontes</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-sm font-bold mb-1">Cor Principal</label>
-                        <div class="flex items-center gap-2">
-                            <input type="color" name="cor_primaria" value="{{ loja.cor_primaria }}" class="h-10 w-full cursor-pointer">
+        <div id="tab-config" class="tab-content active space-y-8">
+            <form method="POST" enctype="multipart/form-data" class="space-y-8">
+                
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="store"></i> Identidade</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold mb-1">Nome da Loja</label>
+                            <input type="text" name="nome" value="{{ loja.nome }}" class="w-full border rounded p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-1">WhatsApp (Apenas números)</label>
+                            <input type="text" name="whatsapp" value="{{ loja.whatsapp_comercial }}" class="w-full border rounded p-2">
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-bold mb-1">Fonte Títulos</label>
-                        <select name="font_titulo" class="w-full border rounded p-2 bg-white">
-                            <option value="Playfair Display" {% if loja.font_titulo == 'Playfair Display' %}selected{% endif %}>Playfair Display (Elegante)</option>
-                            <option value="Poppins" {% if loja.font_titulo == 'Poppins' %}selected{% endif %}>Poppins (Moderno)</option>
-                            <option value="Inter" {% if loja.font_titulo == 'Inter' %}selected{% endif %}>Inter (Limpo)</option>
-                        </select>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="palette"></i> Aparência & Cores</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold mb-1">Cor Principal</label>
+                            <input type="color" name="cor_primaria" value="{{ loja.cor_primaria }}" class="h-10 w-full cursor-pointer rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-1">Cor dos Títulos</label>
+                            <input type="color" name="cor_titulo" value="{{ loja.cor_titulo or '#111827' }}" class="h-10 w-full cursor-pointer rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-1">Cor do Texto</label>
+                            <input type="color" name="cor_texto" value="{{ loja.cor_texto or '#374151' }}" class="h-10 w-full cursor-pointer rounded">
+                        </div>
+                         <div>
+                            <label class="block text-sm font-bold mb-1">Tamanho da Fonte (px)</label>
+                            <input type="number" name="font_tamanho_base" value="{{ loja.font_tamanho_base or 16 }}" class="w-full border rounded p-2">
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-bold mb-1">Fonte Títulos</label>
+                            <select name="font_titulo" class="w-full border rounded p-2 bg-white">
+                                <option value="Playfair Display" {% if loja.font_titulo == 'Playfair Display' %}selected{% endif %}>Playfair Display (Elegante)</option>
+                                <option value="Poppins" {% if loja.font_titulo == 'Poppins' %}selected{% endif %}>Poppins (Moderno)</option>
+                                <option value="Inter" {% if loja.font_titulo == 'Inter' %}selected{% endif %}>Inter (Limpo)</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-bold mb-1">Fonte Corpo</label>
+                            <select name="font_corpo" class="w-full border rounded p-2 bg-white">
+                                <option value="Poppins" {% if loja.font_corpo == 'Poppins' %}selected{% endif %}>Poppins</option>
+                                <option value="Roboto" {% if loja.font_corpo == 'Roboto' %}selected{% endif %}>Roboto</option>
+                            </select>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-bold mb-1">Fonte Corpo</label>
-                        <select name="font_corpo" class="w-full border rounded p-2 bg-white">
-                            <option value="Poppins" {% if loja.font_corpo == 'Poppins' %}selected{% endif %}>Poppins</option>
-                            <option value="Roboto" {% if loja.font_corpo == 'Roboto' %}selected{% endif %}>Roboto</option>
-                        </select>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="layout"></i> Organização da Loja</h2>
+                    <p class="text-sm text-gray-500 mb-4">Arraste os blocos para mudar a ordem na página inicial.</p>
+                    <input type="hidden" name="layout_order" id="layout_order_input" value="{{ loja.layout_order }}">
+                    <div id="sortable-list" class="space-y-2">
+                        {% for item in loja.layout_order.split(',') %}
+                        <div data-id="{{ item }}" class="bg-gray-50 p-3 border rounded flex items-center gap-3 cursor-move hover:bg-gray-100 select-none">
+                            <i data-lucide="grip-vertical" class="text-gray-400"></i>
+                            <span class="capitalize font-bold">{{ item }}</span>
+                        </div>
+                        {% endfor %}
                     </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="image"></i> Banners</h2>
+                    <div class="space-y-4">
+                        <div class="border p-4 rounded bg-gray-50">
+                            <label class="block text-sm font-bold mb-2">Banner Principal 1</label>
+                            {% if loja.banner1_url %}
+                            <img src="{{ loja.banner1_url }}" class="h-20 object-cover mb-2 rounded">
+                            {% endif %}
+                            <input type="file" name="bannerprincipal1" class="text-sm">
+                            <input type="text" name="link1" placeholder="Link (ex: /?categoria=1)" value="{{ loja.linkbannerprincipal1 }}" class="w-full mt-2 border rounded p-2 text-sm">
+                        </div>
+                        <div class="border p-4 rounded bg-gray-50">
+                            <label class="block text-sm font-bold mb-2">Banner Principal 2</label>
+                            {% if loja.banner2_url %}
+                            <img src="{{ loja.banner2_url }}" class="h-20 object-cover mb-2 rounded">
+                            {% endif %}
+                            <input type="file" name="bannerprincipal2" class="text-sm">
+                            <input type="text" name="link2" placeholder="Link (ex: /?categoria=2)" value="{{ loja.linkbannerprincipal2 }}" class="w-full mt-2 border rounded p-2 text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg transition text-lg flex justify-center items-center gap-2">
+                    <i data-lucide="save"></i> SALVAR CONFIGURAÇÕES
+                </button>
+            </form>
+        </div>
+
+        <div id="tab-produtos" class="tab-content">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="package"></i> Meus Produtos</h2>
+                    <button onclick="toggleModal('modal-produto')" class="bg-pink-600 text-white px-4 py-2 rounded font-bold text-sm hover:bg-pink-700">+ Novo Produto</button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-xs text-gray-500 uppercase border-b bg-gray-50">
+                                <th class="p-3">Imagem</th>
+                                <th class="p-3">Nome</th>
+                                <th class="p-3">Preço</th>
+                                <th class="p-3 text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm divide-y">
+                            {% for p in produtos %}
+                            <tr>
+                                <td class="p-3">
+                                    <img src="{{ p.imagem_destaque }}" class="w-10 h-10 object-cover rounded bg-gray-100">
+                                </td>
+                                <td class="p-3 font-medium">{{ p.nome }}</td>
+                                <td class="p-3">R$ {{ "%.2f"|format(p.preco or 0) }}</td>
+                                <td class="p-3 text-right">
+                                    <a href="/admin/produto/excluir/{{ p.id }}" onclick="return confirm('Excluir este produto?')" class="text-red-500 hover:underline text-xs">Excluir</a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="4" class="p-4 text-center text-gray-400">Nenhum produto cadastrado.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
+            <div id="modal-produto" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
+                <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+                    <h3 class="font-bold text-lg mb-4">Adicionar Produto</h3>
+                    <form action="/admin/produto/salvar" method="POST" enctype="multipart/form-data" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Nome do Produto</label>
+                            <input type="text" name="nome" required class="w-full border rounded p-2">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase mb-1">Preço (R$)</label>
+                                <input type="number" step="0.01" name="preco" required class="w-full border rounded p-2">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase mb-1">Categoria</label>
+                                <select name="categoria_id" class="w-full border rounded p-2 bg-white">
+                                    <option value="">Selecione...</option>
+                                    {% for c in categorias %}
+                                    <option value="{{ c.id }}">{{ c.nome }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Imagem Principal</label>
+                            <input type="file" name="imagem" class="w-full text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Descrição</label>
+                            <textarea name="descricao" rows="4" class="w-full border rounded p-2"></textarea>
+                        </div>
+                        <div class="flex gap-2 justify-end pt-4">
+                            <button type="button" onclick="toggleModal('modal-produto')" class="px-4 py-2 border rounded text-gray-600">Cancelar</button>
+                            <button type="submit" class="px-4 py-2 bg-pink-600 text-white rounded font-bold">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-categorias" class="tab-content">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="layout"></i> Organização da Loja</h2>
-                <p class="text-sm text-gray-500 mb-4">Arraste os blocos para mudar a ordem na página inicial.</p>
-                
-                <input type="hidden" name="layout_order" id="layout_order_input" value="{{ loja.layout_order }}">
-                
-                <div id="sortable-list" class="space-y-2">
-                    {% for item in loja.layout_order.split(',') %}
-                    <div data-id="{{ item }}" class="bg-gray-50 p-3 border rounded flex items-center gap-3 cursor-move hover:bg-gray-100 select-none">
-                        <i data-lucide="grip-vertical" class="text-gray-400"></i>
-                        <span class="capitalize font-bold">{{ item }}</span>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="list"></i> Categorias</h2>
+                    <button onclick="toggleModal('modal-categoria')" class="bg-pink-600 text-white px-4 py-2 rounded font-bold text-sm hover:bg-pink-700">+ Nova Categoria</button>
+                </div>
+                <div class="space-y-2">
+                    {% for c in categorias %}
+                    <div class="flex justify-between items-center p-3 border rounded bg-gray-50">
+                        <span class="font-medium">{{ c.nome }}</span>
+                        <a href="/admin/categoria/excluir/{{ c.id }}" onclick="return confirm('Tem certeza? Isso não apaga os produtos.')" class="text-red-500 hover:bg-red-50 p-1 rounded"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
                     </div>
+                    {% else %}
+                    <p class="text-gray-400 text-center py-4">Nenhuma categoria criada.</p>
                     {% endfor %}
                 </div>
             </div>
 
+            <div id="modal-categoria" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
+                <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
+                    <h3 class="font-bold text-lg mb-4">Nova Categoria</h3>
+                    <form action="/admin/categoria/salvar" method="POST" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Nome da Categoria</label>
+                            <input type="text" name="nome" required class="w-full border rounded p-2">
+                        </div>
+                        <div class="flex gap-2 justify-end pt-2">
+                            <button type="button" onclick="toggleModal('modal-categoria')" class="px-4 py-2 border rounded text-gray-600">Cancelar</button>
+                            <button type="submit" class="px-4 py-2 bg-pink-600 text-white rounded font-bold">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-blog" class="tab-content">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="image"></i> Banners</h2>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="file-text"></i> Postagens</h2>
+                    <button onclick="toggleModal('modal-post')" class="bg-pink-600 text-white px-4 py-2 rounded font-bold text-sm hover:bg-pink-700">+ Novo Post</button>
+                </div>
                 
-                <div class="space-y-4">
-                    <div class="border p-4 rounded bg-gray-50">
-                        <label class="block text-sm font-bold mb-2">Banner Principal 1</label>
-                        {% if loja.banner1_url %}
-                        <img src="{{ loja.banner1_url }}" class="h-20 object-cover mb-2 rounded">
-                        {% endif %}
-                        <input type="file" name="bannerprincipal1" class="text-sm">
-                        <input type="text" name="link1" placeholder="Link (ex: /?categoria=1)" value="{{ loja.linkbannerprincipal1 }}" class="w-full mt-2 border rounded p-2 text-sm">
+                <div class="divide-y">
+                    {% for post in posts %}
+                    <div class="py-3 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-gray-800">{{ post.titulo }}</h4>
+                            <span class="text-xs text-gray-400">{{ post.date_created[:10] }}</span>
+                        </div>
+                        <a href="/admin/post/excluir/{{ post.id }}" onclick="return confirm('Excluir este post?')" class="text-red-500 text-sm hover:underline">Excluir</a>
                     </div>
-                    
-                    </div>
+                    {% else %}
+                    <p class="text-gray-400 text-center py-4">Nenhum post no blog.</p>
+                    {% endfor %}
+                </div>
             </div>
 
-            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg transition text-lg flex justify-center items-center gap-2">
-                <i data-lucide="save"></i> SALVAR ALTERAÇÕES
-            </button>
+             <div id="modal-post" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
+                <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
+                    <h3 class="font-bold text-lg mb-4">Adicionar Post</h3>
+                    <form action="/admin/post/salvar" method="POST" enctype="multipart/form-data" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Título</label>
+                            <input type="text" name="titulo" required class="w-full border rounded p-2">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Capa (Imagem)</label>
+                            <input type="file" name="capa" class="w-full text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Resumo Curto</label>
+                            <textarea name="resumo" rows="2" class="w-full border rounded p-2"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Conteúdo Completo</label>
+                            <textarea name="conteudo" rows="6" class="w-full border rounded p-2"></textarea>
+                        </div>
+                        <div class="flex gap-2 justify-end pt-4">
+                            <button type="button" onclick="toggleModal('modal-post')" class="px-4 py-2 border rounded text-gray-600">Cancelar</button>
+                            <button type="submit" class="px-4 py-2 bg-pink-600 text-white rounded font-bold">Publicar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-        </form>
     </div>
 
     <script>
         lucide.createIcons();
 
-        // Lógica de Arrastar e Soltar (Igual ao seu login.html)
+        // Lógica de Tabs
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Lógica de Modais
+        function toggleModal(id) {
+            const el = document.getElementById(id);
+            if(el.classList.contains('hidden')) el.classList.remove('hidden');
+            else el.classList.add('hidden');
+        }
+
+        // Drag and Drop (Config)
         const el = document.getElementById('sortable-list');
-        new Sortable(el, {
-            animation: 150,
-            onEnd: function () {
-                const items = el.querySelectorAll('div[data-id]');
-                let order = [];
-                items.forEach(i => order.push(i.getAttribute('data-id')));
-                document.getElementById('layout_order_input').value = order.join(',');
-            }
-        });
+        if(el) {
+            new Sortable(el, {
+                animation: 150,
+                onEnd: function () {
+                    const items = el.querySelectorAll('div[data-id]');
+                    let order = [];
+                    items.forEach(i => order.push(i.getAttribute('data-id')));
+                    document.getElementById('layout_order_input').value = order.join(',');
+                }
+            });
+        }
     </script>
 </body>
 </html>

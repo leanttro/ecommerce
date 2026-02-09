@@ -64,6 +64,12 @@ def upload_file_to_directus(file_storage):
         print(f"Exceção no upload: {e}")
     return None
 
+def gerar_slug(texto):
+    if not texto: return ""
+    import unicodedata
+    texto = unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('utf-8')
+    return texto.lower().strip().replace(' ', '-').replace('/', '-').replace('.', '')
+
 # --- MIDDLEWARE: IDENTIFICAÇÃO DA LOJA (MULTI-TENANT) ---
 @app.before_request
 def identificar_loja():
@@ -75,10 +81,6 @@ def identificar_loja():
 
     # Pega o domínio que o usuário digitou (ex: doces.leanttro.com)
     host = request.headers.get('Host')
-    
-    # --- MODO DESENVOLVIMENTO (OPCIONAL) ---
-    # if "localhost" in host or "127.0.0.1" in host:
-    #     host = "loja-teste.leanttro.com" # Simula um domínio real para teste
     
     try:
         # Se for rota de sistema (cadastro, admin global), não busca loja agora
@@ -102,16 +104,18 @@ def identificar_loja():
             if not g.loja.get('layout_order'):
                 g.loja['layout_order'] = "banner,busca,categorias,produtos,novidades,blog,footer"
             
+            # Tratamento de novos campos visuais (caso não existam no banco ainda)
+            if not g.loja.get('font_tamanho_base'): g.loja['font_tamanho_base'] = 16
+            if not g.loja.get('cor_titulo'): g.loja['cor_titulo'] = "#111827"
+            if not g.loja.get('cor_texto'): g.loja['cor_texto'] = "#374151"
+            
             g.layout_list = g.loja['layout_order'].split(',')
             
         else:
             # Se não achou loja, mas a pessoa está tentando acessar o /admin ou raiz
-            # e não é um domínio cadastrado, pode ser o domínio principal do SaaS
             g.loja = None
             g.loja_id = None
             if request.path not in ['/cadastro', '/favicon.ico']:
-                 # Se quiser redirecionar domínios inválidos para o cadastro:
-                 # return redirect('/cadastro')
                  pass
 
     except Exception as e:
@@ -124,8 +128,6 @@ def identificar_loja():
 # --- ROTA DE CADASTRO (CRIAR NOVA LOJA) ---
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
-    # REMOVIDO O REDIRECIONAMENTO AUTOMÁTICO PARA EVITAR LOOP
-    # Se o usuário acessar /cadastro logado, ele apenas vê o form novamente.
     
     if request.method == 'POST':
         nome = request.form.get('nome')
@@ -148,7 +150,6 @@ def cadastro():
 
         # 2. Verifica se já existe (Slug/Domínio ou Email) no Directus
         headers = get_headers()
-        # Verifica se já existe esse domínio completo ou o email
         filtro = f"?filter[_or][0][dominio][_eq]={dominio_completo}&filter[_or][1][email][_eq]={email}"
         try:
             check = requests.get(f"{DIRECTUS_URL}/items/lojas{filtro}", headers=headers)
@@ -168,27 +169,29 @@ def cadastro():
         senha_hash = generate_password_hash(senha)
 
         payload = {
-            "status": "published",  # MANTIDO CONFORME SOLICITADO
+            "status": "published",
             "nome": nome,
-            "dominio": dominio_completo,  # SALVANDO O DOMÍNIO COMPLETO (ex: loja.leanttro.com)
+            "dominio": dominio_completo,
             "slug": slug,             
             "email": email,
             "whatsapp_comercial": whatsapp,
             "senha_admin": senha_hash,
             
             # Configurações Visuais Padrão
-            "cor_primaria": "#db2777", 
+            "cor_primaria": "#db2777",
+            "cor_titulo": "#111827",
+            "cor_texto": "#374151",
+            "font_tamanho_base": 16,
             "font_titulo": "Poppins",
             "font_corpo": "Inter",
             "layout_order": "banner,busca,categorias,produtos,novidades,footer",
             
-            # Placeholders
             "linkbannerprincipal1": "#",
             "linkbannerprincipal2": "#"
         }
 
         try:
-            print(f"Tentando criar loja com payload: {payload}") # LOG PARA DEBUG
+            print(f"Tentando criar loja com payload: {payload}") 
             r = requests.post(f"{DIRECTUS_URL}/items/lojas", headers=headers, json=payload)
             
             if r.status_code in [200, 201]:
@@ -196,8 +199,6 @@ def cadastro():
                 novo_id = data['id']
                 
                 # --- LOGIN AUTOMÁTICO ---
-                # Como configuramos SESSION_COOKIE_DOMAIN = '.leanttro.com',
-                # essa sessão será válida no subdomínio.
                 session['loja_admin_id'] = novo_id
                 session.permanent = True
                 
@@ -206,7 +207,6 @@ def cadastro():
                 # --- REDIRECIONA DIRETO PARA O PAINEL DO NOVO DOMÍNIO ---
                 return redirect(f"https://{dominio_completo}/admin/painel")
             else:
-                # LOG DETALHADO DO ERRO
                 print(f"ERRO CRÍTICO DIRECTUS ({r.status_code}): {r.text}")
                 try:
                     erro_msg = r.json().get('errors', [{'message': 'Erro desconhecido'}])[0]['message']
@@ -225,7 +225,6 @@ def cadastro():
 @app.route('/')
 def index():
     if not g.loja: 
-        # Se acessou a raiz sem domínio de loja, manda pro cadastro
         return redirect('/cadastro')
 
     headers = get_headers()
@@ -331,7 +330,6 @@ def produto(slug):
         if p.get('imagem1'): galeria.append(p['imagem1'])
         if p.get('imagem2'): galeria.append(p['imagem2'])
         
-        # Se não tiver nenhuma imagem, usa um placeholder ou vazio
         if not galeria:
             galeria = ["https://placehold.co/600x600?text=Sem+Imagem"]
             
@@ -355,7 +353,6 @@ def produto(slug):
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_login():
     if not g.loja:
-        # Se tentar acessar /admin sem estar num subdomínio de loja
         return redirect('/cadastro')
 
     if session.get('loja_admin_id') == g.loja_id:
@@ -384,6 +381,8 @@ def admin_painel():
     if session.get('loja_admin_id') != g.loja_id:
         return redirect('/admin')
 
+    headers = get_headers()
+
     if request.method == 'POST':
         files_map = {}
         for key in ['logo', 'bannerprincipal1', 'bannerprincipal2', 'bannermenor1', 'bannermenor2']:
@@ -396,6 +395,9 @@ def admin_painel():
             "nome": request.form.get('nome'),
             "whatsapp_comercial": request.form.get('whatsapp'),
             "cor_primaria": request.form.get('cor_primaria'),
+            "cor_titulo": request.form.get('cor_titulo'), # NOVO
+            "cor_texto": request.form.get('cor_texto'),   # NOVO
+            "font_tamanho_base": request.form.get('font_tamanho_base'), # NOVO
             "font_titulo": request.form.get('font_titulo'),
             "font_corpo": request.form.get('font_corpo'),
             "linkbannerprincipal1": request.form.get('link1'),
@@ -406,14 +408,35 @@ def admin_painel():
         payload.update(files_map)
 
         try:
-            requests.patch(f"{DIRECTUS_URL}/items/lojas/{g.loja_id}", 
-                        headers=get_headers(), 
-                        json=payload)
+            requests.patch(f"{DIRECTUS_URL}/items/lojas/{g.loja_id}", headers=headers, json=payload)
             flash('Loja atualizada com sucesso!', 'success')
         except Exception as e:
             flash(f'Erro ao salvar: {e}', 'error')
         
         return redirect('/admin/painel')
+
+    # Busca Dados para as Listagens de CRUD
+    categorias = []
+    produtos = []
+    posts = []
+
+    try:
+        # Busca Categorias
+        r_cat = requests.get(f"{DIRECTUS_URL}/items/categorias?filter[loja_id][_eq]={g.loja_id}&sort=sort", headers=headers)
+        if r_cat.status_code == 200: categorias = r_cat.json()['data']
+
+        # Busca Produtos (resumo)
+        r_prod = requests.get(f"{DIRECTUS_URL}/items/produtos?filter[loja_id][_eq]={g.loja_id}&limit=50&sort=-date_created&fields=id,nome,preco,imagem_destaque", headers=headers)
+        if r_prod.status_code == 200: 
+            produtos = r_prod.json()['data']
+            for p in produtos:
+                p['imagem_destaque'] = get_img_url(p.get('imagem_destaque'))
+
+        # Busca Posts (resumo)
+        r_post = requests.get(f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&limit=20&sort=-date_created&fields=id,titulo,date_created", headers=headers)
+        if r_post.status_code == 200: posts = r_post.json()['data']
+    except Exception as e:
+        print(f"Erro ao carregar dados do painel: {e}")
 
     loja_visual = {
         **g.loja,
@@ -422,7 +445,142 @@ def admin_painel():
         "banner2_url": get_img_url(g.loja.get('bannerprincipal2'))
     }
 
-    return render_template('painel.html', loja=loja_visual)
+    return render_template('painel.html', 
+                           loja=loja_visual, 
+                           categorias=categorias, 
+                           produtos=produtos, 
+                           posts=posts)
+
+# --- CRUD CATEGORIAS ---
+@app.route('/admin/categoria/salvar', methods=['POST'])
+def admin_salvar_categoria():
+    if session.get('loja_admin_id') != g.loja_id: return redirect('/admin')
+    
+    nome = request.form.get('nome')
+    cat_id = request.form.get('id')
+    
+    if not nome:
+        flash('Nome da categoria é obrigatório', 'error')
+        return redirect('/admin/painel')
+
+    headers = get_headers()
+    payload = {
+        "nome": nome,
+        "slug": gerar_slug(nome),
+        "loja_id": g.loja_id,
+        "status": "published"
+    }
+
+    try:
+        if cat_id: # Editar
+            requests.patch(f"{DIRECTUS_URL}/items/categorias/{cat_id}", headers=headers, json=payload)
+            flash('Categoria atualizada!', 'success')
+        else: # Criar
+            requests.post(f"{DIRECTUS_URL}/items/categorias", headers=headers, json=payload)
+            flash('Categoria criada!', 'success')
+    except Exception as e:
+        flash(f'Erro ao salvar categoria: {e}', 'error')
+
+    return redirect('/admin/painel')
+
+@app.route('/admin/categoria/excluir/<int:id>')
+def admin_excluir_categoria(id):
+    if session.get('loja_admin_id') != g.loja_id: return redirect('/admin')
+    requests.delete(f"{DIRECTUS_URL}/items/categorias/{id}", headers=get_headers())
+    flash('Categoria removida!', 'success')
+    return redirect('/admin/painel')
+
+
+# --- CRUD PRODUTOS ---
+@app.route('/admin/produto/salvar', methods=['POST'])
+def admin_salvar_produto():
+    if session.get('loja_admin_id') != g.loja_id: return redirect('/admin')
+    
+    prod_id = request.form.get('id')
+    nome = request.form.get('nome')
+    
+    payload = {
+        "status": "published",
+        "loja_id": g.loja_id,
+        "nome": nome,
+        "preco": request.form.get('preco'),
+        "descricao": request.form.get('descricao'),
+        "categoria_id": request.form.get('categoria_id')
+    }
+    
+    if not prod_id and nome:
+        payload["slug"] = gerar_slug(nome) + "-" + str(uuid.uuid4())[:4]
+
+    # Upload de Imagem
+    f = request.files.get('imagem')
+    if f and f.filename:
+        fid = upload_file_to_directus(f)
+        if fid: payload['imagem_destaque'] = fid
+
+    headers = get_headers()
+    try:
+        if prod_id:
+            requests.patch(f"{DIRECTUS_URL}/items/produtos/{prod_id}", headers=headers, json=payload)
+            flash('Produto atualizado!', 'success')
+        else:
+            requests.post(f"{DIRECTUS_URL}/items/produtos", headers=headers, json=payload)
+            flash('Produto criado!', 'success')
+    except Exception as e:
+        flash(f'Erro ao salvar produto: {e}', 'error')
+        
+    return redirect('/admin/painel')
+
+@app.route('/admin/produto/excluir/<int:id>')
+def admin_excluir_produto(id):
+    if session.get('loja_admin_id') != g.loja_id: return redirect('/admin')
+    requests.delete(f"{DIRECTUS_URL}/items/produtos/{id}", headers=get_headers())
+    flash('Produto removido!', 'success')
+    return redirect('/admin/painel')
+
+
+# --- CRUD POSTS (BLOG) ---
+@app.route('/admin/post/salvar', methods=['POST'])
+def admin_salvar_post():
+    if session.get('loja_admin_id') != g.loja_id: return redirect('/admin')
+    
+    post_id = request.form.get('id')
+    titulo = request.form.get('titulo')
+    
+    payload = {
+        "status": "published",
+        "loja_id": g.loja_id,
+        "titulo": titulo,
+        "resumo": request.form.get('resumo'),
+        "conteudo": request.form.get('conteudo')
+    }
+
+    if not post_id and titulo:
+        payload["slug"] = gerar_slug(titulo)
+
+    f = request.files.get('capa')
+    if f and f.filename:
+        fid = upload_file_to_directus(f)
+        if fid: payload['capa'] = fid
+
+    headers = get_headers()
+    try:
+        if post_id:
+            requests.patch(f"{DIRECTUS_URL}/items/posts/{post_id}", headers=headers, json=payload)
+            flash('Post atualizado!', 'success')
+        else:
+            requests.post(f"{DIRECTUS_URL}/items/posts", headers=headers, json=payload)
+            flash('Post criado!', 'success')
+    except Exception as e:
+        flash(f'Erro ao salvar post: {e}', 'error')
+
+    return redirect('/admin/painel')
+
+@app.route('/admin/post/excluir/<int:id>')
+def admin_excluir_post(id):
+    if session.get('loja_admin_id') != g.loja_id: return redirect('/admin')
+    requests.delete(f"{DIRECTUS_URL}/items/posts/{id}", headers=get_headers())
+    flash('Post removido!', 'success')
+    return redirect('/admin/painel')
 
 
 # --- ROTA: RECUPERAR SENHA ---

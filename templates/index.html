@@ -14,19 +14,30 @@
             --primary: {{ loja.cor_primaria }}; 
             --font-head: '{{ loja.font_titulo }}', sans-serif;
             --font-body: '{{ loja.font_corpo }}', sans-serif;
+            --font-size-base: {{ loja.font_tamanho_base or 16 }}px;
+            --color-title: {{ loja.cor_titulo or '#111827' }};
+            --color-text: {{ loja.cor_texto or '#374151' }};
         }
         
-        body { font-family: var(--font-body); }
-        h1, h2, h3, h4, .font-display { font-family: var(--font-head); }
+        body { 
+            font-family: var(--font-body); 
+            font-size: var(--font-size-base);
+            color: var(--color-text);
+        }
+        
+        h1, h2, h3, h4, .font-display { 
+            font-family: var(--font-head); 
+            color: var(--color-title);
+        }
+        
         .text-theme { color: var(--primary); }
         .bg-theme { background-color: var(--primary); }
         .border-theme { border-color: var(--primary); }
         .hover\:bg-theme:hover { background-color: var(--primary); }
         
-        /* ... Seus estilos CSS originais aqui (slider, modal, etc) ... */
     </style>
 </head>
-<body class="bg-white text-gray-800 flex flex-col min-h-screen">
+<body class="bg-white flex flex-col min-h-screen">
 
     {% include 'components/navbar.html' %}
 
@@ -71,7 +82,7 @@
                             <a href="/produto/{{ p.slug }}">
                                 <img src="{{ p.imagem }}" class="w-full aspect-[4/5] object-cover">
                                 <div class="p-4">
-                                    <h3 class="font-bold truncate">{{ p.nome }}</h3>
+                                    <h3 class="font-bold truncate" style="color: var(--color-title)">{{ p.nome }}</h3>
                                     <p class="text-theme font-bold text-lg">R$ {{ "%.2f"|format(p.preco) }}</p>
                                 </div>
                             </a>
@@ -93,7 +104,6 @@
 
     <script>
         lucide.createIcons();
-        // ... Seus scripts JS do carrinho, slider, etc ...
     </script>
 </body>
 </html>
