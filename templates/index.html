@@ -67,6 +67,15 @@
             0% { transform: translateX(0); }
             100% { transform: translateX(-100%); }
         }
+
+        /* Esconder barra de rolagem mas manter funcionalidade */
+        .hide-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
         
     </style>
 </head>
@@ -101,9 +110,9 @@
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
                 
-                <button class="relative p-2 hover:opacity-70 transition custom-title-color">
+                <button onclick="toggleCart()" class="relative p-2 hover:opacity-70 transition custom-title-color">
                     <i data-lucide="shopping-bag" class="w-6 h-6"></i>
-                    <span class="absolute top-0 right-0 bg-theme text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">0</span>
+                    <span id="cart-count-badge" class="absolute top-0 right-0 bg-theme text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold hidden">0</span>
                 </button>
             </div>
         </div>
@@ -111,7 +120,7 @@
         <div class="hidden md:flex justify-center border-t border-gray-50 py-3 custom-bg">
             <ul class="flex gap-8 text-sm font-bold uppercase tracking-widest custom-title-color opacity-80">
                 <li><a href="/" class="hover:text-theme transition">Início</a></li>
-                <li><a href="#produtos" class="hover:text-theme transition">Produtos</a></li>
+                <li><a href="#categorias" class="hover:text-theme transition">Produtos</a></li>
                 <li><a href="#footer" class="hover:text-theme transition">Contato</a></li>
             </ul>
         </div>
@@ -157,10 +166,14 @@
         {% endif %}
 
         {% if secao == 'categorias' %}
-            <section class="py-4 container mx-auto px-4 custom-bg">
+            <section class="py-4 container mx-auto px-4 custom-bg" id="categorias">
                 <div class="flex gap-4 overflow-x-auto pb-2 category-scroll">
+                    <a href="/" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color font-bold bg-white/50">
+                        Todos
+                    </a>
+                    
                     {% for cat in categorias %}
-                    <a href="/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color">
+                    <a href="/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color bg-white/50">
                         {{ cat.nome }}
                     </a>
                     {% endfor %}
@@ -169,38 +182,57 @@
         {% endif %}
 
         {% if secao == 'produtos' %}
-            <section class="py-12 container mx-auto px-4 custom-bg" id="produtos">
-                <h2 class="text-3xl font-bold mb-8 text-center custom-title-color">Nossos Produtos</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    {% for p in produtos %}
-                        <div class="border rounded-lg overflow-hidden hover:shadow-lg transition bg-white relative">
-                            {% if p.estoque == 0 %}
-                                <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded z-10">
-                                    INDISPONÍVEL
-                                </div>
-                            {% endif %}
-
-                            <a href="/produto/{{ p.slug }}">
-                                <img src="{{ p.imagem }}" class="w-full aspect-[4/5] object-cover {{ 'opacity-50' if p.estoque == 0 }}">
-                                <div class="p-4">
-                                    <h3 class="font-bold truncate custom-title-color">{{ p.nome }}</h3>
-                                    
-                                    {% if p.consulte %}
-                                        <p class="text-blue-600 font-bold text-lg">Consulte-nos</p>
-                                    {% elif p.estoque == 0 %}
-                                        <p class="text-gray-400 font-bold text-sm">Sem Estoque</p>
-                                    {% else %}
-                                        <p class="text-theme font-bold text-lg">R$ {{ "%.2f"|format(p.preco) }}</p>
-                                    {% endif %}
-                                </div>
-                            </a>
-                        </div>
-                    {% else %}
-                        <div class="col-span-full text-center text-gray-400 py-10">
-                            <p>Nenhum produto encontrado.</p>
-                        </div>
-                    {% endfor %}
+            <section class="pt-6 pb-12 container mx-auto px-4 custom-bg relative" id="produtos">
+                
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <h2 class="text-3xl font-bold custom-title-color">Nossos Produtos</h2>
+                    <button onclick="toggleLayout()" class="p-2 border rounded-full hover:bg-gray-100 text-gray-600 transition" title="Mudar visualização">
+                        <i id="layout-icon" data-lucide="grid" class="w-5 h-5"></i>
+                    </button>
                 </div>
+
+                <div class="relative group">
+                    
+                    <button onclick="scrollCarousel(-1)" id="btn-prev" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition hidden md:flex">
+                        <i data-lucide="chevron-left" class="w-6 h-6 text-gray-700"></i>
+                    </button>
+
+                    <div id="products-container" class="flex gap-6 overflow-x-auto snap-x scroll-smooth pb-4 hide-scroll">
+                        {% for p in produtos %}
+                            <div class="min-w-[160px] md:min-w-[250px] border rounded-lg overflow-hidden hover:shadow-lg transition bg-white relative snap-start">
+                                {% if p.estoque == 0 %}
+                                    <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded z-10">
+                                        INDISPONÍVEL
+                                    </div>
+                                {% endif %}
+
+                                <a href="/produto/{{ p.slug }}">
+                                    <img src="{{ p.imagem }}" class="w-full aspect-[4/5] object-cover {{ 'opacity-50' if p.estoque == 0 }}">
+                                    <div class="p-4">
+                                        <h3 class="font-bold truncate custom-title-color">{{ p.nome }}</h3>
+                                        
+                                        {% if p.consulte %}
+                                            <p class="text-blue-600 font-bold text-lg">Consulte-nos</p>
+                                        {% elif p.estoque == 0 %}
+                                            <p class="text-gray-400 font-bold text-sm">Sem Estoque</p>
+                                        {% else %}
+                                            <p class="text-theme font-bold text-lg">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="col-span-full text-center text-gray-400 py-10 w-full">
+                                <p>Nenhum produto encontrado.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <button onclick="scrollCarousel(1)" id="btn-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition flex">
+                        <i data-lucide="chevron-right" class="w-6 h-6 text-gray-700"></i>
+                    </button>
+                </div>
+
             </section>
         {% endif %}
         
@@ -275,8 +307,206 @@
         <i data-lucide="message-circle" class="w-6 h-6 md:w-8 md:h-8"></i>
     </a>
 
+    <div id="cart-modal" class="fixed inset-0 z-[60] hidden">
+        <div class="absolute inset-0 modal-overlay transition-opacity duration-300" onclick="toggleCart()"></div>
+        <div class="absolute right-0 top-0 h-full w-full md:w-[450px] bg-white shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-full" id="cart-panel">
+            
+            <div class="p-6 border-b flex justify-between items-center bg-gray-50">
+                <h2 class="font-bold text-lg flex items-center gap-2 text-gray-800"><i data-lucide="shopping-cart" class="w-5 h-5 text-theme"></i> Sua Sacola</h2>
+                <button onclick="toggleCart()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-6 space-y-6" id="cart-items"></div>
+
+            <div class="p-6 border-t bg-gray-50 space-y-4 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+                
+                <div class="flex justify-between items-center text-xl font-bold pt-2 border-t border-gray-200">
+                    <span class="text-gray-600">Total:</span><span id="cart-total" class="text-theme">R$ 0,00</span>
+                </div>
+                
+                <button onclick="finalizarNoZap()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-green-200 hover:shadow-green-300 transition-all active:scale-95">
+                    <i data-lucide="message-circle" class="w-5 h-5"></i> FECHAR PEDIDO NO WHATSAPP
+                </button>
+                <p class="text-[10px] text-center text-gray-400">Pagamento e frete combinados diretamente no WhatsApp.</p>
+            </div>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
+        
+        let selectedColor = null;
+        let selectedPhoto = "{{ p.galeria[0] }}";
+        const lojaPhone = "55{{ loja.whatsapp_comercial }}";
+
+        // --- FUNÇÕES VISUAIS ---
+        function changeImage(src) {
+            document.getElementById('main-image').src = src;
+        }
+
+        // --- LÓGICA DO LAYOUT (CARROSSEL VS GRADE) ---
+        let isCarousel = true;
+        const container = document.getElementById('products-container');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const iconLayout = document.getElementById('layout-icon');
+
+        function toggleLayout() {
+            isCarousel = !isCarousel;
+            if(isCarousel) {
+                // Modo Carrossel
+                container.className = "flex gap-6 overflow-x-auto snap-x scroll-smooth pb-4 hide-scroll";
+                btnPrev.style.display = "flex";
+                btnNext.style.display = "flex";
+                // Troca ícone para Grid (sugerindo que ao clicar vira grid)
+                if(iconLayout) iconLayout.innerHTML = '<rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>'; 
+                // Recriar ícone pois o innerHTML quebra o svg do lucide
+                lucide.createIcons();
+            } else {
+                // Modo Grade
+                container.className = "grid grid-cols-2 md:grid-cols-4 gap-6";
+                btnPrev.style.display = "none";
+                btnNext.style.display = "none";
+                // Troca ícone para Lista/Carrossel
+                if(iconLayout) iconLayout.innerHTML = '<path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path>';
+                lucide.createIcons();
+            }
+        }
+
+        function scrollCarousel(direction) {
+            const scrollAmount = 300; // Tamanho do scroll
+            container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        }
+
+        // --- LÓGICA DO CARRINHO (MESMA DA INDEX) ---
+        let cart = []; 
+        try { cart = JSON.parse(localStorage.getItem('cart_v2') || '[]'); } catch(e) { cart = []; }
+
+        function saveCart() { localStorage.setItem('cart_v2', JSON.stringify(cart)); updateCartUI(); }
+
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            const panel = document.getElementById('cart-panel');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => panel.classList.remove('translate-x-full'), 10);
+            } else {
+                panel.classList.add('translate-x-full');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        }
+
+        function changeQty(idx, delta) {
+            if (cart[idx]) {
+                cart[idx].qtd += delta;
+                if (cart[idx].qtd <= 0) cart.splice(idx, 1);
+                saveCart();
+            }
+        }
+
+        function removeFromCart(idx) { cart.splice(idx, 1); saveCart(); }
+
+        function addToCartPage(product) {
+            let final = { ...product };
+            if (selectedColor) {
+                final.nome_exibicao = `${product.nome} (${selectedColor})`;
+                final.imagem = selectedPhoto;
+                final.cart_id = `${product.id}-${selectedColor}`;
+            } else {
+                final.nome_exibicao = product.nome;
+                final.imagem = product.galeria[0];
+                final.cart_id = `${product.id}-padrao`;
+            }
+
+            const idx = cart.findIndex(i => i.cart_id === final.cart_id);
+            if (idx > -1) cart[idx].qtd++; else { final.qtd = 1; cart.push(final); }
+            
+            saveCart();
+            toggleCart();
+            
+            const btn = document.getElementById('btn-add-text');
+            if(btn) {
+                const old = btn.innerText;
+                btn.innerText = "Adicionado!";
+                setTimeout(() => btn.innerText = old, 2000);
+            }
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            const countBadge = document.getElementById('cart-count-badge');
+
+            const totalQtd = cart.reduce((acc, i) => acc + i.qtd, 0);
+            if(countBadge) {
+                countBadge.innerText = totalQtd;
+                countBadge.classList.toggle('hidden', totalQtd === 0);
+            }
+
+            container.innerHTML = '';
+            let total = 0;
+            
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 opacity-50"><i data-lucide="shopping-bag" class="w-12 h-12 mx-auto mb-2"></i><p class="text-sm">Sua sacola está vazia.</p></div>`;
+            }
+
+            cart.forEach((item, i) => {
+                // Se item tem preço, soma. Se não (consulte), preço é 0
+                let itemPrice = item.consulte ? 0 : (item.preco || 0);
+                total += itemPrice * item.qtd;
+                
+                let priceDisplay = item.consulte ? "Sob Consulta" : `R$ ${(itemPrice * item.qtd).toFixed(2).replace('.',',')}`;
+
+                container.innerHTML += `
+                    <div class="flex gap-4 border-b border-gray-100 pb-4 last:border-0">
+                        <img src="${item.imagem}" class="w-16 h-16 object-cover rounded-md bg-gray-100 border border-gray-200">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-xs text-gray-800 line-clamp-2 leading-snug mb-1">${item.nome_exibicao}</h4>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-theme font-bold text-sm">${priceDisplay}</span>
+                                <div class="flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-1 border border-gray-200">
+                                    <button onclick="changeQty(${i}, -1)" class="w-5 h-5 flex items-center justify-center text-gray-500 font-bold">-</button>
+                                    <span class="text-xs font-bold text-gray-800 w-4 text-center">${item.qtd}</span>
+                                    <button onclick="changeQty(${i}, 1)" class="w-5 h-5 flex items-center justify-center text-gray-500 font-bold">+</button>
+                                    <div class="w-px h-3 bg-gray-300 mx-1"></div>
+                                    <button onclick="removeFromCart(${i})" class="text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            totalEl.innerText = "R$ " + total.toFixed(2).replace('.', ',');
+            lucide.createIcons();
+        }
+
+        function finalizarNoZap() {
+            if (cart.length === 0) return alert("Adicione produtos primeiro!");
+            
+            let msg = `👋 Olá! Vim do site e quero fechar meu pedido:\n\n`;
+            let total = 0;
+            
+            cart.forEach(i => {
+                msg += `— ${i.qtd}x ${i.nome_exibicao}\n`;
+                if(i.consulte) {
+                     msg += `   (Preço sob Consulta)\n`;
+                } else if(i.preco) {
+                    msg += `   R$ ${(i.preco * i.qtd).toFixed(2)}\n`;
+                    total += i.preco * i.qtd;
+                } else {
+                    msg += `   (Sob Consulta)\n`;
+                }
+            });
+            
+            msg += `--------------------------------\n`;
+            msg += `*💰 Total:* R$ ${total.toFixed(2).replace('.', ',')}\n`;
+            msg += `\nAguardo as instruções de pagamento!`;
+
+            const url = `https://wa.me/${lojaPhone}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+
+        // Inicializa
+        updateCartUI();
     </script>
 </body>
 </html>
