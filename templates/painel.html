@@ -18,7 +18,7 @@
     <nav class="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-50">
         <span class="font-bold text-lg">Painel Admin</span>
         <div class="flex gap-4">
-            <a href="/" target="_blank" class="text-blue-600 flex items-center gap-1"><i data-lucide="eye"></i> Ver Loja</a>
+            <a href="/loja/{{ loja.slug_url }}/" target="_blank" class="text-blue-600 flex items-center gap-1"><i data-lucide="eye"></i> Ver Loja</a>
             <a href="/logout" class="text-red-500">Sair</a>
         </div>
     </nav>
@@ -311,7 +311,7 @@
                                 </td>
                                 <td class="p-3 text-right flex gap-2 justify-end">
                                     <button onclick='editarProduto({{ p|tojson }})' class="text-blue-500 hover:underline text-xs">Editar</button>
-                                    <a href="/admin/produto/excluir/{{ p.id }}" onclick="return confirm('Excluir este produto?')" class="text-red-500 hover:underline text-xs">Excluir</a>
+                                    <a href="/loja/{{ loja.slug_url }}/admin/produto/excluir/{{ p.id }}" onclick="return confirm('Excluir este produto?')" class="text-red-500 hover:underline text-xs">Excluir</a>
                                 </td>
                             </tr>
                             {% else %}
@@ -325,7 +325,7 @@
             <div id="modal-produto" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
                 <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
                     <h3 class="font-bold text-lg mb-4">Produto</h3>
-                    <form id="form-produto" action="/admin/produto/salvar" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    <form id="form-produto" action="/loja/{{ loja.slug_url }}/admin/produto/salvar" method="POST" enctype="multipart/form-data" class="space-y-4">
                         <input type="hidden" name="id" id="prod_id">
                         <div>
                             <label class="block text-xs font-bold uppercase mb-1">Nome do Produto</label>
@@ -385,7 +385,7 @@
                     {% for c in categorias %}
                     <div class="flex justify-between items-center p-3 border rounded bg-gray-50">
                         <span class="font-medium">{{ c.nome }}</span>
-                        <a href="/admin/categoria/excluir/{{ c.id }}" onclick="return confirm('Tem certeza? Isso não apaga os produtos.')" class="text-red-500 hover:bg-red-50 p-1 rounded"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
+                        <a href="/loja/{{ loja.slug_url }}/admin/categoria/excluir/{{ c.id }}" onclick="return confirm('Tem certeza? Isso não apaga os produtos.')" class="text-red-500 hover:bg-red-50 p-1 rounded"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
                     </div>
                     {% else %}
                     <p class="text-gray-400 text-center py-4">Nenhuma categoria criada.</p>
@@ -396,7 +396,7 @@
             <div id="modal-categoria" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
                 <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
                     <h3 class="font-bold text-lg mb-4">Nova Categoria</h3>
-                    <form action="/admin/categoria/salvar" method="POST" class="space-y-4">
+                    <form action="/loja/{{ loja.slug_url }}/admin/categoria/salvar" method="POST" class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold uppercase mb-1">Nome da Categoria</label>
                             <input type="text" name="nome" required class="w-full border rounded p-2">
@@ -424,7 +424,7 @@
                             <h4 class="font-bold text-gray-800">{{ post.titulo }}</h4>
                             <span class="text-xs text-gray-400">{{ post.date_created[:10] }}</span>
                         </div>
-                        <a href="/admin/post/excluir/{{ post.id }}" onclick="return confirm('Excluir este post?')" class="text-red-500 text-sm hover:underline">Excluir</a>
+                        <a href="/loja/{{ loja.slug_url }}/admin/post/excluir/{{ post.id }}" onclick="return confirm('Excluir este post?')" class="text-red-500 text-sm hover:underline">Excluir</a>
                     </div>
                     {% else %}
                     <p class="text-gray-400 text-center py-4">Nenhum post no blog.</p>
@@ -435,7 +435,7 @@
              <div id="modal-post" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
                 <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
                     <h3 class="font-bold text-lg mb-4">Adicionar Post</h3>
-                    <form action="/admin/post/salvar" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    <form action="/loja/{{ loja.slug_url }}/admin/post/salvar" method="POST" enctype="multipart/form-data" class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold uppercase mb-1">Título</label>
                             <input type="text" name="titulo" required class="w-full border rounded p-2">
