@@ -157,10 +157,10 @@
         {% endif %}
 
         {% if secao == 'categorias' %}
-            <section class="py-8 container mx-auto px-4">
-                <div class="flex gap-4 overflow-x-auto pb-4 category-scroll">
+            <section class="py-4 container mx-auto px-4 custom-bg">
+                <div class="flex gap-4 overflow-x-auto pb-2 category-scroll">
                     {% for cat in categorias %}
-                    <a href="/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition">
+                    <a href="/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color">
                         {{ cat.nome }}
                     </a>
                     {% endfor %}
