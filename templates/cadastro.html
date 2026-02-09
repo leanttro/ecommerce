@@ -94,21 +94,16 @@
 
     <script>
         lucide.createIcons();
-
-        // Função para gerar o link (slug) automaticamente enquanto digita o nome
         function gerarSlug() {
             const nome = document.getElementById('inputNome').value;
             const slugInput = document.getElementById('inputSlug');
-            
-            // Remove acentos, espaços e caracteres especiais
             let slug = nome.toLowerCase()
-                .normalize('NFD').replace(/[\u0300-\u036f]/g, "") // Remove acentos
-                .replace(/\s+/g, '-')           // Espaços viram traços
-                .replace(/[^\w\-]+/g, '')       // Remove especiais
-                .replace(/\-\-+/g, '-')         // Remove traços duplicados
-                .replace(/^-+/, '')             // Remove traço do inicio
-                .replace(/-+$/, '');            // Remove traço do fim
-            
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, "") 
+                .replace(/\s+/g, '-')           
+                .replace(/[^\w\-]+/g, '')       
+                .replace(/\-\-+/g, '-')         
+                .replace(/^-+/, '')             
+                .replace(/-+$/, '');            
             slugInput.value = slug;
         }
     </script>
