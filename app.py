@@ -102,7 +102,7 @@ def identificar_loja():
             
             # Tratamento de Layout e Configs Visuais (Fallback se vazio)
             if not g.loja.get('layout_order'):
-                g.loja['layout_order'] = "banner,busca,categorias,produtos,novidades,blog,footer"
+                g.loja['layout_order'] = "banner,busca,categorias,produtos,banners_menores,novidades,blog,footer"
             
             # Tratamento de novos campos visuais (caso não existam no banco ainda)
             if not g.loja.get('font_tamanho_base'): g.loja['font_tamanho_base'] = 16
@@ -187,7 +187,7 @@ def cadastro():
             "font_tamanho_base": 16,
             "font_titulo": "Poppins",
             "font_corpo": "Inter",
-            "layout_order": "banner,busca,categorias,produtos,novidades,footer",
+            "layout_order": "banner,busca,categorias,produtos,banners_menores,novidades,footer",
             
             "linkbannerprincipal1": "#",
             "linkbannerprincipal2": "#"
@@ -433,6 +433,7 @@ def admin_painel():
                 fid = upload_file_to_directus(f)
                 if fid: files_map[key] = fid
 
+        # Captura checkboxes de ocultar (se não vier no post, é False)
         payload = {
             "nome": request.form.get('nome'),
             "whatsapp_comercial": request.form.get('whatsapp'),
@@ -445,12 +446,25 @@ def admin_painel():
             "font_corpo": request.form.get('font_corpo'),
             "linkbannerprincipal1": request.form.get('link1'),
             "linkbannerprincipal2": request.form.get('link2'),
-            "linkbannermenor1": request.form.get('linkbannermenor1'), # NOVO
-            "linkbannermenor2": request.form.get('linkbannermenor2'), # NOVO
-            "frase1": request.form.get('frase1'), # NOVO
-            "frase2": request.form.get('frase2'), # NOVO
-            "frase3": request.form.get('frase3'), # NOVO
-            "layout_order": request.form.get('layout_order') 
+            "linkbannermenor1": request.form.get('linkbannermenor1'),
+            "linkbannermenor2": request.form.get('linkbannermenor2'),
+            "frase1": request.form.get('frase1'),
+            "frase2": request.form.get('frase2'),
+            "frase3": request.form.get('frase3'),
+            "layout_order": request.form.get('layout_order'),
+            
+            # TÍTULOS E OCULTAR (Novos)
+            "titulo_produtos": request.form.get('titulo_produtos'),
+            "ocultar_produtos": True if request.form.get('ocultar_produtos') else False,
+            "titulo_categorias": request.form.get('titulo_categorias'),
+            "ocultar_categorias": True if request.form.get('ocultar_categorias') else False,
+            "titulo_novidades": request.form.get('titulo_novidades'),
+            "ocultar_novidades": True if request.form.get('ocultar_novidades') else False,
+            "titulo_blog": request.form.get('titulo_blog'),
+            "ocultar_blog": True if request.form.get('ocultar_blog') else False,
+            "ocultar_busca": True if request.form.get('ocultar_busca') else False,
+            "ocultar_banner": True if request.form.get('ocultar_banner') else False,
+            "ocultar_banners_menores": True if request.form.get('ocultar_banners_menores') else False
         }
         
         payload.update(files_map)
@@ -491,6 +505,10 @@ def admin_painel():
         if r_post.status_code == 200: posts = r_post.json()['data']
     except Exception as e:
         print(f"Erro ao carregar dados do painel: {e}")
+
+    # GARANTIR QUE BANNERS MENORES ESTÁ NO LAYOUT ORDER (Correção para lojas antigas)
+    if g.loja.get('layout_order') and 'banners_menores' not in g.loja['layout_order']:
+        g.loja['layout_order'] += ",banners_menores"
 
     loja_visual = {
         **g.loja,

@@ -128,7 +128,7 @@
 
     {% for secao in layout %}
         
-        {% if secao == 'banner' %}
+        {% if secao == 'banner' and not loja.ocultar_banner %}
             <section class="slider-container relative w-full h-[350px] md:h-[500px] overflow-hidden">
                 {% if loja.banner1 %}
                 <div class="absolute inset-0">
@@ -138,7 +138,7 @@
             </section>
         {% endif %}
 
-        {% if secao == 'busca' %}
+        {% if secao == 'busca' and not loja.ocultar_busca %}
             <div class="py-6 bg-gray-50 border-b border-gray-100">
                 <div class="container mx-auto px-4">
                     <form action="/" method="GET">
@@ -148,8 +148,8 @@
             </div>
         {% endif %}
 
-        {% if loja.bannermenor1 or loja.bannermenor2 %}
-        <section class="py-8 container mx-auto px-4">
+        {% if secao == 'banners_menores' and not loja.ocultar_banners_menores %}
+        <section class="py-8 container mx-auto px-4 custom-bg">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {% if loja.bannermenor1 %}
                 <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-xl hover:opacity-90 transition">
@@ -165,8 +165,9 @@
         </section>
         {% endif %}
 
-        {% if secao == 'categorias' %}
+        {% if secao == 'categorias' and not loja.ocultar_categorias %}
             <section class="py-4 container mx-auto px-4 custom-bg" id="categorias">
+                <h2 class="text-xl font-bold mb-2 custom-title-color px-2">{{ loja.titulo_categorias or '' }}</h2>
                 <div class="flex gap-4 overflow-x-auto pb-2 category-scroll">
                     <a href="/" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color font-bold bg-white/50">
                         Todos
@@ -181,11 +182,11 @@
             </section>
         {% endif %}
 
-        {% if secao == 'produtos' %}
+        {% if secao == 'produtos' and not loja.ocultar_produtos %}
             <section class="pt-6 pb-12 container mx-auto px-4 custom-bg relative" id="produtos">
                 
                 <div class="flex justify-between items-center mb-4 px-2">
-                    <h2 class="text-3xl font-bold custom-title-color">Nossos Produtos</h2>
+                    <h2 class="text-3xl font-bold custom-title-color">{{ loja.titulo_produtos or 'Nossos Produtos' }}</h2>
                     <button onclick="toggleLayout()" class="p-2 border rounded-full hover:bg-gray-100 text-gray-600 transition" title="Mudar visualização">
                         <i id="layout-icon" data-lucide="grid" class="w-5 h-5"></i>
                     </button>
@@ -236,10 +237,10 @@
             </section>
         {% endif %}
         
-        {% if secao == 'novidades' and novidades %}
+        {% if secao == 'novidades' and novidades and not loja.ocultar_novidades %}
             <section class="py-12 bg-gray-50">
                 <div class="container mx-auto px-4">
-                    <h2 class="text-3xl font-bold mb-8 text-center">Novidades</h2>
+                    <h2 class="text-3xl font-bold mb-8 text-center">{{ loja.titulo_novidades or 'Novidades' }}</h2>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                          {% for p in novidades %}
                         <div class="border rounded-lg overflow-hidden bg-white hover:shadow-lg transition">
@@ -261,9 +262,9 @@
             </section>
         {% endif %}
 
-        {% if secao == 'blog' and posts %}
+        {% if secao == 'blog' and posts and not loja.ocultar_blog %}
             <section class="py-12 container mx-auto px-4">
-                <h2 class="text-3xl font-bold mb-8 text-center custom-title-color">Blog</h2>
+                <h2 class="text-3xl font-bold mb-8 text-center custom-title-color">{{ loja.titulo_blog or 'Blog' }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {% for post in posts %}
                     <div class="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
@@ -477,6 +478,11 @@
             });
             totalEl.innerText = "R$ " + total.toFixed(2).replace('.', ',');
             lucide.createIcons();
+        }
+
+        function finalizingNoZap() {
+            // Alias para manter compatibilidade caso use o nome antigo
+            finalizarNoZap();
         }
 
         function finalizarNoZap() {

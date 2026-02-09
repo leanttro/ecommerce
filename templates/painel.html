@@ -133,6 +133,81 @@
                 </div>
 
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="eye"></i> Personalização das Seções</h2>
+                    <p class="text-sm text-gray-500 mb-4">Escolha os títulos ou oculte seções que não deseja exibir.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="border p-4 rounded bg-gray-50 flex items-center justify-between">
+                            <span class="font-bold">Barra de Busca</span>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" name="ocultar_busca" id="hide_busca" {% if loja.ocultar_busca %}checked{% endif %} class="w-4 h-4 text-pink-600 rounded">
+                                <label for="hide_busca" class="text-sm">Ocultar</label>
+                            </div>
+                        </div>
+
+                        <div class="border p-4 rounded bg-gray-50 flex items-center justify-between">
+                            <span class="font-bold">Banner Principal</span>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" name="ocultar_banner" id="hide_banner" {% if loja.ocultar_banner %}checked{% endif %} class="w-4 h-4 text-pink-600 rounded">
+                                <label for="hide_banner" class="text-sm">Ocultar</label>
+                            </div>
+                        </div>
+
+                        <div class="border p-4 rounded bg-gray-50">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold">Categorias</span>
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" name="ocultar_categorias" id="hide_cat" {% if loja.ocultar_categorias %}checked{% endif %} class="w-4 h-4 text-pink-600 rounded">
+                                    <label for="hide_cat" class="text-sm">Ocultar</label>
+                                </div>
+                            </div>
+                            <input type="text" name="titulo_categorias" value="{{ loja.titulo_categorias }}" placeholder="Título (Padrão: Sem título)" class="w-full border rounded p-2 text-sm">
+                        </div>
+
+                        <div class="border p-4 rounded bg-gray-50">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold">Produtos</span>
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" name="ocultar_produtos" id="hide_prod" {% if loja.ocultar_produtos %}checked{% endif %} class="w-4 h-4 text-pink-600 rounded">
+                                    <label for="hide_prod" class="text-sm">Ocultar</label>
+                                </div>
+                            </div>
+                            <input type="text" name="titulo_produtos" value="{{ loja.titulo_produtos }}" placeholder="Título (Padrão: Nossos Produtos)" class="w-full border rounded p-2 text-sm">
+                        </div>
+
+                        <div class="border p-4 rounded bg-gray-50 flex items-center justify-between">
+                            <span class="font-bold">Banners Menores</span>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" name="ocultar_banners_menores" id="hide_banners_sm" {% if loja.ocultar_banners_menores %}checked{% endif %} class="w-4 h-4 text-pink-600 rounded">
+                                <label for="hide_banners_sm" class="text-sm">Ocultar</label>
+                            </div>
+                        </div>
+
+                        <div class="border p-4 rounded bg-gray-50">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold">Novidades</span>
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" name="ocultar_novidades" id="hide_nov" {% if loja.ocultar_novidades %}checked{% endif %} class="w-4 h-4 text-pink-600 rounded">
+                                    <label for="hide_nov" class="text-sm">Ocultar</label>
+                                </div>
+                            </div>
+                            <input type="text" name="titulo_novidades" value="{{ loja.titulo_novidades }}" placeholder="Título (Padrão: Novidades)" class="w-full border rounded p-2 text-sm">
+                        </div>
+
+                        <div class="border p-4 rounded bg-gray-50">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold">Blog</span>
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" name="ocultar_blog" id="hide_blog" {% if loja.ocultar_blog %}checked{% endif %} class="w-4 h-4 text-pink-600 rounded">
+                                    <label for="hide_blog" class="text-sm">Ocultar</label>
+                                </div>
+                            </div>
+                            <input type="text" name="titulo_blog" value="{{ loja.titulo_blog }}" placeholder="Título (Padrão: Blog)" class="w-full border rounded p-2 text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                     <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="layout"></i> Organização da Loja</h2>
                     <p class="text-sm text-gray-500 mb-4">Arraste os blocos para mudar a ordem na página inicial.</p>
                     <input type="hidden" name="layout_order" id="layout_order_input" value="{{ loja.layout_order }}">
@@ -140,7 +215,9 @@
                         {% for item in loja.layout_order.split(',') %}
                         <div data-id="{{ item }}" class="bg-gray-50 p-3 border rounded flex items-center gap-3 cursor-move hover:bg-gray-100 select-none">
                             <i data-lucide="grip-vertical" class="text-gray-400"></i>
-                            <span class="capitalize font-bold">{{ item }}</span>
+                            <span class="capitalize font-bold">
+                                {% if item == 'banners_menores' %}Banners Menores{% else %}{{ item }}{% endif %}
+                            </span>
                         </div>
                         {% endfor %}
                     </div>
