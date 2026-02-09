@@ -197,7 +197,7 @@
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="package"></i> Meus Produtos</h2>
-                    <button onclick="toggleModal('modal-produto'); document.getElementById('form-produto').reset(); document.getElementById('prod_id').value = '';" class="bg-pink-600 text-white px-4 py-2 rounded font-bold text-sm hover:bg-pink-700">+ Novo Produto</button>
+                    <button onclick="toggleModal('modal-produto'); document.getElementById('form-produto').reset(); document.getElementById('prod_id').value = ''; document.getElementById('prod_consulte').checked = false;" class="bg-pink-600 text-white px-4 py-2 rounded font-bold text-sm hover:bg-pink-700">+ Novo Produto</button>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -207,6 +207,7 @@
                                 <th class="p-3">Imagem</th>
                                 <th class="p-3">Nome</th>
                                 <th class="p-3">Preço</th>
+                                <th class="p-3">Estoque</th>
                                 <th class="p-3 text-right">Ações</th>
                             </tr>
                         </thead>
@@ -217,14 +218,27 @@
                                     <img src="{{ p.imagem_destaque }}" class="w-10 h-10 object-cover rounded bg-gray-100">
                                 </td>
                                 <td class="p-3 font-medium">{{ p.nome }}</td>
-                                <td class="p-3">R$ {{ "%.2f"|format(p.preco or 0) }}</td>
+                                <td class="p-3">
+                                    {% if p.consulte %}
+                                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Sob Consulta</span>
+                                    {% else %}
+                                        R$ {{ "%.2f"|format(p.preco or 0) }}
+                                    {% endif %}
+                                </td>
+                                <td class="p-3">
+                                    {% if p.estoque == 0 %}
+                                        <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Esgotado</span>
+                                    {% else %}
+                                        {{ p.estoque }}
+                                    {% endif %}
+                                </td>
                                 <td class="p-3 text-right flex gap-2 justify-end">
                                     <button onclick='editarProduto({{ p|tojson }})' class="text-blue-500 hover:underline text-xs">Editar</button>
                                     <a href="/admin/produto/excluir/{{ p.id }}" onclick="return confirm('Excluir este produto?')" class="text-red-500 hover:underline text-xs">Excluir</a>
                                 </td>
                             </tr>
                             {% else %}
-                            <tr><td colspan="4" class="p-4 text-center text-gray-400">Nenhum produto cadastrado.</td></tr>
+                            <tr><td colspan="5" class="p-4 text-center text-gray-400">Nenhum produto cadastrado.</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -255,6 +269,18 @@
                                 </select>
                             </div>
                         </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 items-center">
+                            <div>
+                                <label class="block text-xs font-bold uppercase mb-1">Estoque</label>
+                                <input type="number" name="estoque" id="prod_estoque" value="10" required class="w-full border rounded p-2">
+                            </div>
+                            <div class="flex items-center gap-2 pt-4">
+                                <input type="checkbox" name="consulte" id="prod_consulte" class="w-5 h-5 text-pink-600 rounded">
+                                <label for="prod_consulte" class="text-sm font-bold cursor-pointer">Preço sob consulta</label>
+                            </div>
+                        </div>
+
                         <div>
                             <label class="block text-xs font-bold uppercase mb-1">Imagem Principal (Nova)</label>
                             <input type="file" name="imagem" class="w-full text-sm">
@@ -387,6 +413,10 @@
             document.getElementById('prod_preco').value = prod.preco;
             document.getElementById('prod_descricao').value = prod.descricao || '';
             document.getElementById('prod_categoria').value = prod.categoria_id || '';
+            
+            // Novos Campos
+            document.getElementById('prod_estoque').value = (prod.estoque !== undefined && prod.estoque !== null) ? prod.estoque : 0;
+            document.getElementById('prod_consulte').checked = prod.consulte ? true : false;
             
             // Abre o modal
             toggleModal('modal-produto');

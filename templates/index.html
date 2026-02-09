@@ -173,12 +173,25 @@
                 <h2 class="text-3xl font-bold mb-8 text-center custom-title-color">Nossos Produtos</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                     {% for p in produtos %}
-                        <div class="border rounded-lg overflow-hidden hover:shadow-lg transition bg-white">
+                        <div class="border rounded-lg overflow-hidden hover:shadow-lg transition bg-white relative">
+                            {% if p.estoque == 0 %}
+                                <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded z-10">
+                                    INDISPONÍVEL
+                                </div>
+                            {% endif %}
+
                             <a href="/produto/{{ p.slug }}">
-                                <img src="{{ p.imagem }}" class="w-full aspect-[4/5] object-cover">
+                                <img src="{{ p.imagem }}" class="w-full aspect-[4/5] object-cover {{ 'opacity-50' if p.estoque == 0 }}">
                                 <div class="p-4">
                                     <h3 class="font-bold truncate custom-title-color">{{ p.nome }}</h3>
-                                    <p class="text-theme font-bold text-lg">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                    
+                                    {% if p.consulte %}
+                                        <p class="text-blue-600 font-bold text-lg">Consulte-nos</p>
+                                    {% elif p.estoque == 0 %}
+                                        <p class="text-gray-400 font-bold text-sm">Sem Estoque</p>
+                                    {% else %}
+                                        <p class="text-theme font-bold text-lg">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                    {% endif %}
                                 </div>
                             </a>
                         </div>
@@ -202,7 +215,11 @@
                                 <img src="{{ p.imagem }}" class="w-full aspect-[4/5] object-cover">
                                 <div class="p-4">
                                     <h3 class="font-bold truncate">{{ p.nome }}</h3>
-                                    <p class="text-theme font-bold text-lg">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                    {% if p.consulte %}
+                                        <p class="text-blue-600 font-bold text-lg">Consulte-nos</p>
+                                    {% else %}
+                                        <p class="text-theme font-bold text-lg">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                    {% endif %}
                                 </div>
                             </a>
                         </div>

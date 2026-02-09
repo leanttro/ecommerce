@@ -278,13 +278,20 @@ def index():
                     preco_float = float(p.get('preco', 0))
                 except:
                     preco_float = 0.0
+                
+                # TRATAMENTO DE ESTOQUE
+                try:
+                    estoque_val = int(p.get('estoque')) if p.get('estoque') is not None else 0
+                except:
+                    estoque_val = 0
 
                 prod_obj = {
                     "id": p['id'], "nome": p['nome'], "slug": p['slug'],
                     "preco": preco_float,
                     "imagem": img, "categoria_id": p.get('categoria_id'),
                     "variantes": variantes, "origem": p.get('origem'),
-                    "urgencia": p.get('status_urgencia'), "classe_frete": p.get('classe_frete')
+                    "urgencia": p.get('status_urgencia'), "classe_frete": p.get('classe_frete'),
+                    "estoque": estoque_val, "consulte": p.get('consulte', False)
                 }
                 produtos.append(prod_obj)
                 
@@ -367,6 +374,12 @@ def produto(slug):
             p['preco'] = float(p.get('preco', 0))
         except:
             p['preco'] = 0.0
+            
+        # CONVERSÃO DE ESTOQUE
+        try:
+            p['estoque'] = int(p.get('estoque')) if p.get('estoque') is not None else 0
+        except:
+            p['estoque'] = 0
 
         loja_visual = {
             **g.loja,
@@ -553,12 +566,25 @@ def admin_salvar_produto():
         preco = float(preco) if preco else 0
     except:
         preco = 0
+        
+    # NOVO: ESTOQUE
+    estoque = request.form.get('estoque')
+    try:
+        estoque = int(estoque) if estoque else 0
+    except:
+        estoque = 0
+    
+    # NOVO: CONSULTE (CHECKBOX)
+    consulte_form = request.form.get('consulte')
+    consulte = True if consulte_form == 'on' else False
 
     payload = {
         "status": "published",
         "loja_id": g.loja_id,
         "nome": nome,
         "preco": preco,
+        "estoque": estoque, # ADD
+        "consulte": consulte, # ADD
         "descricao": request.form.get('descricao'),
         "categoria_id": cat_id
     }

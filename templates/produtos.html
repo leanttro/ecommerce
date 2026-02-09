@@ -160,11 +160,17 @@
                 <div class="text-xs text-gray-400 mb-6 uppercase tracking-widest">Ref: {{ p.id[:8] }}</div>
 
                 <div class="mb-6">
-                    {% if p.preco %}
-                    <span class="text-4xl font-bold text-theme">R$ {{ "%.2f"|format(p.preco)|replace('.', ',') }}</span>
-                    <span class="text-sm opacity-70 font-bold block mt-1">à vista</span>
+                    {% if p.consulte %}
+                        <span class="text-3xl font-bold text-blue-600">Consulte-nos</span>
+                        <span class="text-sm opacity-70 font-bold block mt-1">Entre em contato para orçamento</span>
+                    {% elif p.estoque == 0 %}
+                        <span class="text-3xl font-bold text-gray-400 line-through">R$ {{ "%.2f"|format(p.preco)|replace('.', ',') }}</span>
+                        <span class="text-sm text-red-500 font-bold block mt-1 uppercase">Produto Indisponível</span>
+                    {% elif p.preco %}
+                        <span class="text-4xl font-bold text-theme">R$ {{ "%.2f"|format(p.preco)|replace('.', ',') }}</span>
+                        <span class="text-sm opacity-70 font-bold block mt-1">à vista</span>
                     {% else %}
-                    <span class="text-2xl font-bold opacity-50 uppercase">Preço sob consulta</span>
+                        <span class="text-2xl font-bold opacity-50 uppercase">Preço sob consulta</span>
                     {% endif %}
                 </div>
 
@@ -186,10 +192,19 @@
                 {% endif %}
 
                 <div class="flex flex-col md:flex-row gap-4 mb-8">
-                    <button onclick='addToCartPage({{ p | tojson }})' class="flex-1 bg-theme text-white font-bold py-4 rounded-xl text-sm uppercase tracking-widest transition-opacity hover:opacity-90 shadow-lg flex items-center justify-center gap-2 active:scale-95">
-                        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
-                        <span id="btn-add-text">Adicionar à Sacola</span>
-                    </button>
+                    
+                    {% if p.estoque == 0 %}
+                        <button disabled class="flex-1 bg-gray-300 text-gray-500 font-bold py-4 rounded-xl text-sm uppercase tracking-widest cursor-not-allowed flex items-center justify-center gap-2">
+                            <i data-lucide="x-circle" class="w-5 h-5"></i>
+                            <span>Produto Indisponível (Sem Estoque)</span>
+                        </button>
+                    {% else %}
+                        <button onclick='addToCartPage({{ p | tojson }})' class="flex-1 bg-theme text-white font-bold py-4 rounded-xl text-sm uppercase tracking-widest transition-opacity hover:opacity-90 shadow-lg flex items-center justify-center gap-2 active:scale-95">
+                            <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                            <span id="btn-add-text">Adicionar à Sacola</span>
+                        </button>
+                    {% endif %}
+
                     <a href="https://wa.me/55{{ loja.whatsapp_comercial }}?text=Tenho%20dúvida%20sobre:%20{{ p.nome }}" target="_blank" class="px-6 py-4 border border-gray-300 rounded-xl hover:bg-gray-50 opacity-70 hover:opacity-100 transition-all flex items-center justify-center">
                         <i data-lucide="message-circle" class="w-6 h-6"></i> <span class="md:hidden ml-2 font-bold">Dúvidas?</span>
                     </a>
@@ -344,14 +359,19 @@
             }
 
             cart.forEach((item, i) => {
-                total += (item.preco || 0) * item.qtd;
+                // Se item tem preço, soma. Se não (consulte), preço é 0
+                let itemPrice = item.consulte ? 0 : (item.preco || 0);
+                total += itemPrice * item.qtd;
+                
+                let priceDisplay = item.consulte ? "Sob Consulta" : `R$ ${(itemPrice * item.qtd).toFixed(2).replace('.',',')}`;
+
                 container.innerHTML += `
                     <div class="flex gap-4 border-b border-gray-100 pb-4 last:border-0">
                         <img src="${item.imagem}" class="w-16 h-16 object-cover rounded-md bg-gray-100 border border-gray-200">
                         <div class="flex-1 min-w-0">
                             <h4 class="font-bold text-xs text-gray-800 line-clamp-2 leading-snug mb-1">${item.nome_exibicao}</h4>
                             <div class="flex justify-between items-center mt-2">
-                                <span class="text-theme font-bold text-sm">R$ ${(item.preco * item.qtd).toFixed(2).replace('.',',')}</span>
+                                <span class="text-theme font-bold text-sm">${priceDisplay}</span>
                                 <div class="flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-1 border border-gray-200">
                                     <button onclick="changeQty(${i}, -1)" class="w-5 h-5 flex items-center justify-center text-gray-500 font-bold">-</button>
                                     <span class="text-xs font-bold text-gray-800 w-4 text-center">${item.qtd}</span>
@@ -380,7 +400,9 @@
             
             cart.forEach(i => {
                 msg += `— ${i.qtd}x ${i.nome_exibicao}\n`;
-                if(i.preco) {
+                if(i.consulte) {
+                     msg += `   (Preço sob Consulta)\n`;
+                } else if(i.preco) {
                     msg += `   R$ ${(i.preco * i.qtd).toFixed(2)}\n`;
                     total += i.preco * i.qtd;
                 } else {
