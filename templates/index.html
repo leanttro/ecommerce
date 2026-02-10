@@ -97,7 +97,7 @@
     <nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg py-4 md:py-0">
         <div class="container mx-auto px-4 min-h-[80px] flex flex-col md:flex-row items-center justify-between">
             
-            <a href="/loja/{{ loja.slug_url }}/" class="flex items-center gap-2 mb-2 md:mb-0">
+            <a href="/{{ loja.slug_url }}/" class="flex items-center gap-2 mb-2 md:mb-0">
                 {% if loja.logo %}
                     <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="h-12 w-auto object-contain">
                 {% else %}
@@ -119,7 +119,7 @@
         
         <div class="hidden md:flex justify-center border-t border-gray-50 py-3 custom-bg">
             <ul class="flex gap-8 text-sm font-bold uppercase tracking-widest custom-title-color opacity-80">
-                <li><a href="/loja/{{ loja.slug_url }}/" class="hover:text-theme transition">Início</a></li>
+                <li><a href="/{{ loja.slug_url }}/" class="hover:text-theme transition">Início</a></li>
                 <li><a href="#categorias" class="hover:text-theme transition">Produtos</a></li>
                 <li><a href="#footer" class="hover:text-theme transition">Contato</a></li>
             </ul>
@@ -141,7 +141,7 @@
         {% if secao == 'busca' and not loja.ocultar_busca %}
             <div class="py-6 bg-gray-50 border-b border-gray-100">
                 <div class="container mx-auto px-4">
-                    <form action="/loja/{{ loja.slug_url }}/" method="GET">
+                    <form action="/{{ loja.slug_url }}/" method="GET">
                         <input type="text" name="busca" placeholder="O que você procura hoje?" class="w-full p-4 rounded-full border border-gray-200 focus:border-theme outline-none text-center">
                     </form>
                 </div>
@@ -172,12 +172,12 @@
                 <div class="container mx-auto px-4">
                     <h2 class="text-3xl font-bold mb-6 text-center custom-title-color px-2">{{ loja.titulo_categorias or '' }}</h2>
                     <div class="flex gap-4 overflow-x-auto pb-2 justify-center category-scroll">
-                        <a href="/loja/{{ loja.slug_url }}/" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color font-bold bg-white/50">
+                        <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color font-bold bg-white/50">
                             Todos
                         </a>
                         
                         {% for cat in categorias %}
-                        <a href="/loja/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color bg-white/50">
+                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color bg-white/50">
                             {{ cat.nome }}
                         </a>
                         {% endfor %}
@@ -212,7 +212,7 @@
                                         </div>
                                     {% endif %}
                                     
-                                    <a href="/loja/{{ loja.slug_url }}/produto/{{ p.slug }}">
+                                    <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
                                         <img src="{{ p.imagem }}" class="w-full aspect-square object-cover {{ 'opacity-50' if p.estoque == 0 }}">
                                         <div class="p-4 text-center"> 
                                             <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight">{{ p.nome }}</h3>
@@ -249,7 +249,7 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                          {% for p in novidades %}
                         <div class="border rounded-lg overflow-hidden bg-white hover:shadow-lg transition">
-                            <a href="/loja/{{ loja.slug_url }}/produto/{{ p.slug }}">
+                            <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
                                 <img src="{{ p.imagem }}" class="w-full aspect-square object-cover">
                                 <div class="p-4 text-center">
                                     <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight">{{ p.nome }}</h3>
@@ -280,7 +280,7 @@
                             <span class="text-xs font-bold text-gray-400 uppercase">{{ post.data }}</span>
                             <h3 class="font-bold text-xl mt-2 mb-2">{{ post.titulo }}</h3>
                             <p class="text-sm text-gray-600 line-clamp-3">{{ post.resumo }}</p>
-                            <a href="/loja/{{ loja.slug_url }}/blog/{{ post.slug }}" class="inline-block mt-4 text-theme font-bold text-sm">Ler mais</a>
+                            <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}" class="inline-block mt-4 text-theme font-bold text-sm">Ler mais</a>
                         </div>
                     </div>
                     {% endfor %}
@@ -301,7 +301,7 @@
             </div>
 
             <div class="mt-8 pt-8 border-t border-white/20">
-                <a href="/loja/{{ loja.slug_url }}/admin" class="text-xs font-bold uppercase tracking-widest hover:text-white flex items-center justify-center gap-2">
+                <a href="/{{ loja.slug_url }}/admin" class="text-xs font-bold uppercase tracking-widest hover:text-white flex items-center justify-center gap-2">
                     <i data-lucide="lock" class="w-3 h-3"></i> Área do Lojista
                 </a>
             </div>
