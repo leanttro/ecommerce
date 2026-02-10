@@ -78,9 +78,9 @@
         <main class="flex-1 space-y-6">
 
             <section id="categorias" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div class="flex justify-between items-center mb-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 md:gap-0">
                     <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2"><i data-lucide="layers" class="text-pink-600"></i> Categorias</h2>
-                    <button onclick="novaCategoria()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2 text-sm">
+                    <button onclick="novaCategoria()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-3 md:px-4 rounded flex items-center gap-2 text-xs md:text-sm">
                         <i data-lucide="plus"></i> Nova Categoria
                     </button>
                 </div>
@@ -462,10 +462,10 @@
         </div>
     </div>
 
-    <div id="produtoModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 py-6">
+    <div id="produtoModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 md:py-6">
         <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
-        <div class="modal-container bg-white w-11/12 md:max-w-4xl mx-auto rounded-xl shadow-2xl z-50 overflow-y-auto max-h-full animate-fade-in-down">
-            <div class="modal-content py-6 text-left px-8">
+        <div class="modal-container bg-white w-full h-full md:h-auto md:w-11/12 md:max-w-4xl mx-auto md:rounded-xl rounded-none shadow-2xl z-50 overflow-y-auto md:max-h-[90vh] animate-fade-in-down">
+            <div class="modal-content py-6 text-left px-6 md:px-8">
                 <div class="flex justify-between items-center pb-6 border-b">
                     <p class="text-2xl font-bold text-gray-800" id="prodModalTitle">Novo Produto</p>
                     <div class="modal-close cursor-pointer z-50 bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition-colors" onclick="toggleModal('produtoModal')">
@@ -508,21 +508,21 @@
                         <label for="prodConsulte" class="text-sm font-bold text-gray-700 cursor-pointer select-none">Este é um produto sob consulta / personalizado (Ocultar preço)</label>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-6 gap-y-8 bg-gray-50 p-6 rounded-lg border border-gray-200">
                         <div class="col-span-3 mb-2"><h4 class="font-bold text-gray-800 flex items-center gap-2"><i data-lucide="image" class="text-pink-600"></i> Imagens do Produto</h4></div>
-                        <div>
+                        <div class="mb-2 md:mb-0">
                             <label class="block text-sm font-bold mb-2 text-gray-700">Imagem Principal (Destaque)*</label>
-                            <input type="file" name="imagem" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
+                            <input type="file" name="imagem" accept="image/*" class="w-full text-sm text-gray-500 file:mr-2 md:file:mr-4 file:py-2 file:px-2 md:file:px-4 file:rounded-full file:border-0 file:text-xs md:file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
                              <p class="text-xs text-gray-500 mt-1">Será a capa do produto.</p>
                         </div>
-                        <div>
+                        <div class="mb-2 md:mb-0">
                             <label class="block text-sm font-bold mb-2 text-gray-700">Imagem Adicional 1</label>
-                            <input type="file" name="imagem1" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
+                            <input type="file" name="imagem1" accept="image/*" class="w-full text-sm text-gray-500 file:mr-2 md:file:mr-4 file:py-2 file:px-2 md:file:px-4 file:rounded-full file:border-0 file:text-xs md:file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
                             <p class="text-xs text-gray-500 mt-1">Opcional.</p>
                         </div>
-                         <div>
+                         <div class="mb-2 md:mb-0">
                             <label class="block text-sm font-bold mb-2 text-gray-700">Imagem Adicional 2</label>
-                            <input type="file" name="imagem2" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
+                            <input type="file" name="imagem2" accept="image/*" class="w-full text-sm text-gray-500 file:mr-2 md:file:mr-4 file:py-2 file:px-2 md:file:px-4 file:rounded-full file:border-0 file:text-xs md:file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
                             <p class="text-xs text-gray-500 mt-1">Opcional.</p>
                         </div>
                     </div>
@@ -532,7 +532,7 @@
                         <textarea name="descricao" id="prodDescricao" rows="6" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all resize-y" placeholder="Descreva seu produto com detalhes..."></textarea>
                     </div>
 
-                    <div class="flex justify-end pt-6 border-t border-gray-200 gap-3">
+                    <div class="flex justify-end pt-6 border-t border-gray-200 gap-3 pb-20 md:pb-0">
                         <button type="button" class="px-6 py-3 rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 font-bold transition-colors" onclick="toggleModal('produtoModal')">Cancelar</button>
                         <button type="submit" class="px-8 py-3 rounded-lg text-white bg-pink-600 hover:bg-pink-700 font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2"><i data-lucide="check"></i> Salvar Produto</button>
                     </div>
