@@ -46,7 +46,7 @@
             overflow: hidden;
             white-space: nowrap;
             background: var(--primary);
-            color: var(--color-bg); /* Alterado para usar a cor do fundo */
+            color: var(--color-bg); /* Letras com a cor do fundo (Body) */
             height: 30px;
             display: flex;
             align-items: center;
@@ -95,17 +95,17 @@
     {% endif %}
 
     <nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg py-4 md:py-0 relative">
-        <div class="container mx-auto px-4 min-h-[80px] flex flex-col md:flex-row items-center justify-between">
+        <div class="container mx-auto px-4 min-h-[80px] flex flex-col md:flex-row items-center md:justify-center relative">
             
             <a href="/{{ loja.slug_url }}/" class="flex items-center gap-2 mb-2 md:mb-0">
                 {% if loja.logo %}
-                    <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="h-12 w-auto object-contain">
+                    <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="h-16 md:h-20 w-auto object-contain transition-all">
                 {% else %}
                     <span class="text-2xl font-bold tracking-tight custom-title-color">{{ loja.nome }}</span>
                 {% endif %}
             </a>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 md:absolute md:right-4">
                  <button onclick="toggleMobileMenu()" class="md:hidden p-2 custom-title-color hover:opacity-70 transition">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
@@ -350,7 +350,7 @@
         lucide.createIcons();
         const lojaPhone = "55{{ loja.whatsapp_comercial }}";
 
-        // --- FUNÇÃO DO MENU MOBILE (ADICIONADA) ---
+        // --- FUNÇÃO DO MENU MOBILE ---
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             if (menu.classList.contains('hidden')) {
@@ -397,7 +397,7 @@
             if(container) container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
         }
 
-        // --- LÓGICA DO CARRINHO (MESMA DA INDEX) ---
+        // --- LÓGICA DO CARRINHO ---
         let cart = []; 
         try { cart = JSON.parse(localStorage.getItem('cart_v2') || '[]'); } catch(e) { cart = []; }
 
@@ -467,7 +467,6 @@
                 }
 
                 cart.forEach((item, i) => {
-                    // Se item tem preço, soma. Se não (consulte), preço é 0
                     let itemPrice = item.consulte ? 0 : (item.preco || 0);
                     total += itemPrice * item.qtd;
                     
