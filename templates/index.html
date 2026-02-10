@@ -94,7 +94,7 @@
     </div>
     {% endif %}
 
-    <nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg py-4 md:py-0">
+    <nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg py-4 md:py-0 relative">
         <div class="container mx-auto px-4 min-h-[80px] flex flex-col md:flex-row items-center justify-between">
             
             <a href="/{{ loja.slug_url }}/" class="flex items-center gap-2 mb-2 md:mb-0">
@@ -106,7 +106,7 @@
             </a>
 
             <div class="flex items-center gap-4">
-                 <button class="md:hidden p-2 custom-title-color">
+                 <button onclick="toggleMobileMenu()" class="md:hidden p-2 custom-title-color hover:opacity-70 transition">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
                 
@@ -122,6 +122,14 @@
                 <li><a href="/{{ loja.slug_url }}/" class="hover:text-theme transition">Início</a></li>
                 <li><a href="#categorias" class="hover:text-theme transition">Produtos</a></li>
                 <li><a href="#footer" class="hover:text-theme transition">Contato</a></li>
+            </ul>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full custom-bg border-t border-gray-100 shadow-lg z-50">
+            <ul class="flex flex-col p-4 space-y-4 font-bold uppercase tracking-widest text-sm custom-title-color text-center">
+                <li><a href="/{{ loja.slug_url }}/" class="block hover:text-theme py-2" onclick="toggleMobileMenu()">Início</a></li>
+                <li><a href="#categorias" class="block hover:text-theme py-2" onclick="toggleMobileMenu()">Produtos</a></li>
+                <li><a href="#footer" class="block hover:text-theme py-2" onclick="toggleMobileMenu()">Contato</a></li>
             </ul>
         </div>
     </nav>
@@ -341,6 +349,16 @@
     <script>
         lucide.createIcons();
         const lojaPhone = "55{{ loja.whatsapp_comercial }}";
+
+        // --- FUNÇÃO DO MENU MOBILE (ADICIONADA) ---
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+            }
+        }
 
         // --- LÓGICA DO LAYOUT (CARROSSEL VS GRADE) ---
         let isCarousel = true;
