@@ -152,7 +152,7 @@ def home_saas():
     # Redireciona a raiz do domínio principal para o cadastro
     # Nota: Se fosse domínio próprio, o ideal seria renderizar a loja, 
     # mas mantendo a lógica original + rotas solicitadas, redirecionamos cadastro se não houver rota específica.
-    return redirect('/cadastro')
+    return redirect('/catalogo')
 
 # --- ROTA DE CADASTRO (CRIAR NOVA LOJA) ---
 @app.route('/cadastro', methods=['GET', 'POST'])
