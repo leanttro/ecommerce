@@ -33,7 +33,8 @@ CEP_ORIGEM_PADRAO = "01026000" # Fallback se a loja não tiver CEP configurado
 
 # --- BLACKLIST DE ROTAS (PALAVRAS RESERVADAS) ---
 # Rotas que não devem ser tratadas como SLUG de loja
-BLACKLIST_ROTAS = ['static', 'cadastro', 'login', 'logout', 'api', 'admin', 'favicon.ico']
+# ADICIONADO 'catalogo' AQUI PARA NÃO CONFUNDIR COM LOJA
+BLACKLIST_ROTAS = ['static', 'cadastro', 'catalogo', 'login', 'logout', 'api', 'admin', 'favicon.ico']
 
 # --- FUNÇÕES AUXILIARES ---
 def get_headers():
@@ -102,6 +103,7 @@ def identificar_loja():
 
     # 1. VERIFICAÇÃO DE DOMÍNIO PRÓPRIO
     # Se não for o domínio principal do SaaS nem localhost
+    # Nota: catalogo.leanttro.com cairá aqui, mas não achará loja, o que é correto (ele é landing page)
     if host not in ['leanttro.com', 'www.leanttro.com', 'localhost', '127.0.0.1']:
         try:
             url = f"{DIRECTUS_URL}/items/lojas?filter[dominio_proprio][_eq]={host}&fields=*.*"
@@ -149,10 +151,25 @@ def identificar_loja():
 # --- ROTA RAIZ DO SAAS ---
 @app.route('/')
 def home_saas():
-    # Redireciona a raiz do domínio principal para o cadastro
-    # Nota: Se fosse domínio próprio, o ideal seria renderizar a loja, 
-    # mas mantendo a lógica original + rotas solicitadas, redirecionamos cadastro se não houver rota específica.
-    return redirect('/catalogo')
+    host = request.host.split(':')[0]
+    
+    # 1. Se for o subdomínio da Landing Page
+    if 'catalogo.leanttro.com' in host:
+        return render_template('catalogo.html')
+
+    # 2. Se for domínio próprio de cliente (já identificado no middleware)
+    if g.loja:
+        # Chama a função index da loja (definida abaixo)
+        return index(g.slug_atual)
+
+    # 3. Caso contrário (leanttro.com raiz), mostra a Landing Page também
+    return render_template('catalogo.html')
+
+# --- ROTA ESPECÍFICA DA LANDING PAGE ---
+# Garante que /catalogo funcione sem tentar buscar loja
+@app.route('/catalogo')
+def landing_page_rota():
+    return render_template('catalogo.html')
 
 # --- ROTA DE CADASTRO (CRIAR NOVA LOJA) ---
 @app.route('/cadastro', methods=['GET', 'POST'])
