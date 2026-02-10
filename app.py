@@ -558,7 +558,7 @@ def admin_salvar_categoria(loja_slug):
     
     if not nome:
         flash('Nome da categoria é obrigatório', 'error')
-        return redirect(f'/{loja_slug}/admin/painel')
+        return redirect(f'/{loja_slug}/admin/painel#categorias')
 
     headers = get_headers()
     payload = {
@@ -578,15 +578,16 @@ def admin_salvar_categoria(loja_slug):
     except Exception as e:
         flash(f'Erro ao salvar categoria: {e}', 'error')
 
-    return redirect(f'/{loja_slug}/admin/painel')
+    return redirect(f'/{loja_slug}/admin/painel#categorias')
 
 # Atualizado: removeu prefixo /loja
-@app.route('/<loja_slug>/admin/categoria/excluir/<int:id>')
+# CORREÇÃO DE ROTA: Removido <int:id> para <id> para aceitar UUID
+@app.route('/<loja_slug>/admin/categoria/excluir/<id>')
 def admin_excluir_categoria(loja_slug, id):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
     requests.delete(f"{DIRECTUS_URL}/items/categorias/{id}", headers=get_headers())
     flash('Categoria removida!', 'success')
-    return redirect(f'/{loja_slug}/admin/painel')
+    return redirect(f'/{loja_slug}/admin/painel#categorias')
 
 
 # --- CRUD PRODUTOS ---
@@ -655,15 +656,17 @@ def admin_salvar_produto(loja_slug):
     except Exception as e:
         flash(f'Erro interno ao salvar produto: {e}', 'error')
         
-    return redirect(f'/{loja_slug}/admin/painel')
+    # CORREÇÃO: Redireciona para #produtos
+    return redirect(f'/{loja_slug}/admin/painel#produtos')
 
 # Atualizado: removeu prefixo /loja
-@app.route('/<loja_slug>/admin/produto/excluir/<int:id>')
+# CORREÇÃO DE ROTA: Removido <int:id> para <id> para aceitar UUID (Resolvido erro 404)
+@app.route('/<loja_slug>/admin/produto/excluir/<id>')
 def admin_excluir_produto(loja_slug, id):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
     requests.delete(f"{DIRECTUS_URL}/items/produtos/{id}", headers=get_headers())
     flash('Produto removido!', 'success')
-    return redirect(f'/{loja_slug}/admin/painel')
+    return redirect(f'/{loja_slug}/admin/painel#produtos')
 
 
 # --- CRUD POSTS (BLOG) ---
@@ -702,15 +705,16 @@ def admin_salvar_post(loja_slug):
     except Exception as e:
         flash(f'Erro ao salvar post: {e}', 'error')
 
-    return redirect(f'/{loja_slug}/admin/painel')
+    return redirect(f'/{loja_slug}/admin/painel#blog')
 
 # Atualizado: removeu prefixo /loja
-@app.route('/<loja_slug>/admin/post/excluir/<int:id>')
+# CORREÇÃO DE ROTA: Removido <int:id> para <id>
+@app.route('/<loja_slug>/admin/post/excluir/<id>')
 def admin_excluir_post(loja_slug, id):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
     requests.delete(f"{DIRECTUS_URL}/items/posts/{id}", headers=get_headers())
     flash('Post removido!', 'success')
-    return redirect(f'/{loja_slug}/admin/painel')
+    return redirect(f'/{loja_slug}/admin/painel#blog')
 
 
 # --- ROTA: RECUPERAR SENHA ---
