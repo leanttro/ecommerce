@@ -41,8 +41,9 @@
         .custom-bg { background-color: var(--color-bg); }
         .custom-title-color { color: var(--color-title); }
         
-        /* Ticker CSS */
+        /* Ticker CSS - Ajustado para Loop Infinito */
         .ticker-wrap {
+            width: 100%;
             overflow: hidden;
             white-space: nowrap;
             background: var(--primary);
@@ -52,9 +53,11 @@
             align-items: center;
         }
         .ticker {
-            display: inline-block;
-            animation: ticker 30s linear infinite;
-            padding-left: 100%;
+            display: flex; /* Alterado para flex para alinhar itens */
+            align-items: center;
+            width: max-content; /* Largura se adapta ao conteúdo */
+            animation: ticker 40s linear infinite; /* Tempo ajustado para suavidade */
+            padding-left: 0; /* Removido padding que causava gap */
         }
         .ticker span {
             display: inline-block;
@@ -65,7 +68,7 @@
         }
         @keyframes ticker {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
+            100% { transform: translateX(-50%); } /* Move metade (já que duplicamos o conteúdo) */
         }
 
         /* Esconder barra de rolagem mas manter funcionalidade */
@@ -90,11 +93,17 @@
             {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
             {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
             {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
+            {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+            {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
+            {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
+            {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+            {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
+            {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
         </div>
     </div>
     {% endif %}
 
-    <nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg py-4 md:py-0 relative">
+    <nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg py-4 md:py-4 relative">
         <div class="container mx-auto px-4 min-h-[80px] flex flex-col md:flex-row items-center md:justify-center relative">
             
             <a href="/{{ loja.slug_url }}/" class="flex items-center gap-2 mb-2 md:mb-0">

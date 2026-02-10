@@ -45,8 +45,9 @@
         
         .modal-overlay { background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
         
-        /* Ticker CSS */
+        /* Ticker CSS - Ajustado para Loop Infinito */
         .ticker-wrap {
+            width: 100%;
             overflow: hidden;
             white-space: nowrap;
             background: var(--primary);
@@ -56,9 +57,11 @@
             align-items: center;
         }
         .ticker {
-            display: inline-block;
-            animation: ticker 30s linear infinite;
-            padding-left: 100%;
+            display: flex;
+            align-items: center;
+            width: max-content;
+            animation: ticker 40s linear infinite;
+            padding-left: 0;
         }
         .ticker span {
             display: inline-block;
@@ -69,7 +72,7 @@
         }
         @keyframes ticker {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
+            100% { transform: translateX(-50%); } /* Loop infinito seamless */
         }
 
         /* Ajustes para o conteúdo da descrição */
@@ -92,11 +95,17 @@
             {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
             {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
             {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
+             {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+            {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
+            {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
+             {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+            {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
+            {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
         </div>
     </div>
     {% endif %}
 
-    <nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg py-4 md:py-0">
+    <nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg py-4 md:py-4 relative">
         <div class="container mx-auto px-4 min-h-[80px] flex flex-col md:flex-row items-center justify-between">
             
             <a href="/{{ loja.slug_url }}/" class="flex items-center gap-2 mb-2 md:mb-0">
@@ -353,42 +362,40 @@
                 countBadge.classList.toggle('hidden', totalQtd === 0);
             }
 
-            if(container) {
-                container.innerHTML = '';
-                let total = 0;
+            container.innerHTML = '';
+            let total = 0;
+            
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 opacity-50"><i data-lucide="shopping-bag" class="w-12 h-12 mx-auto mb-2"></i><p class="text-sm">Sua sacola está vazia.</p></div>`;
+            }
+
+            cart.forEach((item, i) => {
+                // Se item tem preço, soma. Se não (consulte), preço é 0
+                let itemPrice = item.consulte ? 0 : (item.preco || 0);
+                total += itemPrice * item.qtd;
                 
-                if (cart.length === 0) {
-                    container.innerHTML = `<div class="text-center py-10 opacity-50"><i data-lucide="shopping-bag" class="w-12 h-12 mx-auto mb-2"></i><p class="text-sm">Sua sacola está vazia.</p></div>`;
-                }
+                let priceDisplay = item.consulte ? "Sob Consulta" : `R$ ${(itemPrice * item.qtd).toFixed(2).replace('.',',')}`;
 
-                cart.forEach((item, i) => {
-                    // Se item tem preço, soma. Se não (consulte), preço é 0
-                    let itemPrice = item.consulte ? 0 : (item.preco || 0);
-                    total += itemPrice * item.qtd;
-                    
-                    let priceDisplay = item.consulte ? "Sob Consulta" : `R$ ${(itemPrice * item.qtd).toFixed(2).replace('.',',')}`;
-
-                    container.innerHTML += `
-                        <div class="flex gap-4 border-b border-gray-100 pb-4 last:border-0">
-                            <img src="${item.imagem}" class="w-16 h-16 object-cover rounded-md bg-gray-100 border border-gray-200">
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-bold text-xs text-gray-800 line-clamp-2 leading-snug mb-1">${item.nome_exibicao}</h4>
-                                <div class="flex justify-between items-center mt-2">
-                                    <span class="text-theme font-bold text-sm">${priceDisplay}</span>
-                                    <div class="flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-1 border border-gray-200">
-                                        <button onclick="changeQty(${i}, -1)" class="w-5 h-5 flex items-center justify-center text-gray-500 font-bold">-</button>
-                                        <span class="text-xs font-bold text-gray-800 w-4 text-center">${item.qtd}</span>
-                                        <button onclick="changeQty(${i}, 1)" class="w-5 h-5 flex items-center justify-center text-gray-500 font-bold">+</button>
-                                        <div class="w-px h-3 bg-gray-300 mx-1"></div>
-                                        <button onclick="removeFromCart(${i})" class="text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
-                                    </div>
+                container.innerHTML += `
+                    <div class="flex gap-4 border-b border-gray-100 pb-4 last:border-0">
+                        <img src="${item.imagem}" class="w-16 h-16 object-cover rounded-md bg-gray-100 border border-gray-200">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-xs text-gray-800 line-clamp-2 leading-snug mb-1">${item.nome_exibicao}</h4>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-theme font-bold text-sm">${priceDisplay}</span>
+                                <div class="flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-1 border border-gray-200">
+                                    <button onclick="changeQty(${i}, -1)" class="w-5 h-5 flex items-center justify-center text-gray-500 font-bold">-</button>
+                                    <span class="text-xs font-bold text-gray-800 w-4 text-center">${item.qtd}</span>
+                                    <button onclick="changeQty(${i}, 1)" class="w-5 h-5 flex items-center justify-center text-gray-500 font-bold">+</button>
+                                    <div class="w-px h-3 bg-gray-300 mx-1"></div>
+                                    <button onclick="removeFromCart(${i})" class="text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
                                 </div>
                             </div>
-                        </div>`;
-                });
-                if(totalEl) totalEl.innerText = "R$ " + total.toFixed(2).replace('.', ',');
-                lucide.createIcons();
-            }
+                        </div>
+                    </div>`;
+            });
+            totalEl.innerText = "R$ " + total.toFixed(2).replace('.', ',');
+            lucide.createIcons();
         }
 
         function finalizingNoZap() {
