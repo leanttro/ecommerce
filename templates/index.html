@@ -53,11 +53,11 @@
             align-items: center;
         }
         .ticker {
-            display: flex; /* Alterado para flex para alinhar itens */
+            display: flex;
             align-items: center;
-            width: max-content; /* Largura se adapta ao conteúdo */
-            animation: ticker 40s linear infinite; /* Tempo ajustado para suavidade */
-            padding-left: 0; /* Removido padding que causava gap */
+            width: max-content;
+            animation: ticker 40s linear infinite;
+            padding-left: 0;
         }
         .ticker span {
             display: inline-block;
@@ -68,7 +68,7 @@
         }
         @keyframes ticker {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); } /* Move metade (já que duplicamos o conteúdo) */
+            100% { transform: translateX(-50%); } /* Loop infinito seamless */
         }
 
         /* Esconder barra de rolagem mas manter funcionalidade */
@@ -93,10 +93,10 @@
             {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
             {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
             {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
-            {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+             {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
             {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
             {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
-            {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+             {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
             {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
             {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
         </div>
@@ -234,8 +234,8 @@
                                             <img src="{{ p.imagem }}" class="w-full aspect-square object-cover {{ 'opacity-50' if p.estoque == 0 }}">
                                         </a>
                                         {% if p.estoque > 0 and not p.consulte %}
-                                        <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-2 right-2 bg-theme text-white p-2 rounded-full shadow-lg hover:scale-110 transition z-20">
-                                            <i data-lucide="plus" class="w-4 h-4"></i>
+                                        <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-2 right-2 bg-theme text-white w-8 h-8 rounded-full shadow-lg hover:scale-110 transition flex items-center justify-center z-20">
+                                            <i data-lucide="plus" class="w-5 h-5"></i>
                                         </button>
                                         {% endif %}
                                     </div>
@@ -281,8 +281,8 @@
                                     <img src="{{ p.imagem }}" class="w-full aspect-square object-cover">
                                 </a>
                                 {% if p.estoque > 0 and not p.consulte %}
-                                <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-2 right-2 bg-theme text-white p-2 rounded-full shadow-lg hover:scale-110 transition z-20">
-                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-2 right-2 bg-theme text-white w-8 h-8 rounded-full shadow-lg hover:scale-110 transition flex items-center justify-center z-20">
+                                    <i data-lucide="plus" class="w-5 h-5"></i>
                                 </button>
                                 {% endif %}
                             </div>
@@ -466,6 +466,8 @@
             
             saveCart();
             toggleCart();
+            
+            // Feedback visual no botão (opcional, mas não tem ID único por card, então deixamos o toggleCart abrir como feedback)
         }
 
         function updateCartUI() {
