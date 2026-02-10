@@ -15,6 +15,11 @@
         .color-preview { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #e5e7eb; cursor: pointer; }
         .list-group-item { cursor: move; }
         .list-group-item.sortable-ghost { opacity: 0.4; background-color: #f9fafb; border: 2px dashed #d1d5db; }
+        
+        /* Classe utilitária para esconder/mostrar menu suavemente */
+        .mobile-nav-hidden { display: none; }
+        .mobile-nav-visible { display: block; animation: slideDown 0.3s ease-out; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="bg-gray-100 font-sans leading-normal tracking-normal">
@@ -53,23 +58,28 @@
     <div class="container mx-auto mt-24 px-6 md:px-0 flex flex-col md:flex-row gap-6">
         
         <aside class="w-full md:w-64 bg-white rounded-lg shadow-sm border border-gray-200 p-4 h-fit sticky top-24">
-            <nav class="space-y-2">
-                <a href="#categorias" class="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors font-bold" onclick="showSection('categorias')">
+            <button onclick="toggleMobileMenu()" class="md:hidden w-full flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200 text-gray-700 font-bold hover:bg-gray-100 transition-colors mb-2">
+                <span class="flex items-center gap-2"><i data-lucide="menu"></i> Menu de Navegação</span>
+                <i data-lucide="chevron-down" id="menuChevron" class="transition-transform duration-300"></i>
+            </button>
+
+            <nav id="sidebarNav" class="space-y-2 hidden md:block">
+                <a href="#categorias" class="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors font-bold" onclick="selectMenuItem('categorias')">
                     <i data-lucide="layers"></i> Categorias
                 </a>
-                <a href="#produtos" class="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors font-bold" onclick="showSection('produtos')">
+                <a href="#produtos" class="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors font-bold" onclick="selectMenuItem('produtos')">
                     <i data-lucide="shopping-bag"></i> Produtos
                 </a>
-                <a href="#blog" class="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors font-bold" onclick="showSection('blog')">
+                <a href="#blog" class="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors font-bold" onclick="selectMenuItem('blog')">
                     <i data-lucide="file-text"></i> Blog (Posts)
                 </a>
-                <a href="#layout" class="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors font-bold" onclick="showSection('layout')">
+                <a href="#layout" class="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors font-bold" onclick="selectMenuItem('layout')">
                     <i data-lucide="layout-template"></i> Layout & Ordem
                 </a>
-                <a href="#visual" class="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors font-bold" onclick="showSection('visual')">
+                <a href="#visual" class="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors font-bold" onclick="selectMenuItem('visual')">
                     <i data-lucide="palette"></i> Identidade Visual
                 </a>
-                <a href="#config" class="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors font-bold" onclick="showSection('config')">
+                <a href="#config" class="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors font-bold" onclick="selectMenuItem('config')">
                     <i data-lucide="settings"></i> Configurações
                 </a>
             </nav>
@@ -508,22 +518,29 @@
                         <label for="prodConsulte" class="text-sm font-bold text-gray-700 cursor-pointer select-none">Este é um produto sob consulta / personalizado (Ocultar preço)</label>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-6 gap-y-8 bg-gray-50 p-6 rounded-lg border border-gray-200">
-                        <div class="col-span-3 mb-2"><h4 class="font-bold text-gray-800 flex items-center gap-2"><i data-lucide="image" class="text-pink-600"></i> Imagens do Produto</h4></div>
-                        <div class="mb-2 md:mb-0">
-                            <label class="block text-sm font-bold mb-2 text-gray-700">Imagem Principal (Destaque)*</label>
-                            <input type="file" name="imagem" accept="image/*" class="w-full text-sm text-gray-500 file:mr-2 md:file:mr-4 file:py-2 file:px-2 md:file:px-4 file:rounded-full file:border-0 file:text-xs md:file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
-                             <p class="text-xs text-gray-500 mt-1">Será a capa do produto.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50 p-6 rounded-lg border border-gray-200">
+                        <div class="col-span-1 md:col-span-3 mb-2">
+                            <h4 class="font-bold text-gray-800 flex items-center gap-2"><i data-lucide="image" class="text-pink-600"></i> Imagens do Produto</h4>
                         </div>
-                        <div class="mb-2 md:mb-0">
-                            <label class="block text-sm font-bold mb-2 text-gray-700">Imagem Adicional 1</label>
-                            <input type="file" name="imagem1" accept="image/*" class="w-full text-sm text-gray-500 file:mr-2 md:file:mr-4 file:py-2 file:px-2 md:file:px-4 file:rounded-full file:border-0 file:text-xs md:file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
-                            <p class="text-xs text-gray-500 mt-1">Opcional.</p>
-                        </div>
-                         <div class="mb-2 md:mb-0">
-                            <label class="block text-sm font-bold mb-2 text-gray-700">Imagem Adicional 2</label>
-                            <input type="file" name="imagem2" accept="image/*" class="w-full text-sm text-gray-500 file:mr-2 md:file:mr-4 file:py-2 file:px-2 md:file:px-4 file:rounded-full file:border-0 file:text-xs md:file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
-                            <p class="text-xs text-gray-500 mt-1">Opcional.</p>
+                        
+                        <div class="space-y-8 md:space-y-0 md:contents">
+                            <div class="w-full">
+                                <label class="block text-sm font-bold mb-2 text-gray-700">Imagem Principal (Destaque)*</label>
+                                <input type="file" name="imagem" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
+                                <p class="text-xs text-gray-500 mt-1">Será a capa do produto.</p>
+                            </div>
+                            
+                            <div class="w-full">
+                                <label class="block text-sm font-bold mb-2 text-gray-700">Imagem Adicional 1</label>
+                                <input type="file" name="imagem1" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
+                                <p class="text-xs text-gray-500 mt-1">Opcional.</p>
+                            </div>
+                            
+                            <div class="w-full">
+                                <label class="block text-sm font-bold mb-2 text-gray-700">Imagem Adicional 2</label>
+                                <input type="file" name="imagem2" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
+                                <p class="text-xs text-gray-500 mt-1">Opcional.</p>
+                            </div>
                         </div>
                     </div>
 
@@ -602,6 +619,30 @@
                 }
             });
              window.scrollTo(0, 0);
+        }
+
+        // Função para selecionar item no mobile e fechar o menu automaticamente
+        function selectMenuItem(sectionId) {
+            showSection(sectionId);
+            if(window.innerWidth < 768) { // Só fecha se for mobile
+                toggleMobileMenu();
+            }
+        }
+
+        // Função do Slicer (Menu Mobile)
+        function toggleMobileMenu() {
+            const nav = document.getElementById('sidebarNav');
+            const chevron = document.getElementById('menuChevron');
+            
+            if (nav.classList.contains('hidden')) {
+                nav.classList.remove('hidden');
+                nav.classList.add('mobile-nav-visible');
+                chevron.style.transform = 'rotate(180deg)';
+            } else {
+                nav.classList.add('hidden');
+                nav.classList.remove('mobile-nav-visible');
+                chevron.style.transform = 'rotate(0deg)';
+            }
         }
 
         // Mostra a seção inicial baseada na URL (hash) ou padrão
@@ -706,18 +747,6 @@
                 document.querySelectorAll('#lista-categorias li').forEach((li, index) => {
                     orderMap[li.getAttribute('data-id')] = index + 1;
                 });
-                
-                // Envia a nova ordem para a API (Directus) via fetch
-                // Nota: Isso requer que a coleção 'categorias' tenha um campo 'sort' configurado.
-                // Se não tiver, essa parte não funcionará como esperado sem configuração extra no backend.
-                /* Exemplo de como seria a chamada (precisaria de um endpoint específico no app.py ou chamada direta ao Directus se tiver token público/permissão)
-                fetch('/api/reordenar-categorias', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(orderMap)
-                }); */
-                console.log("Nova ordem categorias (Simulação):", orderMap);
-                // Por enquanto, apenas logamos, pois não temos a rota de reordenação implementada no app.py
             }
         });
     </script>
