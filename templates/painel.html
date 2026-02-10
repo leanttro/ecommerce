@@ -40,7 +40,7 @@
                 </span>
             </div>
             <div class="flex items-center gap-4">
-                <a href="/loja/{{ loja.slug_url }}/" target="_blank" class="text-gray-600 hover:text-pink-600 flex items-center gap-1 text-sm font-bold">
+                <a href="/{{ loja.slug_url }}/" target="_blank" class="text-gray-600 hover:text-pink-600 flex items-center gap-1 text-sm font-bold">
                     <i data-lucide="external-link" class="w-4 h-4"></i> Ver Loja
                 </a>
                 <a href="/logout" class="text-red-500 hover:text-red-700 flex items-center gap-1 text-sm font-bold">
@@ -95,7 +95,7 @@
                             </div>
                             <div class="flex items-center gap-2">
                                 <button onclick='editarCategoria({{ cat | tojson }})' class="text-blue-500 hover:text-blue-700 p-2 hover:bg-blue-50 rounded"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-                                <a href="/loja/{{ loja.slug_url }}/admin/categoria/excluir/{{ cat.id }}" class="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded" onclick="return confirm('Tem certeza que deseja excluir esta categoria?')"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
+                                <a href="/{{ loja.slug_url }}/admin/categoria/excluir/{{ cat.id }}" class="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded" onclick="return confirm('Tem certeza que deseja excluir esta categoria?')"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
                             </div>
                         </li>
                         {% else %}
@@ -138,7 +138,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ prod.estoque }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <button onclick='editarProduto({{ prod | tojson }})' class="text-blue-500 hover:text-blue-700 mr-3"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-                                    <a href="/loja/{{ loja.slug_url }}/admin/produto/excluir/{{ prod.id }}" class="text-red-500 hover:text-red-700" onclick="return confirm('Excluir este produto?')"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
+                                    <a href="/{{ loja.slug_url }}/admin/produto/excluir/{{ prod.id }}" class="text-red-500 hover:text-red-700" onclick="return confirm('Excluir este produto?')"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
                                 </td>
                             </tr>
                              {% else %}
@@ -165,7 +165,7 @@
                         </div>
                         <div class="flex items-center gap-2">
                              <button onclick='editarPost({{ post | tojson }})' class="text-blue-500 hover:text-blue-700 p-2 hover:bg-blue-50 rounded"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-                            <a href="/loja/{{ loja.slug_url }}/admin/post/excluir/{{ post.id }}" class="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded" onclick="return confirm('Excluir este post?')"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
+                            <a href="/{{ loja.slug_url }}/admin/post/excluir/{{ post.id }}" class="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded" onclick="return confirm('Excluir este post?')"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
                         </div>
                     </div>
                     {% else %}
@@ -174,7 +174,7 @@
                 </div>
             </section>
 
-            <form action="/loja/{{ loja.slug_url }}/admin/painel" method="POST" enctype="multipart/form-data">
+            <form action="/{{ loja.slug_url }}/admin/painel" method="POST" enctype="multipart/form-data">
                 
                 <section id="layout" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hidden space-y-6">
                     <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2 mb-6"><i data-lucide="layout-template" class="text-pink-600"></i> Layout & Ordem</h2>
@@ -421,7 +421,7 @@
                         <i data-lucide="info" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
                         <div>
                             <p class="font-bold">URL da sua loja:</p>
-                            <code class="bg-blue-100 px-2 py-1 rounded select-all">https://leanttro.com/loja/{{ loja.slug_url }}</code>
+                            <code class="bg-blue-100 px-2 py-1 rounded select-all">https://leanttro.com/{{ loja.slug_url }}</code>
                         </div>
                     </div>
                 </section>
@@ -447,7 +447,7 @@
                         <i data-lucide="x" class="text-gray-500"></i>
                     </div>
                 </div>
-                <form id="categoriaForm" action="/loja/{{ loja.slug_url }}/admin/categoria/salvar" method="POST">
+                <form id="categoriaForm" action="/{{ loja.slug_url }}/admin/categoria/salvar" method="POST">
                     <input type="hidden" name="id" id="catId">
                     <div class="mb-4">
                         <label class="block text-sm font-bold mb-2">Nome da Categoria</label>
@@ -472,7 +472,7 @@
                         <i data-lucide="x" class="text-gray-600 w-6 h-6"></i>
                     </div>
                 </div>
-                <form id="produtoForm" action="/loja/{{ loja.slug_url }}/admin/produto/salvar" method="POST" enctype="multipart/form-data" class="mt-6 space-y-6">
+                <form id="produtoForm" action="/{{ loja.slug_url }}/admin/produto/salvar" method="POST" enctype="multipart/form-data" class="mt-6 space-y-6">
                     <input type="hidden" name="id" id="prodId">
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -551,7 +551,7 @@
                         <i data-lucide="x" class="text-gray-600 w-6 h-6"></i>
                     </div>
                 </div>
-                <form id="postForm" action="/loja/{{ loja.slug_url }}/admin/post/salvar" method="POST" enctype="multipart/form-data" class="mt-6 space-y-6">
+                <form id="postForm" action="/{{ loja.slug_url }}/admin/post/salvar" method="POST" enctype="multipart/form-data" class="mt-6 space-y-6">
                     <input type="hidden" name="id" id="postId">
                     
                     <div>
