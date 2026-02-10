@@ -220,20 +220,30 @@
                                         </div>
                                     {% endif %}
                                     
-                                    <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
-                                        <img src="{{ p.imagem }}" class="w-full aspect-square object-cover {{ 'opacity-50' if p.estoque == 0 }}">
-                                        <div class="p-4 text-center"> 
-                                            <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight">{{ p.nome }}</h3>
-                                            
-                                            {% if p.consulte %}
-                                                <p class="text-blue-600 font-bold text-lg mt-1 text-center">Consulte-nos</p>
-                                            {% elif p.estoque == 0 %}
-                                                <p class="text-gray-400 font-bold text-sm mt-1 text-center">Sem Estoque</p>
-                                            {% else %}
-                                                <p class="text-theme font-bold text-lg mt-1 text-center">R$ {{ "%.2f"|format(p.preco) }}</p>
-                                            {% endif %}
-                                        </div>
-                                    </a>
+                                    <div class="relative">
+                                        <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
+                                            <img src="{{ p.imagem }}" class="w-full aspect-square object-cover {{ 'opacity-50' if p.estoque == 0 }}">
+                                        </a>
+                                        {% if p.estoque > 0 and not p.consulte %}
+                                        <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-2 right-2 bg-theme text-white p-2 rounded-full shadow-lg hover:scale-110 transition z-20">
+                                            <i data-lucide="plus" class="w-4 h-4"></i>
+                                        </button>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="p-4 text-center"> 
+                                        <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
+                                            <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight hover:text-theme transition">{{ p.nome }}</h3>
+                                        </a>
+                                        
+                                        {% if p.consulte %}
+                                            <p class="text-blue-600 font-bold text-lg mt-1 text-center">Consulte-nos</p>
+                                        {% elif p.estoque == 0 %}
+                                            <p class="text-gray-400 font-bold text-sm mt-1 text-center">Sem Estoque</p>
+                                        {% else %}
+                                            <p class="text-theme font-bold text-lg mt-1 text-center">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             {% else %}
                                 <div class="col-span-full text-center text-gray-400 py-10 w-full">
@@ -257,17 +267,26 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                          {% for p in novidades %}
                         <div class="border rounded-lg overflow-hidden bg-white hover:shadow-lg transition">
-                            <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
-                                <img src="{{ p.imagem }}" class="w-full aspect-square object-cover">
-                                <div class="p-4 text-center">
-                                    <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight">{{ p.nome }}</h3>
-                                    {% if p.consulte %}
-                                        <p class="text-blue-600 font-bold text-lg mt-1 text-center">Consulte-nos</p>
-                                    {% else %}
-                                        <p class="text-theme font-bold text-lg mt-1 text-center">R$ {{ "%.2f"|format(p.preco) }}</p>
-                                    {% endif %}
-                                </div>
-                            </a>
+                            <div class="relative">
+                                <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
+                                    <img src="{{ p.imagem }}" class="w-full aspect-square object-cover">
+                                </a>
+                                {% if p.estoque > 0 and not p.consulte %}
+                                <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-2 right-2 bg-theme text-white p-2 rounded-full shadow-lg hover:scale-110 transition z-20">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                            <div class="p-4 text-center">
+                                <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
+                                    <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight hover:text-theme transition">{{ p.nome }}</h3>
+                                </a>
+                                {% if p.consulte %}
+                                    <p class="text-blue-600 font-bold text-lg mt-1 text-center">Consulte-nos</p>
+                                {% else %}
+                                    <p class="text-theme font-bold text-lg mt-1 text-center">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                {% endif %}
+                            </div>
                         </div>
                         {% endfor %}
                     </div>
@@ -438,13 +457,6 @@
             
             saveCart();
             toggleCart();
-            
-            const btn = document.getElementById('btn-add-text');
-            if(btn) {
-                const old = btn.innerText;
-                btn.innerText = "Adicionado!";
-                setTimeout(() => btn.innerText = old, 2000);
-            }
         }
 
         function updateCartUI() {
