@@ -148,14 +148,14 @@
         {% if secao == 'banner' and not loja.ocultar_banner %}
             <section class="slider-container relative w-full overflow-hidden group bg-gray-50/50">
                 
-                <div id="banner-slider" class="flex transition-transform duration-500 ease-in-out w-full items-center">
+                <div id="banner-slider" class="flex transition-transform duration-500 ease-in-out w-full">
                     
                     {% if loja.banner1 %}
-                    <div class="min-w-full relative flex-shrink-0">
+                    <div class="w-full flex-none relative">
                         {% if loja.linkbannerprincipal1 and loja.linkbannerprincipal1 != '#' %}
-                        <a href="{{ loja.linkbannerprincipal1 }}" class="block w-full">
+                        <a href="{{ loja.linkbannerprincipal1 }}" class="block w-full h-full">
                         {% endif %}
-                            <img src="{{ loja.banner1 }}" class="w-full h-auto object-contain">
+                            <img src="{{ loja.banner1 }}" class="w-full h-[300px] md:h-[450px] lg:h-[500px] object-cover object-center">
                         {% if loja.linkbannerprincipal1 and loja.linkbannerprincipal1 != '#' %}
                         </a>
                         {% endif %}
@@ -163,11 +163,11 @@
                     {% endif %}
                     
                     {% if loja.banner2 %}
-                    <div class="min-w-full relative flex-shrink-0">
+                    <div class="w-full flex-none relative">
                         {% if loja.linkbannerprincipal2 and loja.linkbannerprincipal2 != '#' %}
-                        <a href="{{ loja.linkbannerprincipal2 }}" class="block w-full">
+                        <a href="{{ loja.linkbannerprincipal2 }}" class="block w-full h-full">
                         {% endif %}
-                            <img src="{{ loja.banner2 }}" class="w-full h-auto object-contain">
+                            <img src="{{ loja.banner2 }}" class="w-full h-[300px] md:h-[450px] lg:h-[500px] object-cover object-center">
                         {% if loja.linkbannerprincipal2 and loja.linkbannerprincipal2 != '#' %}
                         </a>
                         {% endif %}
