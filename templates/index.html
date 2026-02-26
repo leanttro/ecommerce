@@ -103,25 +103,25 @@
     </div>
     {% endif %}
 
-    <nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg py-4 md:py-4 relative">
-        <div class="container mx-auto px-4 min-h-[80px] flex flex-col md:flex-row items-center md:justify-center relative">
+    <nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg py-4 relative">
+        <div class="container mx-auto px-4 min-h-[90px] flex items-center justify-center relative">
             
-            <a href="/{{ loja.slug_url }}/" class="flex items-center gap-2 mb-2 md:mb-0">
+            <a href="/{{ loja.slug_url }}/" class="flex items-center justify-center z-10">
                 {% if loja.logo %}
-                    <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="h-16 md:h-20 w-auto object-contain transition-all">
+                    <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="h-20 md:h-28 w-auto object-contain transition-all">
                 {% else %}
-                    <span class="text-2xl font-bold tracking-tight custom-title-color">{{ loja.nome }}</span>
+                    <span class="text-3xl font-bold tracking-tight custom-title-color">{{ loja.nome }}</span>
                 {% endif %}
             </a>
 
-            <div class="flex items-center gap-4 md:absolute md:right-4">
+            <div class="absolute right-4 flex items-center gap-2 md:gap-4 z-20">
                  <button onclick="toggleMobileMenu()" class="md:hidden p-2 custom-title-color hover:opacity-70 transition">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
+                    <i data-lucide="menu" class="w-7 h-7"></i>
                 </button>
                 
                 <button onclick="toggleCart()" class="relative p-2 hover:opacity-70 transition custom-title-color">
-                    <i data-lucide="shopping-bag" class="w-6 h-6"></i>
-                    <span id="cart-count-badge" class="absolute top-0 right-0 bg-theme text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold hidden">0</span>
+                    <i data-lucide="shopping-bag" class="w-7 h-7"></i>
+                    <span id="cart-count-badge" class="absolute top-0 right-0 bg-theme text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold hidden">0</span>
                 </button>
             </div>
         </div>
