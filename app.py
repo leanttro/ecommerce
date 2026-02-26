@@ -313,7 +313,8 @@ def cadastro():
             "whatsapp_comercial": whatsapp,
             "senha_admin": senha_hash,
             
-            # Configurações Visuais Padrão
+            # Configurações Visuais Padrão e Template
+            "template_ativo": "index",
             "cor_primaria": "#db2777",
             "cor_titulo": "#111827",
             "cor_texto": "#374151",
@@ -449,8 +450,13 @@ def index(loja_slug):
         "bannermenor2": get_img_url(g.loja.get('bannermenor2')),
         "slug_url": loja_slug # Passamos o slug para montar links no HTML
     }
+    
+    # DEFINE QUAL TEMPLATE RENDERIZAR
+    template_name = g.loja.get('template_ativo') or 'index'
+    if template_name not in ['index', 'pascoa']:
+        template_name = 'index'
 
-    return render_template('index.html', 
+    return render_template(f'{template_name}.html', 
                          loja=loja_visual, 
                          layout=g.layout_list,
                          categorias=categorias, 
@@ -561,6 +567,7 @@ def admin_painel(loja_slug):
         payload = {
             "nome": request.form.get('nome'),
             "whatsapp_comercial": request.form.get('whatsapp'),
+            "template_ativo": request.form.get('template_ativo') or 'index',
             "cor_primaria": request.form.get('cor_primaria'),
             "cor_titulo": request.form.get('cor_titulo'), 
             "cor_texto": request.form.get('cor_texto'),

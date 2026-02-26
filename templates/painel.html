@@ -287,6 +287,27 @@
                 <section id="visual" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hidden space-y-8">
                     <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2"><i data-lucide="palette" class="text-pink-600"></i> Identidade Visual</h2>
 
+                    <h3 class="font-bold text-gray-700 border-b pb-2 mt-4 mb-4">Tema da Loja</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <label class="border rounded-xl p-4 cursor-pointer flex items-center gap-3 transition-colors theme-selector {% if not loja.template_ativo or loja.template_ativo == 'index' %}ring-2 ring-pink-500 border-pink-500 bg-pink-50{% else %}hover:bg-gray-50{% endif %}" onclick="selectTheme(this)">
+                            <input type="radio" name="template_ativo" value="index" class="hidden" {% if not loja.template_ativo or loja.template_ativo == 'index' %}checked{% endif %}>
+                            <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center border border-gray-200"><i data-lucide="layout" class="text-gray-500"></i></div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Tema Padrão</h4>
+                                <p class="text-xs text-gray-500">Visual limpo, elegante e focado nos produtos.</p>
+                            </div>
+                        </label>
+                        
+                        <label class="border rounded-xl p-4 cursor-pointer flex items-center gap-3 transition-colors theme-selector {% if loja.template_ativo == 'pascoa' %}ring-2 ring-pink-500 border-pink-500 bg-pink-50{% else %}hover:bg-gray-50{% endif %}" onclick="selectTheme(this)">
+                            <input type="radio" name="template_ativo" value="pascoa" class="hidden" {% if loja.template_ativo == 'pascoa' %}checked{% endif %}>
+                            <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center border border-pink-200"><i data-lucide="rabbit" class="text-pink-500"></i></div>
+                            <div>
+                                <h4 class="font-bold text-pink-600">Especial Páscoa</h4>
+                                <p class="text-xs text-gray-500">Animações fofas, coelhos, ovos e muito movimento.</p>
+                            </div>
+                        </label>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         
                         <div class="space-y-6">
@@ -601,7 +622,6 @@
         </div>
     </div>
 
-
     <script>
         lucide.createIcons();
 
@@ -632,7 +652,17 @@
             });
         }
 
-        // Função para selecionar item no mobile e fechar o menu automaticamente
+        // --- TEMA SELECTOR ---
+        function selectTheme(el) {
+            document.querySelectorAll('.theme-selector').forEach(label => {
+                label.classList.remove('ring-2', 'ring-pink-500', 'border-pink-500', 'bg-pink-50');
+                label.classList.add('hover:bg-gray-50');
+            });
+            el.classList.remove('hover:bg-gray-50');
+            el.classList.add('ring-2', 'ring-pink-500', 'border-pink-500', 'bg-pink-50');
+            el.querySelector('input').checked = true;
+        }
+
         function selectMenuItem(sectionId) {
             showSection(sectionId);
             if(window.innerWidth < 768) { // Só fecha se for mobile
@@ -640,7 +670,6 @@
             }
         }
 
-        // Função do Slicer (Menu Mobile)
         function toggleMobileMenu() {
             const nav = document.getElementById('sidebarNav');
             const chevron = document.getElementById('menuChevron');
@@ -656,8 +685,6 @@
             }
         }
 
-        // Mostra a seção inicial baseada na URL (hash) ou padrão
-        // Se vier do redirecionamento do Flask (#produtos), ele vai abrir a aba certa
         const hash = window.location.hash.replace('#', '');
         showSection(hash || 'categorias');
 
@@ -692,7 +719,6 @@
             document.getElementById('prodCategoria').value = '';
             document.getElementById('prodDescricao').value = '';
             document.getElementById('prodConsulte').checked = false;
-            // Limpa inputs de arquivo
             document.querySelector('#produtoForm input[name="imagem"]').value = '';
             document.querySelector('#produtoForm input[name="imagem1"]').value = '';
             document.querySelector('#produtoForm input[name="imagem2"]').value = '';
@@ -708,7 +734,6 @@
             document.getElementById('prodCategoria').value = prod.categoria_id || '';
             document.getElementById('prodDescricao').value = prod.descricao || '';
             document.getElementById('prodConsulte').checked = prod.consulte;
-            // Limpa inputs de arquivo
             document.querySelector('#produtoForm input[name="imagem"]').value = '';
             document.querySelector('#produtoForm input[name="imagem1"]').value = '';
             document.querySelector('#produtoForm input[name="imagem2"]').value = '';
@@ -737,7 +762,6 @@
             toggleModal('postModal');
         }
 
-
         // --- REORDENAÇÃO DO LAYOUT ---
         new Sortable(document.getElementById('layout-sortable'), {
             animation: 150,
@@ -753,7 +777,7 @@
          new Sortable(document.getElementById('lista-categorias'), {
             animation: 150,
             ghostClass: 'sortable-ghost',
-            handle: '.cursor-move', // Só arrasta pelo ícone
+            handle: '.cursor-move',
             onEnd: function () {
                  const orderMap = {};
                 document.querySelectorAll('#lista-categorias li').forEach((li, index) => {
