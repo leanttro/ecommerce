@@ -95,17 +95,19 @@
         .falling-item {
             position: fixed;
             top: -10%;
-            z-index: 0; 
+            z-index: 60; 
             user-select: none;
             pointer-events: none;
             animation: fall linear infinite;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15));
+            will-change: transform, opacity;
         }
         @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 0; }
+            0% { transform: translate(0, -10vh) rotate(0deg) scale(0.8); opacity: 0; }
             10% { opacity: 1; }
+            50% { transform: translate(30px, 50vh) rotate(180deg) scale(1.1); }
             90% { opacity: 1; }
-            100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; }
+            100% { transform: translate(-30px, 110vh) rotate(360deg) scale(1.2); opacity: 0; }
         }
         
         .content-layer { position: relative; z-index: 10; }
@@ -508,13 +510,13 @@
 
         function createFallingElements() {
             const items = ['🐰', '🥚', '🥕', '🍫', '🌸', '✨'];
-            for(let i = 0; i < 15; i++) {
+            for(let i = 0; i < 35; i++) {
                 let el = document.createElement('div');
-                el.className = 'falling-item text-3xl opacity-30';
+                el.className = 'falling-item text-4xl opacity-80';
                 el.innerText = items[Math.floor(Math.random() * items.length)];
                 el.style.left = Math.random() * 100 + 'vw';
-                el.style.animationDuration = (Math.random() * 20 + 15) + 's'; 
-                el.style.animationDelay = (Math.random() * 15) + 's';
+                el.style.animationDuration = (Math.random() * 15 + 10) + 's'; 
+                el.style.animationDelay = (Math.random() * 10) + 's';
                 document.body.appendChild(el);
             }
         }
