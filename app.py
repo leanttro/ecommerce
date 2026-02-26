@@ -8,6 +8,9 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 # Carrega variáveis de ambiente
 load_dotenv()
@@ -31,6 +34,12 @@ DIRECTUS_TOKEN = os.getenv("DIRECTUS_TOKEN", "")
 SUPERFRETE_TOKEN = os.getenv("SUPERFRETE_TOKEN", "")
 SUPERFRETE_URL = os.getenv("SUPERFRETE_URL", "https://api.superfrete.com/api/v0/calculator")
 CEP_ORIGEM_PADRAO = "01026000" # Fallback se a loja não tiver CEP configurado
+
+# --- CONFIGURAÇÕES DE E-MAIL (SMTP) ---
+SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
+SMTP_USER = os.getenv("SMTP_USER", "")
+SMTP_PASS = os.getenv("SMTP_PASS", "")
 
 # --- BLACKLIST DE ROTAS (PALAVRAS RESERVADAS) ---
 # Rotas que não devem ser tratadas como SLUG de loja
@@ -106,6 +115,43 @@ def gerar_slug(texto):
     import unicodedata
     texto = unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('utf-8')
     return texto.lower().strip().replace(' ', '-').replace('/', '-').replace('.', '')
+
+def enviar_email_recuperacao(destinatario, link, nome_loja):
+    if not SMTP_USER or not SMTP_PASS:
+        print("Configurações de SMTP ausentes. E-mail não enviado.")
+        return False
+
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = f"Leanttro <{SMTP_USER}>"
+        msg['To'] = destinatario
+        msg['Subject'] = f"Recuperação de Senha - {nome_loja}"
+
+        corpo = f"""
+        Olá,
+
+        Você solicitou a recuperação de senha para a loja {nome_loja}.
+        
+        Acesse o link abaixo para criar uma nova senha (este link expira em 1 hora):
+        https://{link}
+        
+        Se você não solicitou isso, ignore este e-mail.
+        
+        Atenciosamente,
+        Equipe Leanttro
+        """
+        
+        msg.attach(MIMEText(corpo, 'plain', 'utf-8'))
+
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()
+        server.login(SMTP_USER, SMTP_PASS)
+        server.send_message(msg)
+        server.quit()
+        return True
+    except Exception as e:
+        print(f"Erro ao enviar e-mail: {e}")
+        return False
 
 # --- MIDDLEWARE: IDENTIFICAÇÃO DA LOJA (DOMÍNIO OU PATH) ---
 @app.before_request
@@ -784,7 +830,13 @@ def recuperar_senha(loja_slug):
             link = f"{DOMINIO_BASE}/{loja_slug}/nova-senha/{token}"
             print(f"--- LINK RECUPERAÇÃO: {link} ---")
             
-            flash('Link de recuperação enviado para seu e-mail.', 'success')
+            # Chama a função de envio de e-mail
+            enviado = enviar_email_recuperacao(email, link, g.loja.get('nome'))
+            
+            if enviado:
+                flash('Link de recuperação enviado para seu e-mail.', 'success')
+            else:
+                flash('Erro ao enviar o e-mail. Tente novamente mais tarde.', 'error')
         else:
             flash('E-mail não corresponde ao cadastro desta loja.', 'error')
     
