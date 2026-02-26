@@ -3,6 +3,7 @@ import requests
 import os
 import json
 import uuid
+import time
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -35,6 +36,38 @@ CEP_ORIGEM_PADRAO = "01026000" # Fallback se a loja não tiver CEP configurado
 # Rotas que não devem ser tratadas como SLUG de loja
 # ADICIONADO 'catalogo' AQUI PARA NÃO CONFUNDIR COM LOJA
 BLACKLIST_ROTAS = ['static', 'cadastro', 'catalogo', 'login', 'logout', 'api', 'admin', 'favicon.ico']
+
+# --- SEGURANÇA: RATE LIMITING NA MEMÓRIA ---
+RATE_LIMIT_DATA = {}
+MAX_REQUESTS = 5
+TIME_WINDOW = 60 # segundos
+
+def check_rate_limit(ip, action):
+    current_time = time.time()
+    key = f"{ip}_{action}"
+    
+    if key not in RATE_LIMIT_DATA:
+        RATE_LIMIT_DATA[key] = []
+    
+    # Limpa requisições antigas fora da janela de tempo
+    RATE_LIMIT_DATA[key] = [t for t in RATE_LIMIT_DATA[key] if current_time - t < TIME_WINDOW]
+    
+    # Se atingiu o limite, bloqueia
+    if len(RATE_LIMIT_DATA[key]) >= MAX_REQUESTS:
+        return False
+    
+    RATE_LIMIT_DATA[key].append(current_time)
+    return True
+
+# --- SEGURANÇA: BLOQUEIO DE BOTS ---
+BLOCKED_USER_AGENTS = ['python-requests', 'curl', 'postmanruntime', 'wget', 'urllib', 'bot', 'spider', 'crawler']
+
+@app.before_request
+def block_bots():
+    user_agent = request.headers.get('User-Agent', '').lower()
+    for bot in BLOCKED_USER_AGENTS:
+        if bot in user_agent:
+            return "Acesso negado. Tráfego automatizado não permitido.", 403
 
 # --- FUNÇÕES AUXILIARES ---
 def get_headers():
@@ -176,6 +209,12 @@ def landing_page_rota():
 def cadastro():
     
     if request.method == 'POST':
+        # SEGURANÇA: Verifica Rate Limit (Proteção contra criação em massa/spam)
+        client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        if not check_rate_limit(client_ip, 'cadastro'):
+            flash('Muitas tentativas de cadastro. Por favor, tente novamente mais tarde.', 'error')
+            return render_template('cadastro.html'), 429
+
         nome = request.form.get('nome')
         slug_input = request.form.get('slug')
         
@@ -434,6 +473,13 @@ def admin_login(loja_slug):
         return redirect(f'/{loja_slug}/admin/painel')
 
     if request.method == 'POST':
+        # SEGURANÇA: Verifica Rate Limit (Proteção contra força bruta no login)
+        client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        if not check_rate_limit(client_ip, 'login'):
+            flash('Muitas tentativas de login. Por favor, aguarde alguns minutos.', 'error')
+            loja_visual = {**g.loja, "logo": get_img_url(g.loja.get('logo')), "slug_url": loja_slug}
+            return render_template('login_admin.html', loja=loja_visual), 429
+
         senha = request.form.get('senha')
         
         if g.loja.get('senha_admin') and check_password_hash(g.loja['senha_admin'], senha):
@@ -755,6 +801,16 @@ def nova_senha(loja_slug, token):
         return "Link inválido ou expirado.", 400
     
     loja_alvo = data[0]
+
+    # SEGURANÇA: Validação de Expiração do Token
+    expiracao_str = loja_alvo.get('reset_expires')
+    if expiracao_str:
+        try:
+            expiracao = datetime.fromisoformat(expiracao_str)
+            if datetime.now() > expiracao:
+                return "Token expirado. Por favor, solicite uma nova recuperação de senha.", 400
+        except ValueError:
+            pass
 
     if request.method == 'POST':
         nova = request.form.get('senha')
