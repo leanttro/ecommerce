@@ -49,6 +49,7 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
         }
 
+        /* Animações inspiradas no site do Lando Norris */
         .reveal {
             opacity: 0;
             transform: translateY(30px) scale(0.98);
@@ -92,6 +93,7 @@
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
+        /* Stickers de Páscoa com Fade Progressivo */
         .falling-item {
             position: fixed;
             top: -10%;
@@ -99,15 +101,14 @@
             user-select: none;
             pointer-events: none;
             animation: fall linear infinite;
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15));
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
             will-change: transform, opacity;
         }
         @keyframes fall {
-            0% { transform: translate(0, -10vh) rotate(0deg) scale(0.8); opacity: 0; }
-            10% { opacity: 1; }
-            50% { transform: translate(30px, 50vh) rotate(180deg) scale(1.1); }
-            90% { opacity: 1; }
-            100% { transform: translate(-30px, 110vh) rotate(360deg) scale(1.2); opacity: 0; }
+            0% { transform: translate(0, -10vh) rotate(0deg) scale(0.7); opacity: 0; }
+            15% { opacity: 0.5; }
+            50% { transform: translate(40px, 50vh) rotate(180deg) scale(0.9); opacity: 0.3; }
+            100% { transform: translate(-40px, 110vh) rotate(360deg) scale(1.1); opacity: 0; }
         }
         
         .content-layer { position: relative; z-index: 10; }
@@ -136,16 +137,13 @@
             <div class="ticker">
                 {% if loja.frase1 %}<span>🐰 {{ loja.frase1 }}</span>{% endif %}
                 {% if loja.frase2 %}<span>🥕 {{ loja.frase2 }}</span>{% endif %}
-                {% if loja.frase3 %}<span>🍫 {{ loja.frase3 }}</span>{% endif %}
+                {% if loja.frase3 %}<span>🎁 {{ loja.frase3 }}</span>{% endif %}
                 {% if loja.frase1 %}<span>🐰 {{ loja.frase1 }}</span>{% endif %}
                 {% if loja.frase2 %}<span>🥕 {{ loja.frase2 }}</span>{% endif %}
-                {% if loja.frase3 %}<span>🍫 {{ loja.frase3 }}</span>{% endif %}
-                 {% if loja.frase1 %}<span>🐰 {{ loja.frase1 }}</span>{% endif %}
+                {% if loja.frase3 %}<span>🎁 {{ loja.frase3 }}</span>{% endif %}
+                {% if loja.frase1 %}<span>🐰 {{ loja.frase1 }}</span>{% endif %}
                 {% if loja.frase2 %}<span>🥕 {{ loja.frase2 }}</span>{% endif %}
-                {% if loja.frase3 %}<span>🍫 {{ loja.frase3 }}</span>{% endif %}
-                 {% if loja.frase1 %}<span>🐰 {{ loja.frase1 }}</span>{% endif %}
-                {% if loja.frase2 %}<span>🥕 {{ loja.frase2 }}</span>{% endif %}
-                {% if loja.frase3 %}<span>🍫 {{ loja.frase3 }}</span>{% endif %}
+                {% if loja.frase3 %}<span>🎁 {{ loja.frase3 }}</span>{% endif %}
             </div>
         </div>
         {% endif %}
@@ -235,7 +233,7 @@
                     <div class="container mx-auto max-w-2xl">
                         <form action="/{{ loja.slug_url }}/" method="GET" class="relative group">
                             <i data-lucide="search" class="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-theme transition-colors"></i>
-                            <input type="text" name="busca" placeholder="Busque por doces e chocolates mágicos..." class="w-full p-5 pl-14 rounded-full glass-panel focus:outline-none focus:ring-2 focus:ring-pink-200 transition-all font-medium text-gray-700 placeholder-gray-400 text-lg shadow-lg">
+                            <input type="text" name="busca" placeholder="O que você está procurando hoje?..." class="w-full p-5 pl-14 rounded-full glass-panel focus:outline-none focus:ring-2 focus:ring-pink-200 transition-all font-medium text-gray-700 placeholder-gray-400 text-lg shadow-lg">
                         </form>
                     </div>
                 </div>
@@ -264,12 +262,12 @@
                 <section class="reveal w-full py-12" id="categorias">
                     <div class="container mx-auto px-4">
                         <div class="flex flex-col items-center justify-center mb-10">
-                            <span class="text-theme font-bold uppercase tracking-widest text-xs mb-2">Descubra</span>
-                            <h2 class="text-4xl font-bold text-center text-[var(--color-title)]">Nossas Categorias</h2>
+                            <span class="text-theme font-bold uppercase tracking-widest text-xs mb-2">Explore</span>
+                            <h2 class="text-4xl font-bold text-center text-[var(--color-title)]">Coleções</h2>
                         </div>
                         <div class="flex gap-4 overflow-x-auto pb-6 justify-center hide-scroll snap-x">
                             <a href="/{{ loja.slug_url }}/" class="snap-center whitespace-nowrap px-8 py-3.5 rounded-full glass-panel hover:bg-theme hover:text-white transition-all font-semibold text-sm">
-                                Todos
+                                Ver Tudo
                             </a>
                             {% for cat in categorias %}
                             <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="snap-center whitespace-nowrap px-8 py-3.5 rounded-full glass-panel hover:bg-theme hover:text-white transition-all font-semibold text-sm">
@@ -287,8 +285,8 @@
                         
                         <div class="flex justify-between items-end mb-12 px-2 border-b border-gray-200/50 pb-4">
                             <div>
-                                <span class="text-theme font-bold uppercase tracking-widest text-xs mb-1 block">Escolhas</span>
-                                <h2 class="text-4xl font-bold text-[var(--color-title)]">Especialidades</h2>
+                                <span class="text-theme font-bold uppercase tracking-widest text-xs mb-1 block">Curadoria</span>
+                                <h2 class="text-4xl font-bold text-[var(--color-title)]">Em Destaque</h2>
                             </div>
                             <button onclick="toggleLayout()" class="p-3 bg-white/50 rounded-full hover:bg-white transition-colors glass-panel" title="Mudar visualização">
                                 <i id="layout-icon" data-lucide="grid" class="w-5 h-5 text-gray-600"></i>
@@ -336,10 +334,6 @@
                                                 {% endif %}
                                             </div>
                                         </div>
-                                    </div>
-                                {% else %}
-                                    <div class="col-span-full text-center text-gray-400 py-20 w-full">
-                                        <p class="text-lg">Nenhum encanto cadastrado ainda.</p>
                                     </div>
                                 {% endfor %}
                             </div>
@@ -394,8 +388,8 @@
             {% if secao == 'blog' and posts and not loja.ocultar_blog %}
                 <section class="reveal py-24 container mx-auto px-4">
                     <div class="flex flex-col items-center justify-center mb-16">
-                        <span class="text-theme font-bold uppercase tracking-widest text-xs mb-2 block">Inspirações</span>
-                        <h2 class="text-4xl font-bold text-[var(--color-title)]">Diário Doce</h2>
+                        <span class="text-theme font-bold uppercase tracking-widest text-xs mb-2 block">Novidades</span>
+                        <h2 class="text-4xl font-bold text-[var(--color-title)]">Editorial</h2>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                         {% for post in posts %}
@@ -409,7 +403,7 @@
                                 <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ post.data }}</span>
                                 <h3 class="font-bold text-xl mt-3 mb-3 text-[var(--color-title)] leading-tight">{{ post.titulo }}</h3>
                                 <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed mb-6">{{ post.resumo }}</p>
-                                <span class="text-theme font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">Ler história <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                                <span class="text-theme font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">Ver mais <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
                             </div>
                         </div>
                         {% endfor %}
@@ -422,17 +416,17 @@
         <footer class="text-white py-20 mt-12 relative z-20 overflow-hidden" style="background-color: var(--color-title);" id="footer">
             <div class="container mx-auto px-4 text-center relative z-10">
                 <h4 class="font-bold text-3xl mb-6 tracking-tight">{{ loja.nome }}</h4>
-                <p class="text-sm mb-10 opacity-70 font-light max-w-md mx-auto">Criando momentos magicos e doces lembrancas em cada detalhe.</p>
+                <p class="text-sm mb-10 opacity-70 font-light max-w-md mx-auto">Excelência e dedicação em cada detalhe para você.</p>
                 
                 <div class="flex justify-center gap-8 text-xs font-semibold uppercase tracking-widest opacity-80 mb-16">
                     <a href="#" class="hover:text-theme transition-colors">Privacidade</a>
                     <a href="#" class="hover:text-theme transition-colors">Termos</a>
-                    <a href="#" class="hover:text-theme transition-colors">Instagram</a>
+                    <a href="#" class="hover:text-theme transition-colors">Social</a>
                 </div>
 
                 <div class="pt-8 border-t border-white/10">
                     <a href="/{{ loja.slug_url }}/admin" class="text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 opacity-40 hover:opacity-100 transition-opacity">
-                        <i data-lucide="lock" class="w-3 h-3"></i> Lojista
+                        <i data-lucide="lock" class="w-3 h-3"></i> Acesso Lojista
                     </a>
                 </div>
             </div>
@@ -464,7 +458,6 @@
                 <button onclick="finalizarNoZap()" class="w-full bg-black hover:bg-gray-800 text-white font-semibold py-5 rounded-[1.5rem] flex items-center justify-center gap-3 transition-transform active:scale-95 text-lg shadow-lg">
                     Finalizar Pedido <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </button>
-                <p class="text-[10px] font-semibold uppercase tracking-widest text-center text-gray-400 mt-6">Pagamento processado via WhatsApp</p>
             </div>
         </div>
     </div>
@@ -480,15 +473,10 @@
         });
 
         const lenis = new Lenis({
-            duration: 1.2,
+            duration: 1.4,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            orientation: 'vertical',
-            gestureOrientation: 'vertical',
             smoothWheel: true,
-            wheelMultiplier: 1,
-            smoothTouch: false,
-            touchMultiplier: 2,
-            infinite: false,
+            wheelMultiplier: 0.9,
         });
 
         function raf(time) {
@@ -509,14 +497,14 @@
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
         function createFallingElements() {
-            const items = ['🐰', '🥚', '🥕', '🍫', '🌸', '✨'];
-            for(let i = 0; i < 35; i++) {
+            const items = ['🐰', '🥕']; // Apenas coelho e cenoura
+            for(let i = 0; i < 10; i++) { // Quantidade reduzida para elegância
                 let el = document.createElement('div');
-                el.className = 'falling-item text-4xl opacity-80';
+                el.className = 'falling-item text-4xl opacity-0';
                 el.innerText = items[Math.floor(Math.random() * items.length)];
                 el.style.left = Math.random() * 100 + 'vw';
-                el.style.animationDuration = (Math.random() * 15 + 10) + 's'; 
-                el.style.animationDelay = (Math.random() * 10) + 's';
+                el.style.animationDuration = (Math.random() * 25 + 18) + 's'; // Velocidade reduzida
+                el.style.animationDelay = (Math.random() * 15) + 's';
                 document.body.appendChild(el);
             }
         }
@@ -524,11 +512,7 @@
 
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
-            if (menu.classList.contains('hidden')) {
-                menu.classList.remove('hidden');
-            } else {
-                menu.classList.add('hidden');
-            }
+            menu.classList.toggle('hidden');
         }
 
         let isCarousel = true;
@@ -594,8 +578,6 @@
             }
         }
 
-        function removeFromCart(idx) { cart.splice(idx, 1); saveCart(); }
-
         function addToCartPage(product) {
             let final = { ...product };
             final.nome_exibicao = product.nome;
@@ -625,7 +607,7 @@
                 let total = 0;
                 
                 if (cart.length === 0) {
-                    container.innerHTML = `<div class="text-center py-20 opacity-40 flex flex-col items-center"><i data-lucide="shopping-bag" class="w-12 h-12 mb-4"></i><p class="font-medium text-lg">Sua sacola esta vazia</p></div>`;
+                    container.innerHTML = `<div class="text-center py-20 opacity-40 flex flex-col items-center"><i data-lucide="shopping-bag" class="w-12 h-12 mb-4"></i><p class="font-medium text-lg">Vazio por aqui</p></div>`;
                 }
 
                 cart.forEach((item, i) => {
@@ -656,29 +638,15 @@
         }
 
         function finalizarNoZap() {
-            if (cart.length === 0) return alert("Adicione produtos primeiro!");
-            
-            let msg = `Ola! Vim do site e quero fechar meu pedido especial:\n\n`;
+            if (cart.length === 0) return alert("Adicione itens à sacola!");
+            let msg = `Olá! Tenho interesse nos seguintes itens:\n\n`;
             let total = 0;
-            
             cart.forEach(i => {
-                msg += `> ${i.qtd}x ${i.nome_exibicao}\n`;
-                if(i.consulte) {
-                     msg += `   (Preco sob Consulta)\n`;
-                } else if(i.preco) {
-                    msg += `   R$ ${(i.preco * i.qtd).toFixed(2)}\n`;
-                    total += i.preco * i.qtd;
-                } else {
-                    msg += `   (Sob Consulta)\n`;
-                }
+                msg += `• ${i.qtd}x ${i.nome_exibicao}\n`;
+                if(!i.consulte && i.preco) total += i.preco * i.qtd;
             });
-            
-            msg += `--------------------------------\n`;
-            msg += `*Total:* R$ ${total.toFixed(2).replace('.', ',')}\n`;
-            msg += `\nAguardo as instrucoes!`;
-
-            const url = `https://wa.me/${lojaPhone}?text=${encodeURIComponent(msg)}`;
-            window.open(url, '_blank');
+            msg += `\n*Total:* R$ ${total.toFixed(2).replace('.', ',')}`;
+            window.open(`https://wa.me/${lojaPhone}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
         updateCartUI();
@@ -690,28 +658,15 @@
 
         function showHeroSlide(index) {
             if (!heroSlides.length) return;
-            
             heroSlides.forEach(slide => {
                 slide.classList.remove('opacity-100', 'z-10');
                 slide.classList.add('opacity-0', 'z-0');
             });
-            
-            if (heroDots.length) {
-                heroDots.forEach(dot => {
-                    dot.classList.remove('opacity-100');
-                    dot.classList.add('opacity-40');
-                });
-            }
-
+            heroDots.forEach(dot => dot.classList.replace('opacity-100', 'opacity-40'));
             currentHeroSlide = (index + heroSlides.length) % heroSlides.length;
-            
-            heroSlides[currentHeroSlide].classList.remove('opacity-0', 'z-0');
-            heroSlides[currentHeroSlide].classList.add('opacity-100', 'z-10');
-            
-            if (heroDots.length) {
-                heroDots[currentHeroSlide].classList.remove('opacity-40');
-                heroDots[currentHeroSlide].classList.add('opacity-100');
-            }
+            heroSlides[currentHeroSlide].classList.replace('opacity-0', 'opacity-100');
+            heroSlides[currentHeroSlide].classList.add('z-10');
+            heroDots[currentHeroSlide].classList.replace('opacity-40', 'opacity-100');
         }
 
         function changeHeroSlide(direction) {
@@ -726,14 +681,10 @@
 
         function resetHeroInterval() {
             clearInterval(heroInterval);
-            if(heroSlides.length > 1) {
-                heroInterval = setInterval(() => changeHeroSlide(1), 5000);
-            }
+            if(heroSlides.length > 1) heroInterval = setInterval(() => changeHeroSlide(1), 6000);
         }
 
-        if(heroSlides.length > 1) {
-            resetHeroInterval();
-        }
+        if(heroSlides.length > 1) resetHeroInterval();
     </script>
 </body>
 </html>
