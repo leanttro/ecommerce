@@ -146,12 +146,45 @@
     {% for secao in layout %}
         
         {% if secao == 'banner' and not loja.ocultar_banner %}
-            <section class="slider-container relative w-full h-[350px] md:h-[500px] overflow-hidden">
-                {% if loja.banner1 %}
-                <div class="absolute inset-0">
-                    <img src="{{ loja.banner1 }}" class="w-full h-full object-cover">
+            <section class="slider-container relative w-full h-[350px] md:h-[500px] overflow-hidden group">
+                
+                <div id="banner-slider" class="flex transition-transform duration-500 ease-in-out w-full h-full">
+                    
+                    {% if loja.banner1 %}
+                    <div class="min-w-full h-full relative flex-shrink-0">
+                        {% if loja.linkbannerprincipal1 and loja.linkbannerprincipal1 != '#' %}
+                        <a href="{{ loja.linkbannerprincipal1 }}" class="block w-full h-full">
+                        {% endif %}
+                            <img src="{{ loja.banner1 }}" class="w-full h-full object-cover">
+                        {% if loja.linkbannerprincipal1 and loja.linkbannerprincipal1 != '#' %}
+                        </a>
+                        {% endif %}
                     </div>
+                    {% endif %}
+                    
+                    {% if loja.banner2 %}
+                    <div class="min-w-full h-full relative flex-shrink-0">
+                        {% if loja.linkbannerprincipal2 and loja.linkbannerprincipal2 != '#' %}
+                        <a href="{{ loja.linkbannerprincipal2 }}" class="block w-full h-full">
+                        {% endif %}
+                            <img src="{{ loja.banner2 }}" class="w-full h-full object-cover">
+                        {% if loja.linkbannerprincipal2 and loja.linkbannerprincipal2 != '#' %}
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                </div>
+                
+                {% if loja.banner1 and loja.banner2 %}
+                <button onclick="moveBanner(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 md:p-3 rounded-full shadow-lg hover:bg-white transition text-gray-700 opacity-70 hover:opacity-100 flex items-center justify-center">
+                    <i data-lucide="chevron-left" class="w-6 h-6"></i>
+                </button>
+                <button onclick="moveBanner(1)" class="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 md:p-3 rounded-full shadow-lg hover:bg-white transition text-gray-700 opacity-70 hover:opacity-100 flex items-center justify-center">
+                    <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                </button>
                 {% endif %}
+
             </section>
         {% endif %}
 
@@ -377,6 +410,30 @@
     <script>
         lucide.createIcons();
         const lojaPhone = "55{{ loja.whatsapp_comercial }}";
+
+        // --- LÓGICA DO BANNER (SLIDER) ---
+        let currentBannerIndex = 0;
+        function moveBanner(direction) {
+            const slider = document.getElementById('banner-slider');
+            if (!slider) return;
+            const slides = slider.children.length;
+            if (slides <= 1) return;
+            
+            currentBannerIndex += direction;
+            if (currentBannerIndex >= slides) currentBannerIndex = 0;
+            if (currentBannerIndex < 0) currentBannerIndex = slides - 1;
+            
+            slider.style.transform = `translateX(-${currentBannerIndex * 100}%)`;
+        }
+
+        // Auto slide a cada 5 segundos
+        setInterval(() => {
+            const slider = document.getElementById('banner-slider');
+            if(slider && slider.children.length > 1) {
+                moveBanner(1);
+            }
+        }, 5000);
+
 
         // --- FUNÇÃO DO MENU MOBILE ---
         function toggleMobileMenu() {
