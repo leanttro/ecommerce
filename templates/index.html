@@ -146,16 +146,16 @@
     {% for secao in layout %}
         
         {% if secao == 'banner' and not loja.ocultar_banner %}
-            <section class="slider-container relative w-full h-[350px] md:h-[500px] overflow-hidden group">
+            <section class="slider-container relative w-full overflow-hidden group bg-gray-50/50">
                 
-                <div id="banner-slider" class="flex transition-transform duration-500 ease-in-out w-full h-full">
+                <div id="banner-slider" class="flex transition-transform duration-500 ease-in-out w-full items-center">
                     
                     {% if loja.banner1 %}
-                    <div class="min-w-full h-full relative flex-shrink-0">
+                    <div class="min-w-full relative flex-shrink-0">
                         {% if loja.linkbannerprincipal1 and loja.linkbannerprincipal1 != '#' %}
-                        <a href="{{ loja.linkbannerprincipal1 }}" class="block w-full h-full">
+                        <a href="{{ loja.linkbannerprincipal1 }}" class="block w-full">
                         {% endif %}
-                            <img src="{{ loja.banner1 }}" class="w-full h-full object-cover">
+                            <img src="{{ loja.banner1 }}" class="w-full h-auto object-contain">
                         {% if loja.linkbannerprincipal1 and loja.linkbannerprincipal1 != '#' %}
                         </a>
                         {% endif %}
@@ -163,11 +163,11 @@
                     {% endif %}
                     
                     {% if loja.banner2 %}
-                    <div class="min-w-full h-full relative flex-shrink-0">
+                    <div class="min-w-full relative flex-shrink-0">
                         {% if loja.linkbannerprincipal2 and loja.linkbannerprincipal2 != '#' %}
-                        <a href="{{ loja.linkbannerprincipal2 }}" class="block w-full h-full">
+                        <a href="{{ loja.linkbannerprincipal2 }}" class="block w-full">
                         {% endif %}
-                            <img src="{{ loja.banner2 }}" class="w-full h-full object-cover">
+                            <img src="{{ loja.banner2 }}" class="w-full h-auto object-contain">
                         {% if loja.linkbannerprincipal2 and loja.linkbannerprincipal2 != '#' %}
                         </a>
                         {% endif %}
@@ -177,11 +177,11 @@
                 </div>
                 
                 {% if loja.banner1 and loja.banner2 %}
-                <button onclick="moveBanner(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 md:p-3 rounded-full shadow-lg hover:bg-white transition text-gray-700 opacity-70 hover:opacity-100 flex items-center justify-center">
-                    <i data-lucide="chevron-left" class="w-6 h-6"></i>
+                <button onclick="moveBanner(-1)" class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 md:p-3 rounded-full shadow-lg hover:bg-white transition text-gray-700 opacity-80 hover:opacity-100 flex items-center justify-center">
+                    <i data-lucide="chevron-left" class="w-5 h-5 md:w-6 h-6"></i>
                 </button>
-                <button onclick="moveBanner(1)" class="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 md:p-3 rounded-full shadow-lg hover:bg-white transition text-gray-700 opacity-70 hover:opacity-100 flex items-center justify-center">
-                    <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                <button onclick="moveBanner(1)" class="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 md:p-3 rounded-full shadow-lg hover:bg-white transition text-gray-700 opacity-80 hover:opacity-100 flex items-center justify-center">
+                    <i data-lucide="chevron-right" class="w-5 h-5 md:w-6 h-6"></i>
                 </button>
                 {% endif %}
 
