@@ -191,12 +191,39 @@
         {% for secao in layout %}
             
             {% if secao == 'banner' and not loja.ocultar_banner %}
-                <section class="reveal relative w-full h-[40vh] md:h-[60vh] overflow-hidden mb-12">
-                    {% if loja.banner1 %}
-                    <div class="absolute inset-0">
-                        <img src="{{ loja.banner1 }}" class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-[2s] ease-out">
+                <section class="reveal relative w-full h-[40vh] md:h-[60vh] overflow-hidden mb-12 group" id="hero-carousel">
+                    <div class="relative w-full h-full">
+                        {% if loja.banner1 %}
+                        <div class="hero-slide absolute inset-0 opacity-100 transition-opacity duration-1000 ease-in-out z-10">
+                            {% if loja.linkbanner1 %}<a href="{{ loja.linkbanner1 }}" class="w-full h-full block">{% endif %}
+                            <img src="{{ loja.banner1 }}" class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-[3s] ease-out">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] to-transparent opacity-80 pointer-events-none"></div>
+                            {% if loja.linkbanner1 %}</a>{% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        {% if loja.banner2 %}
+                        <div class="hero-slide absolute inset-0 opacity-0 transition-opacity duration-1000 ease-in-out z-0">
+                            {% if loja.linkbanner2 %}<a href="{{ loja.linkbanner2 }}" class="w-full h-full block">{% endif %}
+                            <img src="{{ loja.banner2 }}" class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-[3s] ease-out">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] to-transparent opacity-80 pointer-events-none"></div>
+                            {% if loja.linkbanner2 %}</a>{% endif %}
+                        </div>
+                        {% endif %}
                     </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] to-transparent opacity-80"></div>
+
+                    {% if loja.banner1 and loja.banner2 %}
+                    <button onclick="changeHeroSlide(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 glass-panel p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-lg">
+                        <i data-lucide="chevron-left" class="w-6 h-6 text-[var(--color-title)]"></i>
+                    </button>
+                    <button onclick="changeHeroSlide(1)" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 glass-panel p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-lg">
+                        <i data-lucide="chevron-right" class="w-6 h-6 text-[var(--color-title)]"></i>
+                    </button>
+                    
+                    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+                        <button onclick="goToHeroSlide(0)" class="hero-dot w-2.5 h-2.5 rounded-full bg-[var(--color-title)] opacity-100 transition-all duration-300 shadow-sm"></button>
+                        <button onclick="goToHeroSlide(1)" class="hero-dot w-2.5 h-2.5 rounded-full bg-[var(--color-title)] opacity-40 transition-all duration-300 shadow-sm"></button>
+                    </div>
                     {% endif %}
                 </section>
             {% endif %}
@@ -653,6 +680,58 @@
         }
 
         updateCartUI();
+
+        let currentHeroSlide = 0;
+        const heroSlides = document.querySelectorAll('.hero-slide');
+        const heroDots = document.querySelectorAll('.hero-dot');
+        let heroInterval;
+
+        function showHeroSlide(index) {
+            if (!heroSlides.length) return;
+            
+            heroSlides.forEach(slide => {
+                slide.classList.remove('opacity-100', 'z-10');
+                slide.classList.add('opacity-0', 'z-0');
+            });
+            
+            if (heroDots.length) {
+                heroDots.forEach(dot => {
+                    dot.classList.remove('opacity-100');
+                    dot.classList.add('opacity-40');
+                });
+            }
+
+            currentHeroSlide = (index + heroSlides.length) % heroSlides.length;
+            
+            heroSlides[currentHeroSlide].classList.remove('opacity-0', 'z-0');
+            heroSlides[currentHeroSlide].classList.add('opacity-100', 'z-10');
+            
+            if (heroDots.length) {
+                heroDots[currentHeroSlide].classList.remove('opacity-40');
+                heroDots[currentHeroSlide].classList.add('opacity-100');
+            }
+        }
+
+        function changeHeroSlide(direction) {
+            showHeroSlide(currentHeroSlide + direction);
+            resetHeroInterval();
+        }
+
+        function goToHeroSlide(index) {
+            showHeroSlide(index);
+            resetHeroInterval();
+        }
+
+        function resetHeroInterval() {
+            clearInterval(heroInterval);
+            if(heroSlides.length > 1) {
+                heroInterval = setInterval(() => changeHeroSlide(1), 5000);
+            }
+        }
+
+        if(heroSlides.length > 1) {
+            resetHeroInterval();
+        }
     </script>
 </body>
 </html>
