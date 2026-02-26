@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ loja.nome }} - Especial Páscoa</title>
+    <title>{{ loja.nome }} Especial Páscoa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family={{ loja.font_titulo }}:wght@400;700&family={{ loja.font_corpo }}:wght@300;400;600&display=swap');
         
         :root { 
             --primary: {{ loja.cor_primaria }}; 
-            --color-bg: {{ loja.cor_fundo or '#ffffff' }};
-            --color-title: {{ loja.cor_titulo or '#111827' }};
-            --color-text: {{ loja.cor_texto or '#374151' }};
+            --color-bg: {{ loja.cor_fundo or '#fafafa' }};
+            --color-title: {{ loja.cor_titulo or '#1d1d1f' }};
+            --color-text: {{ loja.cor_texto or '#515154' }};
             
             --font-head: '{{ loja.font_titulo }}', sans-serif;
             --font-body: '{{ loja.font_corpo }}', sans-serif;
@@ -25,49 +26,63 @@
             font-family: var(--font-body); 
             font-size: var(--font-size-base);
             color: var(--color-text);
-            /* Overlay suave para integrar o tema */
             background-color: var(--color-bg);
             position: relative;
+            overscroll-behavior: none;
         }
         
         h1, h2, h3, h4, .font-display { 
             font-family: var(--font-head); 
             color: var(--color-title);
+            letter-spacing: -0.02em;
         }
         
         .text-theme { color: var(--primary); }
         .bg-theme { background-color: var(--primary); }
         .border-theme { border-color: var(--primary); }
-        .hover\:bg-theme:hover { background-color: var(--primary); }
         
-        .custom-bg { background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(5px); }
-        .custom-title-color { color: var(--color-title); }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px) scale(0.98);
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
         
-        /* Ticker CSS */
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
         .ticker-wrap {
             width: 100%;
             overflow: hidden;
             white-space: nowrap;
             background: var(--primary);
-            color: var(--color-bg); 
+            color: #fff; 
             height: 35px;
             display: flex;
             align-items: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .ticker {
             display: flex;
             align-items: center;
             width: max-content;
             animation: ticker 40s linear infinite;
-            padding-left: 0;
         }
         .ticker span {
             display: inline-block;
             padding: 0 40px;
             font-size: 13px;
-            font-weight: bold;
+            font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         @keyframes ticker {
             0% { transform: translateX(0); }
@@ -77,7 +92,6 @@
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Animação de Queda - Tema Páscoa */
         .falling-item {
             position: fixed;
             top: -10%;
@@ -85,17 +99,34 @@
             user-select: none;
             pointer-events: none;
             animation: fall linear infinite;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
         }
         @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+            0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; }
         }
         
-        /* Ajuste para garantir que o conteúdo fique por cima da animação */
         .content-layer { position: relative; z-index: 10; }
+
+        .card-hover {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
+
+    <div id="preloader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white transition-transform duration-1000 ease-[cubic-bezier(0.7,0,0.3,1)]">
+        <div class="animate-bounce text-6xl mb-6">🐰</div>
+        <div class="h-1 w-32 bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-full bg-pink-400 w-full animate-pulse rounded-full"></div>
+        </div>
+    </div>
 
     <div class="content-layer">
         {% if loja.frase1 or loja.frase2 or loja.frase3 %}
@@ -117,39 +148,39 @@
         </div>
         {% endif %}
 
-        <nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg py-4 relative rounded-b-3xl">
-            <div class="container mx-auto px-4 min-h-[90px] flex items-center justify-center relative">
+        <nav class="sticky top-0 z-40 glass-panel py-4 transition-all duration-300">
+            <div class="container mx-auto px-4 min-h-[70px] flex items-center justify-center relative">
                 
-                <a href="/{{ loja.slug_url }}/" class="flex items-center justify-center z-10 transform -translate-y-2 md:-translate-y-3 hover:scale-105 transition-transform duration-300">
+                <a href="/{{ loja.slug_url }}/" class="flex items-center justify-center z-10 transform hover:scale-105 transition-transform duration-500 ease-out">
                     {% if loja.logo %}
-                        <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="h-20 md:h-28 w-auto object-contain transition-all">
+                        <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="h-16 md:h-24 w-auto object-contain transition-all drop-shadow-sm">
                     {% else %}
-                        <span class="text-3xl font-bold tracking-tight custom-title-color">{{ loja.nome }}</span>
+                        <span class="text-3xl font-bold tracking-tight text-[var(--color-title)]">{{ loja.nome }}</span>
                     {% endif %}
                 </a>
 
-                <div class="absolute right-4 flex items-center gap-2 md:gap-4 z-20">
-                     <button onclick="toggleMobileMenu()" class="md:hidden p-2 custom-title-color hover:text-pink-500 transition">
-                        <i data-lucide="menu" class="w-7 h-7"></i>
+                <div class="absolute right-4 flex items-center gap-3 z-20">
+                     <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-[var(--color-title)] hover:text-pink-500 transition">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
                     </button>
                     
-                    <button onclick="toggleCart()" class="relative p-2 hover:text-pink-500 transition custom-title-color">
-                        <i data-lucide="shopping-bag" class="w-7 h-7"></i>
-                        <span id="cart-count-badge" class="absolute top-0 right-0 bg-theme text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold hidden shadow-md">0</span>
+                    <button onclick="toggleCart()" class="relative p-3 bg-white/50 rounded-full hover:bg-white transition-all shadow-sm border border-gray-100 group text-[var(--color-title)]">
+                        <i data-lucide="shopping-bag" class="w-6 h-6 group-hover:scale-110 transition-transform"></i>
+                        <span id="cart-count-badge" class="absolute -top-1 -right-1 bg-theme text-white text-[11px] w-5 h-5 flex items-center justify-center rounded-full font-bold hidden shadow-sm">0</span>
                     </button>
                 </div>
             </div>
             
-            <div class="hidden md:flex justify-center py-3">
-                <ul class="flex gap-8 text-sm font-bold uppercase tracking-widest custom-title-color opacity-90">
-                    <li><a href="/{{ loja.slug_url }}/" class="hover:text-theme flex items-center gap-1 transition"><i data-lucide="home" class="w-4 h-4"></i> Início</a></li>
-                    <li><a href="#categorias" class="hover:text-theme flex items-center gap-1 transition"><i data-lucide="gift" class="w-4 h-4"></i> Produtos</a></li>
-                    <li><a href="#footer" class="hover:text-theme flex items-center gap-1 transition"><i data-lucide="phone" class="w-4 h-4"></i> Contato</a></li>
+            <div class="hidden md:flex justify-center pt-2 pb-1">
+                <ul class="flex gap-10 text-xs font-semibold uppercase tracking-widest text-[var(--color-title)] opacity-80">
+                    <li><a href="/{{ loja.slug_url }}/" class="hover:text-theme flex items-center gap-2 transition hover:opacity-100"><i data-lucide="home" class="w-3.5 h-3.5"></i> Início</a></li>
+                    <li><a href="#categorias" class="hover:text-theme flex items-center gap-2 transition hover:opacity-100"><i data-lucide="gift" class="w-3.5 h-3.5"></i> Produtos</a></li>
+                    <li><a href="#footer" class="hover:text-theme flex items-center gap-2 transition hover:opacity-100"><i data-lucide="phone" class="w-3.5 h-3.5"></i> Contato</a></li>
                 </ul>
             </div>
 
-            <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full custom-bg border-t border-gray-100 shadow-xl z-50 rounded-b-3xl">
-                <ul class="flex flex-col p-4 space-y-4 font-bold uppercase tracking-widest text-sm custom-title-color text-center">
+            <div id="mobile-menu" class="hidden absolute top-full left-0 w-full glass-panel border-t border-gray-100 shadow-xl z-50">
+                <ul class="flex flex-col p-6 space-y-4 font-semibold uppercase tracking-widest text-sm text-center">
                     <li><a href="/{{ loja.slug_url }}/" class="block hover:text-theme py-2" onclick="toggleMobileMenu()">Início</a></li>
                     <li><a href="#categorias" class="block hover:text-theme py-2" onclick="toggleMobileMenu()">Produtos</a></li>
                     <li><a href="#footer" class="block hover:text-theme py-2" onclick="toggleMobileMenu()">Contato</a></li>
@@ -160,38 +191,39 @@
         {% for secao in layout %}
             
             {% if secao == 'banner' and not loja.ocultar_banner %}
-                <section class="slider-container relative w-full h-[350px] md:h-[500px] overflow-hidden rounded-b-[3rem] shadow-sm mb-6">
+                <section class="reveal relative w-full h-[40vh] md:h-[60vh] overflow-hidden mb-12">
                     {% if loja.banner1 %}
                     <div class="absolute inset-0">
-                        <img src="{{ loja.banner1 }}" class="w-full h-full object-cover">
-                        </div>
+                        <img src="{{ loja.banner1 }}" class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-[2s] ease-out">
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] to-transparent opacity-80"></div>
                     {% endif %}
                 </section>
             {% endif %}
 
             {% if secao == 'busca' and not loja.ocultar_busca %}
-                <div class="py-6 custom-bg">
-                    <div class="container mx-auto px-4 max-w-xl">
-                        <form action="/{{ loja.slug_url }}/" method="GET" class="relative">
-                            <i data-lucide="search" class="absolute left-4 top-4 text-pink-400 w-5 h-5"></i>
-                            <input type="text" name="busca" placeholder="Busque por ovos, doces, chocolates..." class="w-full p-4 pl-12 rounded-full border-2 border-pink-100 focus:border-theme outline-none shadow-sm transition-all font-medium text-gray-700">
+                <div class="reveal py-4 px-4 relative z-20 -mt-16 md:-mt-24 mb-12">
+                    <div class="container mx-auto max-w-2xl">
+                        <form action="/{{ loja.slug_url }}/" method="GET" class="relative group">
+                            <i data-lucide="search" class="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-theme transition-colors"></i>
+                            <input type="text" name="busca" placeholder="Busque por doces e chocolates mágicos..." class="w-full p-5 pl-14 rounded-full glass-panel focus:outline-none focus:ring-2 focus:ring-pink-200 transition-all font-medium text-gray-700 placeholder-gray-400 text-lg shadow-lg">
                         </form>
                     </div>
                 </div>
             {% endif %}
 
             {% if secao == 'banners_menores' and not loja.ocultar_banners_menores %}
-            <section class="w-full custom-bg py-8">
+            <section class="reveal w-full py-10">
                 <div class="container mx-auto px-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {% if loja.bannermenor1 %}
-                        <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-3xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all">
-                            <img src="{{ loja.bannermenor1 }}" class="w-full h-auto object-cover">
+                        <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-[2.5rem] card-hover">
+                            <img src="{{ loja.bannermenor1 }}" class="w-full h-full object-cover aspect-[2/1] md:aspect-auto">
                         </a>
                         {% endif %}
                         {% if loja.bannermenor2 %}
-                        <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-3xl shadow-md hover:shadow-lg hover:scale-[1.02] transition-all">
-                            <img src="{{ loja.bannermenor2 }}" class="w-full h-auto object-cover">
+                        <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-[2.5rem] card-hover">
+                            <img src="{{ loja.bannermenor2 }}" class="w-full h-full object-cover aspect-[2/1] md:aspect-auto">
                         </a>
                         {% endif %}
                     </div>
@@ -200,18 +232,18 @@
             {% endif %}
 
             {% if secao == 'categorias' and not loja.ocultar_categorias %}
-                <section class="w-full custom-bg py-6" id="categorias">
+                <section class="reveal w-full py-12" id="categorias">
                     <div class="container mx-auto px-4">
-                        <h2 class="text-3xl font-bold mb-6 text-center custom-title-color px-2 flex items-center justify-center gap-2">
-                            🌸 {{ loja.titulo_categorias or 'Nossas Categorias' }} 🌸
-                        </h2>
-                        <div class="flex gap-4 overflow-x-auto pb-4 justify-center category-scroll hide-scroll">
-                            <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-8 py-3 rounded-full border-2 border-pink-200 hover:bg-theme hover:text-white hover:border-theme transition-all shadow-sm font-bold bg-white text-gray-700">
+                        <div class="flex flex-col items-center justify-center mb-10">
+                            <span class="text-theme font-bold uppercase tracking-widest text-xs mb-2">Descubra</span>
+                            <h2 class="text-4xl font-bold text-center text-[var(--color-title)]">Nossas Categorias</h2>
+                        </div>
+                        <div class="flex gap-4 overflow-x-auto pb-6 justify-center hide-scroll snap-x">
+                            <a href="/{{ loja.slug_url }}/" class="snap-center whitespace-nowrap px-8 py-3.5 rounded-full glass-panel hover:bg-theme hover:text-white transition-all font-semibold text-sm">
                                 Todos
                             </a>
-                            
                             {% for cat in categorias %}
-                            <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-8 py-3 rounded-full border-2 border-pink-100 hover:bg-theme hover:text-white hover:border-theme transition-all shadow-sm font-bold bg-white text-gray-700">
+                            <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="snap-center whitespace-nowrap px-8 py-3.5 rounded-full glass-panel hover:bg-theme hover:text-white transition-all font-semibold text-sm">
                                 {{ cat.nome }}
                             </a>
                             {% endfor %}
@@ -221,67 +253,70 @@
             {% endif %}
 
             {% if secao == 'produtos' and not loja.ocultar_produtos %}
-                <section class="w-full custom-bg pt-6 pb-16" id="produtos">
+                <section class="reveal w-full pt-8 pb-24" id="produtos">
                     <div class="container mx-auto px-4 relative">
                         
-                        <div class="relative flex justify-center items-center mb-10 px-2">
-                            <h2 class="text-3xl font-bold text-center custom-title-color flex items-center gap-2">
-                                🐰 {{ loja.titulo_produtos or 'Especialidades' }} 🥕
-                            </h2>
-                            <button onclick="toggleLayout()" class="absolute right-0 p-3 bg-pink-50 rounded-full hover:bg-pink-100 text-pink-600 transition shadow-sm" title="Mudar visualização">
-                                <i id="layout-icon" data-lucide="grid" class="w-5 h-5"></i>
+                        <div class="flex justify-between items-end mb-12 px-2 border-b border-gray-200/50 pb-4">
+                            <div>
+                                <span class="text-theme font-bold uppercase tracking-widest text-xs mb-1 block">Escolhas</span>
+                                <h2 class="text-4xl font-bold text-[var(--color-title)]">Especialidades</h2>
+                            </div>
+                            <button onclick="toggleLayout()" class="p-3 bg-white/50 rounded-full hover:bg-white transition-colors glass-panel" title="Mudar visualização">
+                                <i id="layout-icon" data-lucide="grid" class="w-5 h-5 text-gray-600"></i>
                             </button>
                         </div>
 
                         <div class="relative group">
                             
-                            <button onclick="scrollCarousel(-1)" id="btn-prev" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white p-3 rounded-full shadow-xl hover:bg-pink-50 transition hidden md:flex border border-pink-100 -ml-4">
-                                <i data-lucide="chevron-left" class="w-6 h-6 text-pink-600"></i>
+                            <button onclick="scrollCarousel(-1)" id="btn-prev" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 glass-panel p-4 rounded-full hover:scale-110 transition-all hidden md:flex -ml-6">
+                                <i data-lucide="chevron-left" class="w-5 h-5 text-gray-800"></i>
                             </button>
 
-                            <div id="products-container" class="flex gap-6 overflow-x-auto snap-x scroll-smooth pb-8 hide-scroll pt-2 px-2">
+                            <div id="products-container" class="flex gap-8 overflow-x-auto snap-x scroll-smooth pb-12 hide-scroll pt-4 px-2">
                                 {% for p in produtos %}
-                                    <div class="min-w-[170px] w-[170px] md:min-w-[260px] md:w-[260px] flex-none border-2 border-pink-50 rounded-[2rem] overflow-hidden hover:shadow-xl hover:border-pink-200 transition-all bg-white relative snap-start transform hover:-translate-y-2">
+                                    <div class="min-w-[200px] w-[200px] md:min-w-[280px] md:w-[280px] flex-none glass-panel rounded-[2.5rem] p-3 card-hover snap-start relative">
                                         {% if p.estoque == 0 %}
-                                            <div class="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-full z-10 shadow-md">
-                                                ESGOTADO
+                                            <div class="absolute top-6 right-6 bg-black/80 backdrop-blur-md text-white text-[10px] font-bold px-4 py-2 rounded-full z-10 uppercase tracking-wider">
+                                                Esgotado
                                             </div>
                                         {% endif %}
                                         
-                                        <div class="relative p-2">
+                                        <div class="relative overflow-hidden rounded-[2rem] bg-gray-50 aspect-square">
                                             <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
-                                                <img src="{{ p.imagem }}" class="w-full aspect-square object-cover rounded-[1.5rem] shadow-sm {{ 'opacity-50' if p.estoque == 0 }}">
+                                                <img src="{{ p.imagem }}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110 {{ 'opacity-60 grayscale' if p.estoque == 0 }}">
                                             </a>
                                             {% if p.estoque > 0 and not p.consulte %}
-                                            <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-0 right-0 transform translate-x-2 translate-y-2 bg-theme text-white w-12 h-12 rounded-full shadow-lg border-4 border-white hover:scale-110 transition flex items-center justify-center z-20">
-                                                <i data-lucide="plus" class="w-6 h-6"></i>
+                                            <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-4 right-4 bg-white text-[var(--color-title)] w-12 h-12 rounded-full shadow-lg hover:bg-theme hover:text-white transition-all duration-300 flex items-center justify-center z-20 group">
+                                                <i data-lucide="plus" class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300"></i>
                                             </button>
                                             {% endif %}
                                         </div>
 
-                                        <div class="p-5 text-center"> 
+                                        <div class="pt-6 pb-4 px-2 flex flex-col items-center"> 
                                             <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
-                                                <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight hover:text-theme transition">{{ p.nome }}</h3>
+                                                <h3 class="font-semibold text-[var(--color-title)] text-[15px] text-center line-clamp-2 leading-snug hover:text-theme transition-colors">{{ p.nome }}</h3>
                                             </a>
                                             
-                                            {% if p.consulte %}
-                                                <p class="text-pink-600 font-black text-lg mt-2 text-center bg-pink-50 rounded-full py-1">Consulte-nos</p>
-                                            {% elif p.estoque == 0 %}
-                                                <p class="text-gray-400 font-bold text-sm mt-2 text-center">Sem Estoque</p>
-                                            {% else %}
-                                                <p class="text-theme font-black text-xl mt-2 text-center">R$ {{ "%.2f"|format(p.preco) }}</p>
-                                            {% endif %}
+                                            <div class="mt-4">
+                                                {% if p.consulte %}
+                                                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-4 py-2 rounded-full">Sob Consulta</span>
+                                                {% elif p.estoque == 0 %}
+                                                    <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Indisponível</span>
+                                                {% else %}
+                                                    <span class="text-[var(--color-title)] font-bold text-xl tracking-tight">R$ {{ "%.2f"|format(p.preco) }}</span>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
                                 {% else %}
-                                    <div class="col-span-full text-center text-gray-400 py-10 w-full">
-                                        <p>Nenhum produto cadastrado.</p>
+                                    <div class="col-span-full text-center text-gray-400 py-20 w-full">
+                                        <p class="text-lg">Nenhum encanto cadastrado ainda.</p>
                                     </div>
                                 {% endfor %}
                             </div>
 
-                            <button onclick="scrollCarousel(1)" id="btn-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white p-3 rounded-full shadow-xl hover:bg-pink-50 transition flex border border-pink-100 -mr-4">
-                                <i data-lucide="chevron-right" class="w-6 h-6 text-pink-600"></i>
+                            <button onclick="scrollCarousel(1)" id="btn-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 glass-panel p-4 rounded-full hover:scale-110 transition-all hidden md:flex -mr-6">
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-800"></i>
                             </button>
                         </div>
                     </div>
@@ -289,31 +324,36 @@
             {% endif %}
             
             {% if secao == 'novidades' and novidades and not loja.ocultar_novidades %}
-                <section class="py-16 custom-bg">
+                <section class="reveal py-24 bg-white/40">
                     <div class="container mx-auto px-4">
-                        <h2 class="text-3xl font-bold mb-10 text-center flex items-center justify-center gap-2">⭐ {{ loja.titulo_novidades or 'Lançamentos' }} ⭐</h2>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div class="flex flex-col items-center justify-center mb-16">
+                            <span class="text-theme font-bold uppercase tracking-widest text-xs mb-2 block">Acabaram de chegar</span>
+                            <h2 class="text-4xl font-bold text-[var(--color-title)]">Lançamentos</h2>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
                              {% for p in novidades %}
-                            <div class="border-2 border-pink-50 rounded-3xl overflow-hidden bg-white hover:shadow-xl hover:-translate-y-2 transition-all p-2">
-                                <div class="relative">
+                            <div class="glass-panel rounded-[2rem] p-3 card-hover flex flex-col">
+                                <div class="relative overflow-hidden rounded-3xl bg-gray-50 aspect-square">
                                     <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
-                                        <img src="{{ p.imagem }}" class="w-full aspect-square object-cover rounded-2xl">
+                                        <img src="{{ p.imagem }}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
                                     </a>
                                     {% if p.estoque > 0 and not p.consulte %}
-                                    <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-0 right-0 transform translate-x-2 translate-y-2 bg-theme text-white w-10 h-10 rounded-full shadow-lg border-2 border-white hover:scale-110 transition flex items-center justify-center z-20">
-                                        <i data-lucide="plus" class="w-5 h-5"></i>
+                                    <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm text-gray-900 w-10 h-10 rounded-full shadow-sm hover:bg-theme hover:text-white transition-all flex items-center justify-center z-20">
+                                        <i data-lucide="plus" class="w-4 h-4"></i>
                                     </button>
                                     {% endif %}
                                 </div>
-                                <div class="p-4 text-center">
+                                <div class="pt-5 pb-3 px-2 flex-1 flex flex-col justify-between items-center">
                                     <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
-                                        <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight hover:text-theme transition">{{ p.nome }}</h3>
+                                        <h3 class="font-medium text-[var(--color-title)] text-sm text-center line-clamp-2 leading-relaxed">{{ p.nome }}</h3>
                                     </a>
-                                    {% if p.consulte %}
-                                        <p class="text-pink-600 font-bold text-lg mt-1 text-center bg-pink-50 rounded-full">Consulte</p>
-                                    {% else %}
-                                        <p class="text-theme font-black text-xl mt-1 text-center">R$ {{ "%.2f"|format(p.preco) }}</p>
-                                    {% endif %}
+                                    <div class="mt-3">
+                                        {% if p.consulte %}
+                                            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Consulte</span>
+                                        {% else %}
+                                            <span class="text-[var(--color-title)] font-semibold text-lg">R$ {{ "%.2f"|format(p.preco) }}</span>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                             {% endfor %}
@@ -323,19 +363,24 @@
             {% endif %}
 
             {% if secao == 'blog' and posts and not loja.ocultar_blog %}
-                <section class="py-16 container mx-auto px-4">
-                    <h2 class="text-3xl font-bold mb-10 text-center custom-title-color flex items-center justify-center gap-2">📖 {{ loja.titulo_blog or 'Dicas Fofas' }} 📖</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <section class="reveal py-24 container mx-auto px-4">
+                    <div class="flex flex-col items-center justify-center mb-16">
+                        <span class="text-theme font-bold uppercase tracking-widest text-xs mb-2 block">Inspirações</span>
+                        <h2 class="text-4xl font-bold text-[var(--color-title)]">Diário Doce</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                         {% for post in posts %}
-                        <div class="border-2 border-pink-50 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all bg-white hover:-translate-y-1">
+                        <div class="glass-panel rounded-[2.5rem] overflow-hidden card-hover group cursor-pointer" onclick="window.location='/{{ loja.slug_url }}/blog/{{ post.slug }}'">
                             {% if post.capa %}
-                            <img src="{{ post.capa }}" class="w-full h-48 object-cover">
+                            <div class="overflow-hidden aspect-[4/3]">
+                                <img src="{{ post.capa }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            </div>
                             {% endif %}
-                            <div class="p-6">
-                                <span class="text-xs font-bold text-pink-400 bg-pink-50 px-3 py-1 rounded-full uppercase">{{ post.data }}</span>
-                                <h3 class="font-bold text-xl mt-4 mb-2 text-gray-800">{{ post.titulo }}</h3>
-                                <p class="text-sm text-gray-500 line-clamp-3 leading-relaxed">{{ post.resumo }}</p>
-                                <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}" class="inline-block mt-4 text-theme font-bold text-sm hover:underline">Ler mais &rarr;</a>
+                            <div class="p-8">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ post.data }}</span>
+                                <h3 class="font-bold text-xl mt-3 mb-3 text-[var(--color-title)] leading-tight">{{ post.titulo }}</h3>
+                                <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed mb-6">{{ post.resumo }}</p>
+                                <span class="text-theme font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">Ler história <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
                             </div>
                         </div>
                         {% endfor %}
@@ -345,19 +390,20 @@
 
         {% endfor %}
 
-        <footer class="text-white py-16 mt-12 rounded-t-[3rem] shadow-[0_-10px_30px_rgba(0,0,0,0.05)] relative z-20" style="background-color: var(--primary);" id="footer">
-            <div class="container mx-auto px-4 text-center">
-                <h4 class="font-black text-2xl mb-4">{{ loja.nome }}</h4>
-                <p class="text-sm mb-8 opacity-90 font-medium">Feito com muito amor e açúcar! 💖</p>
+        <footer class="text-white py-20 mt-12 relative z-20 overflow-hidden" style="background-color: var(--color-title);" id="footer">
+            <div class="container mx-auto px-4 text-center relative z-10">
+                <h4 class="font-bold text-3xl mb-6 tracking-tight">{{ loja.nome }}</h4>
+                <p class="text-sm mb-10 opacity-70 font-light max-w-md mx-auto">Criando momentos magicos e doces lembrancas em cada detalhe.</p>
                 
-                <div class="flex justify-center gap-6 text-sm font-bold opacity-80">
-                    <a href="#" class="hover:underline hover:opacity-100 transition">Privacidade</a>
-                    <a href="#" class="hover:underline hover:opacity-100 transition">Termos</a>
+                <div class="flex justify-center gap-8 text-xs font-semibold uppercase tracking-widest opacity-80 mb-16">
+                    <a href="#" class="hover:text-theme transition-colors">Privacidade</a>
+                    <a href="#" class="hover:text-theme transition-colors">Termos</a>
+                    <a href="#" class="hover:text-theme transition-colors">Instagram</a>
                 </div>
 
-                <div class="mt-10 pt-8 border-t border-white/20">
-                    <a href="/{{ loja.slug_url }}/admin" class="text-xs font-bold uppercase tracking-widest hover:text-white flex items-center justify-center gap-2 opacity-70 hover:opacity-100 transition">
-                        <i data-lucide="lock" class="w-3 h-3"></i> Área do Lojista
+                <div class="pt-8 border-t border-white/10">
+                    <a href="/{{ loja.slug_url }}/admin" class="text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 opacity-40 hover:opacity-100 transition-opacity">
+                        <i data-lucide="lock" class="w-3 h-3"></i> Lojista
                     </a>
                 </div>
             </div>
@@ -365,30 +411,31 @@
     </div>
 
     <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" 
-       class="fixed bottom-6 right-6 z-[70] bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-[0_10px_25px_rgba(34,197,94,0.5)] transition-all hover:scale-110 flex items-center justify-center animate-bounce border-4 border-white">
-        <i data-lucide="message-circle" class="w-8 h-8"></i>
+       class="fixed bottom-8 right-8 z-[70] bg-black text-white p-5 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition-transform hover:scale-110 flex items-center justify-center">
+        <i data-lucide="message-circle" class="w-6 h-6"></i>
     </a>
 
-    <div id="cart-modal" class="fixed inset-0 z-[80] hidden">
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300" onclick="toggleCart()"></div>
-        <div class="absolute right-0 top-0 h-full w-full md:w-[450px] bg-white shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-full rounded-l-[2rem] overflow-hidden" id="cart-panel">
+    <div id="cart-modal" class="fixed inset-0 z-[80] hidden pointer-events-none">
+        <div class="absolute inset-0 bg-white/60 backdrop-blur-md transition-opacity duration-500 opacity-0 pointer-events-auto" id="cart-overlay" onclick="toggleCart()"></div>
+        <div class="absolute right-0 top-0 h-full w-full md:w-[480px] bg-white/90 backdrop-blur-xl shadow-2xl flex flex-col transform transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] translate-x-full rounded-l-[2.5rem] overflow-hidden pointer-events-auto border-l border-white/50" id="cart-panel">
             
-            <div class="p-6 border-b border-pink-100 flex justify-between items-center bg-pink-50/50">
-                <h2 class="font-black text-xl flex items-center gap-2 text-gray-800"><i data-lucide="shopping-bag" class="w-6 h-6 text-theme"></i> Sua Sacola</h2>
-                <button onclick="toggleCart()" class="text-gray-400 hover:text-pink-500 bg-white p-2 rounded-full shadow-sm transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <div class="px-8 py-6 border-b border-gray-100/50 flex justify-between items-center mt-4">
+                <h2 class="font-bold text-2xl tracking-tight text-[var(--color-title)]">Sua Sacola</h2>
+                <button onclick="toggleCart()" class="text-gray-400 hover:text-black transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
             
-            <div class="flex-1 overflow-y-auto p-6 space-y-6" id="cart-items"></div>
+            <div class="flex-1 overflow-y-auto p-8 space-y-8 hide-scroll" id="cart-items"></div>
 
-            <div class="p-6 border-t border-pink-100 bg-white space-y-4 shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
-                <div class="flex justify-between items-center text-xl font-black pt-2">
-                    <span class="text-gray-600">Total:</span><span id="cart-total" class="text-theme">R$ 0,00</span>
+            <div class="p-8 bg-gray-50/50 backdrop-blur-md border-t border-gray-100/50">
+                <div class="flex justify-between items-end mb-8">
+                    <span class="text-sm font-semibold text-gray-500 uppercase tracking-widest">Total Estimado</span>
+                    <span id="cart-total" class="text-3xl font-bold text-[var(--color-title)] tracking-tight">R$ 0,00</span>
                 </div>
                 
-                <button onclick="finalizarNoZap()" class="w-full bg-green-500 hover:bg-green-600 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(34,197,94,0.3)] hover:shadow-[0_12px_25px_rgba(34,197,94,0.4)] transition-all active:scale-95 text-lg">
-                    <i data-lucide="message-circle" class="w-6 h-6"></i> ENVIAR PEDIDO
+                <button onclick="finalizarNoZap()" class="w-full bg-black hover:bg-gray-800 text-white font-semibold py-5 rounded-[1.5rem] flex items-center justify-center gap-3 transition-transform active:scale-95 text-lg shadow-lg">
+                    Finalizar Pedido <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </button>
-                <p class="text-xs font-bold text-center text-gray-400">Pagamento combinado no WhatsApp 🐰</p>
+                <p class="text-[10px] font-semibold uppercase tracking-widest text-center text-gray-400 mt-6">Pagamento processado via WhatsApp</p>
             </div>
         </div>
     </div>
@@ -397,27 +444,55 @@
         lucide.createIcons();
         const lojaPhone = "55{{ loja.whatsapp_comercial }}";
 
-        // --- EFEITO PÁSCOA (ITENS CAINDO) ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('preloader').style.transform = 'translateY(-100%)';
+            }, 800);
+        });
+
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            orientation: 'vertical',
+            gestureOrientation: 'vertical',
+            smoothWheel: true,
+            wheelMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
         function createFallingElements() {
-            // Emojis fofos
-            const emojis = ['🐰', '🥚', '🥕', '🍫', '🌸', '✨'];
-            for(let i = 0; i < 20; i++) {
+            const items = ['🐰', '🥚', '🥕', '🍫', '🌸', '✨'];
+            for(let i = 0; i < 15; i++) {
                 let el = document.createElement('div');
-                el.className = 'falling-item text-2xl md:text-3xl opacity-20';
-                el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-                // Posição horizontal aleatória
+                el.className = 'falling-item text-3xl opacity-30';
+                el.innerText = items[Math.floor(Math.random() * items.length)];
                 el.style.left = Math.random() * 100 + 'vw';
-                // Duração da queda aleatória entre 10s e 25s
-                el.style.animationDuration = (Math.random() * 15 + 10) + 's'; 
-                // Delay aleatório para não caírem juntos
-                el.style.animationDelay = (Math.random() * 10) + 's';
+                el.style.animationDuration = (Math.random() * 20 + 15) + 's'; 
+                el.style.animationDelay = (Math.random() * 15) + 's';
                 document.body.appendChild(el);
             }
         }
         document.addEventListener('DOMContentLoaded', createFallingElements);
 
-
-        // --- MENU MOBILE ---
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             if (menu.classList.contains('hidden')) {
@@ -427,7 +502,6 @@
             }
         }
 
-        // --- LAYOUT LISTA/GRADE ---
         let isCarousel = true;
         const container = document.getElementById('products-container');
         const btnPrev = document.getElementById('btn-prev');
@@ -437,7 +511,7 @@
         function toggleLayout() {
             isCarousel = !isCarousel;
             if(isCarousel) {
-                if(container) container.className = "flex gap-6 overflow-x-auto snap-x scroll-smooth pb-8 hide-scroll pt-2 px-2";
+                if(container) container.className = "flex gap-8 overflow-x-auto snap-x scroll-smooth pb-12 hide-scroll pt-4 px-2";
                 if(btnPrev) btnPrev.style.display = "flex";
                 if(btnNext) btnNext.style.display = "flex";
                 if(iconLayout) {
@@ -445,7 +519,7 @@
                     lucide.createIcons();
                 }
             } else {
-                if(container) container.className = "grid grid-cols-2 md:grid-cols-4 gap-6 pt-2 px-2";
+                if(container) container.className = "grid grid-cols-2 md:grid-cols-4 gap-6 pt-4 px-2";
                 if(btnPrev) btnPrev.style.display = "none";
                 if(btnNext) btnNext.style.display = "none";
                 if(iconLayout) {
@@ -456,11 +530,10 @@
         }
 
         function scrollCarousel(direction) {
-            const scrollAmount = 300; 
+            const scrollAmount = 350; 
             if(container) container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
         }
 
-        // --- CARRINHO ---
         let cart = []; 
         try { cart = JSON.parse(localStorage.getItem('cart_v2') || '[]'); } catch(e) { cart = []; }
 
@@ -469,12 +542,18 @@
         function toggleCart() {
             const modal = document.getElementById('cart-modal');
             const panel = document.getElementById('cart-panel');
+            const overlay = document.getElementById('cart-overlay');
+            
             if (modal.classList.contains('hidden')) {
                 modal.classList.remove('hidden');
-                setTimeout(() => panel.classList.remove('translate-x-full'), 10);
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                    panel.classList.remove('translate-x-full');
+                }, 10);
             } else {
                 panel.classList.add('translate-x-full');
-                setTimeout(() => modal.classList.add('hidden'), 300);
+                overlay.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 500);
             }
         }
 
@@ -517,28 +596,26 @@
                 let total = 0;
                 
                 if (cart.length === 0) {
-                    container.innerHTML = `<div class="text-center py-12 opacity-50 flex flex-col items-center"><div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4"><i data-lucide="shopping-bag" class="w-8 h-8 text-gray-400"></i></div><p class="font-bold">Sua sacola está vazia.</p></div>`;
+                    container.innerHTML = `<div class="text-center py-20 opacity-40 flex flex-col items-center"><i data-lucide="shopping-bag" class="w-12 h-12 mb-4"></i><p class="font-medium text-lg">Sua sacola esta vazia</p></div>`;
                 }
 
                 cart.forEach((item, i) => {
                     let itemPrice = item.consulte ? 0 : (item.preco || 0);
                     total += itemPrice * item.qtd;
                     
-                    let priceDisplay = item.consulte ? "Sob Consulta" : `R$ ${(itemPrice * item.qtd).toFixed(2).replace('.',',')}`;
+                    let priceDisplay = item.consulte ? "Consultar" : `R$ ${(itemPrice * item.qtd).toFixed(2).replace('.',',')}`;
 
                     container.innerHTML += `
-                        <div class="flex gap-4 border-b border-pink-50 pb-5 last:border-0">
-                            <img src="${item.imagem}" class="w-20 h-20 object-cover rounded-2xl bg-gray-100 shadow-sm">
+                        <div class="flex gap-6 group">
+                            <img src="${item.imagem}" class="w-24 h-24 object-cover rounded-[1.5rem] bg-gray-50">
                             <div class="flex-1 min-w-0 flex flex-col justify-center">
-                                <h4 class="font-bold text-sm text-gray-800 line-clamp-2 leading-snug mb-2">${item.nome_exibicao}</h4>
+                                <h4 class="font-semibold text-sm text-[var(--color-title)] line-clamp-2 leading-snug mb-3">${item.nome_exibicao}</h4>
                                 <div class="flex justify-between items-end mt-auto">
-                                    <span class="text-theme font-black text-md">${priceDisplay}</span>
-                                    <div class="flex items-center gap-1 bg-pink-50 rounded-xl p-1 border border-pink-100 shadow-sm">
-                                        <button onclick="changeQty(${i}, -1)" class="w-6 h-6 flex items-center justify-center text-pink-600 hover:bg-white rounded-lg transition font-bold">-</button>
-                                        <span class="text-xs font-bold text-gray-800 w-5 text-center">${item.qtd}</span>
-                                        <button onclick="changeQty(${i}, 1)" class="w-6 h-6 flex items-center justify-center text-pink-600 hover:bg-white rounded-lg transition font-bold">+</button>
-                                        <div class="w-px h-4 bg-pink-200 mx-1"></div>
-                                        <button onclick="removeFromCart(${i})" class="w-6 h-6 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-white rounded-lg transition"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                                    <span class="text-[var(--color-title)] font-bold text-lg tracking-tight">${priceDisplay}</span>
+                                    <div class="flex items-center gap-2 bg-gray-50 rounded-full px-2 py-1">
+                                        <button onclick="changeQty(${i}, -1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-black rounded-full transition font-medium">-</button>
+                                        <span class="text-xs font-semibold text-gray-800 w-4 text-center">${item.qtd}</span>
+                                        <button onclick="changeQty(${i}, 1)" class="w-7 h-7 flex items-center justify-center text-gray-500 hover:text-black rounded-full transition font-medium">+</button>
                                     </div>
                                 </div>
                             </div>
@@ -552,13 +629,13 @@
         function finalizarNoZap() {
             if (cart.length === 0) return alert("Adicione produtos primeiro!");
             
-            let msg = `🐰 Olá! Vim do site e quero fechar meu pedido de Páscoa:\n\n`;
+            let msg = `Ola! Vim do site e quero fechar meu pedido especial:\n\n`;
             let total = 0;
             
             cart.forEach(i => {
-                msg += `— ${i.qtd}x ${i.nome_exibicao}\n`;
+                msg += `> ${i.qtd}x ${i.nome_exibicao}\n`;
                 if(i.consulte) {
-                     msg += `   (Preço sob Consulta)\n`;
+                     msg += `   (Preco sob Consulta)\n`;
                 } else if(i.preco) {
                     msg += `   R$ ${(i.preco * i.qtd).toFixed(2)}\n`;
                     total += i.preco * i.qtd;
@@ -568,8 +645,8 @@
             });
             
             msg += `--------------------------------\n`;
-            msg += `*💰 Total:* R$ ${total.toFixed(2).replace('.', ',')}\n`;
-            msg += `\nAguardo as instruções de pagamento! 🥕`;
+            msg += `*Total:* R$ ${total.toFixed(2).replace('.', ',')}\n`;
+            msg += `\nAguardo as instrucoes!`;
 
             const url = `https://wa.me/${lojaPhone}?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
