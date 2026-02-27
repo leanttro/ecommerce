@@ -871,7 +871,7 @@ def recuperar_senha(loja_slug):
             if enviado:
                 flash('Link de recuperação enviado para seu e-mail.', 'success')
             else:
-                flash('Erro ao enviar o e-mail. Tente novamente mais tarde.', 'error')
+                flash('Erro ao enviar  o e-mail. Tente novamente mais tarde.', 'error')
         else:
             flash('E-mail não corresponde ao cadastro desta loja.', 'error')
     
