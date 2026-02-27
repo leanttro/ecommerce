@@ -356,8 +356,8 @@ def cadastro():
 
 
 # ROTA INDEX A VITRINE DA LOJA
-# Atualizado removeu prefixo loja e adicionada tipagem explicita string
-@app.route('/<string:loja_slug>/')
+# Atualizado removeu prefixo loja
+@app.route('/<loja_slug>/')
 def index(loja_slug):
     if not g.loja: 
         return "Loja não encontrada", 404
@@ -465,8 +465,8 @@ def index(loja_slug):
 
 
 # ROTA DETALHE DO PRODUTO
-# Atualizado removeu prefixo loja e adicionada tipagem explicita string
-@app.route('/<string:loja_slug>/produto/<string:slug>')
+# Atualizado removeu prefixo loja
+@app.route('/<loja_slug>/produto/<slug>')
 def produto(loja_slug, slug):
     if not g.loja: return "Loja não encontrada", 404
 
@@ -513,8 +513,8 @@ def produto(loja_slug, slug):
 
 
 # ROTA ADMIN LOGIN
-# Atualizado removeu prefixo loja e adicionada tipagem explicita string
-@app.route('/<string:loja_slug>/admin', methods=['GET', 'POST'])
+# Atualizado removeu prefixo loja
+@app.route('/<loja_slug>/admin', methods=['GET', 'POST'])
 def admin_login(loja_slug):
     if not g.loja:
         return "Loja não encontrada", 404
@@ -544,8 +544,8 @@ def admin_login(loja_slug):
 
 
 # ROTA PAINEL DE EDIÇÃO
-# Atualizado removeu prefixo loja e adicionada tipagem explicita string
-@app.route('/<string:loja_slug>/admin/painel', methods=['GET', 'POST'])
+# Atualizado removeu prefixo loja
+@app.route('/<loja_slug>/admin/painel', methods=['GET', 'POST'])
 def admin_painel(loja_slug):
     if not g.loja: return redirect('/')
     
@@ -649,8 +649,8 @@ def admin_painel(loja_slug):
                            posts=posts)
 
 # CRUD CATEGORIAS
-# Atualizado removeu prefixo loja e adicionada tipagem explicita string
-@app.route('/<string:loja_slug>/admin/categoria/salvar', methods=['POST'])
+# Atualizado removeu prefixo loja
+@app.route('/<loja_slug>/admin/categoria/salvar', methods=['POST'])
 def admin_salvar_categoria(loja_slug):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
     
@@ -681,9 +681,9 @@ def admin_salvar_categoria(loja_slug):
 
     return redirect(f'/{loja_slug}/admin/painel#categorias')
 
-# Atualizado removeu prefixo loja e adicionada tipagem explicita string
+# Atualizado removeu prefixo loja
 # CORREÇÃO DE ROTA Removido int id para id para aceitar UUID
-@app.route('/<string:loja_slug>/admin/categoria/excluir/<string:id>')
+@app.route('/<loja_slug>/admin/categoria/excluir/<id>')
 def admin_excluir_categoria(loja_slug, id):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
     
@@ -702,8 +702,8 @@ def admin_excluir_categoria(loja_slug, id):
 
 
 # CRUD PRODUTOS
-# Atualizado removeu prefixo loja e adicionada tipagem explicita string
-@app.route('/<string:loja_slug>/admin/produto/salvar', methods=['POST'])
+# Atualizado removeu prefixo loja
+@app.route('/<loja_slug>/admin/produto/salvar', methods=['POST'])
 def admin_salvar_produto(loja_slug):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
     
@@ -770,9 +770,9 @@ def admin_salvar_produto(loja_slug):
     # CORREÇÃO Redireciona para produtos
     return redirect(f'/{loja_slug}/admin/painel#produtos')
 
-# Atualizado removeu prefixo loja e adicionada tipagem explicita string
+# Atualizado removeu prefixo loja
 # CORREÇÃO DE ROTA Removido int id para id para aceitar UUID Resolvido erro 404
-@app.route('/<string:loja_slug>/admin/produto/excluir/<string:id>')
+@app.route('/<loja_slug>/admin/produto/excluir/<id>')
 def admin_excluir_produto(loja_slug, id):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
     
@@ -791,8 +791,8 @@ def admin_excluir_produto(loja_slug, id):
 
 
 # CRUD POSTS BLOG
-# Atualizado removeu prefixo loja e adicionada tipagem explicita string
-@app.route('/<string:loja_slug>/admin/post/salvar', methods=['POST'])
+# Atualizado removeu prefixo loja
+@app.route('/<loja_slug>/admin/post/salvar', methods=['POST'])
 def admin_salvar_post(loja_slug):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
     
@@ -828,9 +828,9 @@ def admin_salvar_post(loja_slug):
 
     return redirect(f'/{loja_slug}/admin/painel#blog')
 
-# Atualizado removeu prefixo loja e adicionada tipagem explicita string
+# Atualizado removeu prefixo loja
 # CORREÇÃO DE ROTA Removido int id para id
-@app.route('/<string:loja_slug>/admin/post/excluir/<string:id>')
+@app.route('/<loja_slug>/admin/post/excluir/<id>')
 def admin_excluir_post(loja_slug, id):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
     
@@ -849,8 +849,8 @@ def admin_excluir_post(loja_slug, id):
 
 
 # ROTA RECUPERAR SENHA
-# Atualizado removeu prefixo loja e adicionada tipagem explicita string
-@app.route('/<string:loja_slug>/recuperar-senha', methods=['GET', 'POST'])
+# Atualizado removeu prefixo loja
+@app.route('/<loja_slug>/recuperar-senha', methods=['GET', 'POST'])
 def recuperar_senha(loja_slug):
     if not g.loja: return redirect('/')
 
@@ -882,8 +882,8 @@ def recuperar_senha(loja_slug):
     loja_visual = {**g.loja, "logo": get_img_url(g.loja.get('logo')), "slug_url": loja_slug}
     return render_template('esqueceu_senha.html', loja=loja_visual)
 
-# Atualizado removeu prefixo loja e adicionada tipagem explicita string
-@app.route('/<string:loja_slug>/nova-senha/<string:token>', methods=['GET', 'POST'])
+# Atualizado removeu prefixo loja
+@app.route('/<loja_slug>/nova-senha/<token>', methods=['GET', 'POST'])
 def nova_senha(loja_slug, token):
     r = requests.get(f"{DIRECTUS_URL}/items/lojas?filter[reset_token][_eq]={token}", headers=get_headers())
     data = r.json().get('data')
