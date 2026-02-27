@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 
 # Carrega variáveis de ambiente
 load_dotenv()
@@ -23,6 +24,8 @@ app.url_map.strict_slashes = False
 
 # Em produção defina uma SECRET_KEY fixa no .env
 app.secret_key = os.getenv("SECRET_KEY", "chave_secreta_super_segura_saas_2026")
+
+serializer = URLSafeTimedSerializer(app.secret_key)
 
 # CONFIGURAÇÃO DE DOMÍNIO BASE
 DOMINIO_BASE = "leanttro.com"
@@ -858,15 +861,10 @@ def recuperar_senha(loja_slug):
         email = request.form.get('email')
         
         if email == g.loja.get('email'):
-            token = str(uuid.uuid4())
-            expiracao = (datetime.now() + timedelta(hours=1)).isoformat()
-            
-            requests.patch(f"{DIRECTUS_URL}/items/lojas/{g.loja_id}", 
-                         headers=get_headers(),
-                         json={'reset_token': token, 'reset_expires': expiracao})
+            token = serializer.dumps(email, salt='recuperacao-senha-loja')
             
             # Atualizado link para o formato clean URL
-            link = f"{DOMINIO_BASE}/{loja_slug}/nova-senha/{token}"
+            link = f"{DOMINIO_BASE}/{loja_slug}/reset-senha/{token}"
             print(f" LINK RECUPERAÇÃO: {link} ")
             
             # Chama a função de envio de e-mail
@@ -883,25 +881,22 @@ def recuperar_senha(loja_slug):
     return render_template('esqueceu_senha.html', loja=loja_visual)
 
 # Atualizado removeu prefixo loja
-@app.route('/<loja_slug>/nova-senha/<token>', methods=['GET', 'POST'])
-def nova_senha(loja_slug, token):
-    r = requests.get(f"{DIRECTUS_URL}/items/lojas?filter[reset_token][_eq]={token}", headers=get_headers())
+@app.route('/<loja_slug>/reset-senha/<token>', methods=['GET', 'POST'])
+def reset_senha(loja_slug, token):
+    try:
+        email = serializer.loads(token, salt='recuperacao-senha-loja', max_age=3600)
+    except SignatureExpired:
+        return "O link de recuperação expirou. Solicite um novo.", 400
+    except BadSignature:
+        return "O link de recuperação é inválido.", 400
+
+    r = requests.get(f"{DIRECTUS_URL}/items/lojas?filter[email][_eq]={email}", headers=get_headers())
     data = r.json().get('data')
     
     if not data: 
-        return "Link inválido ou expirado.", 400
+        return "Loja não encontrada para este e-mail.", 400
     
     loja_alvo = data[0]
-
-    # SEGURANÇA Validação de Expiração do Token
-    expiracao_str = loja_alvo.get('reset_expires')
-    if expiracao_str:
-        try:
-            expiracao = datetime.fromisoformat(expiracao_str)
-            if datetime.now() > expiracao:
-                return "Token expirado. Por favor, solicite uma nova recuperação de senha.", 400
-        except ValueError:
-            pass
 
     if request.method == 'POST':
         nova = request.form.get('senha')
@@ -909,7 +904,7 @@ def nova_senha(loja_slug, token):
         
         requests.patch(f"{DIRECTUS_URL}/items/lojas/{loja_alvo['id']}", 
                      headers=get_headers(),
-                     json={'senha_admin': hash_senha, 'reset_token': None, 'reset_expires': None})
+                     json={'senha_admin': hash_senha})
         
         flash('Senha alterada com sucesso! Faça login.', 'success')
         return redirect(f'/{loja_slug}/admin')
