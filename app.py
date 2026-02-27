@@ -883,7 +883,7 @@ def recuperar_senha(loja_slug):
     return render_template('esqueceu_senha.html', loja=loja_visual)
 
 # Atualizado removeu prefixo loja
-@app.route('/<loja_slug>/novasenha/<token>', methods=['GET', 'POST'])
+@app.route('/<loja_slug>/nova-senha/<token>', methods=['GET', 'POST'])
 def nova_senha(loja_slug, token):
     r = requests.get(f"{DIRECTUS_URL}/items/lojas?filter[reset_token][_eq]={token}", headers=get_headers())
     data = r.json().get('data')
