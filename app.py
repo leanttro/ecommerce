@@ -17,17 +17,17 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# --- CORREÇÃO DE ERRO 404 (BARRAS NA URL) ---
-# Isso faz o sistema aceitar tanto "/slug" quanto "/slug/"
+# CORREÇÃO DE ERRO 404 BARRAS NA URL
+# Isso faz o sistema aceitar tanto slug quanto slug/
 app.url_map.strict_slashes = False 
 
-# Em produção, defina uma SECRET_KEY fixa no .env
+# Em produção defina uma SECRET_KEY fixa no .env
 app.secret_key = os.getenv("SECRET_KEY", "chave_secreta_super_segura_saas_2026")
 
-# --- CONFIGURAÇÃO DE DOMÍNIO BASE ---
+# CONFIGURAÇÃO DE DOMÍNIO BASE
 DOMINIO_BASE = "leanttro.com"
 
-# --- CONFIGURAÇÕES GERAIS ---
+# CONFIGURAÇÕES GERAIS
 # Remove barra final da URL para evitar erros de concatenação
 DIRECTUS_URL = os.getenv("DIRECTUS_URL", "https://api2.leanttro.com").rstrip('/')
 DIRECTUS_TOKEN = os.getenv("DIRECTUS_TOKEN", "") 
@@ -35,18 +35,18 @@ SUPERFRETE_TOKEN = os.getenv("SUPERFRETE_TOKEN", "")
 SUPERFRETE_URL = os.getenv("SUPERFRETE_URL", "https://api.superfrete.com/api/v0/calculator")
 CEP_ORIGEM_PADRAO = "01026000" # Fallback se a loja não tiver CEP configurado
 
-# --- CONFIGURAÇÕES DE E-MAIL (SMTP) ---
+# CONFIGURAÇÕES DE E-MAIL SMTP
 SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
 SMTP_USER = os.getenv("SMTP_USER", "")
 SMTP_PASS = os.getenv("SMTP_PASS", "")
 
-# --- BLACKLIST DE ROTAS (PALAVRAS RESERVADAS) ---
+# BLACKLIST DE ROTAS PALAVRAS RESERVADAS
 # Rotas que não devem ser tratadas como SLUG de loja
-# ADICIONADO 'catalogo' AQUI PARA NÃO CONFUNDIR COM LOJA
+# ADICIONADO catalogo AQUI PARA NÃO CONFUNDIR COM LOJA
 BLACKLIST_ROTAS = ['static', 'cadastro', 'catalogo', 'login', 'logout', 'api', 'admin', 'favicon.ico']
 
-# --- SEGURANÇA: RATE LIMITING NA MEMÓRIA ---
+# SEGURANÇA RATE LIMITING NA MEMÓRIA
 RATE_LIMIT_DATA = {}
 MAX_REQUESTS = 5
 TIME_WINDOW = 60 # segundos
@@ -61,14 +61,14 @@ def check_rate_limit(ip, action):
     # Limpa requisições antigas fora da janela de tempo
     RATE_LIMIT_DATA[key] = [t for t in RATE_LIMIT_DATA[key] if current_time - t < TIME_WINDOW]
     
-    # Se atingiu o limite, bloqueia
+    # Se atingiu o limite bloqueia
     if len(RATE_LIMIT_DATA[key]) >= MAX_REQUESTS:
         return False
     
     RATE_LIMIT_DATA[key].append(current_time)
     return True
 
-# --- SEGURANÇA: BLOQUEIO DE BOTS ---
+# SEGURANÇA BLOQUEIO DE BOTS
 BLOCKED_USER_AGENTS = ['python-requests', 'curl', 'postmanruntime', 'wget', 'urllib', 'bot', 'spider', 'crawler']
 
 @app.before_request
@@ -78,7 +78,7 @@ def block_bots():
         if bot in user_agent:
             return "Acesso negado. Tráfego automatizado não permitido.", 403
 
-# --- FUNÇÕES AUXILIARES ---
+# FUNÇÕES AUXILIARES
 def get_headers():
     return {"Authorization": f"Bearer {DIRECTUS_TOKEN}", "Content-Type": "application/json"}
 
@@ -87,14 +87,14 @@ def get_upload_headers():
     return {"Authorization": f"Bearer {DIRECTUS_TOKEN}"}
 
 def get_img_url(image_id_or_obj):
-    """Trata URLs de imagens vindas do Directus (ID, Objeto ou URL completa)"""
+    # Trata URLs de imagens vindas do Directus ID Objeto ou URL completa
     if not image_id_or_obj: return ""
     if isinstance(image_id_or_obj, dict): return f"{DIRECTUS_URL}/assets/{image_id_or_obj.get('id')}"
     if isinstance(image_id_or_obj, str) and image_id_or_obj.startswith('http'): return image_id_or_obj
     return f"{DIRECTUS_URL}/assets/{image_id_or_obj}"
 
 def upload_file_to_directus(file_storage):
-    """Faz upload de arquivo para o Directus e retorna o ID"""
+    # Faz upload de arquivo para o Directus e retorna o ID
     try:
         url = f"{DIRECTUS_URL}/files"
         filename = secure_filename(file_storage.filename)
@@ -132,10 +132,10 @@ def enviar_email_recuperacao(destinatario, link, nome_loja):
 
         Você solicitou a recuperação de senha para a loja {nome_loja}.
         
-        Acesse o link abaixo para criar uma nova senha (este link expira em 1 hora):
+        Acesse o link abaixo para criar uma nova senha este link expira em 1 hora:
         https://{link}
         
-        Se você não solicitou isso, ignore este e-mail.
+        Se você não solicitou isso ignore este e-mail.
         
         Atenciosamente,
         Equipe Leanttro
@@ -153,14 +153,12 @@ def enviar_email_recuperacao(destinatario, link, nome_loja):
         print(f"Erro ao enviar e-mail: {e}")
         return False
 
-# --- MIDDLEWARE: IDENTIFICAÇÃO DA LOJA (DOMÍNIO OU PATH) ---
+# MIDDLEWARE IDENTIFICAÇÃO DA LOJA DOMÍNIO OU PATH
 @app.before_request
 def identificar_loja():
-    """
-    Identifica qual loja está sendo acessada.
-    Prioridade 1: Domínio Próprio (Ex: lojadaju.com.br)
-    Prioridade 2: Path Slug (Ex: leanttro.com/doces)
-    """
+    # Identifica qual loja está sendo acessada.
+    # Prioridade 1 Domínio Próprio Ex lojadaju.com.br
+    # Prioridade 2 Path Slug Ex leanttro.com/doces
     
     # Ignora arquivos estáticos
     if request.path.startswith('/static'):
@@ -180,9 +178,9 @@ def identificar_loja():
     headers = get_headers()
     loja_encontrada = None
 
-    # 1. VERIFICAÇÃO DE DOMÍNIO PRÓPRIO
+    # 1 VERIFICAÇÃO DE DOMÍNIO PRÓPRIO
     # Se não for o domínio principal do SaaS nem localhost
-    # Nota: catalogo.leanttro.com cairá aqui, mas não achará loja, o que é correto (ele é landing page)
+    # Nota catalogo.leanttro.com cairá aqui mas não achará loja o que é correto ele é landing page
     if host not in ['leanttro.com', 'www.leanttro.com', 'localhost', '127.0.0.1']:
         try:
             url = f"{DIRECTUS_URL}/items/lojas?filter[dominio_proprio][_eq]={host}&fields=*.*"
@@ -193,8 +191,8 @@ def identificar_loja():
         except Exception as e:
             print(f"Erro Middleware Domínio: {e}")
 
-    # 2. VERIFICAÇÃO DE PATH (SLUG)
-    # Se não achou por domínio, tenta pelo primeiro segmento da URL
+    # 2 VERIFICAÇÃO DE PATH SLUG
+    # Se não achou por domínio tenta pelo primeiro segmento da URL
     # Verifica se o primeiro segmento NÃO é uma palavra reservada
     if not loja_encontrada and primeiro_segmento and primeiro_segmento not in BLACKLIST_ROTAS:
         g.slug_atual = primeiro_segmento
@@ -206,12 +204,12 @@ def identificar_loja():
         except Exception as e:
             print(f"Erro Middleware Slug: {e}")
 
-    # SE A LOJA FOI IDENTIFICADA (Por Domínio ou Slug), configura o ambiente
+    # SE A LOJA FOI IDENTIFICADA Por Domínio ou Slug configura o ambiente
     if loja_encontrada:
         g.loja = loja_encontrada
         g.loja_id = g.loja['id']
         
-        # Tratamento de Layout e Configs Visuais (Fallback se vazio)
+        # Tratamento de Layout e Configs Visuais Fallback se vazio
         if not g.loja.get('layout_order'):
             g.loja['layout_order'] = "banner,busca,categorias,produtos,banners_menores,novidades,blog,footer"
         
@@ -223,39 +221,39 @@ def identificar_loja():
         
         g.layout_list = g.loja['layout_order'].split(',')
         
-        # Adiciona URL base para templates (Se for domínio próprio, pode ser / ou mantém slug)
-        # Mantendo compatibilidade com rotas path-based:
+        # Adiciona URL base para templates Se for domínio próprio pode ser / ou mantém slug
+        # Mantendo compatibilidade com rotas path-based
         g.loja['base_url'] = f"/{g.slug_atual}"
 
-# --- ROTA RAIZ DO SAAS ---
+# ROTA RAIZ DO SAAS
 @app.route('/')
 def home_saas():
     host = request.host.split(':')[0]
     
-    # 1. Se for o subdomínio da Landing Page
+    # 1 Se for o subdomínio da Landing Page
     if 'catalogo.leanttro.com' in host:
         return render_template('catalogo.html')
 
-    # 2. Se for domínio próprio de cliente (já identificado no middleware)
+    # 2 Se for domínio próprio de cliente já identificado no middleware
     if g.loja:
-        # Chama a função index da loja (definida abaixo)
+        # Chama a função index da loja definida abaixo
         return index(g.slug_atual)
 
-    # 3. Caso contrário (leanttro.com raiz), mostra a Landing Page também
+    # 3 Caso contrário leanttro.com raiz mostra a Landing Page também
     return render_template('catalogo.html')
 
-# --- ROTA ESPECÍFICA DA LANDING PAGE ---
-# Garante que /catalogo funcione sem tentar buscar loja
+# ROTA ESPECÍFICA DA LANDING PAGE
+# Garante que catalogo funcione sem tentar buscar loja
 @app.route('/catalogo')
 def landing_page_rota():
     return render_template('catalogo.html')
 
-# --- ROTA DE CADASTRO (CRIAR NOVA LOJA) ---
+# ROTA DE CADASTRO CRIAR NOVA LOJA
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
     
     if request.method == 'POST':
-        # SEGURANÇA: Verifica Rate Limit (Proteção contra criação em massa/spam)
+        # SEGURANÇA Verifica Rate Limit Proteção contra criação em massa spam
         client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
         if not check_rate_limit(client_ip, 'cadastro'):
             flash('Muitas tentativas de cadastro. Por favor, tente novamente mais tarde.', 'error')
@@ -271,20 +269,20 @@ def cadastro():
         whatsapp = request.form.get('whatsapp', '').replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
         senha = request.form.get('senha')
 
-        # Link agora é baseado na raiz (clean URL)
+        # Link agora é baseado na raiz clean URL
         link_loja = f"{DOMINIO_BASE}/{slug}"
 
-        # 1. Validações Básicas
+        # 1 Validações Básicas
         if not all([nome, slug, email, whatsapp, senha]):
             flash('Preencha todos os campos obrigatórios.', 'error')
             return render_template('cadastro.html')
 
-        # 2. Verifica palavras reservadas
+        # 2 Verifica palavras reservadas
         if slug in BLACKLIST_ROTAS:
-             flash(f'O endereço "{slug}" não é permitido. Escolha outro.', 'error')
+             flash(f'O endereço {slug} não é permitido. Escolha outro.', 'error')
              return render_template('cadastro.html')
 
-        # 3. Verifica se já existe Slug ou Email
+        # 3 Verifica se já existe Slug ou Email
         headers = get_headers()
         filtro = f"?filter[_or][0][slug][_eq]={slug}&filter[_or][1][email][_eq]={email}"
         try:
@@ -292,7 +290,7 @@ def cadastro():
             if check.status_code == 200 and len(check.json()['data']) > 0:
                 existing = check.json()['data'][0]
                 if existing.get('slug') == slug:
-                    flash(f'O endereço "{slug}" já está em uso. Escolha outro.', 'error')
+                    flash(f'O endereço {slug} já está em uso. Escolha outro.', 'error')
                 else:
                     flash('Este e-mail já possui uma loja cadastrada.', 'error')
                 return render_template('cadastro.html')
@@ -301,7 +299,7 @@ def cadastro():
             flash('Erro de conexão ao verificar disponibilidade.', 'error')
             return render_template('cadastro.html')
 
-        # 4. Cria a Loja com Configurações Padrão
+        # 4 Cria a Loja com Configurações Padrão
         senha_hash = generate_password_hash(senha)
 
         payload = {
@@ -335,13 +333,13 @@ def cadastro():
                 data = r.json().get('data')
                 novo_id = data['id']
                 
-                # --- LOGIN AUTOMÁTICO ---
+                # LOGIN AUTOMÁTICO
                 session['loja_admin_id'] = novo_id
                 session.permanent = True
                 
                 flash('Loja criada com sucesso!', 'success')
                 
-                # --- REDIRECIONA PARA O PAINEL COM A NOVA URL (SEM /LOJA) ---
+                # REDIRECIONA PARA O PAINEL COM A NOVA URL SEM LOJA
                 return redirect(f"/{slug}/admin/painel")
             else:
                 try:
@@ -357,8 +355,8 @@ def cadastro():
     return render_template('cadastro.html')
 
 
-# --- ROTA: INDEX (A VITRINE DA LOJA) ---
-# Atualizado: removeu prefixo /loja
+# ROTA INDEX A VITRINE DA LOJA
+# Atualizado removeu prefixo loja
 @app.route('/<loja_slug>/')
 def index(loja_slug):
     if not g.loja: 
@@ -366,7 +364,7 @@ def index(loja_slug):
 
     headers = get_headers()
     
-    # 1. Busca Categorias
+    # 1 Busca Categorias
     categorias = []
     try:
         url_cat = f"{DIRECTUS_URL}/items/categorias?filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published&sort=sort"
@@ -374,7 +372,7 @@ def index(loja_slug):
         if r_cat.status_code == 200: categorias = r_cat.json()['data']
     except: pass
 
-    # 2. Busca Produtos
+    # 2 Busca Produtos
     cat_filter = request.args.get('categoria')
     busca_query = request.args.get('busca') 
     
@@ -426,7 +424,7 @@ def index(loja_slug):
     except Exception as e:
         print(f"Erro produtos: {e}")
 
-    # 3. Busca Posts
+    # 3 Busca Posts
     posts = []
     try:
         url_blog = f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published&limit=3&sort=-date_created"
@@ -466,8 +464,8 @@ def index(loja_slug):
                          directus_url=DIRECTUS_URL)
 
 
-# --- ROTA: DETALHE DO PRODUTO ---
-# Atualizado: removeu prefixo /loja
+# ROTA DETALHE DO PRODUTO
+# Atualizado removeu prefixo loja
 @app.route('/<loja_slug>/produto/<slug>')
 def produto(loja_slug, slug):
     if not g.loja: return "Loja não encontrada", 404
@@ -514,8 +512,8 @@ def produto(loja_slug, slug):
     return "Produto não encontrado nesta loja", 404
 
 
-# --- ROTA: ADMIN LOGIN ---
-# Atualizado: removeu prefixo /loja
+# ROTA ADMIN LOGIN
+# Atualizado removeu prefixo loja
 @app.route('/<loja_slug>/admin', methods=['GET', 'POST'])
 def admin_login(loja_slug):
     if not g.loja:
@@ -525,7 +523,7 @@ def admin_login(loja_slug):
         return redirect(f'/{loja_slug}/admin/painel')
 
     if request.method == 'POST':
-        # SEGURANÇA: Verifica Rate Limit (Proteção contra força bruta no login)
+        # SEGURANÇA Verifica Rate Limit Proteção contra força bruta no login
         client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
         if not check_rate_limit(client_ip, 'login'):
             flash('Muitas tentativas de login. Por favor, aguarde alguns minutos.', 'error')
@@ -545,8 +543,8 @@ def admin_login(loja_slug):
     return render_template('login_admin.html', loja=loja_visual)
 
 
-# --- ROTA: PAINEL DE EDIÇÃO ---
-# Atualizado: removeu prefixo /loja
+# ROTA PAINEL DE EDIÇÃO
+# Atualizado removeu prefixo loja
 @app.route('/<loja_slug>/admin/painel', methods=['GET', 'POST'])
 def admin_painel(loja_slug):
     if not g.loja: return redirect('/')
@@ -646,8 +644,8 @@ def admin_painel(loja_slug):
                            produtos=produtos, 
                            posts=posts)
 
-# --- CRUD CATEGORIAS ---
-# Atualizado: removeu prefixo /loja
+# CRUD CATEGORIAS
+# Atualizado removeu prefixo loja
 @app.route('/<loja_slug>/admin/categoria/salvar', methods=['POST'])
 def admin_salvar_categoria(loja_slug):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
@@ -679,18 +677,28 @@ def admin_salvar_categoria(loja_slug):
 
     return redirect(f'/{loja_slug}/admin/painel#categorias')
 
-# Atualizado: removeu prefixo /loja
-# CORREÇÃO DE ROTA: Removido <int:id> para <id> para aceitar UUID
+# Atualizado removeu prefixo loja
+# CORREÇÃO DE ROTA Removido int id para id para aceitar UUID
 @app.route('/<loja_slug>/admin/categoria/excluir/<id>')
 def admin_excluir_categoria(loja_slug, id):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
-    requests.delete(f"{DIRECTUS_URL}/items/categorias/{id}", headers=get_headers())
-    flash('Categoria removida!', 'success')
+    
+    # PROTEÇÃO IDOR INÍCIO
+    headers = get_headers()
+    check = requests.get(f"{DIRECTUS_URL}/items/categorias/{id}?fields=loja_id", headers=headers)
+    
+    if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
+        requests.delete(f"{DIRECTUS_URL}/items/categorias/{id}", headers=headers)
+        flash('Categoria removida!', 'success')
+    else:
+        flash('Acesso negado ou item não encontrado.', 'error')
+    # PROTEÇÃO IDOR FIM
+        
     return redirect(f'/{loja_slug}/admin/painel#categorias')
 
 
-# --- CRUD PRODUTOS ---
-# Atualizado: removeu prefixo /loja
+# CRUD PRODUTOS
+# Atualizado removeu prefixo loja
 @app.route('/<loja_slug>/admin/produto/salvar', methods=['POST'])
 def admin_salvar_produto(loja_slug):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
@@ -726,7 +734,7 @@ def admin_salvar_produto(loja_slug):
     if not prod_id and nome:
         payload["slug"] = gerar_slug(nome) + "-" + str(uuid.uuid4())[:4]
 
-    # Upload da Imagem Principal (Destaque)
+    # Upload da Imagem Principal Destaque
     f = request.files.get('imagem')
     if f and f.filename:
         fid = upload_file_to_directus(f)
@@ -755,21 +763,31 @@ def admin_salvar_produto(loja_slug):
     except Exception as e:
         flash(f'Erro interno ao salvar produto: {e}', 'error')
         
-    # CORREÇÃO: Redireciona para #produtos
+    # CORREÇÃO Redireciona para produtos
     return redirect(f'/{loja_slug}/admin/painel#produtos')
 
-# Atualizado: removeu prefixo /loja
-# CORREÇÃO DE ROTA: Removido <int:id> para <id> para aceitar UUID (Resolvido erro 404)
+# Atualizado removeu prefixo loja
+# CORREÇÃO DE ROTA Removido int id para id para aceitar UUID Resolvido erro 404
 @app.route('/<loja_slug>/admin/produto/excluir/<id>')
 def admin_excluir_produto(loja_slug, id):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
-    requests.delete(f"{DIRECTUS_URL}/items/produtos/{id}", headers=get_headers())
-    flash('Produto removido!', 'success')
+    
+    # PROTEÇÃO IDOR INÍCIO
+    headers = get_headers()
+    check = requests.get(f"{DIRECTUS_URL}/items/produtos/{id}?fields=loja_id", headers=headers)
+    
+    if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
+        requests.delete(f"{DIRECTUS_URL}/items/produtos/{id}", headers=headers)
+        flash('Produto removido!', 'success')
+    else:
+        flash('Acesso negado ou item não encontrado.', 'error')
+    # PROTEÇÃO IDOR FIM
+        
     return redirect(f'/{loja_slug}/admin/painel#produtos')
 
 
-# --- CRUD POSTS (BLOG) ---
-# Atualizado: removeu prefixo /loja
+# CRUD POSTS BLOG
+# Atualizado removeu prefixo loja
 @app.route('/<loja_slug>/admin/post/salvar', methods=['POST'])
 def admin_salvar_post(loja_slug):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
@@ -806,18 +824,28 @@ def admin_salvar_post(loja_slug):
 
     return redirect(f'/{loja_slug}/admin/painel#blog')
 
-# Atualizado: removeu prefixo /loja
-# CORREÇÃO DE ROTA: Removido <int:id> para <id>
+# Atualizado removeu prefixo loja
+# CORREÇÃO DE ROTA Removido int id para id
 @app.route('/<loja_slug>/admin/post/excluir/<id>')
 def admin_excluir_post(loja_slug, id):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
-    requests.delete(f"{DIRECTUS_URL}/items/posts/{id}", headers=get_headers())
-    flash('Post removido!', 'success')
+    
+    # PROTEÇÃO IDOR INÍCIO
+    headers = get_headers()
+    check = requests.get(f"{DIRECTUS_URL}/items/posts/{id}?fields=loja_id", headers=headers)
+    
+    if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
+        requests.delete(f"{DIRECTUS_URL}/items/posts/{id}", headers=headers)
+        flash('Post removido!', 'success')
+    else:
+        flash('Acesso negado ou item não encontrado.', 'error')
+    # PROTEÇÃO IDOR FIM
+        
     return redirect(f'/{loja_slug}/admin/painel#blog')
 
 
-# --- ROTA: RECUPERAR SENHA ---
-# Atualizado: removeu prefixo /loja
+# ROTA RECUPERAR SENHA
+# Atualizado removeu prefixo loja
 @app.route('/<loja_slug>/recuperar-senha', methods=['GET', 'POST'])
 def recuperar_senha(loja_slug):
     if not g.loja: return redirect('/')
@@ -835,7 +863,7 @@ def recuperar_senha(loja_slug):
             
             # Atualizado link para o formato clean URL
             link = f"{DOMINIO_BASE}/{loja_slug}/nova-senha/{token}"
-            print(f"--- LINK RECUPERAÇÃO: {link} ---")
+            print(f" LINK RECUPERAÇÃO: {link} ")
             
             # Chama a função de envio de e-mail
             enviado = enviar_email_recuperacao(email, link, g.loja.get('nome'))
@@ -850,7 +878,7 @@ def recuperar_senha(loja_slug):
     loja_visual = {**g.loja, "logo": get_img_url(g.loja.get('logo')), "slug_url": loja_slug}
     return render_template('esqueceu_senha.html', loja=loja_visual)
 
-# Atualizado: removeu prefixo /loja
+# Atualizado removeu prefixo loja
 @app.route('/<loja_slug>/nova-senha/<token>', methods=['GET', 'POST'])
 def nova_senha(loja_slug, token):
     r = requests.get(f"{DIRECTUS_URL}/items/lojas?filter[reset_token][_eq]={token}", headers=get_headers())
@@ -861,7 +889,7 @@ def nova_senha(loja_slug, token):
     
     loja_alvo = data[0]
 
-    # SEGURANÇA: Validação de Expiração do Token
+    # SEGURANÇA Validação de Expiração do Token
     expiracao_str = loja_alvo.get('reset_expires')
     if expiracao_str:
         try:
@@ -885,18 +913,18 @@ def nova_senha(loja_slug, token):
     return render_template('nova_senha.html', token=token)
 
 
-# --- API FRETE ---
+# API FRETE
 @app.route('/api/calcular-frete', methods=['POST'])
 def api_frete():
     return jsonify([]) 
 
 
-# --- LOGOUT ---
+# LOGOUT
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect('/')
 
-# --- INICIALIZAÇÃO ---
+# INICIALIZAÇÃO
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
