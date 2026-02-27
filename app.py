@@ -266,7 +266,7 @@ def cadastro():
         slug_input = request.form.get('slug')
         
         # Garante slug limpo
-        slug = slug_input.lower().strip().replace(' ', '-') if slug_input else ""
+        slug = slug_input.lower().strip().replace(' ', '-').replace('/', '-').replace('.', '') if slug_input else ""
         
         email = request.form.get('email').strip()
         whatsapp = request.form.get('whatsapp', '').replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
@@ -881,7 +881,7 @@ def recuperar_senha(loja_slug):
     return render_template('esqueceu_senha.html', loja=loja_visual)
 
 # Atualizado removeu prefixo loja
-@app.route('/<loja_slug>/reset-senha/<token>', methods=['GET', 'POST'])
+@app.route('/<loja_slug>/reset-senha/<path:token>', methods=['GET', 'POST'])
 def reset_senha(loja_slug, token):
     try:
         email = serializer.loads(token, salt='recuperacao-senha-loja', max_age=3600)
