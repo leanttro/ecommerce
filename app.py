@@ -594,6 +594,10 @@ def admin_painel(loja_slug):
             "ocultar_banners_menores": True if request.form.get('ocultar_banners_menores') else False
         }
         
+        nova_senha = request.form.get('nova_senha')
+        if nova_senha:
+            payload['senha_admin'] = generate_password_hash(nova_senha)
+        
         payload.update(files_map)
 
         try:
