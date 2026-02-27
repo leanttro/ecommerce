@@ -119,7 +119,7 @@ def gerar_slug(texto):
     texto = unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('utf-8')
     return texto.lower().strip().replace(' ', '-').replace('/', '-').replace('.', '')
 
-def enviar_email_recuperacao(destinatario, link, nome_loja):
+def send_reset_email(user_email, reset_url, nome_loja):
     if not SMTP_USER or not SMTP_PASS:
         print("Configurações de SMTP ausentes. E-mail não enviado.")
         return False
@@ -127,24 +127,11 @@ def enviar_email_recuperacao(destinatario, link, nome_loja):
     try:
         msg = MIMEMultipart()
         msg['From'] = f"Leanttro <{SMTP_USER}>"
-        msg['To'] = destinatario
+        msg['To'] = user_email
         msg['Subject'] = f"Recuperação de Senha - {nome_loja}"
 
-        corpo = f"""
-        Olá,
-
-        Você solicitou a recuperação de senha para a loja {nome_loja}.
-        
-        Acesse o link abaixo para criar uma nova senha este link expira em 1 hora:
-        https://{link}
-        
-        Se você não solicitou isso ignore este e-mail.
-        
-        Atenciosamente,
-        Equipe Leanttro
-        """
-        
-        msg.attach(MIMEText(corpo, 'plain', 'utf-8'))
+        body = f"Olá!\n\nVocê solicitou a redefinição da sua senha de acesso para a loja {nome_loja}.\n\nClique no link abaixo para criar uma nova senha. Este link expira em 30 minutos.\n\n{reset_url}\n\nSe você não fez este pedido, basta ignorar este e-mail.\n\nAtenciosamente,\nEquipe Leanttro"
+        msg.attach(MIMEText(body, 'plain', 'utf-8'))
 
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
         server.starttls()
@@ -153,7 +140,7 @@ def enviar_email_recuperacao(destinatario, link, nome_loja):
         server.quit()
         return True
     except Exception as e:
-        print(f"Erro ao enviar e-mail: {e}")
+        print(f"Erro ao enviar e-mail de recuperação: {e}")
         return False
 
 # MIDDLEWARE IDENTIFICAÇÃO DA LOJA DOMÍNIO OU PATH
@@ -851,65 +838,62 @@ def admin_excluir_post(loja_slug, id):
     return redirect(f'/{loja_slug}/admin/painel#blog')
 
 
-# ROTA RECUPERAR SENHA
-# Atualizado removeu prefixo loja
-@app.route('/<loja_slug>/recuperar-senha', methods=['GET', 'POST'])
-def recuperar_senha(loja_slug):
+# ROTA RECUPERAR SENHA (Estilo Copia)
+@app.route('/<loja_slug>/esqueci-senha', methods=['GET', 'POST'])
+def esqueci_senha(loja_slug):
     if not g.loja: return redirect('/')
+    error = None
+    success = None
 
     if request.method == 'POST':
-        email = request.form.get('email')
+        email = request.form.get('email', '').strip()
         
         if email == g.loja.get('email'):
-            token = serializer.dumps(email, salt='recuperacao-senha-loja')
+            token = serializer.dumps(email, salt='email-reset-salt')
             
-            # Atualizado link para o formato clean URL
-            link = f"{DOMINIO_BASE}/{loja_slug}/reset-senha/{token}"
-            print(f" LINK RECUPERAÇÃO: {link} ")
+            # Usando url_for com _external=True igual no app Copia
+            reset_url = url_for('reset_senha', token=token, _external=True)
             
-            # Chama a função de envio de e-mail
-            enviado = enviar_email_recuperacao(email, link, g.loja.get('nome'))
-            
-            if enviado:
-                flash('Link de recuperação enviado para seu e-mail.', 'success')
+            if send_reset_email(email, reset_url, g.loja.get('nome')):
+                success = "Um link de redefinição de senha foi enviado para o seu e-mail."
             else:
-                flash('Erro ao enviar  o e-mail. Tente novamente mais tarde.', 'error')
+                error = "Tivemos um problema ao enviar o e-mail. Verifique o servidor."
         else:
-            flash('E-mail não corresponde ao cadastro desta loja.', 'error')
+            error = "E-mail não corresponde ao cadastro desta loja."
     
     loja_visual = {**g.loja, "logo": get_img_url(g.loja.get('logo')), "slug_url": loja_slug}
-    return render_template('esqueceu_senha.html', loja=loja_visual)
+    return render_template('esqueci_senha.html', loja=loja_visual, error=error, success=success)
 
-# Atualizado removeu prefixo loja
-@app.route('/<loja_slug>/reset-senha/<path:token>', methods=['GET', 'POST'])
-def reset_senha(loja_slug, token):
+@app.route('/reset-senha/<token>', methods=['GET', 'POST'])
+def reset_senha(token):
     try:
-        email = serializer.loads(token, salt='recuperacao-senha-loja', max_age=3600)
-    except SignatureExpired:
-        return "O link de recuperação expirou. Solicite um novo.", 400
-    except BadSignature:
-        return "O link de recuperação é inválido.", 400
+        email = serializer.loads(token, salt='email-reset-salt', max_age=1800)
+    except Exception:
+        return render_template('reset_senha.html', error="O link de recuperação é inválido ou expirou.")
 
+    error = None
+    success = None
+    
     r = requests.get(f"{DIRECTUS_URL}/items/lojas?filter[email][_eq]={email}", headers=get_headers())
     data = r.json().get('data')
     
     if not data: 
-        return "Loja não encontrada para este e-mail.", 400
+        return render_template('reset_senha.html', error="Loja não encontrada para este e-mail.")
     
     loja_alvo = data[0]
 
     if request.method == 'POST':
-        nova = request.form.get('senha')
-        hash_senha = generate_password_hash(nova)
-        
-        requests.patch(f"{DIRECTUS_URL}/items/lojas/{loja_alvo['id']}", 
-                     headers=get_headers(),
-                     json={'senha_admin': hash_senha})
-        
-        flash('Senha alterada com sucesso! Faça login.', 'success')
-        return redirect(f'/{loja_slug}/admin')
+        new_password = request.form.get('password')
+        if new_password:
+            hash_senha = generate_password_hash(new_password)
+            requests.patch(f"{DIRECTUS_URL}/items/lojas/{loja_alvo['id']}", 
+                         headers=get_headers(),
+                         json={'senha_admin': hash_senha})
+            success = "Sua senha foi atualizada com sucesso! Você já pode fazer login."
+        else:
+            error = "A senha não pode ficar em branco."
 
-    return render_template('nova_senha.html', token=token)
+    return render_template('reset_senha.html', error=error, success=success, token=token, loja=loja_alvo)
 
 
 # API FRETE
