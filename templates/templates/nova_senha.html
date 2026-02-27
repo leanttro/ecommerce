@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Senha</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Como não temos o objeto loja aqui (vem via token), usamos cor padrão rosa */
+        :root { --primary: #db2777; }
+        .bg-theme { background-color: var(--primary); }
+        .text-theme { color: var(--primary); }
+        .ring-theme:focus { --tw-ring-color: var(--primary); }
+        .border-theme:focus { border-color: var(--primary); }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen flex items-center justify-center p-4 font-sans text-gray-800">
+
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-gray-100">
+        
+        <div class="p-8 text-center bg-gray-50/50 border-b border-gray-100">
+            <div class="h-12 w-12 bg-theme rounded-full flex items-center justify-center mx-auto mb-4 text-white">
+                <i data-lucide="lock" class="w-6 h-6"></i>
+            </div>
+            <h2 class="text-xl font-bold text-gray-900">Definir Nova Senha</h2>
+            <p class="text-sm text-gray-500 mt-2">Crie uma nova senha segura para sua loja.</p>
+        </div>
+
+        <div class="p-8">
+            <form method="POST" class="space-y-6">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Nova Senha</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="key" class="h-5 w-5 text-gray-400"></i>
+                        </div>
+                        <input type="password" name="senha" required placeholder="••••••••" minlength="6"
+                               class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 ring-theme border-theme transition-all">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-theme text-white font-bold py-3.5 px-4 rounded-xl shadow-lg hover:opacity-90 transition-all flex justify-center items-center gap-2">
+                    <i data-lucide="check" class="w-4 h-4"></i> ALTERAR SENHA
+                </button>
+            </form>
+        </div>
+    </div>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
