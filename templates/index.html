@@ -525,8 +525,6 @@
             
             saveCart();
             toggleCart();
-            
-            // Feedback visual no botão (opcional, mas não tem ID único por card, então deixamos o toggleCart abrir como feedback)
         }
 
         function updateCartUI() {
@@ -575,10 +573,6 @@
                 if(totalEl) totalEl.innerText = "R$ " + total.toFixed(2).replace('.', ',');
                 lucide.createIcons();
             }
-        }
-
-        function finalizingNoZap() {
-            finalizarNoZap();
         }
 
         function finalizarNoZap() {

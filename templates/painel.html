@@ -288,22 +288,31 @@
                     <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2"><i data-lucide="palette" class="text-pink-600"></i> Identidade Visual</h2>
 
                     <h3 class="font-bold text-gray-700 border-b pb-2 mt-4 mb-4">Tema da Loja</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                         <label class="border rounded-xl p-4 cursor-pointer flex items-center gap-3 transition-colors theme-selector {% if not loja.template_ativo or loja.template_ativo == 'index' %}ring-2 ring-pink-500 border-pink-500 bg-pink-50{% else %}hover:bg-gray-50{% endif %}" onclick="selectTheme(this)">
                             <input type="radio" name="template_ativo" value="index" class="hidden" {% if not loja.template_ativo or loja.template_ativo == 'index' %}checked{% endif %}>
-                            <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center border border-gray-200"><i data-lucide="layout" class="text-gray-500"></i></div>
+                            <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center border border-gray-200 flex-shrink-0"><i data-lucide="layout" class="text-gray-500"></i></div>
                             <div>
-                                <h4 class="font-bold text-gray-800">Tema Padrão</h4>
-                                <p class="text-xs text-gray-500">Visual limpo, elegante e focado nos produtos.</p>
+                                <h4 class="font-bold text-gray-800 text-sm">Tema Padrão</h4>
+                                <p class="text-[10px] text-gray-500">Visual limpo, focado em produtos com carrinho.</p>
                             </div>
                         </label>
                         
                         <label class="border rounded-xl p-4 cursor-pointer flex items-center gap-3 transition-colors theme-selector {% if loja.template_ativo == 'pascoa' %}ring-2 ring-pink-500 border-pink-500 bg-pink-50{% else %}hover:bg-gray-50{% endif %}" onclick="selectTheme(this)">
                             <input type="radio" name="template_ativo" value="pascoa" class="hidden" {% if loja.template_ativo == 'pascoa' %}checked{% endif %}>
-                            <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center border border-pink-200"><i data-lucide="rabbit" class="text-pink-500"></i></div>
+                            <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center border border-pink-200 flex-shrink-0"><i data-lucide="rabbit" class="text-pink-500"></i></div>
                             <div>
-                                <h4 class="font-bold text-pink-600">Especial Páscoa</h4>
-                                <p class="text-xs text-gray-500">Animações fofas, coelhos, ovos e muito movimento.</p>
+                                <h4 class="font-bold text-pink-600 text-sm">Especial Páscoa</h4>
+                                <p class="text-[10px] text-gray-500">Animações fofas, coelhos e carrinho de compras.</p>
+                            </div>
+                        </label>
+
+                        <label class="border rounded-xl p-4 cursor-pointer flex items-center gap-3 transition-colors theme-selector {% if loja.template_ativo == 'direto' %}ring-2 ring-pink-500 border-pink-500 bg-pink-50{% else %}hover:bg-gray-50{% endif %}" onclick="selectTheme(this)">
+                            <input type="radio" name="template_ativo" value="direto" class="hidden" {% if loja.template_ativo == 'direto' %}checked{% endif %}>
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center border border-green-200 flex-shrink-0"><i data-lucide="message-circle" class="text-green-600"></i></div>
+                            <div>
+                                <h4 class="font-bold text-green-700 text-sm">Catálogo Direto</h4>
+                                <p class="text-[10px] text-gray-500">Visual de vitrine. Sem carrinho, vai direto pro Whats.</p>
                             </div>
                         </label>
                     </div>
@@ -728,7 +737,7 @@
             toggleModal('categoriaModal');
         }
 
-        // --- CRUD PRODUTOS E VARIANTES (ATUALIZADO PARA GRUPOS) ---
+        // --- CRUD PRODUTOS E VARIANTES (COM TIPO_PRECO) ---
         let currentVariantes = [];
 
         function renderVariantes() {
@@ -741,9 +750,15 @@
                 
                 grupo.opcoes.forEach((op, oIdx) => {
                     opcoesHTML += `
-                        <div class="flex gap-2 items-center mt-2 pl-4 border-l-2 border-gray-200">
-                            <input type="text" placeholder="Opção (Ex: Chocolate)" value="${op.nome || ''}" onchange="updateOpcao(${gIdx}, ${oIdx}, 'nome', this.value)" class="flex-1 border border-gray-300 rounded-lg p-2 text-sm focus:border-pink-500 outline-none">
-                            <input type="number" step="0.01" placeholder="Adicional R$" value="${op.preco || 0}" onchange="updateOpcao(${gIdx}, ${oIdx}, 'preco', this.value)" class="w-24 border border-gray-300 rounded-lg p-2 text-sm focus:border-pink-500 outline-none">
+                        <div class="flex flex-wrap gap-2 items-center mt-2 pl-4 border-l-2 border-gray-200">
+                            <input type="text" placeholder="Opção (Ex: Chocolate)" value="${op.nome || ''}" onchange="updateOpcao(${gIdx}, ${oIdx}, 'nome', this.value)" class="flex-1 min-w-[120px] border border-gray-300 rounded-lg p-2 text-sm focus:border-pink-500 outline-none">
+                            
+                            <select onchange="updateOpcao(${gIdx}, ${oIdx}, 'tipo_preco', this.value)" class="border border-gray-300 rounded-lg p-2 text-sm focus:border-pink-500 outline-none bg-white">
+                                <option value="adicional" ${op.tipo_preco !== 'final' ? 'selected' : ''}>+ Somar (Adicional)</option>
+                                <option value="final" ${op.tipo_preco === 'final' ? 'selected' : ''}>= Preço Final</option>
+                            </select>
+
+                            <input type="number" step="0.01" placeholder="R$" value="${op.preco || 0}" onchange="updateOpcao(${gIdx}, ${oIdx}, 'preco', this.value)" class="w-24 border border-gray-300 rounded-lg p-2 text-sm focus:border-pink-500 outline-none">
                             <button type="button" onclick="removeOpcao(${gIdx}, ${oIdx})" class="text-red-500 p-2 hover:bg-red-50 rounded" title="Remover Opção"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>
                     `;
@@ -768,17 +783,21 @@
         }
 
         function addGrupo() {
-            currentVariantes.push({ grupo: '', opcoes: [{ nome: '', preco: 0 }] });
+            currentVariantes.push({ grupo: '', opcoes: [{ nome: '', preco: 0, tipo_preco: 'adicional' }] });
             renderVariantes();
         }
 
         function removeGrupo(gIdx) { currentVariantes.splice(gIdx, 1); renderVariantes(); }
         function updateGrupo(gIdx, val) { currentVariantes[gIdx].grupo = val; updateVariantesInput(); }
-        function addOpcao(gIdx) { currentVariantes[gIdx].opcoes.push({ nome: '', preco: 0 }); renderVariantes(); }
+        function addOpcao(gIdx) { currentVariantes[gIdx].opcoes.push({ nome: '', preco: 0, tipo_preco: 'adicional' }); renderVariantes(); }
         function removeOpcao(gIdx, oIdx) { currentVariantes[gIdx].opcoes.splice(oIdx, 1); renderVariantes(); }
         
         function updateOpcao(gIdx, oIdx, field, val) {
-            currentVariantes[gIdx].opcoes[oIdx][field] = field === 'preco' ? parseFloat(val) || 0 : val;
+            if (field === 'preco') {
+                currentVariantes[gIdx].opcoes[oIdx][field] = parseFloat(val) || 0;
+            } else {
+                currentVariantes[gIdx].opcoes[oIdx][field] = val;
+            }
             updateVariantesInput();
         }
         
@@ -821,12 +840,19 @@
 
             currentVariantes = prod.variantes || [];
             
-            // Migração: Se for um array antigo (sem a key 'grupo'), converte pro formato novo
             if (currentVariantes.length > 0 && !currentVariantes[0].grupo) {
                 currentVariantes = [{
                     grupo: "Opções Adicionais",
-                    opcoes: currentVariantes.map(v => ({ nome: v.nome, preco: v.preco || 0 }))
+                    opcoes: currentVariantes.map(v => ({ nome: v.nome, preco: v.preco || 0, tipo_preco: 'adicional' }))
                 }];
+            } else {
+                currentVariantes.forEach(g => {
+                    if(g.opcoes) {
+                        g.opcoes.forEach(o => {
+                            if(!o.tipo_preco) o.tipo_preco = 'adicional';
+                        });
+                    }
+                });
             }
             
             renderVariantes();

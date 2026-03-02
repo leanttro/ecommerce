@@ -439,7 +439,7 @@ def index(loja_slug):
     
     # DEFINE QUAL TEMPLATE RENDERIZAR
     template_name = g.loja.get('template_ativo') or 'index'
-    if template_name not in ['index', 'pascoa']:
+    if template_name not in ['index', 'pascoa', 'direto']:
         template_name = 'index'
 
     return render_template(f'{template_name}.html', 
