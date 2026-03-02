@@ -175,7 +175,7 @@
                     {% elif p.estoque == 0 %}
                         <span class="text-3xl font-bold text-gray-400 line-through">R$ {{ "%.2f"|format(p.preco)|replace('.', ',') }}</span>
                         <span class="text-sm text-red-500 font-bold block mt-1 uppercase">Produto Indisponível</span>
-                    {% elif p.preco %}
+                    {% elif p.preco or p.preco == 0 %}
                         <span id="preco-display" class="text-4xl font-bold text-theme">R$ {{ "%.2f"|format(p.preco)|replace('.', ',') }}</span>
                         <span class="text-sm opacity-70 font-bold block mt-1">à vista</span>
                     {% else %}
@@ -194,9 +194,14 @@
                         <div class="flex flex-wrap gap-3">
                             {% for op in grupo.opcoes %}
                             <label class="cursor-pointer relative">
-                                <input type="radio" name="var_{{ grupo_index }}" value="{{ op.nome }}" data-preco="{{ op.preco }}" class="peer sr-only" onchange="calcularPrecoFinal()" {% if loop.first %}checked{% endif %}>
+                                <input type="radio" name="var_{{ grupo_index }}" value="{{ op.nome }}" data-preco="{{ op.preco }}" data-tipo="{{ op.tipo_preco or 'adicional' }}" class="peer sr-only" onchange="calcularPrecoFinal()" {% if loop.first %}checked{% endif %}>
                                 <div class="px-5 py-3 border-2 border-gray-200 rounded-xl peer-checked:border-theme peer-checked:bg-theme/5 text-sm font-semibold text-gray-700 peer-checked:text-theme transition-all shadow-sm hover:border-gray-300">
-                                    {{ op.nome }} {% if op.preco and op.preco > 0 %}<span class="text-xs opacity-70 ml-1">(+R$ {{ "%.2f"|format(op.preco)|replace('.', ',') }})</span>{% endif %}
+                                    {{ op.nome }} 
+                                    {% if op.tipo_preco == 'final' and op.preco > 0 %}
+                                        <span class="text-xs opacity-70 ml-1">(R$ {{ "%.2f"|format(op.preco)|replace('.', ',') }})</span>
+                                    {% elif op.preco and op.preco > 0 %}
+                                        <span class="text-xs opacity-70 ml-1">(+R$ {{ "%.2f"|format(op.preco)|replace('.', ',') }})</span>
+                                    {% endif %}
                                 </div>
                             </label>
                             {% endfor %}
@@ -297,16 +302,34 @@
         const basePreco = {{ p.preco or 0 }};
         
         function calcularPrecoFinal() {
+            let tempBase = basePreco;
             let adicional = 0;
+            
             const radios = document.querySelectorAll('#variantes-section input[type="radio"]:checked');
+            
+            // 1. Acha se tem preço final (substitui a base)
             radios.forEach(radio => {
-                adicional += parseFloat(radio.getAttribute('data-preco') || 0);
+                const tipo = radio.getAttribute('data-tipo');
+                if (tipo === 'final') {
+                    const precoOpcao = parseFloat(radio.getAttribute('data-preco') || 0);
+                    if (precoOpcao > 0) {
+                        tempBase = precoOpcao;
+                    }
+                }
             });
             
-            const precoFinal = basePreco + adicional;
+            // 2. Soma adicionais
+            radios.forEach(radio => {
+                const tipo = radio.getAttribute('data-tipo');
+                if (tipo !== 'final') {
+                    adicional += parseFloat(radio.getAttribute('data-preco') || 0);
+                }
+            });
+            
+            const precoFinal = tempBase + adicional;
             
             const priceDisplay = document.getElementById('preco-display');
-            if(priceDisplay && basePreco > 0) {
+            if(priceDisplay && (basePreco > 0 || precoFinal > 0)) {
                 priceDisplay.innerText = "R$ " + precoFinal.toFixed(2).replace('.', ',');
             }
         }
@@ -345,10 +368,11 @@
         function addToCartPage(product) {
             let final = { ...product };
             let optionsText = [];
+            
+            let tempBase = final.preco || 0;
             let adicionalTotal = 0;
             let cartIdSuffix = "";
 
-            // Coleta todas as opções selecionadas
             const grupos = document.querySelectorAll('.variante-grupo');
             grupos.forEach((grupoEl) => {
                 const nomeGrupo = grupoEl.getAttribute('data-grupo');
@@ -356,10 +380,17 @@
                 
                 if (checkedRadio) {
                     const nomeOpcao = checkedRadio.value;
+                    const tipoOpcao = checkedRadio.getAttribute('data-tipo');
                     const precoOpcao = parseFloat(checkedRadio.getAttribute('data-preco') || 0);
                     
                     optionsText.push(`${nomeGrupo}: ${nomeOpcao}`);
-                    adicionalTotal += precoOpcao;
+                    
+                    if (tipoOpcao === 'final' && precoOpcao > 0) {
+                        tempBase = precoOpcao;
+                    } else if (tipoOpcao !== 'final') {
+                        adicionalTotal += precoOpcao;
+                    }
+                    
                     cartIdSuffix += `-${nomeOpcao}`;
                 }
             });
@@ -374,9 +405,8 @@
             
             final.imagem = product.galeria[0];
             
-            // Soma o preço base com os adicionais das opções selecionadas
             if (!final.consulte) {
-                final.preco = (final.preco || 0) + adicionalTotal;
+                final.preco = tempBase + adicionalTotal;
             }
 
             const idx = cart.findIndex(i => i.cart_id === final.cart_id);
