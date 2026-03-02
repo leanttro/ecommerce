@@ -186,6 +186,7 @@
                 {% if p.variantes and p.variantes|length > 0 %}
                 <div class="mb-8 space-y-6" id="variantes-section">
                     {% for grupo in p.variantes %}
+                    {% set grupo_index = loop.index %}
                     <div class="variante-grupo text-left" data-grupo="{{ grupo.grupo }}">
                         <label class="text-sm font-bold uppercase tracking-wide block mb-3 custom-title-color">
                             {{ grupo.grupo }}
@@ -193,7 +194,7 @@
                         <div class="flex flex-wrap gap-3">
                             {% for op in grupo.opcoes %}
                             <label class="cursor-pointer relative">
-                                <input type="radio" name="var_{{ loop.parent.index }}" value="{{ op.nome }}" data-preco="{{ op.preco }}" class="peer sr-only" onchange="calcularPrecoFinal()" {% if loop.first %}checked{% endif %}>
+                                <input type="radio" name="var_{{ grupo_index }}" value="{{ op.nome }}" data-preco="{{ op.preco }}" class="peer sr-only" onchange="calcularPrecoFinal()" {% if loop.first %}checked{% endif %}>
                                 <div class="px-5 py-3 border-2 border-gray-200 rounded-xl peer-checked:border-theme peer-checked:bg-theme/5 text-sm font-semibold text-gray-700 peer-checked:text-theme transition-all shadow-sm hover:border-gray-300">
                                     {{ op.nome }} {% if op.preco and op.preco > 0 %}<span class="text-xs opacity-70 ml-1">(+R$ {{ "%.2f"|format(op.preco)|replace('.', ',') }})</span>{% endif %}
                                 </div>
