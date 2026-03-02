@@ -330,7 +330,12 @@
                                                 {% elif p.estoque == 0 %}
                                                     <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Indisponível</span>
                                                 {% else %}
-                                                    <span class="text-[var(--color-title)] font-bold text-xl tracking-tight">R$ {{ "%.2f"|format(p.preco) }}</span>
+                                                    <div class="flex flex-col items-center">
+                                                        {% if p.a_partir_de %}
+                                                            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 leading-none mb-1">A partir de</span>
+                                                        {% endif %}
+                                                        <span class="text-[var(--color-title)] font-bold text-xl tracking-tight">R$ {{ "%.2f"|format(p.preco) }}</span>
+                                                    </div>
                                                 {% endif %}
                                             </div>
                                         </div>
@@ -374,7 +379,12 @@
                                         {% if p.consulte %}
                                             <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Consulte</span>
                                         {% else %}
-                                            <span class="text-[var(--color-title)] font-semibold text-lg">R$ {{ "%.2f"|format(p.preco) }}</span>
+                                            <div class="flex flex-col items-center">
+                                                {% if p.a_partir_de %}
+                                                    <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 leading-none mb-0.5">A partir de</span>
+                                                {% endif %}
+                                                <span class="text-[var(--color-title)] font-semibold text-lg leading-tight">R$ {{ "%.2f"|format(p.preco) }}</span>
+                                            </div>
                                         {% endif %}
                                     </div>
                                 </div>

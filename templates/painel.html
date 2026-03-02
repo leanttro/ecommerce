@@ -545,6 +545,18 @@
                         <label for="prodConsulte" class="text-sm font-bold text-gray-700 cursor-pointer select-none">Este é um produto sob consulta / personalizado (Ocultar preço)</label>
                     </div>
 
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mt-4">
+                        <div class="flex items-center gap-3 mb-4">
+                            <input type="checkbox" name="a_partir_de" id="prodAPartirDe" class="w-5 h-5 text-pink-600 rounded border-gray-300 focus:ring-pink-500">
+                            <label for="prodAPartirDe" class="text-sm font-bold text-gray-700 cursor-pointer select-none">Mostrar "A partir de" no preço da vitrine</label>
+                        </div>
+                        
+                        <h4 class="font-bold text-gray-800 text-sm mb-2">Variantes e Adicionais</h4>
+                        <input type="hidden" name="variantes" id="prodVariantes">
+                        <div id="variantes-container" class="space-y-2 mb-3"></div>
+                        <button type="button" onclick="addVarianteUI()" class="text-sm text-pink-600 font-bold flex items-center gap-1 hover:text-pink-800 transition"><i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar Variante</button>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50 p-6 rounded-lg border border-gray-200">
                         <div class="col-span-1 md:col-span-3 mb-2">
                             <h4 class="font-bold text-gray-800 flex items-center gap-2"><i data-lucide="image" class="text-pink-600"></i> Imagens do Produto</h4>
@@ -716,7 +728,40 @@
             toggleModal('categoriaModal');
         }
 
-        // --- CRUD PRODUTOS ---
+        // --- CRUD PRODUTOS E VARIANTES ---
+        let currentVariantes = [];
+
+        function renderVariantes() {
+            const container = document.getElementById('variantes-container');
+            container.innerHTML = '';
+            currentVariantes.forEach((v, idx) => {
+                container.innerHTML += `
+                    <div class="flex gap-2 items-center">
+                        <input type="text" placeholder="Nome (Ex: Tamanho M)" value="${v.nome || ''}" onchange="updateVariante(${idx}, 'nome', this.value)" class="flex-1 border border-gray-300 rounded-lg p-2 text-sm">
+                        <input type="number" step="0.01" placeholder="Adicional (R$)" value="${v.preco || 0}" onchange="updateVariante(${idx}, 'preco', this.value)" class="w-32 border border-gray-300 rounded-lg p-2 text-sm">
+                        <button type="button" onclick="removeVariante(${idx})" class="text-red-500 hover:text-red-700 p-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                `;
+            });
+            document.getElementById('prodVariantes').value = JSON.stringify(currentVariantes);
+            lucide.createIcons();
+        }
+
+        function addVarianteUI() {
+            currentVariantes.push({nome: '', preco: 0});
+            renderVariantes();
+        }
+
+        function updateVariante(idx, field, val) {
+            currentVariantes[idx][field] = field === 'preco' ? parseFloat(val) || 0 : val;
+            document.getElementById('prodVariantes').value = JSON.stringify(currentVariantes);
+        }
+
+        function removeVariante(idx) {
+            currentVariantes.splice(idx, 1);
+            renderVariantes();
+        }
+
         function novoProduto() {
             document.getElementById('prodId').value = '';
             document.getElementById('prodNome').value = '';
@@ -725,13 +770,18 @@
             document.getElementById('prodCategoria').value = '';
             document.getElementById('prodDescricao').value = '';
             document.getElementById('prodConsulte').checked = false;
+            document.getElementById('prodAPartirDe').checked = false;
             document.querySelector('#produtoForm input[name="imagem"]').value = '';
             document.querySelector('#produtoForm input[name="imagem1"]').value = '';
             document.querySelector('#produtoForm input[name="imagem2"]').value = '';
 
+            currentVariantes = [];
+            renderVariantes();
+
             document.getElementById('prodModalTitle').innerText = 'Novo Produto';
             toggleModal('produtoModal');
         }
+        
         function editarProduto(prod) {
             document.getElementById('prodId').value = prod.id;
             document.getElementById('prodNome').value = prod.nome;
@@ -740,9 +790,13 @@
             document.getElementById('prodCategoria').value = prod.categoria_id || '';
             document.getElementById('prodDescricao').value = prod.descricao || '';
             document.getElementById('prodConsulte').checked = prod.consulte;
+            document.getElementById('prodAPartirDe').checked = prod.a_partir_de || false;
             document.querySelector('#produtoForm input[name="imagem"]').value = '';
             document.querySelector('#produtoForm input[name="imagem1"]').value = '';
             document.querySelector('#produtoForm input[name="imagem2"]').value = '';
+
+            currentVariantes = prod.variantes || [];
+            renderVariantes();
 
             document.getElementById('prodModalTitle').innerText = 'Editar Produto';
             toggleModal('produtoModal');

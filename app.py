@@ -386,11 +386,16 @@ def index(loja_slug):
             for p in raw_prods:
                 img = get_img_url(p.get('imagem_destaque') or p.get('imagem1'))
                 
-                variantes = []
-                if p.get('variantes'):
-                    for v in p['variantes']:
-                        v_foto = get_img_url(v.get('foto')) if v.get('foto') else img
-                        variantes.append({"nome": v.get('nome'), "foto": v_foto})
+                variantes_raw = p.get('variantes') or []
+                variantes_processadas = []
+                for v in variantes_raw:
+                    if isinstance(v, dict):
+                        v_copy = dict(v)
+                        if v_copy.get('foto'):
+                            v_copy['foto'] = get_img_url(v_copy['foto'])
+                        variantes_processadas.append(v_copy)
+                    else:
+                        variantes_processadas.append(v)
 
                 try: preco_float = float(p.get('preco', 0))
                 except: preco_float = 0.0
@@ -402,9 +407,10 @@ def index(loja_slug):
                     "id": p['id'], "nome": p['nome'], "slug": p['slug'],
                     "preco": preco_float,
                     "imagem": img, "categoria_id": p.get('categoria_id'),
-                    "variantes": variantes, "origem": p.get('origem'),
+                    "variantes": variantes_processadas, "origem": p.get('origem'),
                     "urgencia": p.get('status_urgencia'), "classe_frete": p.get('classe_frete'),
-                    "estoque": estoque_val, "consulte": p.get('consulte', False)
+                    "estoque": estoque_val, "consulte": p.get('consulte', False),
+                    "a_partir_de": p.get('a_partir_de', False)
                 }
                 produtos.append(prod_obj)
                 
@@ -483,13 +489,18 @@ def produto(loja_slug, slug):
 
         if p.get('variantes'):
             for v in p['variantes']:
-                v['foto'] = get_img_url(v.get('foto')) if v.get('foto') else p['imagem_destaque']
+                if isinstance(v, dict) and v.get('foto'):
+                    v['foto'] = get_img_url(v['foto'])
+                elif isinstance(v, dict) and not v.get('foto'):
+                    v['foto'] = p['imagem_destaque']
 
         try: p['preco'] = float(p.get('preco', 0))
         except: p['preco'] = 0.0
             
         try: p['estoque'] = int(p.get('estoque')) if p.get('estoque') is not None else 0
         except: p['estoque'] = 0
+
+        p['a_partir_de'] = p.get('a_partir_de', False)
 
         loja_visual = {
             **g.loja,
@@ -714,6 +725,15 @@ def admin_salvar_produto(loja_slug):
     consulte_form = request.form.get('consulte')
     consulte = True if consulte_form == 'on' else False
 
+    a_partir_de_form = request.form.get('a_partir_de')
+    a_partir_de = True if a_partir_de_form == 'on' else False
+
+    variantes_raw = request.form.get('variantes')
+    try:
+        variantes = json.loads(variantes_raw) if variantes_raw else []
+    except:
+        variantes = []
+
     payload = {
         "status": "published",
         "loja_id": g.loja_id,
@@ -721,6 +741,8 @@ def admin_salvar_produto(loja_slug):
         "preco": preco,
         "estoque": estoque,
         "consulte": consulte,
+        "a_partir_de": a_partir_de,
+        "variantes": variantes,
         "descricao": request.form.get('descricao'),
         "categoria_id": cat_id
     }
