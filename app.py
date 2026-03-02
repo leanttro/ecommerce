@@ -497,7 +497,14 @@ def produto(loja_slug, slug):
             "slug_url": loja_slug
         }
 
-        return render_template('produtos.html', p=p, loja=loja_visual, directus_url=DIRECTUS_URL)
+        # VERIFICA O TEMPLATE DA LOJA PARA RENDERIZAR O PRODUTO CORRETO
+        template_produto = 'produtos.html'
+        template_ativo = g.loja.get('template_ativo')
+        
+        if template_ativo in ['direto', 'direto_index']:
+            template_produto = 'direto_produto.html'
+
+        return render_template(template_produto, p=p, loja=loja_visual, directus_url=DIRECTUS_URL)
     
     return "Produto não encontrado nesta loja", 404
 

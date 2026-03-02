@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ p.nome }} | {{ loja.nome }}</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family={{ loja.font_titulo }}:wght@400;700&family={{ loja.font_corpo }}:wght@300;400;600&display=swap');
+        
+        :root { 
+            --primary: {{ loja.cor_primaria }}; 
+            --color-bg: {{ loja.cor_fundo or '#ffffff' }};
+            --color-title: {{ loja.cor_titulo or '#111827' }};
+            --color-text: {{ loja.cor_texto or '#374151' }};
+            
+            --font-head: '{{ loja.font_titulo }}', sans-serif;
+            --font-body: '{{ loja.font_corpo }}', sans-serif;
+            --font-size-base: {{ loja.font_tamanho_base or 16 }}px;
+        }
+        
+        body { 
+            font-family: var(--font-body); 
+            font-size: var(--font-size-base);
+            color: var(--color-text);
+        }
+        
+        h1, h2, h3, h4, .font-display { 
+            font-family: var(--font-head); 
+            color: var(--color-title);
+        }
+        
+        .text-theme { color: var(--primary); }
+        .bg-theme { background-color: var(--primary); }
+        .border-theme { border-color: var(--primary); }
+        .hover\:bg-theme:hover { background-color: var(--primary); }
+        
+        /* Aplica cor de fundo personalizada */
+        .custom-bg { background-color: var(--color-bg); }
+        .custom-title-color { color: var(--color-title); }
+        
+        /* Ticker CSS - Ajustado para Loop Infinito */
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            background: var(--primary);
+            color: var(--color-bg); /* Letras com a cor do fundo (Body) */
+            height: 30px;
+            display: flex;
+            align-items: center;
+        }
+        .ticker {
+            display: flex;
+            align-items: center;
+            width: max-content;
+            animation: ticker 40s linear infinite;
+            padding-left: 0;
+        }
+        .ticker span {
+            display: inline-block;
+            padding: 0 40px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); } /* Loop infinito seamless */
+        }
+
+        /* Ajustes para o conteúdo da descrição */
+        .prose { 
+            line-height: 1.8; 
+            white-space: pre-line; 
+        }
+        .prose strong, .prose b { color: var(--color-title); font-weight: 700; }
+        .prose a { color: var(--primary); text-decoration: underline; }
+    </style>
+</head>
+<body class="custom-bg flex flex-col min-h-screen">
+
+    {% if loja.frase1 or loja.frase2 or loja.frase3 %}
+    <div class="ticker-wrap">
+        <div class="ticker">
+            {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+            {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
+            {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
+            {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+            {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
+            {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
+             {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+            {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
+            {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
+             {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+            {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
+            {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg py-4 md:py-4 relative">
+        <div class="container mx-auto px-4 min-h-[80px] flex flex-col md:flex-row items-center justify-between">
+            
+            <a href="/{{ loja.slug_url }}/" class="flex items-center gap-2 mb-2 md:mb-0">
+                {% if loja.logo %}
+                    <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="h-16 md:h-20 w-auto object-contain">
+                {% else %}
+                    <span class="text-2xl font-bold tracking-tight custom-title-color">{{ loja.nome }}</span>
+                {% endif %}
+            </a>
+
+            <div class="flex items-center gap-4">
+                 <a href="/{{ loja.slug_url }}/" class="md:hidden p-2 custom-title-color hover:opacity-70 transition">
+                    <i data-lucide="home" class="w-6 h-6"></i>
+                </a>
+            </div>
+        </div>
+        
+        <div class="hidden md:flex justify-center border-t border-gray-50 py-3 custom-bg">
+            <ul class="flex gap-8 text-sm font-bold uppercase tracking-widest custom-title-color opacity-80">
+                <li><a href="/{{ loja.slug_url }}/" class="hover:text-theme transition">Início</a></li>
+                <li><a href="/{{ loja.slug_url }}/#produtos" class="hover:text-theme transition">Produtos</a></li>
+                <li><a href="#footer" class="hover:text-theme transition">Contato</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="border-b border-gray-100 py-3 opacity-70">
+        <div class="container mx-auto px-4 text-xs uppercase tracking-widest flex items-center gap-2">
+            <a href="/{{ loja.slug_url }}/" class="hover:text-theme">Início</a> 
+            <i data-lucide="chevron-right" class="w-3 h-3"></i>
+            <span class="font-bold">{{ p.nome }}</span>
+        </div>
+    </div>
+
+    <section class="py-12 container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            
+            <div class="space-y-4">
+                <div class="aspect-square bg-white rounded-xl overflow-hidden border border-gray-100 relative group shadow-sm">
+                    <img id="main-image" src="{{ p.galeria[0] }}" class="w-full h-full object-cover transition-opacity duration-300">
+                </div>
+                
+                {% if p.galeria|length > 1 %}
+                <div class="flex gap-4 overflow-x-auto pb-2 justify-center md:justify-start">
+                    {% for img in p.galeria %}
+                    <button onclick="changeImage('{{ img }}')" class="w-20 h-20 rounded-lg border-2 border-transparent hover:border-theme overflow-hidden flex-shrink-0 transition-all cursor-pointer">
+                        <img src="{{ img }}" class="w-full h-full object-cover hover:opacity-80 transition-opacity">
+                    </button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="text-center md:text-left">
+                <h1 class="text-3xl md:text-4xl font-bold mb-2 leading-tight custom-title-color">{{ p.nome }}</h1>
+                <div class="text-xs text-gray-400 mb-6 uppercase tracking-widest">Ref: {{ p.id[:8] }}</div>
+
+                <div class="mb-6">
+                    {% if p.consulte %}
+                        <span class="text-3xl font-bold text-blue-600">Consulte-nos</span>
+                        <span class="text-sm opacity-70 font-bold block mt-1">Entre em contato para orçamento</span>
+                    {% elif p.estoque == 0 %}
+                        <span class="text-3xl font-bold text-gray-400 line-through">R$ {{ "%.2f"|format(p.preco)|replace('.', ',') }}</span>
+                        <span class="text-sm text-red-500 font-bold block mt-1 uppercase">Produto Indisponível</span>
+                    {% elif p.preco or p.preco == 0 %}
+                        <span id="preco-display" class="text-4xl font-bold text-theme">R$ {{ "%.2f"|format(p.preco)|replace('.', ',') }}</span>
+                        <span class="text-sm opacity-70 font-bold block mt-1">à vista</span>
+                    {% else %}
+                        <span class="text-2xl font-bold opacity-50 uppercase">Preço sob consulta</span>
+                    {% endif %}
+                </div>
+
+                {% if p.variantes and p.variantes|length > 0 %}
+                <div class="mb-8 space-y-6" id="variantes-section">
+                    {% for grupo in p.variantes %}
+                    {% set grupo_index = loop.index %}
+                    <div class="variante-grupo text-left" data-grupo="{{ grupo.grupo }}">
+                        <label class="text-sm font-bold uppercase tracking-wide block mb-3 custom-title-color">
+                            {{ grupo.grupo }}
+                        </label>
+                        <div class="flex flex-wrap gap-3">
+                            {% for op in grupo.opcoes %}
+                            <label class="cursor-pointer relative">
+                                <input type="radio" name="var_{{ grupo_index }}" value="{{ op.nome }}" data-preco="{{ op.preco }}" data-tipo="{{ op.tipo_preco or 'adicional' }}" class="peer sr-only" onchange="calcularPrecoFinal()" {% if loop.first %}checked{% endif %}>
+                                <div class="px-5 py-3 border-2 border-gray-200 rounded-xl peer-checked:border-theme peer-checked:bg-theme/5 text-sm font-semibold text-gray-700 peer-checked:text-theme transition-all shadow-sm hover:border-gray-300">
+                                    {{ op.nome }} 
+                                    {% if op.tipo_preco == 'final' and op.preco > 0 %}
+                                        <span class="text-xs opacity-70 ml-1">(R$ {{ "%.2f"|format(op.preco)|replace('.', ',') }})</span>
+                                    {% elif op.preco and op.preco > 0 %}
+                                        <span class="text-xs opacity-70 ml-1">(+R$ {{ "%.2f"|format(op.preco)|replace('.', ',') }})</span>
+                                    {% endif %}
+                                </div>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="flex flex-col md:flex-row gap-4 mb-8">
+                    
+                    {% if p.estoque == 0 %}
+                        <button disabled class="flex-1 bg-gray-300 text-gray-500 font-bold py-4 rounded-xl text-sm uppercase tracking-widest cursor-not-allowed flex items-center justify-center gap-2">
+                            <i data-lucide="x-circle" class="w-5 h-5"></i>
+                            <span>Produto Indisponível (Sem Estoque)</span>
+                        </button>
+                    {% else %}
+                        <button onclick="pedirNoZap('{{ p.nome|replace('\'', '\\\'') }}', {{ 'true' if p.consulte else 'false' }})" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-xl text-sm uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95">
+                            <i data-lucide="message-circle" class="w-5 h-5"></i>
+                            <span>Fazer Pedido no WhatsApp</span>
+                        </button>
+                    {% endif %}
+
+                </div>
+
+                <div class="bg-white/50 rounded-xl p-6 border border-gray-100 mb-8 text-left backdrop-blur-sm">
+                    <h3 class="font-bold text-lg mb-4 custom-title-color border-b border-gray-100 pb-2">Detalhes do Produto</h3>
+                    <div class="prose text-sm opacity-80 leading-relaxed">
+                        {{ p.descricao | safe }}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-theme text-white py-12 mt-auto" style="background-color: var(--primary);" id="footer">
+        <div class="container mx-auto px-4 text-center">
+            <h4 class="font-bold text-lg mb-4">{{ loja.nome }}</h4>
+            <p class="text-sm mb-6 opacity-80">Todos os direitos reservados.</p>
+            
+            <div class="flex justify-center gap-4 text-sm">
+                <a href="#" class="hover:underline">Política de Privacidade</a>
+                <a href="#" class="hover:underline">Termos de Uso</a>
+            </div>
+
+            <div class="mt-8 pt-8 border-t border-white/20">
+                <a href="/{{ loja.slug_url }}/admin" class="text-xs font-bold uppercase tracking-widest hover:text-white flex items-center justify-center gap-2">
+                    <i data-lucide="lock" class="w-3 h-3"></i> Área do Lojista
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        const lojaPhone = "55{{ loja.whatsapp_comercial }}";
+
+        // --- FUNÇÕES VISUAIS ---
+        function changeImage(src) {
+            document.getElementById('main-image').src = src;
+        }
+
+        // --- CÁLCULO DE PREÇO EM TEMPO REAL ---
+        const basePreco = {{ p.preco or 0 }};
+        
+        function calcularPrecoFinal() {
+            let tempBase = basePreco;
+            let adicional = 0;
+            
+            const radios = document.querySelectorAll('#variantes-section input[type="radio"]:checked');
+            
+            // 1. Acha se tem preço final (substitui a base)
+            radios.forEach(radio => {
+                const tipo = radio.getAttribute('data-tipo');
+                if (tipo === 'final') {
+                    const precoOpcao = parseFloat(radio.getAttribute('data-preco') || 0);
+                    if (precoOpcao > 0) {
+                        tempBase = precoOpcao;
+                    }
+                }
+            });
+            
+            // 2. Soma adicionais
+            radios.forEach(radio => {
+                const tipo = radio.getAttribute('data-tipo');
+                if (tipo !== 'final') {
+                    adicional += parseFloat(radio.getAttribute('data-preco') || 0);
+                }
+            });
+            
+            const precoFinal = tempBase + adicional;
+            
+            const priceDisplay = document.getElementById('preco-display');
+            if(priceDisplay && (basePreco > 0 || precoFinal > 0)) {
+                priceDisplay.innerText = "R$ " + precoFinal.toFixed(2).replace('.', ',');
+            }
+            
+            return precoFinal;
+        }
+
+        document.addEventListener('DOMContentLoaded', calcularPrecoFinal);
+
+        // --- ENVIAR PEDIDO DIRETO PARA O ZAP SEM CARRINHO ---
+        function pedirNoZap(productName, isConsulte) {
+            let optionsText = [];
+            
+            const grupos = document.querySelectorAll('.variante-grupo');
+            grupos.forEach((grupoEl) => {
+                const nomeGrupo = grupoEl.getAttribute('data-grupo');
+                const checkedRadio = grupoEl.querySelector('input[type="radio"]:checked');
+                
+                if (checkedRadio) {
+                    const nomeOpcao = checkedRadio.value;
+                    optionsText.push(`${nomeGrupo}: ${nomeOpcao}`);
+                }
+            });
+
+            let precoFinal = calcularPrecoFinal();
+            
+            let msg = `👋 Olá! Gostaria de encomendar o seguinte produto:\n\n`;
+            msg += `📦 *Produto:* ${productName}\n`;
+            
+            if (optionsText.length > 0) {
+                msg += `📋 *Opções Escolhidas:*\n- ${optionsText.join('\n- ')}\n`;
+            }
+            
+            if (isConsulte) {
+                msg += `\n💰 *Valor:* Sob Consulta\n`;
+            } else {
+                msg += `\n💰 *Valor estimado:* R$ ${precoFinal.toFixed(2).replace('.', ',')}\n`;
+            }
+            
+            const url = `https://wa.me/${lojaPhone}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+
+    </script>
+</body>
+</html>
