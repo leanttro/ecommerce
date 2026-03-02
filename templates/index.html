@@ -599,10 +599,6 @@
                 }
             });
             
-            msg += `--------------------------------\n`;
-            msg += `*💰 Total:* R$ ${total.toFixed(2).replace('.', ',')}\n`;
-            msg += `\nAguardo as instruções de pagamento!`;
-
             const url = `https://wa.me/${lojaPhone}?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
         }
