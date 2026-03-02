@@ -528,7 +528,7 @@
                         </div>
 
                         <div>
-                             <label class="block text-sm font-bold mb-2 text-gray-700">Preço (R$)</label>
+                             <label class="block text-sm font-bold mb-2 text-gray-700">Preço Base (R$)</label>
                              <div class="relative">
                                 <span class="absolute left-3 top-3 text-gray-500">R$</span>
                                 <input type="number" name="preco" id="prodPreco" step="0.01" class="w-full border border-gray-300 rounded-lg p-3 pl-10 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all" placeholder="0,00">
@@ -551,10 +551,10 @@
                             <label for="prodAPartirDe" class="text-sm font-bold text-gray-700 cursor-pointer select-none">Mostrar "A partir de" no preço da vitrine</label>
                         </div>
                         
-                        <h4 class="font-bold text-gray-800 text-sm mb-2">Variantes e Adicionais</h4>
+                        <h4 class="font-bold text-gray-800 text-sm mb-2">Grupos de Variantes e Adicionais</h4>
                         <input type="hidden" name="variantes" id="prodVariantes">
-                        <div id="variantes-container" class="space-y-2 mb-3"></div>
-                        <button type="button" onclick="addVarianteUI()" class="text-sm text-pink-600 font-bold flex items-center gap-1 hover:text-pink-800 transition"><i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar Variante</button>
+                        <div id="variantes-container" class="space-y-4 mb-3"></div>
+                        <button type="button" onclick="addGrupo()" class="text-sm text-pink-600 font-bold flex items-center gap-1 hover:text-pink-800 transition"><i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar Grupo de Variantes</button>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50 p-6 rounded-lg border border-gray-200">
@@ -728,18 +728,38 @@
             toggleModal('categoriaModal');
         }
 
-        // --- CRUD PRODUTOS E VARIANTES ---
+        // --- CRUD PRODUTOS E VARIANTES (ATUALIZADO PARA GRUPOS) ---
         let currentVariantes = [];
 
         function renderVariantes() {
             const container = document.getElementById('variantes-container');
             container.innerHTML = '';
-            currentVariantes.forEach((v, idx) => {
+            
+            currentVariantes.forEach((grupo, gIdx) => {
+                let opcoesHTML = '';
+                if(!grupo.opcoes) grupo.opcoes = [];
+                
+                grupo.opcoes.forEach((op, oIdx) => {
+                    opcoesHTML += `
+                        <div class="flex gap-2 items-center mt-2 pl-4 border-l-2 border-gray-200">
+                            <input type="text" placeholder="Opção (Ex: Chocolate)" value="${op.nome || ''}" onchange="updateOpcao(${gIdx}, ${oIdx}, 'nome', this.value)" class="flex-1 border border-gray-300 rounded-lg p-2 text-sm focus:border-pink-500 outline-none">
+                            <input type="number" step="0.01" placeholder="Adicional R$" value="${op.preco || 0}" onchange="updateOpcao(${gIdx}, ${oIdx}, 'preco', this.value)" class="w-24 border border-gray-300 rounded-lg p-2 text-sm focus:border-pink-500 outline-none">
+                            <button type="button" onclick="removeOpcao(${gIdx}, ${oIdx})" class="text-red-500 p-2 hover:bg-red-50 rounded" title="Remover Opção"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                    `;
+                });
+
                 container.innerHTML += `
-                    <div class="flex gap-2 items-center">
-                        <input type="text" placeholder="Nome (Ex: Tamanho M)" value="${v.nome || ''}" onchange="updateVariante(${idx}, 'nome', this.value)" class="flex-1 border border-gray-300 rounded-lg p-2 text-sm">
-                        <input type="number" step="0.01" placeholder="Adicional (R$)" value="${v.preco || 0}" onchange="updateVariante(${idx}, 'preco', this.value)" class="w-32 border border-gray-300 rounded-lg p-2 text-sm">
-                        <button type="button" onclick="removeVariante(${idx})" class="text-red-500 hover:text-red-700 p-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4 shadow-sm relative group">
+                        <button type="button" onclick="removeGrupo(${gIdx})" class="absolute top-4 right-4 text-red-500 hover:text-red-700 p-1" title="Remover Grupo inteiro"><i data-lucide="x" class="w-5 h-5"></i></button>
+                        <div class="mb-3 w-5/6">
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nome do Grupo (Ex: Tamanho, Sabor)</label>
+                            <input type="text" placeholder="Ex: Escolha a Massa" value="${grupo.grupo || ''}" onchange="updateGrupo(${gIdx}, this.value)" class="font-bold border-b-2 border-gray-300 focus:border-pink-500 outline-none px-1 py-1 w-full text-gray-700">
+                        </div>
+                        <div class="space-y-1">
+                            ${opcoesHTML}
+                        </div>
+                        <button type="button" onclick="addOpcao(${gIdx})" class="text-xs text-pink-600 font-bold flex items-center gap-1 mt-4 hover:text-pink-800 transition"><i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar nova opção neste grupo</button>
                     </div>
                 `;
             });
@@ -747,19 +767,23 @@
             lucide.createIcons();
         }
 
-        function addVarianteUI() {
-            currentVariantes.push({nome: '', preco: 0});
+        function addGrupo() {
+            currentVariantes.push({ grupo: '', opcoes: [{ nome: '', preco: 0 }] });
             renderVariantes();
         }
 
-        function updateVariante(idx, field, val) {
-            currentVariantes[idx][field] = field === 'preco' ? parseFloat(val) || 0 : val;
+        function removeGrupo(gIdx) { currentVariantes.splice(gIdx, 1); renderVariantes(); }
+        function updateGrupo(gIdx, val) { currentVariantes[gIdx].grupo = val; updateVariantesInput(); }
+        function addOpcao(gIdx) { currentVariantes[gIdx].opcoes.push({ nome: '', preco: 0 }); renderVariantes(); }
+        function removeOpcao(gIdx, oIdx) { currentVariantes[gIdx].opcoes.splice(oIdx, 1); renderVariantes(); }
+        
+        function updateOpcao(gIdx, oIdx, field, val) {
+            currentVariantes[gIdx].opcoes[oIdx][field] = field === 'preco' ? parseFloat(val) || 0 : val;
+            updateVariantesInput();
+        }
+        
+        function updateVariantesInput() {
             document.getElementById('prodVariantes').value = JSON.stringify(currentVariantes);
-        }
-
-        function removeVariante(idx) {
-            currentVariantes.splice(idx, 1);
-            renderVariantes();
         }
 
         function novoProduto() {
@@ -796,6 +820,15 @@
             document.querySelector('#produtoForm input[name="imagem2"]').value = '';
 
             currentVariantes = prod.variantes || [];
+            
+            // Migração: Se for um array antigo (sem a key 'grupo'), converte pro formato novo
+            if (currentVariantes.length > 0 && !currentVariantes[0].grupo) {
+                currentVariantes = [{
+                    grupo: "Opções Adicionais",
+                    opcoes: currentVariantes.map(v => ({ nome: v.nome, preco: v.preco || 0 }))
+                }];
+            }
+            
             renderVariantes();
 
             document.getElementById('prodModalTitle').innerText = 'Editar Produto';

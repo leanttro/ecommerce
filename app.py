@@ -386,16 +386,8 @@ def index(loja_slug):
             for p in raw_prods:
                 img = get_img_url(p.get('imagem_destaque') or p.get('imagem1'))
                 
-                variantes_raw = p.get('variantes') or []
-                variantes_processadas = []
-                for v in variantes_raw:
-                    if isinstance(v, dict):
-                        v_copy = dict(v)
-                        if v_copy.get('foto'):
-                            v_copy['foto'] = get_img_url(v_copy['foto'])
-                        variantes_processadas.append(v_copy)
-                    else:
-                        variantes_processadas.append(v)
+                # Repassamos as variantes cruas, sem processar fotos
+                variantes = p.get('variantes') or []
 
                 try: preco_float = float(p.get('preco', 0))
                 except: preco_float = 0.0
@@ -407,7 +399,7 @@ def index(loja_slug):
                     "id": p['id'], "nome": p['nome'], "slug": p['slug'],
                     "preco": preco_float,
                     "imagem": img, "categoria_id": p.get('categoria_id'),
-                    "variantes": variantes_processadas, "origem": p.get('origem'),
+                    "variantes": variantes, "origem": p.get('origem'),
                     "urgencia": p.get('status_urgencia'), "classe_frete": p.get('classe_frete'),
                     "estoque": estoque_val, "consulte": p.get('consulte', False),
                     "a_partir_de": p.get('a_partir_de', False)
@@ -487,12 +479,9 @@ def produto(loja_slug, slug):
             
         p['galeria'] = galeria
 
+        # Variantes agora usam formato de grupos, não buscamos imagem individual mais
         if p.get('variantes'):
-            for v in p['variantes']:
-                if isinstance(v, dict) and v.get('foto'):
-                    v['foto'] = get_img_url(v['foto'])
-                elif isinstance(v, dict) and not v.get('foto'):
-                    v['foto'] = p['imagem_destaque']
+            pass 
 
         try: p['preco'] = float(p.get('preco', 0))
         except: p['preco'] = 0.0

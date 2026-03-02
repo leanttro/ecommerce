@@ -176,7 +176,7 @@
                         <span class="text-3xl font-bold text-gray-400 line-through">R$ {{ "%.2f"|format(p.preco)|replace('.', ',') }}</span>
                         <span class="text-sm text-red-500 font-bold block mt-1 uppercase">Produto Indisponível</span>
                     {% elif p.preco %}
-                        <span class="text-4xl font-bold text-theme">R$ {{ "%.2f"|format(p.preco)|replace('.', ',') }}</span>
+                        <span id="preco-display" class="text-4xl font-bold text-theme">R$ {{ "%.2f"|format(p.preco)|replace('.', ',') }}</span>
                         <span class="text-sm opacity-70 font-bold block mt-1">à vista</span>
                     {% else %}
                         <span class="text-2xl font-bold opacity-50 uppercase">Preço sob consulta</span>
@@ -184,19 +184,24 @@
                 </div>
 
                 {% if p.variantes and p.variantes|length > 0 %}
-                <div class="mb-8">
-                    <label class="text-sm font-bold uppercase tracking-wide block mb-3 custom-title-color">
-                        Opções: <span id="color-label" class="text-theme font-normal"></span>
-                    </label>
-                    <div class="flex flex-wrap gap-3 justify-center md:justify-start">
-                        {% for v in p.variantes %}
-                        <button onclick="selectVariant('{{ v.nome }}', '{{ v.foto }}')" 
-                                class="w-10 h-10 rounded-full border-2 border-gray-200 hover:border-theme focus:ring-2 ring-theme ring-offset-2 bg-cover bg-center transition-all"
-                                style="background-image: url('{{ v.foto }}');"
-                                title="{{ v.nome }}">
-                        </button>
-                        {% endfor %}
+                <div class="mb-8 space-y-6" id="variantes-section">
+                    {% for grupo in p.variantes %}
+                    <div class="variante-grupo text-left" data-grupo="{{ grupo.grupo }}">
+                        <label class="text-sm font-bold uppercase tracking-wide block mb-3 custom-title-color">
+                            {{ grupo.grupo }}
+                        </label>
+                        <div class="flex flex-wrap gap-3">
+                            {% for op in grupo.opcoes %}
+                            <label class="cursor-pointer relative">
+                                <input type="radio" name="var_{{ loop.parent.index }}" value="{{ op.nome }}" data-preco="{{ op.preco }}" class="peer sr-only" onchange="calcularPrecoFinal()" {% if loop.first %}checked{% endif %}>
+                                <div class="px-5 py-3 border-2 border-gray-200 rounded-xl peer-checked:border-theme peer-checked:bg-theme/5 text-sm font-semibold text-gray-700 peer-checked:text-theme transition-all shadow-sm hover:border-gray-300">
+                                    {{ op.nome }} {% if op.preco and op.preco > 0 %}<span class="text-xs opacity-70 ml-1">(+R$ {{ "%.2f"|format(op.preco)|replace('.', ',') }})</span>{% endif %}
+                                </div>
+                            </label>
+                            {% endfor %}
+                        </div>
                     </div>
+                    {% endfor %}
                 </div>
                 {% endif %}
 
@@ -280,9 +285,6 @@
 
     <script>
         lucide.createIcons();
-        
-        let selectedColor = null;
-        let selectedPhoto = "{{ p.galeria[0] }}";
         const lojaPhone = "55{{ loja.whatsapp_comercial }}";
 
         // --- FUNÇÕES VISUAIS ---
@@ -290,14 +292,28 @@
             document.getElementById('main-image').src = src;
         }
 
-        function selectVariant(name, photo) {
-            selectedColor = name;
-            selectedPhoto = photo;
-            document.getElementById('color-label').innerText = name;
-            changeImage(photo);
+        // --- CÁLCULO DE PREÇO EM TEMPO REAL ---
+        const basePreco = {{ p.preco or 0 }};
+        
+        function calcularPrecoFinal() {
+            let adicional = 0;
+            const radios = document.querySelectorAll('#variantes-section input[type="radio"]:checked');
+            radios.forEach(radio => {
+                adicional += parseFloat(radio.getAttribute('data-preco') || 0);
+            });
+            
+            const precoFinal = basePreco + adicional;
+            
+            const priceDisplay = document.getElementById('preco-display');
+            if(priceDisplay && basePreco > 0) {
+                priceDisplay.innerText = "R$ " + precoFinal.toFixed(2).replace('.', ',');
+            }
         }
 
-        // --- LÓGICA DO CARRINHO (MESMA DA INDEX) ---
+        document.addEventListener('DOMContentLoaded', calcularPrecoFinal);
+
+
+        // --- LÓGICA DO CARRINHO ---
         let cart = []; 
         try { cart = JSON.parse(localStorage.getItem('cart_v2') || '[]'); } catch(e) { cart = []; }
 
@@ -327,14 +343,39 @@
 
         function addToCartPage(product) {
             let final = { ...product };
-            if (selectedColor) {
-                final.nome_exibicao = `${product.nome} (${selectedColor})`;
-                final.imagem = selectedPhoto;
-                final.cart_id = `${product.id}-${selectedColor}`;
+            let optionsText = [];
+            let adicionalTotal = 0;
+            let cartIdSuffix = "";
+
+            // Coleta todas as opções selecionadas
+            const grupos = document.querySelectorAll('.variante-grupo');
+            grupos.forEach((grupoEl) => {
+                const nomeGrupo = grupoEl.getAttribute('data-grupo');
+                const checkedRadio = grupoEl.querySelector('input[type="radio"]:checked');
+                
+                if (checkedRadio) {
+                    const nomeOpcao = checkedRadio.value;
+                    const precoOpcao = parseFloat(checkedRadio.getAttribute('data-preco') || 0);
+                    
+                    optionsText.push(`${nomeGrupo}: ${nomeOpcao}`);
+                    adicionalTotal += precoOpcao;
+                    cartIdSuffix += `-${nomeOpcao}`;
+                }
+            });
+
+            if (optionsText.length > 0) {
+                final.nome_exibicao = `${product.nome} (${optionsText.join(' | ')})`;
+                final.cart_id = `${product.id}${cartIdSuffix.replace(/\s+/g, '')}`;
             } else {
                 final.nome_exibicao = product.nome;
-                final.imagem = product.galeria[0];
                 final.cart_id = `${product.id}-padrao`;
+            }
+            
+            final.imagem = product.galeria[0];
+            
+            // Soma o preço base com os adicionais das opções selecionadas
+            if (!final.consulte) {
+                final.preco = (final.preco || 0) + adicionalTotal;
             }
 
             const idx = cart.findIndex(i => i.cart_id === final.cart_id);
@@ -370,7 +411,6 @@
             }
 
             cart.forEach((item, i) => {
-                // Se item tem preço, soma. Se não (consulte), preço é 0
                 let itemPrice = item.consulte ? 0 : (item.preco || 0);
                 total += itemPrice * item.qtd;
                 
@@ -399,7 +439,6 @@
         }
 
         function finalizingNoZap() {
-            // Alias para manter compatibilidade caso use o nome antigo
             finalizarNoZap();
         }
 
@@ -421,10 +460,6 @@
                 }
             });
             
-            msg += `--------------------------------\n`;
-            msg += `*💰 Total:* R$ ${total.toFixed(2).replace('.', ',')}\n`;
-            msg += `\nAguardo as instruções de pagamento!`;
-
             const url = `https://wa.me/${lojaPhone}?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
         }
