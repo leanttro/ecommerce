@@ -114,7 +114,7 @@
     {% for secao in layout %}
 
         {% if secao == 'banner' and not loja.ocultar_banner %}
-        <section class="h-[300px] md:h-screen w-full relative overflow-hidden" id="hero">
+        <section class="h-[70vh] md:h-screen w-full relative overflow-hidden" id="hero">
             {% if loja.banner1 %}
             <a href="{{ loja.linkbannerprincipal1 or '#' }}" class="block w-full h-full">
                 <img src="{{ loja.banner1 }}" class="w-full h-full object-cover object-center">
