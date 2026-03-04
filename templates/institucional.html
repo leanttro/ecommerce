@@ -85,19 +85,29 @@
 </head>
 <body>
 
-    <header class="fixed top-0 w-full z-[1000] py-6">
-        <div class="container mx-auto px-8 flex justify-between items-center">
-            <a href="/{{ loja.slug_url }}/" class="text-2xl font-bold tracking-tighter text-[var(--text-color)]">
-                {% if loja.logo %}<img src="{{ loja.logo }}" class="h-12 w-auto">{% else %}{{ loja.nome }}{% endif %}
-            </a>
-            <nav class="hidden md:flex gap-12 text-xs font-bold uppercase tracking-widest opacity-70">
+    <header class="fixed top-0 w-full z-[1000] py-4 md:py-6">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="flex justify-between items-center">
+                <a href="/{{ loja.slug_url }}/" class="text-2xl font-bold tracking-tighter text-[var(--text-color)]">
+                    {% if loja.logo %}<img src="{{ loja.logo }}" class="h-10 md:h-12 w-auto">{% else %}{{ loja.nome }}{% endif %}
+                </a>
+                
+                <nav class="hidden md:flex gap-12 text-xs font-bold uppercase tracking-widest opacity-70">
+                    {% if not loja.ocultar_sobre %}<a href="#sobre" class="hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
+                    {% if not loja.ocultar_produtos %}<a href="#portfolio" class="hover:opacity-100 transition text-[var(--text-color)]">Portfolio</a>{% endif %}
+                    <a href="#contato" class="hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
+                </nav>
+
+                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="bg-[var(--text-color)] text-[var(--bg-color)] px-4 md:px-6 py-2.5 md:py-3 rounded-full text-[9px] md:text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition">
+                    Fale Conosco
+                </a>
+            </div>
+
+            <nav class="md:hidden flex justify-center gap-6 mt-5 text-[10px] font-bold uppercase tracking-widest opacity-80 border-t border-white/10 pt-4">
                 {% if not loja.ocultar_sobre %}<a href="#sobre" class="hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
                 {% if not loja.ocultar_produtos %}<a href="#portfolio" class="hover:opacity-100 transition text-[var(--text-color)]">Portfolio</a>{% endif %}
                 <a href="#contato" class="hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
             </nav>
-            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="bg-[var(--text-color)] text-[var(--bg-color)] px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition">
-                Fale Conosco
-            </a>
         </div>
     </header>
 
