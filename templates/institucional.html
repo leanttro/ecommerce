@@ -167,7 +167,13 @@
 
     <footer class="py-20 text-center relative" id="contato" style="background-color: var(--text-color); color: var(--bg-color);">
         <div class="container mx-auto px-8">
-            <h2 class="text-4xl md:text-7xl mb-12 tracking-tighter">VAMOS CRIAR ALGO<br>JUNTO COM A <span style="color: var(--primary);">{{ loja.nome }}</span>?</h2>
+            <h2 class="text-4xl md:text-7xl mb-12 tracking-tighter uppercase">
+                {% if loja.chamada_rodape %}
+                    {{ loja.chamada_rodape }}
+                {% else %}
+                    VAMOS CRIAR ALGO<br>JUNTO COM A <span style="color: var(--primary);">{{ loja.nome }}</span>?
+                {% endif %}
+            </h2>
             
             <div class="flex flex-col md:flex-row items-center justify-center gap-8 mb-16">
                 <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="inline-block text-2xl border-b-2 pb-2 transition" style="border-color: var(--primary);">

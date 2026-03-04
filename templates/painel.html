@@ -315,6 +315,17 @@
                                 </div>
                                 <input type="text" name="titulo_blog" value="{{ loja.titulo_blog or 'Últimas do Blog' }}" class="w-full border rounded p-2 text-sm" placeholder="Título da seção">
                             </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <span class="text-sm font-bold text-gray-700">Chamada do Rodapé (Contato)</span>
+                                    </label>
+                                    <i data-lucide="message-square" class="text-gray-400 w-4 h-4"></i>
+                                </div>
+                                <input type="text" name="chamada_rodape" value="{{ loja.chamada_rodape or '' }}" class="w-full border rounded p-2 text-sm" placeholder='Ex: VAMOS CRIAR ALGO JUNTOS?'>
+                                <p class="text-[10px] text-gray-500">Deixe em branco para o padrão: "VAMOS CRIAR ALGO JUNTO COM A [NOME]".</p>
+                            </div>
                         </div>
                     </div>
                 </section>

@@ -595,7 +595,8 @@ def admin_painel(loja_slug):
             "sobre_titulo": request.form.get('sobre_titulo'),
             "sobre_texto": request.form.get('sobre_texto'),
             "ocultar_sobre": True if request.form.get('ocultar_sobre') else False,
-            "instagram_url": request.form.get('instagram_url')
+            "instagram_url": request.form.get('instagram_url'),
+            "chamada_rodape": request.form.get('chamada_rodape')
         }
         
         nova_senha = request.form.get('nova_senha')
