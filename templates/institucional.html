@@ -104,10 +104,10 @@
     {% for secao in layout %}
 
         {% if secao == 'banner' and not loja.ocultar_banner %}
-        <section class="h-screen w-full relative overflow-hidden" id="hero">
+        <section class="h-[300px] md:h-screen w-full relative overflow-hidden" id="hero">
             {% if loja.banner1 %}
             <a href="{{ loja.linkbannerprincipal1 or '#' }}" class="block w-full h-full">
-                <img src="{{ loja.banner1 }}" class="w-full h-full object-cover">
+                <img src="{{ loja.banner1 }}" class="w-full h-full object-cover object-center">
                 <div class="absolute inset-0 bg-black/20"></div>
             </a>
             {% else %}
@@ -137,9 +137,9 @@
         {% if secao == 'produtos' and not loja.ocultar_produtos %}
         <section class="horizontal-section bg-zinc-950" id="portfolio">
             <div class="horizontal-container">
-                <div class="flex-shrink-0 w-[30vw] flex flex-col justify-center pr-12">
+                <div class="flex-shrink-0 w-[85vw] md:w-[45vw] lg:w-[40vw] flex flex-col justify-center pr-8 md:pr-16 relative">
                     <span class="text-[var(--primary)] font-bold tracking-widest text-xs uppercase mb-4">Projetos Selecionados</span>
-                    <h2 class="text-white text-6xl leading-none">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
+                    <h2 class="text-white text-5xl md:text-6xl lg:text-[5rem] leading-tight md:leading-none break-words">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
                 </div>
 
                 {% for p in produtos %}
