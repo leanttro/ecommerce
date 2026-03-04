@@ -686,6 +686,10 @@
                     el.classList.add('bg-pink-50', 'text-pink-600');
                 }
             });
+
+            // Salva a aba ativa para restaurar após recarregar
+            localStorage.setItem('activePainelTab', sectionId);
+            window.history.replaceState(null, null, '#' + sectionId);
         }
 
         // --- TEMA SELECTOR ---
@@ -722,7 +726,8 @@
         }
 
         const hash = window.location.hash.replace('#', '');
-        showSection(hash || 'categorias');
+        const savedTab = localStorage.getItem('activePainelTab');
+        showSection(hash || savedTab || 'categorias');
 
 
         // --- MODAIS ---
