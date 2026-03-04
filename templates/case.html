@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ p.nome }} | Case</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #fff; color: #000; }
+        h1, h2 { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; }
+        
+        .full-hero { height: 80vh; position: relative; overflow: hidden; }
+        .full-hero img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .project-meta { border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 40px 0; }
+        .description-prose { font-size: 1.25rem; line-height: 1.8; color: #444; }
+        .description-prose p { margin-bottom: 2rem; }
+    </style>
+</head>
+<body>
+
+    <nav class="fixed top-0 w-full z-50 p-8 flex justify-between items-center mix-blend-difference text-white">
+        <a href="/{{ loja.slug_url }}" class="flex items-center gap-2 font-bold uppercase tracking-widest text-[10px]">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar ao Portfolio
+        </a>
+    </nav>
+
+    <div class="full-hero">
+        <img src="{{ p.imagem_destaque or p.imagem1 }}" alt="{{ p.nome }}">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+        <div class="absolute bottom-20 left-10 md:left-20 text-white">
+            <h1 class="text-5xl md:text-8xl leading-none mb-4">{{ p.nome }}</h1>
+            <p class="text-sm uppercase tracking-[0.3em] font-bold opacity-70">Projeto Realizado</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-10 md:px-20 py-20">
+        <div class="grid md:grid-cols-3 gap-20">
+            <div class="md:col-span-2">
+                <h2 class="text-sm uppercase tracking-widest text-purple-600 mb-8 font-bold">O Desafio & Solução</h2>
+                <div class="description-prose">
+                    {{ p.descricao | safe }}
+                </div>
+            </div>
+            
+            <div class="space-y-12">
+                <div class="project-meta">
+                    <h4 class="text-[10px] uppercase tracking-widest font-bold opacity-40 mb-4">Serviços Prestados</h4>
+                    <ul class="space-y-2">
+                        {% if p.variantes %}
+                            {% for grupo in p.variantes %}
+                                {% for op in grupo.opcoes %}
+                                <li class="text-sm font-semibold">{{ op.nome }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        {% else %}
+                            <li class="text-sm font-semibold">Consultoria Técnica</li>
+                            <li class="text-sm font-semibold">Desenvolvimento Customizado</li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <button onclick="window.open('https://wa.me/55{{ loja.whatsapp_comercial }}?text=Olá, vi o projeto {{ p.nome }} e gostaria de algo similar.')" class="w-full bg-black text-white py-6 rounded-none font-bold uppercase tracking-[0.2em] text-xs hover:bg-neutral-800 transition">
+                    Solicitar Projeto Similar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-10 md:px-20 pb-40">
+        <div class="grid md:grid-cols-2 gap-4">
+            {% if p.imagem1 %}
+            <div class="rounded-lg overflow-hidden h-[600px]">
+                <img src="{{ p.imagem1 }}" class="w-full h-full object-cover">
+            </div>
+            {% endif %}
+            {% if p.imagem2 %}
+            <div class="rounded-lg overflow-hidden h-[600px]">
+                <img src="{{ p.imagem2 }}" class="w-full h-full object-cover">
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>

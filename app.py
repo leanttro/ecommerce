@@ -201,7 +201,7 @@ def identificar_loja():
         
         # Tratamento de Layout e Configs Visuais Fallback se vazio
         if not g.loja.get('layout_order'):
-            g.loja['layout_order'] = "banner,busca,categorias,produtos,banners_menores,novidades,blog,footer"
+            g.loja['layout_order'] = "banner,busca,categorias,produtos,banners_menores,novidades,blog,sobre,footer"
         
         # Configs Visuais Padrão
         if not g.loja.get('font_tamanho_base'): g.loja['font_tamanho_base'] = 16
@@ -434,12 +434,13 @@ def index(loja_slug):
         "banner2": get_img_url(g.loja.get('bannerprincipal2')),
         "bannermenor1": get_img_url(g.loja.get('bannermenor1')),
         "bannermenor2": get_img_url(g.loja.get('bannermenor2')),
+        "sobre_imagem_url": get_img_url(g.loja.get('sobre_imagem')),
         "slug_url": loja_slug # Passamos o slug para montar links no HTML
     }
     
     # DEFINE QUAL TEMPLATE RENDERIZAR
     template_name = g.loja.get('template_ativo') or 'index'
-    if template_name not in ['index', 'pascoa', 'direto', 'direto_index']:
+    if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional']:
         template_name = 'index'
 
     return render_template(f'{template_name}.html', 
@@ -503,6 +504,8 @@ def produto(loja_slug, slug):
         
         if template_ativo in ['direto', 'direto_index']:
             template_produto = 'direto_produto.html'
+        elif template_ativo == 'institucional':
+            template_produto = 'case.html' # Adicionado para suportar o institucional chique
 
         return render_template(template_produto, p=p, loja=loja_visual, directus_url=DIRECTUS_URL)
     
@@ -553,7 +556,7 @@ def admin_painel(loja_slug):
 
     if request.method == 'POST':
         files_map = {}
-        for key in ['logo', 'bannerprincipal1', 'bannerprincipal2', 'bannermenor1', 'bannermenor2']:
+        for key in ['logo', 'bannerprincipal1', 'bannerprincipal2', 'bannermenor1', 'bannermenor2', 'sobre_imagem']:
             f = request.files.get(key)
             if f and f.filename:
                 fid = upload_file_to_directus(f)
@@ -588,7 +591,11 @@ def admin_painel(loja_slug):
             "ocultar_blog": True if request.form.get('ocultar_blog') else False,
             "ocultar_busca": True if request.form.get('ocultar_busca') else False,
             "ocultar_banner": True if request.form.get('ocultar_banner') else False,
-            "ocultar_banners_menores": True if request.form.get('ocultar_banners_menores') else False
+            "ocultar_banners_menores": True if request.form.get('ocultar_banners_menores') else False,
+            "sobre_titulo": request.form.get('sobre_titulo'),
+            "sobre_texto": request.form.get('sobre_texto'),
+            "ocultar_sobre": True if request.form.get('ocultar_sobre') else False,
+            "instagram_url": request.form.get('instagram_url')
         }
         
         nova_senha = request.form.get('nova_senha')
@@ -626,8 +633,12 @@ def admin_painel(loja_slug):
     except Exception as e:
         print(f"Erro ao carregar dados do painel: {e}")
 
-    if g.loja.get('layout_order') and 'banners_menores' not in g.loja['layout_order']:
-        g.loja['layout_order'] += ",banners_menores"
+    # Garante que a seção sobre e banners_menores existam na string de layout padrão
+    if g.loja.get('layout_order'):
+        if 'banners_menores' not in g.loja['layout_order']:
+            g.loja['layout_order'] += ",banners_menores"
+        if 'sobre' not in g.loja['layout_order']:
+            g.loja['layout_order'] += ",sobre"
 
     loja_visual = {
         **g.loja,
@@ -636,6 +647,7 @@ def admin_painel(loja_slug):
         "banner2_url": get_img_url(g.loja.get('bannerprincipal2')),
         "bannermenor1_url": get_img_url(g.loja.get('bannermenor1')),
         "bannermenor2_url": get_img_url(g.loja.get('bannermenor2')),
+        "sobre_imagem_url": get_img_url(g.loja.get('sobre_imagem')),
         "slug_url": loja_slug
     }
 
