@@ -55,11 +55,11 @@
 
         @media (max-width: 768px) {
             .horizontal-section {
-                height: 75vh;
-                padding-top: 2vh;
+                height: 60vh;
+                padding-top: 0vh;
             }
             .horizontal-container {
-                height: 55vh;
+                height: 60vh;
                 align-items: center;
             }
             .case-info {
@@ -328,7 +328,7 @@
         const container = document.querySelector(".horizontal-container");
         
         if (container) {
-            let startPos = window.innerWidth <= 768 ? "top 22%" : "top top";
+            let startPos = window.innerWidth <= 768 ? "top 35%" : "top top";
             gsap.to(container, {
                 x: () => -(container.scrollWidth - window.innerWidth),
                 ease: "none",
