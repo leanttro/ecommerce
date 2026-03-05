@@ -84,6 +84,20 @@
             z-index: 2;
         }
 
+        @media (max-width: 768px) {
+            .case-info {
+                bottom: 50%;
+                left: 50%;
+                transform: translate(-50%, 50%);
+                width: 100%;
+                padding: 0 20px;
+                text-align: center;
+            }
+            .case-info .flex {
+                justify-content: center;
+            }
+        }
+
         .case-title { font-size: clamp(2rem, 5vw, 4rem); line-height: 1; margin-bottom: 1rem; }
 
         ::-webkit-scrollbar { width: 5px; }
