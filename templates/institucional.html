@@ -118,7 +118,7 @@
             {% if loja.banner1 %}
             <a href="{{ loja.linkbannerprincipal1 or '#' }}" class="block w-full h-full">
                 <img src="{{ loja.banner1 }}" class="w-full h-full object-cover object-center">
-                <div class="absolute inset-0 bg-black/20"></div>
+                
             </a>
             {% else %}
             <div class="w-full h-full flex items-center justify-center bg-gray-100">
@@ -145,11 +145,11 @@
         {% endif %}
 
         {% if secao == 'produtos' and not loja.ocultar_produtos %}
-        <section class="horizontal-section bg-zinc-950" id="portfolio">
+        <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color);">
             <div class="horizontal-container">
                 <div class="flex-shrink-0 w-[90vw] sm:w-[70vw] md:w-[50vw] lg:w-[45vw] flex flex-col justify-center pr-6 md:pr-16 lg:pr-20 relative">
-                    <span class="text-[var(--primary)] font-bold tracking-widest text-xs uppercase mb-4">Projetos Selecionados</span>
-                    <h2 class="text-white text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] leading-tight md:leading-none break-normal">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
+                    
+                    <h2 class="text-[var(--text-color)] text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] leading-tight md:leading-none break-normal">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
                 </div>
 
                 {% for p in produtos %}
@@ -165,8 +165,8 @@
                     </div>
                 </div>
                 {% else %}
-                <div class="flex-shrink-0 w-[70vw] h-full mr-[5vw] flex items-center justify-center border border-white/20 rounded-2xl">
-                    <p class="text-white/50 text-xl font-bold uppercase tracking-widest">Nenhum projeto cadastrado.</p>
+                <div class="flex-shrink-0 w-[70vw] h-full mr-[5vw] flex items-center justify-center border rounded-2xl" style="border-color: var(--text-color);">
+                    <p class="text-xl font-bold uppercase tracking-widest" style="color: var(--text-color); opacity: 0.5;">Nenhum projeto cadastrado.</p>
                 </div>
                 {% endfor %}
             </div>
