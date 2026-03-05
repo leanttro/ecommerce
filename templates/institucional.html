@@ -55,12 +55,23 @@
 
         @media (max-width: 768px) {
             .horizontal-section {
-                height: 70vh;
-                padding-top: 15vh;
+                height: 75vh;
+                padding-top: 2vh;
             }
             .horizontal-container {
-                height: 50vh;
+                height: 55vh;
                 align-items: center;
+            }
+            .case-info {
+                bottom: 50%;
+                left: 50%;
+                transform: translate(-50%, 50%);
+                width: 100%;
+                padding: 0 20px;
+                text-align: center;
+            }
+            .case-info .flex {
+                justify-content: center;
             }
         }
 
@@ -93,20 +104,6 @@
             left: 60px;
             color: white;
             z-index: 2;
-        }
-
-        @media (max-width: 768px) {
-            .case-info {
-                bottom: 50%;
-                left: 50%;
-                transform: translate(-50%, 50%);
-                width: 100%;
-                padding: 0 20px;
-                text-align: center;
-            }
-            .case-info .flex {
-                justify-content: center;
-            }
         }
 
         .case-title { font-size: clamp(2rem, 5vw, 4rem); line-height: 1; margin-bottom: 1rem; }
@@ -173,26 +170,35 @@
         {% endif %}
 
         {% if secao == 'categorias' and not loja.ocultar_categorias %}
-        <section class="py-12 border-b border-gray-100 w-full relative group" style="background-color: var(--bg-color);">
+        <section class="py-6 md:py-12 border-b border-gray-100 w-full relative group" style="background-color: var(--bg-color);">
             <div class="container mx-auto px-4 md:px-8 relative">
-                <button onclick="scrollCategories(-200)" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-md md:hidden group-hover:flex items-center justify-center border border-gray-200" style="color: var(--text-color);">
-                    <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                </button>
                 
-                <div id="category-scroll" class="flex gap-4 overflow-x-auto scroll-smooth hide-scroll px-2 w-full">
-                    <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition shrink-0" style="border-color: var(--text-color); color: var(--text-color);">
-                        Todos os Segmentos
-                    </a>
-                    {% for cat in categorias %}
-                    <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition shrink-0" style="border-color: var(--text-color); color: var(--text-color); opacity: 0.5;">
-                        {{ cat.nome }}
-                    </a>
-                    {% endfor %}
+                {% if loja.titulo_categorias %}
+                <div class="text-center mb-6">
+                    <h2 class="text-[var(--text-color)] text-xl md:text-2xl font-bold uppercase tracking-widest">{{ loja.titulo_categorias }}</h2>
                 </div>
+                {% endif %}
 
-                <button onclick="scrollCategories(200)" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-md md:hidden group-hover:flex items-center justify-center border border-gray-200" style="color: var(--text-color);">
-                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
-                </button>
+                <div class="relative w-full">
+                    <button onclick="scrollCategories(-200)" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-md md:hidden group-hover:flex items-center justify-center border border-gray-200" style="color: var(--text-color);">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    
+                    <div id="category-scroll" class="flex gap-4 overflow-x-auto scroll-smooth hide-scroll px-2 w-full">
+                        <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition shrink-0" style="border-color: var(--text-color); color: var(--text-color);">
+                            Todos os Segmentos
+                        </a>
+                        {% for cat in categorias %}
+                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition shrink-0" style="border-color: var(--text-color); color: var(--text-color); opacity: 0.5;">
+                            {{ cat.nome }}
+                        </a>
+                        {% endfor %}
+                    </div>
+
+                    <button onclick="scrollCategories(200)" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-md md:hidden group-hover:flex items-center justify-center border border-gray-200" style="color: var(--text-color);">
+                        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -322,6 +328,7 @@
         const container = document.querySelector(".horizontal-container");
         
         if (container) {
+            let startPos = window.innerWidth <= 768 ? "top 22%" : "top top";
             gsap.to(container, {
                 x: () => -(container.scrollWidth - window.innerWidth),
                 ease: "none",
@@ -329,6 +336,7 @@
                     trigger: ".horizontal-section",
                     pin: true,
                     scrub: 1,
+                    start: startPos,
                     end: () => "+=" + container.scrollWidth,
                     invalidateOnRefresh: true,
                 }
