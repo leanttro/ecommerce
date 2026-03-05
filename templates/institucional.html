@@ -96,6 +96,15 @@
             .case-info .flex {
                 justify-content: center;
             }
+            .horizontal-container {
+                width: 100%;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+            }
+            .horizontal-container::-webkit-scrollbar {
+                display: none;
+            }
         }
 
         .case-title { font-size: clamp(2rem, 5vw, 4rem); line-height: 1; margin-bottom: 1rem; }
@@ -287,16 +296,20 @@
         const container = document.querySelector(".horizontal-container");
         
         if (container) {
-            gsap.to(container, {
-                x: () => -(container.scrollWidth - window.innerWidth),
-                ease: "none",
-                scrollTrigger: {
-                    trigger: ".horizontal-section",
-                    pin: true,
-                    scrub: 1,
-                    end: () => "+=" + container.scrollWidth,
-                    invalidateOnRefresh: true,
-                }
+            let mm = gsap.matchMedia();
+            
+            mm.add("(min-width: 769px)", () => {
+                gsap.to(container, {
+                    x: () => -(container.scrollWidth - window.innerWidth),
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: ".horizontal-section",
+                        pin: true,
+                        scrub: 1,
+                        end: () => "+=" + (container.scrollWidth * 0.5),
+                        invalidateOnRefresh: true,
+                    }
+                });
             });
         }
     </script>
