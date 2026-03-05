@@ -47,7 +47,7 @@
             
             <div class="space-y-12">
                 <div class="project-meta">
-                    <h4 class="text-[10px] uppercase tracking-widest font-bold opacity-40 mb-4">Serviços Prestados</h4>
+                    <h4 class="text-[10px] uppercase tracking-widest font-bold opacity-40 mb-4">Ficha Técnica</h4>
                     <ul class="space-y-2">
                         {% if p.variantes %}
                             {% for grupo in p.variantes %}
@@ -56,15 +56,23 @@
                                 {% endfor %}
                             {% endfor %}
                         {% else %}
-                            <li class="text-sm font-semibold">Consultoria Técnica</li>
-                            <li class="text-sm font-semibold">Desenvolvimento Customizado</li>
+                            <li class="text-sm font-semibold">Projeto Customizado</li>
+                            <li class="text-sm font-semibold">Identidade Visual</li>
                         {% endif %}
                     </ul>
                 </div>
 
-                <button onclick="window.open('https://wa.me/55{{ loja.whatsapp_comercial }}?text=Olá, vi o projeto {{ p.nome }} e gostaria de algo similar.')" class="w-full bg-black text-white py-6 rounded-none font-bold uppercase tracking-[0.2em] text-xs hover:bg-neutral-800 transition">
-                    Solicitar Projeto Similar
-                </button>
+                <div class="flex flex-col gap-4">
+                    {% if p.link_projeto %}
+                    <a href="{{ p.link_projeto }}" target="_blank" class="w-full border border-black text-black py-5 text-center font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-neutral-50 transition">
+                        Visitar Site ou Instagram
+                    </a>
+                    {% endif %}
+
+                    <button onclick="window.open('https://wa.me/55{{ p.whatsapp_projeto or loja.whatsapp_comercial }}?text=Olá, vi o projeto {{ p.nome }} e gostaria de saber mais.')" class="w-full bg-green-600 text-white py-5 font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-green-700 transition flex items-center justify-center gap-2">
+                        <i data-lucide="message-circle" class="w-4 h-4"></i> Conversar no WhatsApp
+                    </button>
+                </div>
             </div>
         </div>
     </div>

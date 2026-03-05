@@ -81,6 +81,9 @@
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: var(--bg-color); }
         ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body>
@@ -118,7 +121,6 @@
             {% if loja.banner1 %}
             <a href="{{ loja.linkbannerprincipal1 or '#' }}" class="block w-full h-full">
                 <img src="{{ loja.banner1 }}" class="w-full h-full object-cover object-center">
-                
             </a>
             {% else %}
             <div class="w-full h-full flex items-center justify-center bg-gray-100">
@@ -128,13 +130,30 @@
         </section>
         {% endif %}
 
+        {% if secao == 'categorias' and not loja.ocultar_categorias %}
+        <section class="py-12 border-b border-gray-100" style="background-color: var(--bg-color);">
+            <div class="container mx-auto px-8">
+                <div class="flex gap-4 overflow-x-auto pb-4 hide-scroll justify-start md:justify-center">
+                    <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition" style="border-color: var(--text-color); color: var(--text-color);">
+                        Todos os Segmentos
+                    </a>
+                    {% for cat in categorias %}
+                    <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition" style="border-color: var(--text-color); color: var(--text-color); opacity: 0.5;">
+                        {{ cat.nome }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
         {% if secao == 'sobre' and not loja.ocultar_sobre %}
         <section class="py-32" id="sobre" style="background-color: var(--bg-color);">
             <div class="container mx-auto px-8 grid md:grid-cols-2 gap-20 items-center">
                 <div>
                     <h2 class="text-5xl mb-8 leading-tight text-[var(--text-color)]">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
                     <div class="text-xl leading-relaxed mb-8 whitespace-pre-line" style="color: var(--text-color); opacity: 0.8;">
-                        {{ loja.sobre_texto or 'Adicione a história ou a descrição da sua empresa através do painel de administração na aba "Sobre a Empresa".' }}
+                        {{ loja.sobre_texto or 'Adicione a história através do painel na aba "Sobre a Empresa".' }}
                     </div>
                 </div>
                 <div class="rounded-2xl overflow-hidden shadow-2xl h-[400px] md:h-[600px] border border-gray-100">
@@ -167,7 +186,6 @@
         <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color);">
             <div class="horizontal-container">
                 <div class="flex-shrink-0 w-[90vw] sm:w-[70vw] md:w-[50vw] lg:w-[45vw] flex flex-col justify-center pr-6 md:pr-16 lg:pr-20 relative">
-                    
                     <h2 class="text-[var(--text-color)] text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] leading-tight md:leading-none break-normal">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
                 </div>
 
@@ -200,7 +218,7 @@
                 {% if loja.chamada_rodape %}
                     {{ loja.chamada_rodape }}
                 {% else %}
-                    VAMOS CRIAR ALGO<br>JUNTO COM A <span style="color: var(--primary);">{{ loja.nome }}</span>?
+                    VAMOS CRIAR ALGO JUNTO COM A <span style="color: var(--primary);">{{ loja.nome }}</span>?
                 {% endif %}
             </h2>
             
