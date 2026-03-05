@@ -153,20 +153,34 @@
         {% endif %}
 
         {% if secao == 'categorias' and not loja.ocultar_categorias %}
-        <section class="py-12 border-b border-gray-100 w-full" style="background-color: var(--bg-color);">
-            <div class="container mx-auto px-8 max-w-full">
-                <div class="flex gap-4 overflow-x-auto pb-4 hide-scroll justify-start md:justify-center w-full">
-                    <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition" style="border-color: var(--text-color); color: var(--text-color);">
+        <section class="py-12 border-b border-gray-100 w-full relative group" style="background-color: var(--bg-color);">
+            <div class="container mx-auto px-4 md:px-8 relative">
+                <button onclick="scrollCategories(-200)" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-md md:hidden group-hover:flex items-center justify-center border border-gray-200" style="color: var(--text-color);">
+                    <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                </button>
+                
+                <div id="category-scroll" class="flex gap-4 overflow-x-auto scroll-smooth hide-scroll px-2 w-full">
+                    <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition shrink-0" style="border-color: var(--text-color); color: var(--text-color);">
                         Todos os Segmentos
                     </a>
                     {% for cat in categorias %}
-                    <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition" style="border-color: var(--text-color); color: var(--text-color); opacity: 0.5;">
+                    <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition shrink-0" style="border-color: var(--text-color); color: var(--text-color); opacity: 0.5;">
                         {{ cat.nome }}
                     </a>
                     {% endfor %}
                 </div>
+
+                <button onclick="scrollCategories(200)" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-md md:hidden group-hover:flex items-center justify-center border border-gray-200" style="color: var(--text-color);">
+                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                </button>
             </div>
         </section>
+
+        <script>
+            function scrollCategories(val) {
+                document.getElementById('category-scroll').scrollBy({ left: val, behavior: 'smooth' });
+            }
+        </script>
         {% endif %}
 
         {% if secao == 'sobre' and not loja.ocultar_sobre %}
