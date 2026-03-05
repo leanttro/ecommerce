@@ -98,12 +98,12 @@
         <div class="container mx-auto px-4 md:px-8">
             <div class="flex justify-between items-center">
                 <a href="/{{ loja.slug_url }}/" class="text-2xl font-bold tracking-tighter text-[var(--text-color)]">
-                    {% if loja.logo %}<img src="{{ loja.logo }}" class="h-16 md:h-20 w-auto">{% else %}{{ loja.nome }}{% endif %}
+                    {% if loja.logo %}<img src="{{ loja.logo }}" class="h-10 md:h-12 w-auto">{% else %}{{ loja.nome }}{% endif %}
                 </a>
                 
                 <nav class="hidden md:flex gap-12 text-xs font-bold uppercase tracking-widest opacity-70">
                     {% if not loja.ocultar_sobre %}<a href="#sobre" class="hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
-                    {% if not loja.ocultar_produtos %}<a href="#portfolio" class="hover:opacity-100 transition text-[var(--text-color)]">Portfolio</a>{% endif %}
+                    {% if not loja.ocultar_produtos %}<a href="#portfolio" class="hover:opacity-100 transition text-[var(--text-color)]">{{ loja.titulo_produtos or 'Nossos Cases' }}</a>{% endif %}
                     <a href="#contato" class="hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
                 </nav>
 
@@ -114,7 +114,7 @@
 
             <nav class="md:hidden flex flex-wrap justify-center gap-4 mt-5 text-[10px] font-bold uppercase tracking-widest opacity-80 border-t border-white/10 pt-4 w-full">
                 {% if not loja.ocultar_sobre %}<a href="#sobre" class="hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
-                {% if not loja.ocultar_produtos %}<a href="#portfolio" class="hover:opacity-100 transition text-[var(--text-color)]">Portfolio</a>{% endif %}
+                {% if not loja.ocultar_produtos %}<a href="#portfolio" class="hover:opacity-100 transition text-[var(--text-color)]">{{ loja.titulo_produtos or 'Nossos Cases' }}</a>{% endif %}
                 <a href="#contato" class="hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
             </nav>
         </div>
