@@ -144,6 +144,25 @@
         </section>
         {% endif %}
 
+        {% if secao == 'banners_menores' and not loja.ocultar_banners_menores %}
+        <section class="py-16" style="background-color: var(--bg-color);">
+            <div class="container mx-auto px-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {% if loja.bannermenor1 %}
+                    <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl">
+                        <img src="{{ loja.bannermenor1 }}" class="w-full h-auto object-cover">
+                    </a>
+                    {% endif %}
+                    {% if loja.bannermenor2 %}
+                    <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl">
+                        <img src="{{ loja.bannermenor2 }}" class="w-full h-auto object-cover">
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
         {% if secao == 'produtos' and not loja.ocultar_produtos %}
         <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color);">
             <div class="horizontal-container">
