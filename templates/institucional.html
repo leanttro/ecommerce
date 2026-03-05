@@ -96,6 +96,16 @@
             .case-info .flex {
                 justify-content: center;
             }
+            .horizontal-container {
+                width: 100%;
+                overflow-x: auto;
+                overflow-y: visible;
+                -webkit-overflow-scrolling: touch;
+                touch-action: pan-x pan-y;
+            }
+            .horizontal-container::-webkit-scrollbar {
+                display: none;
+            }
         }
 
         .case-title { font-size: clamp(2rem, 5vw, 4rem); line-height: 1; margin-bottom: 1rem; }
