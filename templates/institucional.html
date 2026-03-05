@@ -55,16 +55,27 @@
 
         @media (max-width: 768px) {
             .horizontal-section {
-                height: 70vh;
-                padding-top: 0vh;
+                height: 100vh;
+                padding-top: 5vh;
                 align-items: flex-start;
             }
             .horizontal-container {
-                height: 70vh;
-                align-items: flex-start;
+                height: auto;
+                flex-direction: column;
+                padding-left: 0;
+                align-items: center;
+                width: 100vw;
+            }
+            .flex-shrink-0.relative {
+                width: 100vw;
+                padding: 0 10vw;
+                margin-bottom: 20px;
             }
             .case-card {
-                align-self: flex-start;
+                align-self: center;
+                margin-right: 0 !important;
+                width: 80vw !important;
+                margin-bottom: 20px;
             }
             .case-info {
                 bottom: 50%;
@@ -332,19 +343,24 @@
         const container = document.querySelector(".horizontal-container");
         
         if (container) {
-            let startPos = window.innerWidth <= 768 ? "top 18%" : "top top";
-            gsap.to(container, {
-                x: () => -(container.scrollWidth - window.innerWidth),
-                ease: "none",
-                scrollTrigger: {
-                    trigger: ".horizontal-section",
-                    pin: true,
-                    scrub: 1,
-                    start: startPos,
-                    end: () => "+=" + container.scrollWidth,
-                    invalidateOnRefresh: true,
-                }
-            });
+            if (window.innerWidth > 768) {
+                gsap.to(container, {
+                    x: () => -(container.scrollWidth - window.innerWidth),
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: ".horizontal-section",
+                        pin: true,
+                        scrub: 1,
+                        start: "top top",
+                        end: () => "+=" + container.scrollWidth,
+                        invalidateOnRefresh: true,
+                    }
+                });
+            } else {
+                // Versão mobile: os cards já aparecem abaixo do título no fluxo vertical
+                // Mantemos o ScrollTrigger apenas para efeitos visuais ou controle de fluxo se necessário
+                ScrollTrigger.refresh();
+            }
         }
     </script>
 </body>
