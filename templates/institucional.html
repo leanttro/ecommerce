@@ -85,23 +85,6 @@
         }
 
         @media (max-width: 768px) {
-            .horizontal-section {
-                height: auto !important;
-                padding: 4rem 0 !important;
-                display: block !important;
-            }
-            .horizontal-container {
-                height: auto !important;
-                width: 100%;
-                overflow-x: auto;
-                overflow-y: visible;
-                -webkit-overflow-scrolling: touch;
-                touch-action: pan-x pan-y;
-                align-items: center;
-            }
-            .horizontal-container::-webkit-scrollbar {
-                display: none;
-            }
             .case-info {
                 bottom: 50%;
                 left: 50%;
@@ -328,20 +311,16 @@
         const container = document.querySelector(".horizontal-container");
         
         if (container) {
-            let mm = gsap.matchMedia();
-            
-            mm.add("(min-width: 769px)", () => {
-                gsap.to(container, {
-                    x: () => -(container.scrollWidth - window.innerWidth),
-                    ease: "none",
-                    scrollTrigger: {
-                        trigger: ".horizontal-section",
-                        pin: true,
-                        scrub: 1,
-                        end: () => "+=" + container.scrollWidth,
-                        invalidateOnRefresh: true,
-                    }
-                });
+            gsap.to(container, {
+                x: () => -(container.scrollWidth - window.innerWidth),
+                ease: "none",
+                scrollTrigger: {
+                    trigger: ".horizontal-section",
+                    pin: true,
+                    scrub: 1,
+                    end: () => "+=" + container.scrollWidth,
+                    invalidateOnRefresh: true,
+                }
             });
         }
     </script>
