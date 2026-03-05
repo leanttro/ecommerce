@@ -402,7 +402,9 @@ def index(loja_slug):
                     "variantes": variantes, "origem": p.get('origem'),
                     "urgencia": p.get('status_urgencia'), "classe_frete": p.get('classe_frete'),
                     "estoque": estoque_val, "consulte": p.get('consulte', False),
-                    "a_partir_de": p.get('a_partir_de', False)
+                    "a_partir_de": p.get('a_partir_de', False),
+                    "link_projeto": p.get('link_projeto'),
+                    "whatsapp_projeto": p.get('whatsapp_projeto')
                 }
                 produtos.append(prod_obj)
                 
@@ -753,7 +755,9 @@ def admin_salvar_produto(loja_slug):
         "a_partir_de": a_partir_de,
         "variantes": variantes,
         "descricao": request.form.get('descricao'),
-        "categoria_id": cat_id
+        "categoria_id": cat_id,
+        "link_projeto": request.form.get('link_projeto'),
+        "whatsapp_projeto": request.form.get('whatsapp_projeto')
     }
     
     if not prod_id and nome:

@@ -634,6 +634,20 @@
                         <button type="button" onclick="addGrupo()" class="text-sm text-pink-600 font-bold flex items-center gap-1 hover:text-pink-800 transition"><i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar Grupo de Variantes</button>
                     </div>
 
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mt-4">
+                        <h4 class="font-bold text-blue-800 text-sm mb-3">Links do Case / Portfólio (Opcional)</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold mb-1 text-gray-700">Link do Projeto / Site / Instagram</label>
+                                <input type="text" name="link_projeto" id="prodLinkProjeto" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all" placeholder="Ex: https://instagram.com/seuprojeto">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold mb-1 text-gray-700">WhatsApp do Projeto (Só números)</label>
+                                <input type="text" name="whatsapp_projeto" id="prodWhatsappProjeto" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all" placeholder="Ex: 5511999999999">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50 p-6 rounded-lg border border-gray-200">
                         <div class="col-span-1 md:col-span-3 mb-2">
                             <h4 class="font-bold text-gray-800 flex items-center gap-2"><i data-lucide="image" class="text-pink-600"></i> Imagens do Produto</h4>
@@ -887,6 +901,8 @@
             document.getElementById('prodDescricao').value = '';
             document.getElementById('prodConsulte').checked = false;
             document.getElementById('prodAPartirDe').checked = false;
+            document.getElementById('prodLinkProjeto').value = '';
+            document.getElementById('prodWhatsappProjeto').value = '';
             document.querySelector('#produtoForm input[name="imagem"]').value = '';
             document.querySelector('#produtoForm input[name="imagem1"]').value = '';
             document.querySelector('#produtoForm input[name="imagem2"]').value = '';
@@ -907,6 +923,8 @@
             document.getElementById('prodDescricao').value = prod.descricao || '';
             document.getElementById('prodConsulte').checked = prod.consulte;
             document.getElementById('prodAPartirDe').checked = prod.a_partir_de || false;
+            document.getElementById('prodLinkProjeto').value = prod.link_projeto || '';
+            document.getElementById('prodWhatsappProjeto').value = prod.whatsapp_projeto || '';
             document.querySelector('#produtoForm input[name="imagem"]').value = '';
             document.querySelector('#produtoForm input[name="imagem1"]').value = '';
             document.querySelector('#produtoForm input[name="imagem2"]').value = '';
