@@ -155,7 +155,7 @@
             </a>
             {% else %}
             <div class="w-full h-full flex items-center justify-center bg-gray-100">
-                <h1 class="text-4xl opacity-20">Seu Banner Here</h1>
+                <h1 class="text-4xl opacity-20">Seu Banner Aqui</h1>
             </div>
             {% endif %}
         </section>
@@ -231,7 +231,7 @@
         <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color);">
             <div class="horizontal-container">
                 <div class="flex-shrink-0 w-[90vw] sm:w-[70vw] md:w-[50vw] lg:w-[45vw] flex flex-col justify-center pr-6 md:pr-16 lg:pr-20 relative">
-                    <h2 class="text-[var(--text-color)] text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] leading-tight md:leading-none break-words" style="word-break: break-word;">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
+                    <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] leading-tight md:leading-none break-words" style="word-break: break-word;">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
                     <i data-lucide="arrow-right" class="w-10 h-10 text-[var(--text-color)] mt-4 mb-2 animate-arrow"></i>
                 </div>
 
@@ -291,22 +291,40 @@
     </footer>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const params = new URLSearchParams(window.location.search);
+            const catId = params.get('categoria');
+            if (catId) {
+                const linkCategoria = document.querySelector('a[href*="categoria=' + catId + '"]');
+                if (linkCategoria) {
+                    const tituloProdutos = document.getElementById('titulo-secao-produtos');
+                    if (tituloProdutos) {
+                        tituloProdutos.innerText = linkCategoria.innerText.trim();
+                    }
+                }
+            }
+        });
+
         lucide.createIcons();
         gsap.registerPlugin(ScrollTrigger);
 
         const container = document.querySelector(".horizontal-container");
         
         if (container) {
-            gsap.to(container, {
-                x: () => -(container.scrollWidth - window.innerWidth),
-                ease: "none",
-                scrollTrigger: {
-                    trigger: ".horizontal-section",
-                    pin: true,
-                    scrub: 1,
-                    end: () => "+=" + container.scrollWidth,
-                    invalidateOnRefresh: true,
-                }
+            let mm = gsap.matchMedia();
+            
+            mm.add("(min-width: 769px)", () => {
+                gsap.to(container, {
+                    x: () => -(container.scrollWidth - window.innerWidth),
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: ".horizontal-section",
+                        pin: true,
+                        scrub: 1,
+                        end: () => "+=" + container.scrollWidth,
+                        invalidateOnRefresh: true,
+                    }
+                });
             });
         }
     </script>
