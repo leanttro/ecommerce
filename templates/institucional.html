@@ -96,15 +96,6 @@
             .case-info .flex {
                 justify-content: center;
             }
-            .horizontal-container {
-                width: 100%;
-                overflow-x: auto;
-                overflow-y: hidden;
-                -webkit-overflow-scrolling: touch;
-            }
-            .horizontal-container::-webkit-scrollbar {
-                display: none;
-            }
         }
 
         .case-title { font-size: clamp(2rem, 5vw, 4rem); line-height: 1; margin-bottom: 1rem; }
@@ -115,6 +106,15 @@
 
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @keyframes arrow-move {
+            0% { transform: translateX(0); opacity: 0.5; }
+            50% { transform: translateX(10px); opacity: 1; }
+            100% { transform: translateX(0); opacity: 0.5; }
+        }
+        .animate-arrow {
+            animation: arrow-move 1.5s ease-in-out infinite;
+        }
     </style>
 </head>
 <body>
@@ -155,7 +155,7 @@
             </a>
             {% else %}
             <div class="w-full h-full flex items-center justify-center bg-gray-100">
-                <h1 class="text-4xl opacity-20">Seu Banner Aqui</h1>
+                <h1 class="text-4xl opacity-20">Seu Banner Here</h1>
             </div>
             {% endif %}
         </section>
@@ -232,6 +232,7 @@
             <div class="horizontal-container">
                 <div class="flex-shrink-0 w-[90vw] sm:w-[70vw] md:w-[50vw] lg:w-[45vw] flex flex-col justify-center pr-6 md:pr-16 lg:pr-20 relative">
                     <h2 class="text-[var(--text-color)] text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] leading-tight md:leading-none break-words" style="word-break: break-word;">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
+                    <i data-lucide="arrow-right" class="w-10 h-10 text-[var(--text-color)] mt-4 mb-2 animate-arrow"></i>
                 </div>
 
                 {% for p in produtos %}
@@ -296,20 +297,16 @@
         const container = document.querySelector(".horizontal-container");
         
         if (container) {
-            let mm = gsap.matchMedia();
-            
-            mm.add("(min-width: 769px)", () => {
-                gsap.to(container, {
-                    x: () => -(container.scrollWidth - window.innerWidth),
-                    ease: "none",
-                    scrollTrigger: {
-                        trigger: ".horizontal-section",
-                        pin: true,
-                        scrub: 1,
-                        end: () => "+=" + (container.scrollWidth * 0.5),
-                        invalidateOnRefresh: true,
-                    }
-                });
+            gsap.to(container, {
+                x: () => -(container.scrollWidth - window.innerWidth),
+                ease: "none",
+                scrollTrigger: {
+                    trigger: ".horizontal-section",
+                    pin: true,
+                    scrub: 1,
+                    end: () => "+=" + container.scrollWidth,
+                    invalidateOnRefresh: true,
+                }
             });
         }
     </script>
