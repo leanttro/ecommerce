@@ -1,339 +1,335 @@
 <!DOCTYPE html>
+
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>{{ loja.nome }} | Portfolio</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<title>{{ loja.nome }} | Portfolio</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<style>
+    @import url('[https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&display=swap)');
     
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&display=swap');
-        
-        :root { 
-            --primary: {{ loja.cor_primaria or '#7C3AED' }}; 
-            --bg-color: {{ loja.cor_fundo or '#F8F9FA' }};
-            --text-color: {{ loja.cor_titulo or '#111111' }};
-        }
-        
-        html, body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            overflow-x: hidden !important;
-            width: 100%;
-            max-width: 100vw;
-            -webkit-text-size-adjust: 100%;
-            touch-action: manipulation;
-        }
+    :root { 
+        --primary: {{ loja.cor_primaria or '#7C3AED' }}; 
+        --bg-color: {{ loja.cor_fundo or '#F8F9FA' }};
+        --text-color: {{ loja.cor_titulo or '#111111' }};
+    }
+    
+    html, body { 
+        font-family: 'Inter', sans-serif; 
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        overflow-x: hidden !important;
+        width: 100%;
+        max-width: 100vw;
+        -webkit-text-size-adjust: 100%;
+        touch-action: manipulation;
+    }
 
-        h1, h2, h3, .font-display { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; }
+    h1, h2, h3, .font-display { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; }
 
-        header {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
+    header {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
 
+    .horizontal-section {
+        height: 100vh;
+        overflow: hidden !important;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        max-width: 100vw;
+    }
+
+    .horizontal-container {
+        display: flex;
+        height: 80vh;
+        padding-left: 10vw;
+    }
+
+    .case-card {
+        flex-shrink: 0;
+        width: 70vw;
+        aspect-ratio: 1 / 1;
+        max-width: 75vh;
+        align-self: center;
+        margin-right: 5vw;
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+    }
+
+    .case-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.7);
+        transition: scale 1s ease;
+    }
+
+    .case-card:hover img { scale: 1.05; }
+
+    .case-info {
+        position: absolute;
+        bottom: 60px;
+        left: 60px;
+        color: white;
+        z-index: 2;
+    }
+
+    @media (max-width: 768px) {
         .horizontal-section {
-            height: 100vh;
-            overflow: hidden !important;
-            display: flex;
-            align-items: center;
-            width: 100%;
-            max-width: 100vw;
+            height: 60vh !important;
         }
-
         .horizontal-container {
-            display: flex;
-            height: 80vh;
-            padding-left: 10vw;
+            height: 100% !important;
         }
-
-        @media (max-width: 768px) {
-            .horizontal-section {
-                height: 70vh;
-                padding-top: 15vh;
-            }
-            .horizontal-container {
-                height: 50vh;
-                align-items: center;
-            }
-        }
-
-        .case-card {
-            flex-shrink: 0;
-            width: 70vw;
-            aspect-ratio: 1 / 1;
-            max-width: 75vh;
-            align-self: center;
-            margin-right: 5vw;
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1);
-        }
-
-        .case-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: brightness(0.7);
-            transition: scale 1s ease;
-        }
-
-        .case-card:hover img { scale: 1.05; }
-
         .case-info {
-            position: absolute;
-            bottom: 60px;
-            left: 60px;
-            color: white;
-            z-index: 2;
+            bottom: 50%;
+            left: 50%;
+            transform: translate(-50%, 50%);
+            width: 100%;
+            padding: 0 20px;
+            text-align: center;
         }
-
-        @media (max-width: 768px) {
-            .case-info {
-                bottom: 50%;
-                left: 50%;
-                transform: translate(-50%, 50%);
-                width: 100%;
-                padding: 0 20px;
-                text-align: center;
-            }
-            .case-info .flex {
-                justify-content: center;
-            }
+        .case-info .flex {
+            justify-content: center;
         }
+    }
 
-        .case-title { font-size: clamp(2rem, 5vw, 4rem); line-height: 1; margin-bottom: 1rem; }
+    .case-title { font-size: clamp(2rem, 5vw, 4rem); line-height: 1; margin-bottom: 1rem; }
 
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: var(--bg-color); }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg-color); }
+    ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
-        .hide-scroll::-webkit-scrollbar { display: none; }
-        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    .hide-scroll::-webkit-scrollbar { display: none; }
+    .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
-        @keyframes arrow-move {
-            0% { transform: translateX(0); opacity: 0.5; }
-            50% { transform: translateX(10px); opacity: 1; }
-            100% { transform: translateX(0); opacity: 0.5; }
-        }
-        .animate-arrow {
-            animation: arrow-move 1.5s ease-in-out infinite;
-        }
-    </style>
+    @keyframes arrow-move {
+        0% { transform: translateX(0); opacity: 0.5; }
+        50% { transform: translateX(10px); opacity: 1; }
+        100% { transform: translateX(0); opacity: 0.5; }
+    }
+    .animate-arrow {
+        animation: arrow-move 1.5s ease-in-out infinite;
+    }
+</style>
 </head>
 <body>
 
-    <header class="fixed top-0 w-full z-[1000] py-4 md:py-6">
-        <div class="container mx-auto px-4 md:px-8">
-            <div class="flex justify-between items-center">
-                <a href="/{{ loja.slug_url }}/" class="text-2xl font-bold tracking-tighter text-[var(--text-color)]">
-                    {% if loja.logo %}<img src="{{ loja.logo }}" class="h-10 md:h-12 w-auto">{% else %}{{ loja.nome }}{% endif %}
-                </a>
-                
-                <nav class="hidden md:flex gap-12 text-xs font-bold uppercase tracking-widest opacity-70">
-                    {% if not loja.ocultar_sobre %}<a href="#sobre" class="hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
-                    {% if not loja.ocultar_produtos %}<a href="#portfolio" class="hover:opacity-100 transition text-[var(--text-color)]">{{ loja.titulo_produtos or 'Nossos Cases' }}</a>{% endif %}
-                    <a href="#contato" class="hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
-                </nav>
-
-                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="bg-[var(--text-color)] text-[var(--bg-color)] px-4 md:px-6 py-2.5 md:py-3 rounded-full text-[9px] md:text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition">
-                    Fale Conosco
-                </a>
-            </div>
-
-            <nav class="md:hidden flex flex-wrap justify-center gap-4 mt-5 text-[10px] font-bold uppercase tracking-widest opacity-80 border-t border-white/10 pt-4 w-full">
+<header class="fixed top-0 w-full z-[1000] py-4 md:py-6">
+    <div class="container mx-auto px-4 md:px-8">
+        <div class="flex justify-between items-center">
+            <a href="/{{ loja.slug_url }}/" class="text-2xl font-bold tracking-tighter text-[var(--text-color)]">
+                {% if loja.logo %}<img src="{{ loja.logo }}" class="h-10 md:h-12 w-auto">{% else %}{{ loja.nome }}{% endif %}
+            </a>
+            
+            <nav class="hidden md:flex gap-12 text-xs font-bold uppercase tracking-widest opacity-70">
                 {% if not loja.ocultar_sobre %}<a href="#sobre" class="hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
                 {% if not loja.ocultar_produtos %}<a href="#portfolio" class="hover:opacity-100 transition text-[var(--text-color)]">{{ loja.titulo_produtos or 'Nossos Cases' }}</a>{% endif %}
                 <a href="#contato" class="hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
             </nav>
-        </div>
-    </header>
 
-    {% for secao in layout %}
-
-        {% if secao == 'banner' and not loja.ocultar_banner %}
-        <section class="h-[70vh] md:h-screen w-full relative overflow-hidden" id="hero">
-            {% if loja.banner1 %}
-            <a href="{{ loja.linkbannerprincipal1 or '#' }}" class="block w-full h-full">
-                <img src="{{ loja.banner1 }}" class="w-full h-full object-cover object-center">
+            <a href="[https://wa.me/55](https://wa.me/55){{ loja.whatsapp_comercial }}" class="bg-[var(--text-color)] text-[var(--bg-color)] px-4 md:px-6 py-2.5 md:py-3 rounded-full text-[9px] md:text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition">
+                Fale Conosco
             </a>
-            {% else %}
-            <div class="w-full h-full flex items-center justify-center bg-gray-100">
-                <h1 class="text-4xl opacity-20">Seu Banner Aqui</h1>
-            </div>
-            {% endif %}
-        </section>
+        </div>
+
+        <nav class="md:hidden flex flex-wrap justify-center gap-4 mt-5 text-[10px] font-bold uppercase tracking-widest opacity-80 border-t border-white/10 pt-4 w-full">
+            {% if not loja.ocultar_sobre %}<a href="#sobre" class="hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
+            {% if not loja.ocultar_produtos %}<a href="#portfolio" class="hover:opacity-100 transition text-[var(--text-color)]">{{ loja.titulo_produtos or 'Nossos Cases' }}</a>{% endif %}
+            <a href="#contato" class="hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
+        </nav>
+    </div>
+</header>
+
+{% for secao in layout %}
+
+    {% if secao == 'banner' and not loja.ocultar_banner %}
+    <section class="h-[70vh] md:h-screen w-full relative overflow-hidden" id="hero">
+        {% if loja.banner1 %}
+        <a href="{{ loja.linkbannerprincipal1 or '#' }}" class="block w-full h-full">
+            <img src="{{ loja.banner1 }}" class="w-full h-full object-cover object-center">
+        </a>
+        {% else %}
+        <div class="w-full h-full flex items-center justify-center bg-gray-100">
+            <h1 class="text-4xl opacity-20">Seu Banner Aqui</h1>
+        </div>
         {% endif %}
+    </section>
+    {% endif %}
 
-        {% if secao == 'categorias' and not loja.ocultar_categorias %}
-        <section class="py-12 border-b border-gray-100 w-full relative group" style="background-color: var(--bg-color);">
-            <div class="container mx-auto px-4 md:px-8 relative">
-                <button onclick="scrollCategories(-200)" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-md md:hidden group-hover:flex items-center justify-center border border-gray-200" style="color: var(--text-color);">
-                    <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                </button>
-                
-                <div id="category-scroll" class="flex gap-4 overflow-x-auto scroll-smooth hide-scroll px-2 w-full">
-                    <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition shrink-0" style="border-color: var(--text-color); color: var(--text-color);">
-                        Todos os Segmentos
-                    </a>
-                    {% for cat in categorias %}
-                    <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition shrink-0" style="border-color: var(--text-color); color: var(--text-color); opacity: 0.5;">
-                        {{ cat.nome }}
-                    </a>
-                    {% endfor %}
-                </div>
-
-                <button onclick="scrollCategories(200)" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-md md:hidden group-hover:flex items-center justify-center border border-gray-200" style="color: var(--text-color);">
-                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
-                </button>
-            </div>
-        </section>
-
-        <script>
-            function scrollCategories(val) {
-                document.getElementById('category-scroll').scrollBy({ left: val, behavior: 'smooth' });
-            }
-        </script>
-        {% endif %}
-
-        {% if secao == 'sobre' and not loja.ocultar_sobre %}
-        <section class="py-16 md:py-32 w-full" id="sobre" style="background-color: var(--bg-color);">
-            <div class="container mx-auto px-6 md:px-8 grid md:grid-cols-2 gap-10 md:gap-20 items-center w-full max-w-full overflow-hidden">
-                <div class="w-full max-w-full">
-                    <h2 class="text-3xl md:text-5xl mb-4 md:mb-8 leading-tight text-[var(--text-color)] break-words w-full" style="word-break: break-word;">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
-                    <div class="text-sm md:text-xl leading-relaxed mb-8 whitespace-pre-line break-words w-full" style="word-break: break-word; color: var(--text-color); opacity: 0.8;">
-                        {{ loja.sobre_texto or 'Adicione a história através do painel na aba "Sobre a Empresa".' }}
-                    </div>
-                </div>
-                <div class="rounded-2xl overflow-hidden shadow-2xl h-[300px] md:h-[600px] border border-gray-100 w-full max-w-full">
-                    <img src="{{ loja.sobre_imagem_url or 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000' }}" class="w-full h-full object-cover">
-                </div>
-            </div>
-        </section>
-        {% endif %}
-
-        {% if secao == 'banners_menores' and not loja.ocultar_banners_menores %}
-        <section class="py-16 w-full" style="background-color: var(--bg-color);">
-            <div class="container mx-auto px-8 max-w-full">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-full">
-                    {% if loja.bannermenor1 %}
-                    <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl w-full">
-                        <img src="{{ loja.bannermenor1 }}" class="w-full h-auto object-cover">
-                    </a>
-                    {% endif %}
-                    {% if loja.bannermenor2 %}
-                    <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl w-full">
-                        <img src="{{ loja.bannermenor2 }}" class="w-full h-auto object-cover">
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-        </section>
-        {% endif %}
-
-        {% if secao == 'produtos' and not loja.ocultar_produtos %}
-        <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color);">
-            <div class="horizontal-container">
-                <div class="flex-shrink-0 w-[90vw] sm:w-[70vw] md:w-[50vw] lg:w-[45vw] flex flex-col justify-center pr-6 md:pr-16 lg:pr-20 relative">
-                    <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] leading-tight md:leading-none break-words" style="word-break: break-word;">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
-                    <i data-lucide="arrow-right" class="w-10 h-10 text-[var(--text-color)] mt-4 mb-2 animate-arrow"></i>
-                </div>
-
-                {% for p in produtos %}
-                <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
-                    <img src="{{ p.imagem }}" alt="{{ p.nome }}">
-                    <div class="case-info">
-                        <h3 class="case-title">{{ p.nome }}</h3>
-                        <div class="flex items-center gap-4">
-                            <span class="text-xs uppercase tracking-widest opacity-70">Ver detalhes do projeto</span>
-                            <div class="w-12 h-[1px] bg-white opacity-50"></div>
-                            <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                        </div>
-                    </div>
-                </div>
-                {% else %}
-                <div class="flex-shrink-0 w-[70vw] h-full mr-[5vw] flex items-center justify-center border rounded-2xl" style="border-color: var(--text-color);">
-                    <p class="text-xl font-bold uppercase tracking-widest" style="color: var(--text-color); opacity: 0.5;">Nenhum projeto cadastrado.</p>
-                </div>
+    {% if secao == 'categorias' and not loja.ocultar_categorias %}
+    <section class="py-12 border-b border-gray-100 w-full relative group" style="background-color: var(--bg-color);">
+        <div class="container mx-auto px-4 md:px-8 relative">
+            <button onclick="scrollCategories(-200)" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-md md:hidden group-hover:flex items-center justify-center border border-gray-200" style="color: var(--text-color);">
+                <i data-lucide="chevron-left" class="w-5 h-5"></i>
+            </button>
+            
+            <div id="category-scroll" class="flex gap-4 overflow-x-auto scroll-smooth hide-scroll px-2 w-full">
+                <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition shrink-0" style="border-color: var(--text-color); color: var(--text-color);">
+                    Todos os Segmentos
+                </a>
+                {% for cat in categorias %}
+                <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition shrink-0" style="border-color: var(--text-color); color: var(--text-color); opacity: 0.5;">
+                    {{ cat.nome }}
+                </a>
                 {% endfor %}
             </div>
-        </section>
-        {% endif %}
 
-    {% endfor %}
-
-    <footer class="py-20 text-center relative w-full overflow-hidden" id="contato" style="background-color: var(--text-color); color: var(--bg-color);">
-        <div class="container mx-auto px-6 md:px-8 max-w-full">
-            <h2 class="text-3xl md:text-7xl mb-12 tracking-tighter uppercase break-words w-full" style="word-break: break-word;">
-                {% if loja.chamada_rodape %}
-                    {{ loja.chamada_rodape }}
-                {% else %}
-                    VAMOS CRIAR ALGO JUNTO COM A <span style="color: var(--primary);">{{ loja.nome }}</span>?
-                {% endif %}
-            </h2>
-            
-            <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-16 w-full">
-                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="inline-block text-xl md:text-2xl border-b-2 pb-2 transition text-center" style="border-color: var(--primary);">
-                    Iniciar Conversa no WhatsApp
-                </a>
-                
-                {% if loja.instagram_url %}
-                <a href="{{ loja.instagram_url }}" target="_blank" class="inline-flex items-center gap-2 text-xl hover:opacity-70 transition">
-                    <i data-lucide="instagram" class="w-6 h-6"></i> Instagram
-                </a>
-                {% endif %}
-            </div>
-
-            <p class="mt-24 text-[10px] uppercase tracking-widest opacity-30">© 2026 {{ loja.nome }}. Todos os direitos reservados.</p>
-            
-            <div class="mt-8 pt-8 border-t border-white/10">
-                <a href="/{{ loja.slug_url }}/admin" class="text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 opacity-20 hover:opacity-100 transition">
-                    <i data-lucide="lock" class="w-3 h-3"></i> Acesso Lojista
-                </a>
-            </div>
+            <button onclick="scrollCategories(200)" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-md md:hidden group-hover:flex items-center justify-center border border-gray-200" style="color: var(--text-color);">
+                <i data-lucide="chevron-right" class="w-5 h-5"></i>
+            </button>
         </div>
-    </footer>
+    </section>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const params = new URLSearchParams(window.location.search);
-            const catId = params.get('categoria');
-            if (catId) {
-                const linkCategoria = document.querySelector('a[href*="categoria=' + catId + '"]');
-                if (linkCategoria) {
-                    const tituloProdutos = document.getElementById('titulo-secao-produtos');
-                    if (tituloProdutos) {
-                        tituloProdutos.innerText = linkCategoria.innerText.trim();
-                    }
-                }
-            }
-        });
-
-        lucide.createIcons();
-        gsap.registerPlugin(ScrollTrigger);
-
-        const container = document.querySelector(".horizontal-container");
-        
-        if (container) {
-            gsap.to(container, {
-                x: () => -(container.scrollWidth - window.innerWidth),
-                ease: "none",
-                scrollTrigger: {
-                    trigger: ".horizontal-section",
-                    pin: true,
-                    scrub: 1,
-                    end: () => "+=" + container.scrollWidth,
-                    invalidateOnRefresh: true,
-                }
-            });
+        function scrollCategories(val) {
+            document.getElementById('category-scroll').scrollBy({ left: val, behavior: 'smooth' });
         }
     </script>
+    {% endif %}
+
+    {% if secao == 'sobre' and not loja.ocultar_sobre %}
+    <section class="py-16 md:py-32 w-full" id="sobre" style="background-color: var(--bg-color);">
+        <div class="container mx-auto px-6 md:px-8 grid md:grid-cols-2 gap-10 md:gap-20 items-center w-full max-w-full overflow-hidden">
+            <div class="w-full max-w-full">
+                <h2 class="text-3xl md:text-5xl mb-4 md:mb-8 leading-tight text-[var(--text-color)] break-words w-full" style="word-break: break-word;">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
+                <div class="text-sm md:text-xl leading-relaxed mb-8 whitespace-pre-line break-words w-full" style="word-break: break-word; color: var(--text-color); opacity: 0.8;">
+                    {{ loja.sobre_texto or 'Adicione a história através do painel na aba "Sobre a Empresa".' }}
+                </div>
+            </div>
+            <div class="rounded-2xl overflow-hidden shadow-2xl h-[300px] md:h-[600px] border border-gray-100 w-full max-w-full">
+                <img src="{{ loja.sobre_imagem_url or '[https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000](https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000)' }}" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if secao == 'banners_menores' and not loja.ocultar_banners_menores %}
+    <section class="py-16 w-full" style="background-color: var(--bg-color);">
+        <div class="container mx-auto px-8 max-w-full">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-full">
+                {% if loja.bannermenor1 %}
+                <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl w-full">
+                    <img src="{{ loja.bannermenor1 }}" class="w-full h-auto object-cover">
+                </a>
+                {% endif %}
+                {% if loja.bannermenor2 %}
+                <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl w-full">
+                    <img src="{{ loja.bannermenor2 }}" class="w-full h-auto object-cover">
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if secao == 'produtos' and not loja.ocultar_produtos %}
+    <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color);">
+        <div class="horizontal-container">
+            <div class="flex-shrink-0 w-[90vw] sm:w-[70vw] md:w-[50vw] lg:w-[45vw] flex flex-col justify-center pr-6 md:pr-16 lg:pr-20 relative">
+                <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] leading-tight md:leading-none break-words" style="word-break: break-word;">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
+                <i data-lucide="arrow-right" class="w-10 h-10 text-[var(--text-color)] mt-4 mb-2 animate-arrow"></i>
+            </div>
+
+            {% for p in produtos %}
+            <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
+                <img src="{{ p.imagem }}" alt="{{ p.nome }}">
+                <div class="case-info">
+                    <h3 class="case-title">{{ p.nome }}</h3>
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs uppercase tracking-widest opacity-70">Ver detalhes do projeto</span>
+                        <div class="w-12 h-[1px] bg-white opacity-50"></div>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="flex-shrink-0 w-[70vw] h-full mr-[5vw] flex items-center justify-center border rounded-2xl" style="border-color: var(--text-color);">
+                <p class="text-xl font-bold uppercase tracking-widest" style="color: var(--text-color); opacity: 0.5;">Nenhum projeto cadastrado.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+{% endfor %}
+
+<footer class="py-20 text-center relative w-full overflow-hidden" id="contato" style="background-color: var(--text-color); color: var(--bg-color);">
+    <div class="container mx-auto px-6 md:px-8 max-w-full">
+        <h2 class="text-3xl md:text-7xl mb-12 tracking-tighter uppercase break-words w-full" style="word-break: break-word;">
+            {% if loja.chamada_rodape %}
+                {{ loja.chamada_rodape }}
+            {% else %}
+                VAMOS CRIAR ALGO JUNTO COM A <span style="color: var(--primary);">{{ loja.nome }}</span>?
+            {% endif %}
+        </h2>
+        
+        <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-16 w-full">
+            <a href="[https://wa.me/55](https://wa.me/55){{ loja.whatsapp_comercial }}" class="inline-block text-xl md:text-2xl border-b-2 pb-2 transition text-center" style="border-color: var(--primary);">
+                Iniciar Conversa no WhatsApp
+            </a>
+            
+            {% if loja.instagram_url %}
+            <a href="{{ loja.instagram_url }}" target="_blank" class="inline-flex items-center gap-2 text-xl hover:opacity-70 transition">
+                <i data-lucide="instagram" class="w-6 h-6"></i> Instagram
+            </a>
+            {% endif %}
+        </div>
+
+        <p class="mt-24 text-[10px] uppercase tracking-widest opacity-30">© 2026 {{ loja.nome }}. Todos os direitos reservados.</p>
+        
+        <div class="mt-8 pt-8 border-t border-white/10">
+            <a href="/{{ loja.slug_url }}/admin" class="text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 opacity-20 hover:opacity-100 transition">
+                <i data-lucide="lock" class="w-3 h-3"></i> Acesso Lojista
+            </a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const params = new URLSearchParams(window.location.search);
+        const catId = params.get('categoria');
+        if (catId) {
+            const linkCategoria = document.querySelector('a[href*="categoria=' + catId + '"]');
+            if (linkCategoria) {
+                const tituloProdutos = document.getElementById('titulo-secao-produtos');
+                if (tituloProdutos) {
+                    tituloProdutos.innerText = linkCategoria.innerText.trim();
+                }
+            }
+        }
+    });
+
+    lucide.createIcons();
+    gsap.registerPlugin(ScrollTrigger);
+
+    const container = document.querySelector(".horizontal-container");
+    
+    if (container) {
+        gsap.to(container, {
+            x: () => -(container.scrollWidth - window.innerWidth),
+            ease: "none",
+            scrollTrigger: {
+                trigger: ".horizontal-section",
+                pin: true,
+                scrub: 1,
+                end: () => "+=" + container.scrollWidth,
+                invalidateOnRefresh: true,
+            }
+        });
+    }
+</script>
 </body>
 </html>
