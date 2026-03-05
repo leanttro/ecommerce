@@ -189,11 +189,11 @@
                     </button>
                     
                     <div id="category-scroll" class="flex gap-4 overflow-x-auto scroll-smooth hide-scroll px-2 w-full">
-                        <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition shrink-0" style="border-color: var(--text-color); color: var(--text-color);">
+                        <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition shrink-0" style="background-color: var(--text-color); border-color: var(--text-color); color: var(--bg-color);">
                             Todos os Segmentos
                         </a>
                         {% for cat in categorias %}
-                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition shrink-0" style="border-color: var(--text-color); color: var(--text-color); opacity: 0.5;">
+                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest transition shrink-0" style="background-color: var(--text-color); border-color: var(--text-color); color: var(--bg-color); opacity: 0.7;">
                             {{ cat.nome }}
                         </a>
                         {% endfor %}
