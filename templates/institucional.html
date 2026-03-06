@@ -133,11 +133,15 @@
 </head>
 <body>
 
-    <header class="fixed top-0 w-full z-[1000] py-4 md:py-6">
+    <header class="fixed top-0 w-full z-[1000] py-6 md:py-8">
         <div class="container mx-auto px-4 md:px-8">
-            <div class="flex justify-between items-center">
-                <a href="/{{ loja.slug_url }}/" class="text-2xl font-bold tracking-tighter text-[var(--text-color)]">
-                    {% if loja.logo %}<img src="{{ loja.logo }}" class="h-10 md:h-12 w-auto">{% else %}{{ loja.nome }}{% endif %}
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
+                <a href="/{{ loja.slug_url }}/" class="block">
+                    {% if loja.logo %}
+                        <img src="{{ loja.logo }}" class="h-20 md:h-28 w-auto object-contain mx-auto md:mx-0">
+                    {% else %}
+                        <span class="text-3xl md:text-4xl font-bold tracking-tighter text-[var(--text-color)]">{{ loja.nome }}</span>
+                    {% endif %}
                 </a>
                 
                 <nav class="hidden md:flex gap-12 text-xs font-bold uppercase tracking-widest opacity-70">
@@ -146,12 +150,12 @@
                     <a href="#contato" class="hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
                 </nav>
 
-                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="bg-[var(--text-color)] text-[var(--bg-color)] px-4 md:px-6 py-2.5 md:py-3 rounded-full text-[9px] md:text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition">
+                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="bg-[var(--text-color)] text-[var(--bg-color)] px-8 md:px-10 py-4 md:py-5 rounded-full text-[11px] md:text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg w-full md:w-auto text-center">
                     Fale Conosco
                 </a>
             </div>
 
-            <nav class="md:hidden flex flex-wrap justify-center gap-4 mt-5 text-[10px] font-bold uppercase tracking-widest opacity-80 border-t border-white/10 pt-4 w-full">
+            <nav class="md:hidden flex flex-wrap justify-center gap-6 mt-8 text-[11px] font-bold uppercase tracking-widest opacity-80 border-t border-black/5 pt-6 w-full">
                 {% if not loja.ocultar_sobre %}<a href="#sobre" class="hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
                 {% if not loja.ocultar_produtos %}<a href="#portfolio" class="hover:opacity-100 transition text-[var(--text-color)]">{{ loja.titulo_produtos or 'Nossos Cases' }}</a>{% endif %}
                 <a href="#contato" class="hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
