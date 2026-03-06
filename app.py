@@ -367,9 +367,6 @@ def index(loja_slug):
     busca_query = request.args.get('busca') 
     
     filter_str = f"filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published"
-    
-    if cat_filter: 
-        filter_str += f"filter[categoria_id][_eq]={cat_filter}"
         
     if busca_query:
         filter_str += f"&filter[nome][_icontains]={busca_query}"
@@ -383,6 +380,20 @@ def index(loja_slug):
         
         if r_prod.status_code == 200:
             raw_prods = r_prod.json()['data']
+            
+            # Filtra categoria no Python para garantir que produtos sem categoria apareçam sempre
+            if cat_filter:
+                raw_prods = [p for p in raw_prods if str(p.get('categoria_id')) == str(cat_filter) or not p.get('categoria_id')]
+                
+            # Ordena pela posição e previne erros se o campo sort não existir no banco
+            def get_sort_val(p):
+                try:
+                    return int(p.get('sort')) if p.get('sort') is not None else 999999
+                except:
+                    return 999999
+                    
+            raw_prods.sort(key=get_sort_val)
+
             for p in raw_prods:
                 img = get_img_url(p.get('imagem_destaque') or p.get('imagem1'))
                 
@@ -623,13 +634,24 @@ def admin_painel(loja_slug):
         r_cat = requests.get(f"{DIRECTUS_URL}/items/categorias?filter[loja_id][_eq]={g.loja_id}&sort=sort", headers=headers)
         if r_cat.status_code == 200: categorias = r_cat.json()['data']
 
-        r_prod = requests.get(f"{DIRECTUS_URL}/items/produtos?filter[loja_id][_eq]={g.loja_id}&limit=100&sort=-date_created&fields=*.*", headers=headers)
+        r_prod = requests.get(f"{DIRECTUS_URL}/items/produtos?filter[loja_id][_eq]={g.loja_id}&limit=100&fields=*.*", headers=headers)
         if r_prod.status_code == 200: 
-            produtos = r_prod.json()['data']
-            for p in produtos:
+            raw_prods = r_prod.json()['data']
+            
+            # Ordena pela posição no Python e previne erros se o campo sort não existir no banco
+            def get_sort_val(p):
+                try:
+                    return int(p.get('sort')) if p.get('sort') is not None else 999999
+                except:
+                    return 999999
+            
+            raw_prods.sort(key=get_sort_val)
+            
+            for p in raw_prods:
                 p['imagem_destaque'] = get_img_url(p.get('imagem_destaque'))
                 try: p['preco'] = float(p['preco']) if p.get('preco') else 0.0
                 except: p['preco'] = 0.0
+                produtos.append(p)
 
         r_post = requests.get(f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&limit=20&sort=-date_created&fields=id,titulo,date_created", headers=headers)
         if r_post.status_code == 200: posts = r_post.json()['data']
@@ -733,6 +755,10 @@ def admin_salvar_produto(loja_slug):
     try: estoque = int(estoque) if estoque else 0
     except: estoque = 0
     
+    sort_val = request.form.get('sort')
+    try: sort_val = int(sort_val) if sort_val and sort_val.strip() != "" else None
+    except: sort_val = None
+    
     consulte_form = request.form.get('consulte')
     consulte = True if consulte_form == 'on' else False
 
@@ -755,10 +781,15 @@ def admin_salvar_produto(loja_slug):
         "a_partir_de": a_partir_de,
         "variantes": variantes,
         "descricao": request.form.get('descricao'),
-        "categoria_id": cat_id,
         "link_projeto": request.form.get('link_projeto'),
-        "whatsapp_projeto": request.form.get('whatsapp_projeto')
+        "whatsapp_projeto": request.form.get('whatsapp_projeto'),
+        "sort": sort_val
     }
+    
+    if cat_id:
+        payload["categoria_id"] = cat_id
+    else:
+        payload["categoria_id"] = None
     
     if not prod_id and nome:
         payload["slug"] = gerar_slug(nome) + "-" + str(uuid.uuid4())[:4]
