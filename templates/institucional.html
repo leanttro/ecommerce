@@ -29,12 +29,14 @@
             touch-action: manipulation;
         }
 
+        /* Bloqueio total de quebra de palavras no meio */
         h1, h2, h3, .font-display { 
             font-family: 'Archivo Black', sans-serif; 
             text-transform: uppercase;
-            word-break: keep-all !important;
-            overflow-wrap: break-word;
+            word-break: normal !important;
+            overflow-wrap: normal !important;
             hyphens: none !important;
+            white-space: normal !important;
         }
 
         header {
@@ -76,10 +78,12 @@
                 padding-right: 0 !important;
                 align-items: center !important;
                 text-align: center !important;
+                justify-content: center !important;
             }
             #titulo-secao-produtos {
                 text-align: center;
                 width: 100%;
+                font-size: 2.8rem; /* Ajuste para não estourar lateralmente */
             }
             .case-card {
                 align-self: flex-start;
@@ -151,29 +155,29 @@
 </head>
 <body>
 
-    <header class="fixed top-0 w-full z-[1000] py-6 md:py-8">
+    <header class="fixed top-0 w-full z-[1000] py-4 md:py-6">
         <div class="container mx-auto px-4 md:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
-                <a href="/{{ loja.slug_url }}/" class="block">
+                <a href="/{{ loja.slug_url }}/" class="block order-1">
                     {% if loja.logo %}
-                        <img src="{{ loja.logo }}" class="h-20 md:h-28 w-auto object-contain mx-auto md:mx-0">
+                        <img src="{{ loja.logo }}" class="h-32 md:h-44 w-auto object-contain mx-auto md:mx-0">
                     {% else %}
-                        <span class="text-3xl md:text-4xl font-bold tracking-tighter text-[var(--text-color)]">{{ loja.nome }}</span>
+                        <span class="text-4xl md:text-5xl font-bold tracking-tighter text-[var(--text-color)]">{{ loja.nome }}</span>
                     {% endif %}
                 </a>
                 
-                <nav class="hidden md:flex gap-12 text-xs font-bold uppercase tracking-widest opacity-70">
+                <nav class="hidden md:flex gap-12 text-xs font-bold uppercase tracking-widest opacity-70 order-2">
                     {% if not loja.ocultar_sobre %}<a href="#sobre" class="hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
                     {% if not loja.ocultar_produtos %}<a href="#portfolio" class="hover:opacity-100 transition text-[var(--text-color)]">{{ loja.titulo_produtos or 'Nossos Cases' }}</a>{% endif %}
                     <a href="#contato" class="hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
                 </nav>
 
-                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="bg-[var(--text-color)] text-[var(--bg-color)] px-8 md:px-10 py-4 md:py-5 rounded-full text-[11px] md:text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg w-full md:w-auto text-center">
+                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="bg-[var(--text-color)] text-[var(--bg-color)] px-10 py-5 rounded-full text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg w-full md:w-auto text-center order-2 md:order-3">
                     Fale Conosco
                 </a>
             </div>
 
-            <nav class="md:hidden flex flex-wrap justify-center gap-6 mt-8 text-[11px] font-bold uppercase tracking-widest opacity-80 border-t border-black/5 pt-6 w-full">
+            <nav class="md:hidden flex flex-wrap justify-center gap-6 mt-6 text-[11px] font-bold uppercase tracking-widest opacity-80 border-t border-black/5 pt-6 w-full">
                 {% if not loja.ocultar_sobre %}<a href="#sobre" class="hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
                 {% if not loja.ocultar_produtos %}<a href="#portfolio" class="hover:opacity-100 transition text-[var(--text-color)]">{{ loja.titulo_produtos or 'Nossos Cases' }}</a>{% endif %}
                 <a href="#contato" class="hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
@@ -241,8 +245,8 @@
         <section class="py-16 md:py-32 w-full" id="sobre" style="background-color: var(--bg-color);">
             <div class="container mx-auto px-6 md:px-8 grid md:grid-cols-2 gap-10 md:gap-20 items-center w-full max-w-full overflow-hidden">
                 <div class="w-full max-w-full">
-                    <h2 class="text-3xl md:text-5xl mb-4 md:mb-8 leading-tight text-[var(--text-color)] break-words w-full" style="word-break: keep-all;">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
-                    <div class="text-sm md:text-xl leading-relaxed mb-8 whitespace-pre-line break-words w-full" style="word-break: keep-all; color: var(--text-color); opacity: 0.8;">
+                    <h2 class="text-3xl md:text-5xl mb-4 md:mb-8 leading-tight text-[var(--text-color)] break-words w-full">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
+                    <div class="text-sm md:text-xl leading-relaxed mb-8 whitespace-pre-line break-words w-full" style="color: var(--text-color); opacity: 0.8;">
                         {{ loja.sobre_texto or 'Adicione a história através do painel na aba "Sobre a Empresa".' }}
                     </div>
                 </div>
@@ -276,7 +280,7 @@
         <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color);">
             <div class="horizontal-container">
                 <div class="intro-slide flex-shrink-0 w-[90vw] sm:w-[70vw] md:w-[50vw] lg:w-[45vw] flex flex-col justify-start md:justify-center pr-6 md:pr-16 lg:pr-20 relative pt-4 md:pt-0">
-                    <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] leading-tight md:leading-none" style="word-break: keep-all;">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
+                    <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] leading-tight md:leading-none">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
                     <i data-lucide="arrow-right" class="w-10 h-10 text-[var(--text-color)] mt-4 mb-2 animate-arrow mx-auto md:mx-0"></i>
                 </div>
 
@@ -284,7 +288,7 @@
                 <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
                     <img src="{{ p.imagem }}" alt="{{ p.nome }}">
                     <div class="case-info">
-                        <h3 class="case-title" style="word-break: keep-all;">{{ p.nome }}</h3>
+                        <h3 class="case-title">{{ p.nome }}</h3>
                         <div class="flex items-center gap-4">
                             <span class="text-xs uppercase tracking-widest opacity-70">Ver detalhes do projeto</span>
                             <div class="w-12 h-[1px] bg-white opacity-50"></div>
@@ -305,7 +309,7 @@
 
     <footer class="py-20 text-center relative w-full overflow-hidden" id="contato" style="background-color: var(--text-color); color: var(--bg-color);">
         <div class="container mx-auto px-6 md:px-8 max-w-full">
-            <h2 class="text-3xl md:text-7xl mb-12 tracking-tighter uppercase w-full" style="word-break: keep-all;">
+            <h2 class="text-3xl md:text-7xl mb-12 tracking-tighter uppercase w-full">
                 {% if loja.chamada_rodape %}
                     {{ loja.chamada_rodape }}
                 {% else %}
