@@ -29,7 +29,6 @@
             touch-action: manipulation;
         }
 
-        /* Bloqueio total de quebra de palavras no meio */
         h1, h2, h3, .font-display { 
             font-family: 'Archivo Black', sans-serif; 
             text-transform: uppercase;
@@ -63,13 +62,15 @@
 
         @media (max-width: 768px) {
             .horizontal-section {
-                height: 70vh;
-                padding-top: 0vh;
-                align-items: flex-start;
+                height: 100vh !important; /* Força ocupação da tela cheia */
+                display: flex !important;
+                align-items: center !important; /* Centraliza verticalmente no meio da tela */
+                justify-content: center;
+                padding-top: 100px; /* Afasta do cabeçalho fixo */
             }
             .horizontal-container {
-                height: 70vh;
-                align-items: flex-start;
+                height: auto !important;
+                align-items: center !important;
                 padding-left: 0;
                 width: 100%;
             }
@@ -83,7 +84,11 @@
             #titulo-secao-produtos {
                 text-align: center;
                 width: 100%;
-                font-size: 2.8rem;
+                font-size: 2.2rem; /* Reduzido para não quebrar */
+                line-height: 1.2;
+            }
+            .case-card {
+                align-self: center !important; /* Garante centralização vertical do card */
             }
         }
 
@@ -104,20 +109,19 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: brightness(0.6);
+            filter: brightness(0.5); /* Escurecido para dar mais contraste ao texto centralizado */
             transition: scale 1s ease;
         }
 
         .case-card:hover img { scale: 1.05; }
 
-        /* Centralização total do conteúdo do cart */
         .case-info {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 100%;
-            padding: 0 20px;
+            padding: 0 30px;
             box-sizing: border-box;
             text-align: center;
             color: white;
@@ -128,12 +132,12 @@
             justify-content: center;
         }
 
-        /* Tamanho reduzido para caber sem cortar e evitar quebra de palavra */
         .case-title { 
-            font-size: clamp(1.2rem, 3.5vw, 2.5rem); 
+            font-size: clamp(1rem, 3.2vw, 2.2rem); 
             line-height: 1.1; 
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
             word-break: keep-all !important;
+            white-space: normal;
         }
 
         ::-webkit-scrollbar { width: 5px; }
