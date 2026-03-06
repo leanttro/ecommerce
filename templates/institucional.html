@@ -56,41 +56,28 @@
         @media (max-width: 768px) {
             .horizontal-section {
                 height: 70vh;
-                padding-top: 0;
-                align-items: center;
+                padding-top: 0vh;
+                align-items: flex-start;
             }
             .horizontal-container {
                 height: 70vh;
-                align-items: center;
+                align-items: flex-start;
             }
             .case-card {
-                align-self: center;
+                align-self: flex-start;
             }
             .case-info {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                transform: none;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
+                top: 50%;
+                bottom: auto;
+                left: 50%;
+                transform: translate(-50%, -50%);
                 width: 100%;
-                padding: 0 15px;
+                box-sizing: border-box;
+                padding: 0 20px;
                 text-align: center;
-            }
-            .case-title {
-                font-size: clamp(1.8rem, 8vw, 2.5rem);
-                word-break: break-word;
-                text-align: center;
-                width: 100%;
-                margin-bottom: 1rem;
             }
             .case-info .flex {
                 justify-content: center;
-                width: 100%;
             }
         }
 
@@ -182,7 +169,7 @@
             </a>
             {% else %}
             <div class="w-full h-full flex items-center justify-center bg-gray-100">
-                <h1 class="text-4xl opacity-20">Seu Banner Aqui</h1>
+                <h1 class="text-4xl opacity-20">Seu Banner Here</h1>
             </div>
             {% endif %}
         </section>
@@ -347,7 +334,7 @@
         const container = document.querySelector(".horizontal-container");
         
         if (container) {
-            let startPos = window.innerWidth <= 768 ? "top 10%" : "top top";
+            let startPos = "top top";
             gsap.to(container, {
                 x: () => -(container.scrollWidth - window.innerWidth),
                 ease: "none",
