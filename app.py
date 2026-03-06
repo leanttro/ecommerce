@@ -90,11 +90,11 @@ def get_upload_headers():
     return {"Authorization": f"Bearer {DIRECTUS_TOKEN}"}
 
 def get_img_url(image_id_or_obj):
-    # Trata URLs de imagens vindas do Directus ID Objeto ou URL completa
+    # Trata URLs de imagens vindas do Directus ID Objeto ou URL completa com compressão webp
     if not image_id_or_obj: return ""
-    if isinstance(image_id_or_obj, dict): return f"{DIRECTUS_URL}/assets/{image_id_or_obj.get('id')}"
+    if isinstance(image_id_or_obj, dict): return f"{DIRECTUS_URL}/assets/{image_id_or_obj.get('id')}?quality=80&format=webp"
     if isinstance(image_id_or_obj, str) and image_id_or_obj.startswith('http'): return image_id_or_obj
-    return f"{DIRECTUS_URL}/assets/{image_id_or_obj}"
+    return f"{DIRECTUS_URL}/assets/{image_id_or_obj}?quality=80&format=webp"
 
 def upload_file_to_directus(file_storage):
     # Faz upload de arquivo para o Directus e retorna o ID
