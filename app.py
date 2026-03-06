@@ -170,10 +170,10 @@ def identificar_loja():
 
     # 1 VERIFICAÇÃO DE DOMÍNIO PRÓPRIO
     # Se não for o domínio principal do SaaS nem localhost
-    # Nota catalogo.leanttro.com cairá aqui mas não achará loja o que é correto ele é landing page
-    if host not in ['leanttro.com', 'www.leanttro.com', 'localhost', '127.0.0.1']:
+    if host not in ['leanttro.com', 'www.leanttro.com', 'catalogo.leanttro.com', 'localhost', '127.0.0.1']:
         try:
-            url = f"{DIRECTUS_URL}/items/lojas?filter[dominio_proprio][_eq]={host}&fields=*.*"
+            host_clean = host.replace('www.', '')
+            url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=*.*"
             resp = requests.get(url, headers=headers)
             if resp.status_code == 200 and len(resp.json()['data']) > 0:
                 loja_encontrada = resp.json()['data'][0]
@@ -369,7 +369,7 @@ def index(loja_slug):
     filter_str = f"filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published"
     
     if cat_filter: 
-        filter_str += f"&filter[categoria_id][_eq]={cat_filter}"
+        filter_str += f"filter[categoria_id][_eq]={cat_filter}"
         
     if busca_query:
         filter_str += f"&filter[nome][_icontains]={busca_query}"
