@@ -60,13 +60,24 @@
             padding-left: 10vw;
         }
 
+        /* Ajustes exclusivos para Desktop */
+        @media (min-width: 769px) {
+            .horizontal-section {
+                padding-top: 100px; /* Evita que o cabeçalho corte o conteúdo */
+            }
+            .case-card {
+                width: 42vw !important; /* Diminuído para caber melhor na tela */
+                max-width: 60vh !important; /* Ajuste proporcional de altura */
+            }
+        }
+
         @media (max-width: 768px) {
             .horizontal-section {
-                height: 100vh !important; /* Força ocupação da tela cheia */
+                height: 100vh !important;
                 display: flex !important;
-                align-items: center !important; /* Centraliza verticalmente no meio da tela */
+                align-items: center !important;
                 justify-content: center;
-                padding-top: 100px; /* Afasta do cabeçalho fixo */
+                padding-top: 100px;
             }
             .horizontal-container {
                 height: auto !important;
@@ -84,11 +95,11 @@
             #titulo-secao-produtos {
                 text-align: center;
                 width: 100%;
-                font-size: 2.2rem; /* Reduzido para não quebrar */
+                font-size: 2.2rem;
                 line-height: 1.2;
             }
             .case-card {
-                align-self: center !important; /* Garante centralização vertical do card */
+                align-self: center !important;
             }
         }
 
@@ -109,7 +120,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: brightness(0.5); /* Escurecido para dar mais contraste ao texto centralizado */
+            filter: brightness(0.5);
             transition: scale 1s ease;
         }
 
