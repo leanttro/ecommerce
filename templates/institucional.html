@@ -63,11 +63,17 @@
         /* Ajustes exclusivos para Desktop */
         @media (min-width: 769px) {
             .horizontal-section {
-                padding-top: 100px; /* Evita que o cabeçalho corte o conteúdo */
+                padding-top: 100px; 
             }
             .case-card {
-                width: 42vw !important; /* Diminuído para caber melhor na tela */
-                max-width: 60vh !important; /* Ajuste proporcional de altura */
+                width: 42vw !important; 
+                max-width: 60vh !important; 
+            }
+            /* Aumento da largura da slide de introdução para o texto nunca ficar sob o card */
+            .intro-slide {
+                min-width: 65vw !important;
+                width: 65vw !important;
+                padding-right: 12vw !important;
             }
         }
 
