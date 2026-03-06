@@ -1,3 +1,4 @@
+O Gemini disse
 <!DOCTYPE html>
 
 <html lang="pt-br">
@@ -258,7 +259,7 @@
             <div class="container mx-auto px-4 relative">
                 
                 <div class="relative flex justify-center items-center mb-8 px-2">
-                    <h2 class="text-3xl font-bold text-center custom-title-color">{{ loja.titulo_produtos or 'Nossos Produtos' }}</h2>
+                    <h2 id="titulo-secao-produtos" class="text-3xl font-bold text-center custom-title-color">{{ loja.titulo_produtos or 'Nossos Produtos' }}</h2>
                     <button onclick="toggleLayout()" class="absolute right-0 p-2 border rounded-full hover:bg-gray-100 text-gray-600 transition" title="Mudar visualização">
                         <i id="layout-icon" data-lucide="grid" class="w-5 h-5"></i>
                     </button>
@@ -445,6 +446,21 @@
 <script>
     lucide.createIcons();
     const lojaPhone = "55{{ loja.whatsapp_comercial }}";
+
+    // Muda titulo da seção produtos baseado na categoria selecionada
+    document.addEventListener("DOMContentLoaded", function() {
+        const params = new URLSearchParams(window.location.search);
+        const catId = params.get('categoria');
+        if (catId) {
+            const linkCategoria = document.querySelector('.category-scroll a[href*="categoria=' + catId + '"]');
+            if (linkCategoria) {
+                const tituloProdutos = document.getElementById('titulo-secao-produtos');
+                if (tituloProdutos) {
+                    tituloProdutos.innerText = linkCategoria.innerText.trim();
+                }
+            }
+        }
+    });
 
     // --- LÓGICA DO BANNER (SLIDER) ---
     let currentBannerIndex = 0;
