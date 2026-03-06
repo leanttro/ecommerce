@@ -9,644 +9,651 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
-    @import url('[https://fonts.googleapis.com/css2?family=](https://fonts.googleapis.com/css2?family=){{ loja.font_titulo }}:wght@400;700&family={{ loja.font_corpo }}:wght@300;400;600&display=swap');
-    
-    :root { 
-        --primary: {{ loja.cor_primaria }}; 
-        --color-bg: {{ loja.cor_fundo or '#ffffff' }};
-        --color-title: {{ loja.cor_titulo or '#111827' }};
-        --color-text: {{ loja.cor_texto or '#374151' }};
-        
-        --font-head: '{{ loja.font_titulo }}', sans-serif;
-        --font-body: '{{ loja.font_corpo }}', sans-serif;
-        --font-size-base: {{ loja.font_tamanho_base or 16 }}px;
-    }
-    
-    body { 
-        font-family: var(--font-body); 
-        font-size: var(--font-size-base);
-        color: var(--color-text);
-    }
-    
-    h1, h2, h3, h4, .font-display { 
-        font-family: var(--font-head); 
-        color: var(--color-title);
-    }
-    
-    .text-theme { color: var(--primary); }
-    .bg-theme { background-color: var(--primary); }
-    .border-theme { border-color: var(--primary); }
-    .hover\:bg-theme:hover { background-color: var(--primary); }
-    
-    /* Aplica cor de fundo personalizada */
-    .custom-bg { background-color: var(--color-bg); }
-    .custom-title-color { color: var(--color-title); }
-    
-    /* Ticker CSS - Ajustado para Loop Infinito */
-    .ticker-wrap {
-        width: 100%;
-        overflow: hidden;
-        white-space: nowrap;
-        background: var(--primary);
-        color: var(--color-bg); /* Letras com a cor do fundo (Body) */
-        height: 30px;
-        display: flex;
-        align-items: center;
-    }
-    .ticker {
-        display: flex;
-        align-items: center;
-        width: max-content;
-        animation: ticker 40s linear infinite;
-        padding-left: 0;
-    }
-    .ticker span {
-        display: inline-block;
-        padding: 0 40px;
-        font-size: 12px;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
-    @keyframes ticker {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); } /* Loop infinito seamless */
-    }
+@import url('https://fonts.googleapis.com/css2?family={{ loja.font_titulo }}:wght@400;700&family={{ loja.font_corpo }}:wght@300;400;600&display=swap');
 
-    /* Esconder barra de rolagem mas manter funcionalidade */
-    .hide-scroll::-webkit-scrollbar {
-        display: none;
-    }
-    .hide-scroll {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
+:root { 
+    --primary: {{ loja.cor_primaria }}; 
+    --color-bg: {{ loja.cor_fundo or &#39;#ffffff&#39; }};
+    --color-title: {{ loja.cor_titulo or &#39;#111827&#39; }};
+    --color-text: {{ loja.cor_texto or &#39;#374151&#39; }};
     
+    --font-head: &#39;{{ loja.font_titulo }}&#39;, sans-serif;
+    --font-body: &#39;{{ loja.font_corpo }}&#39;, sans-serif;
+    --font-size-base: {{ loja.font_tamanho_base or 16 }}px;
+}
+
+body { 
+    font-family: var(--font-body); 
+    font-size: var(--font-size-base);
+    color: var(--color-text);
+}
+
+h1, h2, h3, h4, .font-display { 
+    font-family: var(--font-head); 
+    color: var(--color-title);
+}
+
+.text-theme { color: var(--primary); }
+.bg-theme { background-color: var(--primary); }
+.border-theme { border-color: var(--primary); }
+.hover\:bg-theme:hover { background-color: var(--primary); }
+
+/* Aplica cor de fundo personalizada */
+.custom-bg { background-color: var(--color-bg); }
+.custom-title-color { color: var(--color-title); }
+
+/* Ticker CSS - Ajustado para Loop Infinito */
+.ticker-wrap {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    background: var(--primary);
+    color: var(--color-bg); /* Letras com a cor do fundo (Body) */
+    height: 30px;
+    display: flex;
+    align-items: center;
+}
+.ticker {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: ticker 40s linear infinite;
+    padding-left: 0;
+}
+.ticker span {
+    display: inline-block;
+    padding: 0 40px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+@keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); } /* Loop infinito seamless */
+}
+
+/* Esconder barra de rolagem mas manter funcionalidade */
+.hide-scroll::-webkit-scrollbar {
+    display: none;
+}
+.hide-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
 </style>
+
 </head>
 <body class="custom-bg flex flex-col min-h-screen">
 
 {% if loja.frase1 or loja.frase2 or loja.frase3 %}
+
 <div class="ticker-wrap">
-    <div class="ticker">
-        {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
-        {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
-        {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
-        {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
-        {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
-        {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
-         {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
-        {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
-        {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
-         {% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
-        {% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
-        {% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
-    </div>
+<div class="ticker">
+{% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+{% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
+{% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
+{% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+{% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
+{% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
+{% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+{% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
+{% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
+{% if loja.frase1 %}<span>{{ loja.frase1 }}</span>{% endif %}
+{% if loja.frase2 %}<span>{{ loja.frase2 }}</span>{% endif %}
+{% if loja.frase3 %}<span>{{ loja.frase3 }}</span>{% endif %}
+</div>
 </div>
 {% endif %}
 
 <nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg py-4 relative">
-    <div class="container mx-auto px-4 min-h-[90px] flex items-center justify-center relative">
+<div class="container mx-auto px-4 min-h-[90px] flex items-center justify-center relative">
+
+    <a href="/{{ loja.slug_url }}/" class="flex items-center justify-center z-10 transform -translate-y-2 md:-translate-y-3">
+        {% if loja.logo %}
+            <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="h-20 md:h-28 w-auto object-contain transition-all">
+        {% else %}
+            <span class="text-3xl font-bold tracking-tight custom-title-color">{{ loja.nome }}</span>
+        {% endif %}
+    </a>
+
+    <div class="absolute right-4 flex items-center gap-2 md:gap-4 z-20">
+         <button onclick="toggleMobileMenu()" class="md:hidden p-2 custom-title-color hover:opacity-70 transition">
+            <i data-lucide="menu" class="w-7 h-7"></i>
+        </button>
         
-        <a href="/{{ loja.slug_url }}/" class="flex items-center justify-center z-10 transform -translate-y-2 md:-translate-y-3">
-            {% if loja.logo %}
-                <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="h-20 md:h-28 w-auto object-contain transition-all">
-            {% else %}
-                <span class="text-3xl font-bold tracking-tight custom-title-color">{{ loja.nome }}</span>
-            {% endif %}
-        </a>
+        <button onclick="toggleCart()" class="relative p-2 hover:opacity-70 transition custom-title-color">
+            <i data-lucide="shopping-bag" class="w-7 h-7"></i>
+            <span id="cart-count-badge" class="absolute top-0 right-0 bg-theme text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold hidden">0</span>
+        </button>
+    </div>
+</div>
 
-        <div class="absolute right-4 flex items-center gap-2 md:gap-4 z-20">
-             <button onclick="toggleMobileMenu()" class="md:hidden p-2 custom-title-color hover:opacity-70 transition">
-                <i data-lucide="menu" class="w-7 h-7"></i>
-            </button>
-            
-            <button onclick="toggleCart()" class="relative p-2 hover:opacity-70 transition custom-title-color">
-                <i data-lucide="shopping-bag" class="w-7 h-7"></i>
-                <span id="cart-count-badge" class="absolute top-0 right-0 bg-theme text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold hidden">0</span>
-            </button>
-        </div>
-    </div>
-    
-    <div class="hidden md:flex justify-center border-t border-gray-50 py-3 custom-bg">
-        <ul class="flex gap-8 text-sm font-bold uppercase tracking-widest custom-title-color opacity-80">
-            <li><a href="/{{ loja.slug_url }}/" class="hover:text-theme transition">Início</a></li>
-            <li class="relative group">
-                <a href="#categorias" class="hover:text-theme transition flex items-center gap-1 cursor-pointer">Produtos <i data-lucide="chevron-down" class="w-4 h-4"></i></a>
-                <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-48 bg-white shadow-xl border border-gray-100 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 flex flex-col py-2">
-                    <a href="/{{ loja.slug_url }}/" class="px-4 py-2 hover:bg-gray-50 hover:text-theme transition text-xs text-left normal-case tracking-normal">Todos</a>
-                    {% for cat in categorias %}
-                    <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="px-4 py-2 hover:bg-gray-50 hover:text-theme transition text-xs text-left normal-case tracking-normal">{{ cat.nome }}</a>
-                    {% endfor %}
-                </div>
-            </li>
-            <li><a href="#footer" class="hover:text-theme transition">Contato</a></li>
-        </ul>
-    </div>
+<div class="hidden md:flex justify-center border-t border-gray-50 py-3 custom-bg">
+    <ul class="flex gap-8 text-sm font-bold uppercase tracking-widest custom-title-color opacity-80">
+        <li><a href="/{{ loja.slug_url }}/" class="hover:text-theme transition">Início</a></li>
+        <li class="relative group">
+            <a href="#categorias" class="hover:text-theme transition flex items-center gap-1 cursor-pointer">Produtos <i data-lucide="chevron-down" class="w-4 h-4"></i></a>
+            <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-48 bg-white shadow-xl border border-gray-100 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 flex flex-col py-2">
+                <a href="/{{ loja.slug_url }}/" class="px-4 py-2 hover:bg-gray-50 hover:text-theme transition text-xs text-left normal-case tracking-normal">Todos</a>
+                {% for cat in categorias %}
+                <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="px-4 py-2 hover:bg-gray-50 hover:text-theme transition text-xs text-left normal-case tracking-normal">{{ cat.nome }}</a>
+                {% endfor %}
+            </div>
+        </li>
+        <li><a href="#footer" class="hover:text-theme transition">Contato</a></li>
+    </ul>
+</div>
 
-    <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full custom-bg border-t border-gray-100 shadow-lg z-50">
-        <ul class="flex flex-col p-4 space-y-4 font-bold uppercase tracking-widest text-sm custom-title-color text-center">
-            <li><a href="/{{ loja.slug_url }}/" class="block hover:text-theme py-2" onclick="toggleMobileMenu()">Início</a></li>
-            <li>
-                <div class="flex justify-center items-center gap-1 cursor-pointer hover:text-theme py-2" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">Produtos <i data-lucide="chevron-down" class="w-4 h-4"></i></div>
-                <div id="mobile-cat-menu" class="hidden flex flex-col bg-gray-50 py-2 rounded-lg mt-2 shadow-inner">
-                    <a href="/{{ loja.slug_url }}/" class="block hover:text-theme py-2 text-xs normal-case tracking-normal" onclick="toggleMobileMenu()">Todos</a>
-                    {% for cat in categorias %}
-                    <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="block hover:text-theme py-2 text-xs normal-case tracking-normal" onclick="toggleMobileMenu()">{{ cat.nome }}</a>
-                    {% endfor %}
-                </div>
-            </li>
-            <li><a href="#footer" class="block hover:text-theme py-2" onclick="toggleMobileMenu()">Contato</a></li>
-        </ul>
-    </div>
+<div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full custom-bg border-t border-gray-100 shadow-lg z-50">
+    <ul class="flex flex-col p-4 space-y-4 font-bold uppercase tracking-widest text-sm custom-title-color text-center">
+        <li><a href="/{{ loja.slug_url }}/" class="block hover:text-theme py-2" onclick="toggleMobileMenu()">Início</a></li>
+        <li>
+            <div class="flex justify-center items-center gap-1 cursor-pointer hover:text-theme py-2" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">Produtos <i data-lucide="chevron-down" class="w-4 h-4"></i></div>
+            <div id="mobile-cat-menu" class="hidden flex flex-col bg-gray-50 py-2 rounded-lg mt-2 shadow-inner">
+                <a href="/{{ loja.slug_url }}/" class="block hover:text-theme py-2 text-xs normal-case tracking-normal" onclick="toggleMobileMenu()">Todos</a>
+                {% for cat in categorias %}
+                <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="block hover:text-theme py-2 text-xs normal-case tracking-normal" onclick="toggleMobileMenu()">{{ cat.nome }}</a>
+                {% endfor %}
+            </div>
+        </li>
+        <li><a href="#footer" class="block hover:text-theme py-2" onclick="toggleMobileMenu()">Contato</a></li>
+    </ul>
+</div>
 </nav>
 
 {% for secao in layout %}
-    
-    {% if secao == 'banner' and not loja.ocultar_banner %}
-        <section class="slider-container relative w-full overflow-hidden group bg-gray-50/50">
-            
-            <div id="banner-slider" class="flex transition-transform duration-500 ease-in-out w-full">
-                
-                {% if loja.banner1 %}
-                <div class="w-full flex-none relative">
-                    {% if loja.linkbannerprincipal1 and loja.linkbannerprincipal1 != '#' %}
-                    <a href="{{ loja.linkbannerprincipal1 }}" class="block w-full h-full">
-                    {% endif %}
-                        <img src="{{ loja.banner1 }}" class="w-full h-[300px] md:h-[450px] lg:h-[500px] object-cover object-center">
-                    {% if loja.linkbannerprincipal1 and loja.linkbannerprincipal1 != '#' %}
-                    </a>
-                    {% endif %}
-                </div>
-                {% endif %}
-                
-                {% if loja.banner2 %}
-                <div class="w-full flex-none relative">
-                    {% if loja.linkbannerprincipal2 and loja.linkbannerprincipal2 != '#' %}
-                    <a href="{{ loja.linkbannerprincipal2 }}" class="block w-full h-full">
-                    {% endif %}
-                        <img src="{{ loja.banner2 }}" class="w-full h-[300px] md:h-[450px] lg:h-[500px] object-cover object-center">
-                    {% if loja.linkbannerprincipal2 and loja.linkbannerprincipal2 != '#' %}
-                    </a>
-                    {% endif %}
-                </div>
-                {% endif %}
 
-            </div>
+{% if secao == 'banner' and not loja.ocultar_banner %}
+    <section class="slider-container relative w-full overflow-hidden group bg-gray-50/50">
+        
+        <div id="banner-slider" class="flex transition-transform duration-500 ease-in-out w-full">
             
-            {% if loja.banner1 and loja.banner2 %}
-            <button onclick="moveBanner(-1)" class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 md:p-3 rounded-full shadow-lg hover:bg-white transition text-gray-700 opacity-80 hover:opacity-100 flex items-center justify-center">
-                <i data-lucide="chevron-left" class="w-5 h-5 md:w-6 h-6"></i>
-            </button>
-            <button onclick="moveBanner(1)" class="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 md:p-3 rounded-full shadow-lg hover:bg-white transition text-gray-700 opacity-80 hover:opacity-100 flex items-center justify-center">
-                <i data-lucide="chevron-right" class="w-5 h-5 md:w-6 h-6"></i>
-            </button>
+            {% if loja.banner1 %}
+            <div class="w-full flex-none relative">
+                {% if loja.linkbannerprincipal1 and loja.linkbannerprincipal1 != '#' %}
+                <a href="{{ loja.linkbannerprincipal1 }}" class="block w-full h-full">
+                {% endif %}
+                    <img src="{{ loja.banner1 }}" class="w-full h-[300px] md:h-[450px] lg:h-[500px] object-cover object-center">
+                {% if loja.linkbannerprincipal1 and loja.linkbannerprincipal1 != '#' %}
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            {% if loja.banner2 %}
+            <div class="w-full flex-none relative">
+                {% if loja.linkbannerprincipal2 and loja.linkbannerprincipal2 != '#' %}
+                <a href="{{ loja.linkbannerprincipal2 }}" class="block w-full h-full">
+                {% endif %}
+                    <img src="{{ loja.banner2 }}" class="w-full h-[300px] md:h-[450px] lg:h-[500px] object-cover object-center">
+                {% if loja.linkbannerprincipal2 and loja.linkbannerprincipal2 != '#' %}
+                </a>
+                {% endif %}
+            </div>
             {% endif %}
 
-        </section>
-    {% endif %}
-
-    {% if secao == 'busca' and not loja.ocultar_busca %}
-        <div class="py-6 bg-gray-50 border-b border-gray-100">
-            <div class="container mx-auto px-4">
-                <form action="/{{ loja.slug_url }}/" method="GET">
-                    <input type="text" name="busca" placeholder="O que você procura hoje?" class="w-full p-4 rounded-full border border-gray-200 focus:border-theme outline-none text-center">
-                </form>
-            </div>
         </div>
-    {% endif %}
+        
+        {% if loja.banner1 and loja.banner2 %}
+        <button onclick="moveBanner(-1)" class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 md:p-3 rounded-full shadow-lg hover:bg-white transition text-gray-700 opacity-80 hover:opacity-100 flex items-center justify-center">
+            <i data-lucide="chevron-left" class="w-5 h-5 md:w-6 h-6"></i>
+        </button>
+        <button onclick="moveBanner(1)" class="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 md:p-3 rounded-full shadow-lg hover:bg-white transition text-gray-700 opacity-80 hover:opacity-100 flex items-center justify-center">
+            <i data-lucide="chevron-right" class="w-5 h-5 md:w-6 h-6"></i>
+        </button>
+        {% endif %}
 
-    {% if secao == 'banners_menores' and not loja.ocultar_banners_menores %}
-    <section class="w-full custom-bg py-8">
+    </section>
+{% endif %}
+
+{% if secao == 'busca' and not loja.ocultar_busca %}
+    <div class="py-6 bg-gray-50 border-b border-gray-100">
         <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {% if loja.bannermenor1 %}
-                <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-xl hover:opacity-90 transition">
-                    <img src="{{ loja.bannermenor1 }}" loading="lazy" class="w-full h-auto object-cover">
+            <form action="/{{ loja.slug_url }}/" method="GET">
+                <input type="text" name="busca" placeholder="O que você procura hoje?" class="w-full p-4 rounded-full border border-gray-200 focus:border-theme outline-none text-center">
+            </form>
+        </div>
+    </div>
+{% endif %}
+
+{% if secao == 'banners_menores' and not loja.ocultar_banners_menores %}
+<section class="w-full custom-bg py-8">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% if loja.bannermenor1 %}
+            <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-xl hover:opacity-90 transition">
+                <img src="{{ loja.bannermenor1 }}" loading="lazy" class="w-full h-auto object-cover">
+            </a>
+            {% endif %}
+            {% if loja.bannermenor2 %}
+            <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-xl hover:opacity-90 transition">
+                <img src="{{ loja.bannermenor2 }}" loading="lazy" class="w-full h-auto object-cover">
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if secao == 'categorias' and not loja.ocultar_categorias %}
+    <section class="w-full custom-bg py-4" id="categorias">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-6 text-center custom-title-color px-2">{{ loja.titulo_categorias or '' }}</h2>
+            <div class="flex gap-4 overflow-x-auto pb-2 pt-1 justify-start md:justify-center category-scroll hide-scroll px-2">
+                <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color font-bold bg-white/50">
+                    Todos
                 </a>
-                {% endif %}
-                {% if loja.bannermenor2 %}
-                <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-xl hover:opacity-90 transition">
-                    <img src="{{ loja.bannermenor2 }}" loading="lazy" class="w-full h-auto object-cover">
+                
+                {% for cat in categorias %}
+                <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color bg-white/50">
+                    {{ cat.nome }}
                 </a>
-                {% endif %}
+                {% endfor %}
             </div>
         </div>
     </section>
-    {% endif %}
+{% endif %}
 
-    {% if secao == 'categorias' and not loja.ocultar_categorias %}
-        <section class="w-full custom-bg py-4" id="categorias">
-            <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold mb-6 text-center custom-title-color px-2">{{ loja.titulo_categorias or '' }}</h2>
-                <div class="flex gap-4 overflow-x-auto pb-2 pt-1 justify-start md:justify-center category-scroll hide-scroll px-2">
-                    <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color font-bold bg-white/50">
-                        Todos
-                    </a>
-                    
-                    {% for cat in categorias %}
-                    <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color bg-white/50">
-                        {{ cat.nome }}
-                    </a>
-                    {% endfor %}
-                </div>
+{% if secao == 'produtos' and not loja.ocultar_produtos %}
+    <section class="w-full custom-bg pt-6 pb-12" id="produtos">
+        <div class="container mx-auto px-4 relative">
+            
+            <div class="relative flex justify-center items-center mb-8 px-2">
+                <h2 id="titulo-secao-produtos" class="text-3xl font-bold text-center custom-title-color">{{ loja.titulo_produtos or 'Nossos Produtos' }}</h2>
+                <button onclick="toggleLayout()" class="absolute right-0 p-2 border rounded-full hover:bg-gray-100 text-gray-600 transition" title="Mudar visualização">
+                    <i id="layout-icon" data-lucide="grid" class="w-5 h-5"></i>
+                </button>
             </div>
-        </section>
-    {% endif %}
 
-    {% if secao == 'produtos' and not loja.ocultar_produtos %}
-        <section class="w-full custom-bg pt-6 pb-12" id="produtos">
-            <div class="container mx-auto px-4 relative">
+            <div class="relative group">
                 
-                <div class="relative flex justify-center items-center mb-8 px-2">
-                    <h2 id="titulo-secao-produtos" class="text-3xl font-bold text-center custom-title-color">{{ loja.titulo_produtos or 'Nossos Produtos' }}</h2>
-                    <button onclick="toggleLayout()" class="absolute right-0 p-2 border rounded-full hover:bg-gray-100 text-gray-600 transition" title="Mudar visualização">
-                        <i id="layout-icon" data-lucide="grid" class="w-5 h-5"></i>
-                    </button>
-                </div>
+                <button onclick="scrollCarousel(-1)" id="btn-prev" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition hidden md:flex">
+                    <i data-lucide="chevron-left" class="w-6 h-6 text-gray-700"></i>
+                </button>
 
-                <div class="relative group">
-                    
-                    <button onclick="scrollCarousel(-1)" id="btn-prev" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition hidden md:flex">
-                        <i data-lucide="chevron-left" class="w-6 h-6 text-gray-700"></i>
-                    </button>
-
-                    <div id="products-container" class="flex gap-6 overflow-x-auto snap-x scroll-smooth pb-4 hide-scroll">
-                        {% for p in produtos %}
-                            <div class="min-w-[160px] w-[160px] md:min-w-[230px] md:w-[230px] flex-none border rounded-lg overflow-hidden hover:shadow-lg transition bg-white relative snap-start">
-                                {% if p.estoque == 0 %}
-                                    <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded z-10">
-                                        INDISPONÍVEL
-                                    </div>
+                <div id="products-container" class="flex gap-6 overflow-x-auto snap-x scroll-smooth pb-4 hide-scroll">
+                    {% for p in produtos %}
+                        <div class="min-w-[160px] w-[160px] md:min-w-[230px] md:w-[230px] flex-none border rounded-lg overflow-hidden hover:shadow-lg transition bg-white relative snap-start">
+                            {% if p.estoque == 0 %}
+                                <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded z-10">
+                                    INDISPONÍVEL
+                                </div>
+                            {% endif %}
+                            
+                            <div class="relative">
+                                <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
+                                    <img src="{{ p.imagem }}" loading="lazy" class="w-full aspect-square object-cover {{ 'opacity-50' if p.estoque == 0 }}">
+                                </a>
+                                {% if p.estoque > 0 and not p.consulte %}
+                                <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-2 right-2 bg-theme text-white w-8 h-8 rounded-full shadow-lg hover:scale-110 transition flex items-center justify-center z-20">
+                                    <i data-lucide="plus" class="w-5 h-5"></i>
+                                </button>
                                 {% endif %}
+                            </div>
+
+                            <div class="p-4 text-center"> 
+                                <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
+                                    <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight hover:text-theme transition">{{ p.nome }}</h3>
+                                </a>
                                 
-                                <div class="relative">
-                                    <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
-                                        <img src="{{ p.imagem }}" loading="lazy" class="w-full aspect-square object-cover {{ 'opacity-50' if p.estoque == 0 }}">
-                                    </a>
-                                    {% if p.estoque > 0 and not p.consulte %}
-                                    <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-2 right-2 bg-theme text-white w-8 h-8 rounded-full shadow-lg hover:scale-110 transition flex items-center justify-center z-20">
-                                        <i data-lucide="plus" class="w-5 h-5"></i>
-                                    </button>
-                                    {% endif %}
-                                </div>
-
-                                <div class="p-4 text-center"> 
-                                    <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
-                                        <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight hover:text-theme transition">{{ p.nome }}</h3>
-                                    </a>
-                                    
-                                    {% if p.consulte %}
-                                        <p class="text-blue-600 font-bold text-lg mt-1 text-center">Consulte-nos</p>
-                                    {% elif p.estoque == 0 %}
-                                        <p class="text-gray-400 font-bold text-sm mt-1 text-center">Sem Estoque</p>
-                                    {% else %}
-                                        {% if p.a_partir_de %}<p class="text-[10px] text-gray-500 uppercase font-bold text-center leading-none mt-2 mb-0">A partir de</p>{% endif %}
-                                        <p class="text-theme font-bold text-lg text-center {{ 'mt-1' if not p.a_partir_de else '' }}">R$ {{ "%.2f"|format(p.preco) }}</p>
-                                    {% endif %}
-                                </div>
+                                {% if p.consulte %}
+                                    <p class="text-blue-600 font-bold text-lg mt-1 text-center">Consulte-nos</p>
+                                {% elif p.estoque == 0 %}
+                                    <p class="text-gray-400 font-bold text-sm mt-1 text-center">Sem Estoque</p>
+                                {% else %}
+                                    {% if p.a_partir_de %}<p class="text-[10px] text-gray-500 uppercase font-bold text-center leading-none mt-2 mb-0">A partir de</p>{% endif %}
+                                    <p class="text-theme font-bold text-lg text-center {{ 'mt-1' if not p.a_partir_de else '' }}">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                {% endif %}
                             </div>
-                        {% else %}
-                            <div class="col-span-full text-center text-gray-400 py-10 w-full">
-                                <p>Nenhum produto encontrado.</p>
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                    <button onclick="scrollCarousel(1)" id="btn-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition flex">
-                        <i data-lucide="chevron-right" class="w-6 h-6 text-gray-700"></i>
-                    </button>
-                </div>
-            </div>
-        </section>
-    {% endif %}
-    
-    {% if secao == 'novidades' and novidades and not loja.ocultar_novidades %}
-        <section class="py-12 bg-gray-50">
-            <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold mb-8 text-center">{{ loja.titulo_novidades or 'Novidades' }}</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                     {% for p in novidades %}
-                    <div class="border rounded-lg overflow-hidden bg-white hover:shadow-lg transition">
-                        <div class="relative">
-                            <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
-                                <img src="{{ p.imagem }}" loading="lazy" class="w-full aspect-square object-cover">
-                            </a>
-                            {% if p.estoque > 0 and not p.consulte %}
-                            <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-2 right-2 bg-theme text-white w-8 h-8 rounded-full shadow-lg hover:scale-110 transition flex items-center justify-center z-20">
-                                <i data-lucide="plus" class="w-5 h-5"></i>
-                            </button>
-                            {% endif %}
                         </div>
-                        <div class="p-4 text-center">
-                            <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
-                                <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight hover:text-theme transition">{{ p.nome }}</h3>
-                            </a>
-                            {% if p.consulte %}
-                                <p class="text-blue-600 font-bold text-lg mt-1 text-center">Consulte-nos</p>
-                            {% else %}
-                                {% if p.a_partir_de %}<p class="text-[10px] text-gray-500 uppercase font-bold text-center leading-none mt-2 mb-0">A partir de</p>{% endif %}
-                                <p class="text-theme font-bold text-lg text-center {{ 'mt-1' if not p.a_partir_de else '' }}">R$ {{ "%.2f"|format(p.preco) }}</p>
-                            {% endif %}
+                    {% else %}
+                        <div class="col-span-full text-center text-gray-400 py-10 w-full">
+                            <p>Nenhum produto encontrado.</p>
                         </div>
-                    </div>
                     {% endfor %}
                 </div>
-            </div>
-        </section>
-    {% endif %}
 
-    {% if secao == 'blog' and posts and not loja.ocultar_blog %}
-        <section class="py-12 container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-8 text-center custom-title-color">{{ loja.titulo_blog or 'Blog' }}</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {% for post in posts %}
-                <div class="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
-                    {% if post.capa %}
-                    <img src="{{ post.capa }}" loading="lazy" class="w-full h-48 object-cover">
-                    {% endif %}
-                    <div class="p-6">
-                        <span class="text-xs font-bold text-gray-400 uppercase">{{ post.data }}</span>
-                        <h3 class="font-bold text-xl mt-2 mb-2">{{ post.titulo }}</h3>
-                        <p class="text-sm text-gray-600 line-clamp-3">{{ post.resumo }}</p>
-                        <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}" class="inline-block mt-4 text-theme font-bold text-sm">Ler mais</a>
+                <button onclick="scrollCarousel(1)" id="btn-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition flex">
+                    <i data-lucide="chevron-right" class="w-6 h-6 text-gray-700"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+{% if secao == 'novidades' and novidades and not loja.ocultar_novidades %}
+    <section class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-8 text-center">{{ loja.titulo_novidades or 'Novidades' }}</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                 {% for p in novidades %}
+                <div class="border rounded-lg overflow-hidden bg-white hover:shadow-lg transition">
+                    <div class="relative">
+                        <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
+                            <img src="{{ p.imagem }}" loading="lazy" class="w-full aspect-square object-cover">
+                        </a>
+                        {% if p.estoque > 0 and not p.consulte %}
+                        <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-2 right-2 bg-theme text-white w-8 h-8 rounded-full shadow-lg hover:scale-110 transition flex items-center justify-center z-20">
+                            <i data-lucide="plus" class="w-5 h-5"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                    <div class="p-4 text-center">
+                        <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
+                            <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight hover:text-theme transition">{{ p.nome }}</h3>
+                        </a>
+                        {% if p.consulte %}
+                            <p class="text-blue-600 font-bold text-lg mt-1 text-center">Consulte-nos</p>
+                        {% else %}
+                            {% if p.a_partir_de %}<p class="text-[10px] text-gray-500 uppercase font-bold text-center leading-none mt-2 mb-0">A partir de</p>{% endif %}
+                            <p class="text-theme font-bold text-lg text-center {{ 'mt-1' if not p.a_partir_de else '' }}">R$ {{ "%.2f"|format(p.preco) }}</p>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
             </div>
-        </section>
-    {% endif %}
-
-    {% if secao == 'sobre' and not loja.ocultar_sobre %}
-    <section class="py-16 md:py-32 w-full custom-bg" id="sobre">
-        <div class="container mx-auto px-6 md:px-8 grid md:grid-cols-2 gap-10 md:gap-20 items-center w-full max-w-full overflow-hidden">
-            <div class="w-full max-w-full">
-                <h2 class="text-3xl md:text-5xl mb-4 md:mb-8 leading-tight custom-title-color break-words w-full" style="word-break: break-word;">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
-                <div class="text-sm md:text-xl leading-relaxed mb-8 whitespace-pre-line break-words w-full" style="word-break: break-word; color: var(--color-text); opacity: 0.8;">
-                    {{ loja.sobre_texto or 'Adicione a história através do painel na aba "Sobre a Empresa".' }}
-                </div>
-            </div>
-            <div class="rounded-2xl overflow-hidden shadow-2xl h-[300px] md:h-[600px] border border-gray-100 w-full max-w-full">
-                <img src="{{ loja.sobre_imagem_url or '[https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000](https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000)' }}" loading="lazy" class="w-full h-full object-cover">
-            </div>
         </div>
     </section>
-    {% endif %}
+{% endif %}
 
+{% if secao == 'blog' and posts and not loja.ocultar_blog %}
+    <section class="py-12 container mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-8 text-center custom-title-color">{{ loja.titulo_blog or 'Blog' }}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for post in posts %}
+            <div class="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
+                {% if post.capa %}
+                <img src="{{ post.capa }}" loading="lazy" class="w-full h-48 object-cover">
+                {% endif %}
+                <div class="p-6">
+                    <span class="text-xs font-bold text-gray-400 uppercase">{{ post.data }}</span>
+                    <h3 class="font-bold text-xl mt-2 mb-2">{{ post.titulo }}</h3>
+                    <p class="text-sm text-gray-600 line-clamp-3">{{ post.resumo }}</p>
+                    <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}" class="inline-block mt-4 text-theme font-bold text-sm">Ler mais</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
+
+{% if secao == 'sobre' and not loja.ocultar_sobre %}
+<section class="py-16 md:py-32 w-full custom-bg" id="sobre">
+    <div class="container mx-auto px-6 md:px-8 grid md:grid-cols-2 gap-10 md:gap-20 items-center w-full max-w-full overflow-hidden">
+        <div class="w-full max-w-full">
+            <h2 class="text-3xl md:text-5xl mb-4 md:mb-8 leading-tight custom-title-color break-words w-full" style="word-break: break-word;">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
+            <div class="text-sm md:text-xl leading-relaxed mb-8 whitespace-pre-line break-words w-full" style="word-break: break-word; color: var(--color-text); opacity: 0.8;">
+                {{ loja.sobre_texto or 'Adicione a história através do painel na aba "Sobre a Empresa".' }}
+            </div>
+        </div>
+        <div class="rounded-2xl overflow-hidden shadow-2xl h-[300px] md:h-[600px] border border-gray-100 w-full max-w-full">
+            <img src="{{ loja.sobre_imagem_url or '[https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000](https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000)' }}" loading="lazy" class="w-full h-full object-cover">
+        </div>
+    </div>
+</section>
+{% endif %}
 {% endfor %}
 
 <footer class="bg-theme text-white py-12 mt-auto" style="background-color: var(--primary);" id="footer">
-    <div class="container mx-auto px-4 text-center">
-        <h4 class="font-bold text-lg mb-4">{{ loja.nome }}</h4>
-        <p class="text-sm mb-6 opacity-80">Todos os direitos reservados.</p>
-        
-        <div class="flex justify-center gap-4 text-sm">
-            <a href="#" class="hover:underline">Política de Privacidade</a>
-            <a href="#" class="hover:underline">Termos de Uso</a>
-        </div>
+<div class="container mx-auto px-4 text-center">
+<h4 class="font-bold text-lg mb-4">{{ loja.nome }}</h4>
+<p class="text-sm mb-6 opacity-80">Todos os direitos reservados.</p>
 
-        <div class="mt-8 pt-8 border-t border-white/20">
-            <a href="/{{ loja.slug_url }}/admin" class="text-xs font-bold uppercase tracking-widest hover:text-white flex items-center justify-center gap-2">
-                <i data-lucide="lock" class="w-3 h-3"></i> Área do Lojista
+    <div class="flex justify-center gap-4 text-sm mb-6">
+        <a href="#" class="hover:underline">Política de Privacidade</a>
+        <a href="#" class="hover:underline">Termos de Uso</a>
+    </div>
+
+    <div class="mt-8 pt-8 border-t border-white/20 flex flex-col items-center gap-4">
+        <a href="/{{ loja.slug_url }}/admin" class="text-xs font-bold uppercase tracking-widest hover:text-white flex items-center justify-center gap-2">
+            <i data-lucide="lock" class="w-3 h-3"></i> Área do Lojista
+        </a>
+        <div class="text-[10px] opacity-80 flex flex-col items-center">
+            <span>Desenvolvido por Leanttro Tecnology</span>
+            <a href="[https://wa.me/5511913324827](https://wa.me/5511913324827)" target="_blank" class="font-bold hover:underline flex items-center gap-1 mt-1">
+                <i data-lucide="message-circle" class="w-3 h-3"></i> (11) 91332-4827
             </a>
         </div>
     </div>
+</div>
 </footer>
 
-<a href="[https://wa.me/55](https://wa.me/55){{ loja.whatsapp_comercial }}" target="_blank" 
-   class="fixed bottom-4 right-4 z-50 bg-green-500 hover:bg-green-600 text-white p-3 md:p-4 rounded-full shadow-2xl transition-all hover:scale-110 flex items-center justify-center animate-bounce">
-    <i data-lucide="message-circle" class="w-6 h-6 md:w-8 md:h-8"></i>
+<a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank"
+class="fixed bottom-4 right-4 z-50 bg-green-500 hover:bg-green-600 text-white p-3 md:p-4 rounded-full shadow-2xl transition-all hover:scale-110 flex items-center justify-center animate-bounce">
+<i data-lucide="message-circle" class="w-6 h-6 md:w-8 md:h-8"></i>
 </a>
 
 <div id="cart-modal" class="fixed inset-0 z-[60] hidden">
-    <div class="absolute inset-0 modal-overlay transition-opacity duration-300" onclick="toggleCart()"></div>
-    <div class="absolute right-0 top-0 h-full w-full md:w-[450px] bg-white shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-full" id="cart-panel">
-        
-        <div class="p-6 border-b flex justify-between items-center bg-gray-50">
-            <h2 class="font-bold text-lg flex items-center gap-2 text-gray-800"><i data-lucide="shopping-cart" class="w-5 h-5 text-theme"></i> Sua Sacola</h2>
-            <button onclick="toggleCart()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
-        </div>
-        
-        <div class="flex-1 overflow-y-auto p-6 space-y-6" id="cart-items"></div>
+<div class="absolute inset-0 modal-overlay transition-opacity duration-300" onclick="toggleCart()"></div>
+<div class="absolute right-0 top-0 h-full w-full md:w-[450px] bg-white shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-full" id="cart-panel">
 
-        <div class="p-6 border-t bg-gray-50 space-y-4 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
-            
-            <div class="flex justify-between items-center text-xl font-bold pt-2 border-t border-gray-200">
-                <span class="text-gray-600">Total:</span><span id="cart-total" class="text-theme">R$ 0,00</span>
-            </div>
-            
-            <button onclick="finalizarNoZap()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-green-200 hover:shadow-green-300 transition-all active:scale-95">
-                <i data-lucide="message-circle" class="w-5 h-5"></i> FECHAR PEDIDO NO WHATSAPP
-            </button>
-            <p class="text-[10px] text-center text-gray-400">Pagamento e frete combinados diretamente no WhatsApp.</p>
-        </div>
+    <div class="p-6 border-b flex justify-between items-center bg-gray-50">
+        <h2 class="font-bold text-lg flex items-center gap-2 text-gray-800"><i data-lucide="shopping-cart" class="w-5 h-5 text-theme"></i> Sua Sacola</h2>
+        <button onclick="toggleCart()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
     </div>
+    
+    <div class="flex-1 overflow-y-auto p-6 space-y-6" id="cart-items"></div>
+
+    <div class="p-6 border-t bg-gray-50 space-y-4 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+        
+        <div class="flex justify-between items-center text-xl font-bold pt-2 border-t border-gray-200">
+            <span class="text-gray-600">Total:</span><span id="cart-total" class="text-theme">R$ 0,00</span>
+        </div>
+        
+        <button onclick="finalizarNoZap()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-green-200 hover:shadow-green-300 transition-all active:scale-95">
+            <i data-lucide="message-circle" class="w-5 h-5"></i> FECHAR PEDIDO NO WHATSAPP
+        </button>
+        <p class="text-[10px] text-center text-gray-400">Pagamento e frete combinados diretamente no WhatsApp.</p>
+    </div>
+</div>
 </div>
 
 <script>
-    lucide.createIcons();
-    const lojaPhone = "55{{ loja.whatsapp_comercial }}";
+lucide.createIcons();
+const lojaPhone = "55{{ loja.whatsapp_comercial }}";
 
-    // Muda titulo da seção produtos baseado na categoria selecionada
-    document.addEventListener("DOMContentLoaded", function() {
-        const params = new URLSearchParams(window.location.search);
-        const catId = params.get('categoria');
-        if (catId) {
-            const linkCategoria = document.querySelector('.category-scroll a[href*="categoria=' + catId + '"]');
-            if (linkCategoria) {
-                const tituloProdutos = document.getElementById('titulo-secao-produtos');
-                if (tituloProdutos) {
-                    tituloProdutos.innerText = linkCategoria.innerText.trim();
-                }
-            }
-        }
-    });
-
-    // --- LÓGICA DO BANNER (SLIDER) ---
-    let currentBannerIndex = 0;
-    function moveBanner(direction) {
-        const slider = document.getElementById('banner-slider');
-        if (!slider) return;
-        const slides = slider.children.length;
-        if (slides <= 1) return;
-        
-        currentBannerIndex += direction;
-        if (currentBannerIndex >= slides) currentBannerIndex = 0;
-        if (currentBannerIndex < 0) currentBannerIndex = slides - 1;
-        
-        slider.style.transform = `translateX(-${currentBannerIndex * 100}%)`;
-    }
-
-    // Auto slide a cada 5 segundos
-    setInterval(() => {
-        const slider = document.getElementById('banner-slider');
-        if(slider && slider.children.length > 1) {
-            moveBanner(1);
-        }
-    }, 5000);
-
-
-    // --- FUNÇÃO DO MENU MOBILE ---
-    function toggleMobileMenu() {
-        const menu = document.getElementById('mobile-menu');
-        if (menu.classList.contains('hidden')) {
-            menu.classList.remove('hidden');
-        } else {
-            menu.classList.add('hidden');
-        }
-    }
-
-    // --- LÓGICA DO LAYOUT (CARROSSEL VS GRADE) ---
-    let isCarousel = true;
-    const container = document.getElementById('products-container');
-    const btnPrev = document.getElementById('btn-prev');
-    const btnNext = document.getElementById('btn-next');
-    const iconLayout = document.getElementById('layout-icon');
-
-    function toggleLayout() {
-        isCarousel = !isCarousel;
-        if(isCarousel) {
-            // Modo Carrossel
-            if(container) container.className = "flex gap-6 overflow-x-auto snap-x scroll-smooth pb-4 hide-scroll";
-            if(btnPrev) btnPrev.style.display = "flex";
-            if(btnNext) btnNext.style.display = "flex";
-            // Troca ícone para Grid (sugerindo que ao clicar vira grid)
-            if(iconLayout) {
-                iconLayout.innerHTML = '<rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>'; 
-                lucide.createIcons();
-            }
-        } else {
-            // Modo Grade
-            if(container) container.className = "grid grid-cols-2 md:grid-cols-4 gap-6";
-            if(btnPrev) btnPrev.style.display = "none";
-            if(btnNext) btnNext.style.display = "none";
-            // Troca ícone para Lista/Carrossel
-            if(iconLayout) {
-                iconLayout.innerHTML = '<path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path>';
-                lucide.createIcons();
+// Muda titulo da seção produtos baseado na categoria selecionada
+document.addEventListener(&quot;DOMContentLoaded&quot;, function() {
+    const params = new URLSearchParams(window.location.search);
+    const catId = params.get(&#39;categoria&#39;);
+    if (catId) {
+        const linkCategoria = document.querySelector(&#39;.category-scroll a[href*=&quot;categoria=&#39; + catId + &#39;&quot;]&#39;);
+        if (linkCategoria) {
+            const tituloProdutos = document.getElementById(&#39;titulo-secao-produtos&#39;);
+            if (tituloProdutos) {
+                tituloProdutos.innerText = linkCategoria.innerText.trim();
             }
         }
     }
+});
 
-    function scrollCarousel(direction) {
-        const scrollAmount = 300; 
-        if(container) container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+// --- LÓGICA DO BANNER (SLIDER) ---
+let currentBannerIndex = 0;
+function moveBanner(direction) {
+    const slider = document.getElementById(&#39;banner-slider&#39;);
+    if (!slider) return;
+    const slides = slider.children.length;
+    if (slides &lt;= 1) return;
+    
+    currentBannerIndex += direction;
+    if (currentBannerIndex &gt;= slides) currentBannerIndex = 0;
+    if (currentBannerIndex &lt; 0) currentBannerIndex = slides - 1;
+    
+    slider.style.transform = `translateX(-${currentBannerIndex * 100}%)`;
+}
+
+// Auto slide a cada 5 segundos
+setInterval(() =&gt; {
+    const slider = document.getElementById(&#39;banner-slider&#39;);
+    if(slider &amp;&amp; slider.children.length &gt; 1) {
+        moveBanner(1);
     }
+}, 5000);
 
-    // --- LÓGICA DO CARRINHO ---
-    let cart = []; 
-    try { cart = JSON.parse(localStorage.getItem('cart_v2') || '[]'); } catch(e) { cart = []; }
 
-    function saveCart() { localStorage.setItem('cart_v2', JSON.stringify(cart)); updateCartUI(); }
+// --- FUNÇÃO DO MENU MOBILE ---
+function toggleMobileMenu() {
+    const menu = document.getElementById(&#39;mobile-menu&#39;);
+    if (menu.classList.contains(&#39;hidden&#39;)) {
+        menu.classList.remove(&#39;hidden&#39;);
+    } else {
+        menu.classList.add(&#39;hidden&#39;);
+    }
+}
 
-    function toggleCart() {
-        const modal = document.getElementById('cart-modal');
-        const panel = document.getElementById('cart-panel');
-        if (modal.classList.contains('hidden')) {
-            modal.classList.remove('hidden');
-            setTimeout(() => panel.classList.remove('translate-x-full'), 10);
-        } else {
-            panel.classList.add('translate-x-full');
-            setTimeout(() => modal.classList.add('hidden'), 300);
+// --- LÓGICA DO LAYOUT (CARROSSEL VS GRADE) ---
+let isCarousel = true;
+const container = document.getElementById(&#39;products-container&#39;);
+const btnPrev = document.getElementById(&#39;btn-prev&#39;);
+const btnNext = document.getElementById(&#39;btn-next&#39;);
+const iconLayout = document.getElementById(&#39;layout-icon&#39;);
+
+function toggleLayout() {
+    isCarousel = !isCarousel;
+    if(isCarousel) {
+        // Modo Carrossel
+        if(container) container.className = &quot;flex gap-6 overflow-x-auto snap-x scroll-smooth pb-4 hide-scroll&quot;;
+        if(btnPrev) btnPrev.style.display = &quot;flex&quot;;
+        if(btnNext) btnNext.style.display = &quot;flex&quot;;
+        // Troca ícone para Grid (sugerindo que ao clicar vira grid)
+        if(iconLayout) {
+            iconLayout.innerHTML = &#39;&lt;rect x=&quot;3&quot; y=&quot;3&quot; width=&quot;7&quot; height=&quot;7&quot;&gt;&lt;/rect&gt;&lt;rect x=&quot;14&quot; y=&quot;3&quot; width=&quot;7&quot; height=&quot;7&quot;&gt;&lt;/rect&gt;&lt;rect x=&quot;14&quot; y=&quot;14&quot; width=&quot;7&quot; height=&quot;7&quot;&gt;&lt;/rect&gt;&lt;rect x=&quot;3&quot; y=&quot;14&quot; width=&quot;7&quot; height=&quot;7&quot;&gt;&lt;/rect&gt;&#39;; 
+            lucide.createIcons();
         }
-    }
-
-    function changeQty(idx, delta) {
-        if (cart[idx]) {
-            cart[idx].qtd += delta;
-            if (cart[idx].qtd <= 0) cart.splice(idx, 1);
-            saveCart();
-        }
-    }
-
-    function removeFromCart(idx) { cart.splice(idx, 1); saveCart(); }
-
-    function addToCartPage(product) {
-        let final = { ...product };
-        
-        // Na index não seleciona variante visualmente, então adiciona o padrão
-        final.nome_exibicao = product.nome;
-        final.imagem = product.imagem; 
-        final.cart_id = `${product.id}-padrao`;
-
-        const idx = cart.findIndex(i => i.cart_id === final.cart_id);
-        if (idx > -1) cart[idx].qtd++; else { final.qtd = 1; cart.push(final); }
-        
-        saveCart();
-        toggleCart();
-    }
-
-    function updateCartUI() {
-        const container = document.getElementById('cart-items');
-        const totalEl = document.getElementById('cart-total');
-        const countBadge = document.getElementById('cart-count-badge');
-
-        const totalQtd = cart.reduce((acc, i) => acc + i.qtd, 0);
-        if(countBadge) {
-            countBadge.innerText = totalQtd;
-            countBadge.classList.toggle('hidden', totalQtd === 0);
-        }
-
-        if(container) {
-            container.innerHTML = '';
-            let total = 0;
-            
-            if (cart.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 opacity-50"><i data-lucide="shopping-bag" class="w-12 h-12 mx-auto mb-2"></i><p class="text-sm">Sua sacola está vazia.</p></div>`;
-            }
-
-            cart.forEach((item, i) => {
-                let itemPrice = item.consulte ? 0 : (item.preco || 0);
-                total += itemPrice * item.qtd;
-                
-                let priceDisplay = item.consulte ? "Sob Consulta" : `R$ ${(itemPrice * item.qtd).toFixed(2).replace('.',',')}`;
-
-                container.innerHTML += `
-                    <div class="flex gap-4 border-b border-gray-100 pb-4 last:border-0">
-                        <img src="${item.imagem}" class="w-16 h-16 object-cover rounded-md bg-gray-100 border border-gray-200">
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-xs text-gray-800 line-clamp-2 leading-snug mb-1">${item.nome_exibicao}</h4>
-                            <div class="flex justify-between items-center mt-2">
-                                <span class="text-theme font-bold text-sm">${priceDisplay}</span>
-                                <div class="flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-1 border border-gray-200">
-                                    <button onclick="changeQty(${i}, -1)" class="w-5 h-5 flex items-center justify-center text-gray-500 font-bold">-</button>
-                                    <span class="text-xs font-bold text-gray-800 w-4 text-center">${item.qtd}</span>
-                                    <button onclick="changeQty(${i}, 1)" class="w-5 h-5 flex items-center justify-center text-gray-500 font-bold">+</button>
-                                    <div class="w-px h-3 bg-gray-300 mx-1"></div>
-                                    <button onclick="removeFromCart(${i})" class="text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-            if(totalEl) totalEl.innerText = "R$ " + total.toFixed(2).replace('.', ',');
+    } else {
+        // Modo Grade
+        if(container) container.className = &quot;grid grid-cols-2 md:grid-cols-4 gap-6&quot;;
+        if(btnPrev) btnPrev.style.display = &quot;none&quot;;
+        if(btnNext) btnNext.style.display = &quot;none&quot;;
+        // Troca ícone para Lista/Carrossel
+        if(iconLayout) {
+            iconLayout.innerHTML = &#39;&lt;path d=&quot;M8 6h13&quot;&gt;&lt;/path&gt;&lt;path d=&quot;M8 12h13&quot;&gt;&lt;/path&gt;&lt;path d=&quot;M8 18h13&quot;&gt;&lt;/path&gt;&lt;path d=&quot;M3 6h.01&quot;&gt;&lt;/path&gt;&lt;path d=&quot;M3 12h.01&quot;&gt;&lt;/path&gt;&lt;path d=&quot;M3 18h.01&quot;&gt;&lt;/path&gt;&#39;;
             lucide.createIcons();
         }
     }
+}
 
-    function finalizarNoZap() {
-        if (cart.length === 0) return alert("Adicione produtos primeiro!");
-        
-        let msg = `👋 Olá! Vim do site e quero fechar meu pedido:\n\n`;
-        let total = 0;
-        
-        cart.forEach(i => {
-            msg += `— ${i.qtd}x ${i.nome_exibicao}\n`;
-            if(i.consulte) {
-                 msg += `   (Preço sob Consulta)\n`;
-            } else if(i.preco) {
-                msg += `   R$ ${(i.preco * i.qtd).toFixed(2)}\n`;
-                total += i.preco * i.qtd;
-            } else {
-                msg += `   (Sob Consulta)\n`;
-            }
-        });
-        
-        const url = `https://wa.me/${lojaPhone}?text=${encodeURIComponent(msg)}`;
-        window.open(url, '_blank');
+function scrollCarousel(direction) {
+    const scrollAmount = 300; 
+    if(container) container.scrollBy({ left: direction * scrollAmount, behavior: &#39;smooth&#39; });
+}
+
+// --- LÓGICA DO CARRINHO ---
+let cart = []; 
+try { cart = JSON.parse(localStorage.getItem(&#39;cart_v2&#39;) || &#39;[]&#39;); } catch(e) { cart = []; }
+
+function saveCart() { localStorage.setItem(&#39;cart_v2&#39;, JSON.stringify(cart)); updateCartUI(); }
+
+function toggleCart() {
+    const modal = document.getElementById(&#39;cart-modal&#39;);
+    const panel = document.getElementById(&#39;cart-panel&#39;);
+    if (modal.classList.contains(&#39;hidden&#39;)) {
+        modal.classList.remove(&#39;hidden&#39;);
+        setTimeout(() =&gt; panel.classList.remove(&#39;translate-x-full&#39;), 10);
+    } else {
+        panel.classList.add(&#39;translate-x-full&#39;);
+        setTimeout(() =&gt; modal.classList.add(&#39;hidden&#39;), 300);
+    }
+}
+
+function changeQty(idx, delta) {
+    if (cart[idx]) {
+        cart[idx].qtd += delta;
+        if (cart[idx].qtd &lt;= 0) cart.splice(idx, 1);
+        saveCart();
+    }
+}
+
+function removeFromCart(idx) { cart.splice(idx, 1); saveCart(); }
+
+function addToCartPage(product) {
+    let final = { ...product };
+    
+    // Na index não seleciona variante visualmente, então adiciona o padrão
+    final.nome_exibicao = product.nome;
+    final.imagem = product.imagem; 
+    final.cart_id = `${product.id}-padrao`;
+
+    const idx = cart.findIndex(i =&gt; i.cart_id === final.cart_id);
+    if (idx &gt; -1) cart[idx].qtd++; else { final.qtd = 1; cart.push(final); }
+    
+    saveCart();
+    toggleCart();
+}
+
+function updateCartUI() {
+    const container = document.getElementById(&#39;cart-items&#39;);
+    const totalEl = document.getElementById(&#39;cart-total&#39;);
+    const countBadge = document.getElementById(&#39;cart-count-badge&#39;);
+
+    const totalQtd = cart.reduce((acc, i) =&gt; acc + i.qtd, 0);
+    if(countBadge) {
+        countBadge.innerText = totalQtd;
+        countBadge.classList.toggle(&#39;hidden&#39;, totalQtd === 0);
     }
 
-    // Inicializa
-    updateCartUI();
+    if(container) {
+        container.innerHTML = &#39;&#39;;
+        let total = 0;
+        
+        if (cart.length === 0) {
+            container.innerHTML = `&lt;div class=&quot;text-center py-10 opacity-50&quot;&gt;&lt;i data-lucide=&quot;shopping-bag&quot; class=&quot;w-12 h-12 mx-auto mb-2&quot;&gt;&lt;/i&gt;&lt;p class=&quot;text-sm&quot;&gt;Sua sacola está vazia.&lt;/p&gt;&lt;/div&gt;`;
+        }
+
+        cart.forEach((item, i) =&gt; {
+            let itemPrice = item.consulte ? 0 : (item.preco || 0);
+            total += itemPrice * item.qtd;
+            
+            let priceDisplay = item.consulte ? &quot;Sob Consulta&quot; : `R$ ${(itemPrice * item.qtd).toFixed(2).replace(&#39;.&#39;,&#39;,&#39;)}`;
+
+            container.innerHTML += `
+                &lt;div class=&quot;flex gap-4 border-b border-gray-100 pb-4 last:border-0&quot;&gt;
+                    &lt;img src=&quot;${item.imagem}&quot; class=&quot;w-16 h-16 object-cover rounded-md bg-gray-100 border border-gray-200&quot;&gt;
+                    &lt;div class=&quot;flex-1 min-w-0&quot;&gt;
+                        &lt;h4 class=&quot;font-bold text-xs text-gray-800 line-clamp-2 leading-snug mb-1&quot;&gt;${item.nome_exibicao}&lt;/h4&gt;
+                        &lt;div class=&quot;flex justify-between items-center mt-2&quot;&gt;
+                            &lt;span class=&quot;text-theme font-bold text-sm&quot;&gt;${priceDisplay}&lt;/span&gt;
+                            &lt;div class=&quot;flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-1 border border-gray-200&quot;&gt;
+                                &lt;button onclick=&quot;changeQty(${i}, -1)&quot; class=&quot;w-5 h-5 flex items-center justify-center text-gray-500 font-bold&quot;&gt;-&lt;/button&gt;
+                                &lt;span class=&quot;text-xs font-bold text-gray-800 w-4 text-center&quot;&gt;${item.qtd}&lt;/span&gt;
+                                &lt;button onclick=&quot;changeQty(${i}, 1)&quot; class=&quot;w-5 h-5 flex items-center justify-center text-gray-500 font-bold&quot;&gt;+&lt;/button&gt;
+                                &lt;div class=&quot;w-px h-3 bg-gray-300 mx-1&quot;&gt;&lt;/div&gt;
+                                &lt;button onclick=&quot;removeFromCart(${i})&quot; class=&quot;text-red-400 hover:text-red-600&quot;&gt;&lt;i data-lucide=&quot;trash-2&quot; class=&quot;w-3 h-3&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;`;
+        });
+        if(totalEl) totalEl.innerText = &quot;R$ &quot; + total.toFixed(2).replace(&#39;.&#39;, &#39;,&#39;);
+        lucide.createIcons();
+    }
+}
+
+function finalizarNoZap() {
+    if (cart.length === 0) return alert(&quot;Adicione produtos primeiro!&quot;);
+    
+    let msg = `👋 Olá! Vim do site e quero fechar meu pedido:\n\n`;
+    let total = 0;
+    
+    cart.forEach(i =&gt; {
+        msg += `— ${i.qtd}x ${i.nome_exibicao}\n`;
+        if(i.consulte) {
+             msg += `   (Preço sob Consulta)\n`;
+        } else if(i.preco) {
+            msg += `   R$ ${(i.preco * i.qtd).toFixed(2)}\n`;
+            total += i.preco * i.qtd;
+        } else {
+            msg += `   (Sob Consulta)\n`;
+        }
+    });
+    
+    const url = `https://wa.me/${lojaPhone}?text=${encodeURIComponent(msg)}`;
+    window.open(url, &#39;_blank&#39;);
+}
+
+// Inicializa
+updateCartUI();
 </script>
+
 </body>
 </html>
