@@ -366,19 +366,25 @@ def index(loja_slug):
     cat_filter = request.args.get('categoria')
     busca_query = request.args.get('busca') 
     
-    filter_str = f"filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published"
+    filter_parts = [
+        f"filter[loja_id][_eq]={g.loja_id}",
+        f"filter[status][_eq]=published"
+    ]
     
     if cat_filter: 
-        filter_str += f"filter[categoria_id][_eq]={cat_filter}"
+        filter_parts.append(f"filter[_or][0][categoria_id][_eq]={cat_filter}")
+        filter_parts.append(f"filter[_or][1][categoria_id][_null]=true")
         
     if busca_query:
-        filter_str += f"&filter[nome][_icontains]={busca_query}"
+        filter_parts.append(f"filter[nome][_icontains]={busca_query}")
+
+    filter_str = "&".join(filter_parts)
 
     produtos = []
     novidades = []
 
     try:
-        url_prod = f"{DIRECTUS_URL}/items/produtos?{filter_str}&fields=*.*"
+        url_prod = f"{DIRECTUS_URL}/items/produtos?{filter_str}&sort=sort,-date_created&fields=*.*"
         r_prod = requests.get(url_prod, headers=headers)
         
         if r_prod.status_code == 200:
@@ -623,7 +629,7 @@ def admin_painel(loja_slug):
         r_cat = requests.get(f"{DIRECTUS_URL}/items/categorias?filter[loja_id][_eq]={g.loja_id}&sort=sort", headers=headers)
         if r_cat.status_code == 200: categorias = r_cat.json()['data']
 
-        r_prod = requests.get(f"{DIRECTUS_URL}/items/produtos?filter[loja_id][_eq]={g.loja_id}&limit=100&sort=-date_created&fields=*.*", headers=headers)
+        r_prod = requests.get(f"{DIRECTUS_URL}/items/produtos?filter[loja_id][_eq]={g.loja_id}&limit=100&sort=sort,-date_created&fields=*.*", headers=headers)
         if r_prod.status_code == 200: 
             produtos = r_prod.json()['data']
             for p in produtos:
@@ -733,6 +739,10 @@ def admin_salvar_produto(loja_slug):
     try: estoque = int(estoque) if estoque else 0
     except: estoque = 0
     
+    sort_val = request.form.get('sort')
+    try: sort_val = int(sort_val) if sort_val and sort_val.strip() != "" else None
+    except: sort_val = None
+    
     consulte_form = request.form.get('consulte')
     consulte = True if consulte_form == 'on' else False
 
@@ -755,10 +765,15 @@ def admin_salvar_produto(loja_slug):
         "a_partir_de": a_partir_de,
         "variantes": variantes,
         "descricao": request.form.get('descricao'),
-        "categoria_id": cat_id,
         "link_projeto": request.form.get('link_projeto'),
-        "whatsapp_projeto": request.form.get('whatsapp_projeto')
+        "whatsapp_projeto": request.form.get('whatsapp_projeto'),
+        "sort": sort_val
     }
+    
+    if cat_id:
+        payload["categoria_id"] = cat_id
+    else:
+        payload["categoria_id"] = None
     
     if not prod_id and nome:
         payload["slug"] = gerar_slug(nome) + "-" + str(uuid.uuid4())[:4]

@@ -589,31 +589,34 @@
                 <form id="produtoForm" action="/{{ loja.slug_url }}/admin/produto/salvar" method="POST" enctype="multipart/form-data" class="mt-6 space-y-6">
                     <input type="hidden" name="id" id="prodId">
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="col-span-2 md:col-span-1">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="col-span-1 md:col-span-2">
                             <label class="block text-sm font-bold mb-2 text-gray-700">Nome do Produto / Case*</label>
                             <input type="text" name="nome" id="prodNome" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all" required placeholder="Ex: Projeto Residência 01">
                         </div>
-                        <div class="col-span-2 md:col-span-1">
+                        <div class="col-span-1 md:col-span-1">
                             <label class="block text-sm font-bold mb-2 text-gray-700">Categoria</label>
                             <select name="categoria_id" id="prodCategoria" class="w-full border border-gray-300 rounded-lg p-3 bg-white focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all">
-                                <option value="">Sem Categoria</option>
+                                <option value="">Sem Categoria (Aparece em Todas)</option>
                                 {% for cat in categorias %}
                                 <option value="{{ cat.id }}">{{ cat.nome }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-
-                        <div>
+                        <div class="col-span-1">
                              <label class="block text-sm font-bold mb-2 text-gray-700">Preço Base (R$)</label>
                              <div class="relative">
                                 <span class="absolute left-3 top-3 text-gray-500">R$</span>
                                 <input type="number" name="preco" id="prodPreco" step="0.01" class="w-full border border-gray-300 rounded-lg p-3 pl-10 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all" placeholder="0,00">
                             </div>
                         </div>
-                         <div>
+                         <div class="col-span-1">
                             <label class="block text-sm font-bold mb-2 text-gray-700">Estoque Atual</label>
                             <input type="number" name="estoque" id="prodEstoque" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all" placeholder="Ex: 10">
+                        </div>
+                        <div class="col-span-1">
+                            <label class="block text-sm font-bold mb-2 text-gray-700">Posição (Ordem)</label>
+                            <input type="number" name="sort" id="prodSort" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all" placeholder="Ex: 1">
                         </div>
                     </div>
 
@@ -898,6 +901,7 @@
             document.getElementById('prodPreco').value = '';
             document.getElementById('prodEstoque').value = '';
             document.getElementById('prodCategoria').value = '';
+            document.getElementById('prodSort').value = '';
             document.getElementById('prodDescricao').value = '';
             document.getElementById('prodConsulte').checked = false;
             document.getElementById('prodAPartirDe').checked = false;
@@ -920,6 +924,7 @@
             document.getElementById('prodPreco').value = prod.preco;
             document.getElementById('prodEstoque').value = prod.estoque;
             document.getElementById('prodCategoria').value = prod.categoria_id || '';
+            document.getElementById('prodSort').value = prod.sort !== null && prod.sort !== undefined ? prod.sort : '';
             document.getElementById('prodDescricao').value = prod.descricao || '';
             document.getElementById('prodConsulte').checked = prod.consulte;
             document.getElementById('prodAPartirDe').checked = prod.a_partir_de || false;
