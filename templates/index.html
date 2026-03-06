@@ -359,6 +359,22 @@
             </section>
         {% endif %}
 
+        {% if secao == 'sobre' and not loja.ocultar_sobre %}
+        <section class="py-16 md:py-32 w-full custom-bg" id="sobre">
+            <div class="container mx-auto px-6 md:px-8 grid md:grid-cols-2 gap-10 md:gap-20 items-center w-full max-w-full overflow-hidden">
+                <div class="w-full max-w-full">
+                    <h2 class="text-3xl md:text-5xl mb-4 md:mb-8 leading-tight custom-title-color break-words w-full" style="word-break: break-word;">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
+                    <div class="text-sm md:text-xl leading-relaxed mb-8 whitespace-pre-line break-words w-full" style="word-break: break-word; color: var(--color-text); opacity: 0.8;">
+                        {{ loja.sobre_texto or 'Adicione a história através do painel na aba "Sobre a Empresa".' }}
+                    </div>
+                </div>
+                <div class="rounded-2xl overflow-hidden shadow-2xl h-[300px] md:h-[600px] border border-gray-100 w-full max-w-full">
+                    <img src="{{ loja.sobre_imagem_url or 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000' }}" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
     {% endfor %}
 
     <footer class="bg-theme text-white py-12 mt-auto" style="background-color: var(--primary);" id="footer">
