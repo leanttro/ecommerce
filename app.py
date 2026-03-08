@@ -453,7 +453,7 @@ def index(loja_slug):
     
     # DEFINE QUAL TEMPLATE RENDERIZAR
     template_name = g.loja.get('template_ativo') or 'index'
-    if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional']:
+    if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional', 'creapes']:
         template_name = 'index'
 
     return render_template(f'{template_name}.html', 
@@ -676,7 +676,11 @@ def admin_painel(loja_slug):
         "slug_url": loja_slug
     }
 
-    return render_template('painel.html', 
+    template_painel = 'painel.html'
+    if g.loja.get('template_ativo') == 'creapes':
+        template_painel = 'painel_creapes.html'
+
+    return render_template(template_painel, 
                            loja=loja_visual, 
                            categorias=categorias, 
                            produtos=produtos, 
