@@ -11,8 +11,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <style>
 :root {
-  --bg: #050505;
-  --text: #F5F5F7;
+  --bg: {{ loja.cor_fundo }};
+  --text: {{ loja.cor_texto }};
   --accent: {{ loja.cor_primaria }};
   --glass: rgba(5, 5, 5, 0.6);
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -108,7 +108,7 @@ nav {
 }
 
 .play-link {
-  display: block; width: 100%; height: 100%; position: relative; cursor: pointer; z-index: 3;
+  display: block; width: 100%; height: 100%; position: relative; cursor: pointer;
 }
 
 .play-btn {
@@ -119,6 +119,7 @@ nav {
   width: 80px;
   height: 80px;
   display: flex; justify-content: center; align-items: center;
+  z-index: 3;
   color: var(--text);
   transition: all 0.4s var(--ease);
 }
@@ -614,12 +615,24 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   {% for p in hero_videos %}
     {% set bg_link = p.link_projeto %}
     {% if bg_link and 'vimeo.com' in bg_link and 'player.vimeo.com' not in bg_link %}
-      {% set bg_link = bg_link | replace('vimeo.com/', 'player.vimeo.com/video/') %}
+      {% set clean_url = bg_link.split('?')[0].strip('/') %}
+      {% set link_parts = clean_url.split('/') %}
+      {% if link_parts|length >= 5 %}
+        {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] ~ '?h=' ~ link_parts[4] %}
+      {% elif link_parts|length == 4 %}
+        {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] %}
+      {% endif %}
     {% endif %}
 
     {% set modal_link = p.whatsapp_projeto %}
     {% if modal_link and 'vimeo.com' in modal_link and 'player.vimeo.com' not in modal_link %}
-      {% set modal_link = modal_link | replace('vimeo.com/', 'player.vimeo.com/video/') %}
+      {% set m_clean_url = modal_link.split('?')[0].strip('/') %}
+      {% set m_link_parts = m_clean_url.split('/') %}
+      {% if m_link_parts|length >= 5 %}
+        {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] ~ '?h=' ~ m_link_parts[4] %}
+      {% elif m_link_parts|length == 4 %}
+        {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] %}
+      {% endif %}
     {% endif %}
 
   <div class="slide {% if loop.first %}active{% endif %}">
@@ -644,7 +657,13 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     {% for p in hero_videos %}
       {% set modal_link = p.whatsapp_projeto %}
       {% if modal_link and 'vimeo.com' in modal_link and 'player.vimeo.com' not in modal_link %}
-        {% set modal_link = modal_link | replace('vimeo.com/', 'player.vimeo.com/video/') %}
+        {% set m_clean_url = modal_link.split('?')[0].strip('/') %}
+        {% set m_link_parts = m_clean_url.split('/') %}
+        {% if m_link_parts|length >= 5 %}
+          {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] ~ '?h=' ~ m_link_parts[4] %}
+        {% elif m_link_parts|length == 4 %}
+          {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] %}
+        {% endif %}
       {% endif %}
     <h1 class="hero-title-item {% if loop.first %}active{% endif %}" onmouseenter="goToSlide({{ loop.index0 }})" onclick="openVideo('{{ modal_link }}')">{{ p.nome }} <span class="year">{{ p.estoque }}</span></h1>
     {% endfor %}
@@ -704,7 +723,13 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
         
         {% set bg_link = p.link_projeto %}
         {% if bg_link and 'vimeo.com' in bg_link and 'player.vimeo.com' not in bg_link %}
-          {% set bg_link = bg_link | replace('vimeo.com/', 'player.vimeo.com/video/') %}
+          {% set clean_url = bg_link.split('?')[0].strip('/') %}
+          {% set link_parts = clean_url.split('/') %}
+          {% if link_parts|length >= 5 %}
+            {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] ~ '?h=' ~ link_parts[4] %}
+          {% elif link_parts|length == 4 %}
+            {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] %}
+          {% endif %}
         {% endif %}
 
         {% if bg_link and 'vimeo.com' in bg_link %}
