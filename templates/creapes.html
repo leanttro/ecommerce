@@ -11,8 +11,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <style>
 :root {
-  --bg: {{ loja.cor_fundo }};
-  --text: {{ loja.cor_texto }};
+  --bg: #050505;
+  --text: #F5F5F7;
   --accent: {{ loja.cor_primaria }};
   --glass: rgba(5, 5, 5, 0.6);
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -604,8 +604,9 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 <header class="hero" id="hero">
   {% set hero_videos = [] %}
   {% for p in produtos %}
+    {% set p_cat = p.categoria_id.id if p.categoria_id is mapping else p.categoria_id %}
     {% for c in categorias %}
-      {% if p.categoria_id|string == c.id|string and c.slug == 'hero' %}
+      {% if p_cat|string == c.id|string and ('hero' in c.slug|lower or 'hero' in c.nome|lower) %}
         {% set _ = hero_videos.append(p) %}
       {% endif %}
     {% endfor %}
@@ -669,8 +670,9 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     <div class="portfolio-track">
       {% set port_videos = [] %}
       {% for p in produtos %}
+        {% set p_cat = p.categoria_id.id if p.categoria_id is mapping else p.categoria_id %}
         {% for c in categorias %}
-          {% if p.categoria_id|string == c.id|string and c.slug == 'portfolio' %}
+          {% if p_cat|string == c.id|string and ('portfolio' in c.slug|lower or 'portfólio' in c.nome|lower or 'portfolio' in c.nome|lower) %}
             {% set _ = port_videos.append(p) %}
           {% endif %}
         {% endfor %}
