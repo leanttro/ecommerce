@@ -596,12 +596,13 @@
                         </div>
                         <div class="col-span-1 md:col-span-1">
                             <label class="block text-sm font-bold mb-2 text-gray-700">Categoria</label>
-                            <select name="categoria_id" id="prodCategoria" class="w-full border border-gray-300 rounded-lg p-3 bg-white focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all">
+                            <select name="categoria_id" id="prodCategoria" onchange="document.getElementById('hiddenCategoria').value = this.value;" class="w-full border border-gray-300 rounded-lg p-3 bg-white focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all">
                                 <option value="">Sem Categoria (Aparece em Todas)</option>
                                 {% for cat in categorias %}
                                 <option value="{{ cat.id }}">{{ cat.nome }}</option>
                                 {% endfor %}
                             </select>
+                            <input type="hidden" name="categoria" id="hiddenCategoria">
                         </div>
                         <div class="col-span-1">
                              <label class="block text-sm font-bold mb-2 text-gray-700">Preço Base (R$)</label>
@@ -901,6 +902,7 @@
             document.getElementById('prodPreco').value = '';
             document.getElementById('prodEstoque').value = '';
             document.getElementById('prodCategoria').value = '';
+            document.getElementById('hiddenCategoria').value = '';
             document.getElementById('prodSort').value = '';
             document.getElementById('prodDescricao').value = '';
             document.getElementById('prodConsulte').checked = false;
@@ -923,7 +925,15 @@
             document.getElementById('prodNome').value = prod.nome;
             document.getElementById('prodPreco').value = prod.preco;
             document.getElementById('prodEstoque').value = prod.estoque;
-            document.getElementById('prodCategoria').value = prod.categoria_id || '';
+            
+            let catVal = ('categoria_id' in prod && prod.categoria_id !== null) ? prod.categoria_id : (prod.categoria || '');
+            let catSelect = document.getElementById('prodCategoria');
+            catSelect.value = catVal;
+            if (!catSelect.value && catVal !== '') {
+                catSelect.value = String(catVal);
+            }
+            document.getElementById('hiddenCategoria').value = catSelect.value;
+            
             document.getElementById('prodSort').value = prod.sort !== null && prod.sort !== undefined ? prod.sort : '';
             document.getElementById('prodDescricao').value = prod.descricao || '';
             document.getElementById('prodConsulte').checked = prod.consulte;
