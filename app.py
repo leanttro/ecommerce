@@ -452,9 +452,12 @@ def index(loja_slug):
     }
     
     # DEFINE QUAL TEMPLATE RENDERIZAR
-    template_name = g.loja.get('template_ativo') or 'index'
-    if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional', 'creapes']:
-        template_name = 'index'
+    if loja_slug == 'creapes':
+        template_name = 'creapes'
+    else:
+        template_name = g.loja.get('template_ativo') or 'index'
+        if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional']:
+            template_name = 'index'
 
     return render_template(f'{template_name}.html', 
                          loja=loja_visual, 
@@ -677,7 +680,7 @@ def admin_painel(loja_slug):
     }
 
     template_painel = 'painel.html'
-    if g.loja.get('template_ativo') == 'creapes':
+    if loja_slug == 'creapes':
         template_painel = 'painel_creapes.html'
 
     return render_template(template_painel, 
