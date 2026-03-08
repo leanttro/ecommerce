@@ -47,9 +47,10 @@ a:hover { color: var(--accent); }
 nav {
   position: fixed;
   top: 0; left: 0; width: 100%;
-  padding: 1.5rem 4rem;
+  height: 60px;
+  padding: 0 4rem;
   display: flex; justify-content: space-between; align-items: center;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+  background: #000000;
   z-index: 100;
 }
 
@@ -57,12 +58,13 @@ nav {
 .nav-right { justify-content: flex-end; }
 
 .brand { 
-  font-size: 1.5rem; 
+  font-size: 1.2rem; 
   font-weight: 700; 
   letter-spacing: 0.1em; 
   position: absolute; 
   left: 50%; 
-  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .menu-btn {
@@ -571,7 +573,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 .social-links { display: flex; gap: 1.5rem; }
 
 @media (max-width: 900px) {
-  nav { padding: 1.5rem 2rem; }
+  nav { padding: 0 2rem; height: 60px; }
   .hero-titles-list { left: 2rem; bottom: 3rem; }
   section { padding: 5rem 2rem; }
   .split-screen, .footer-blocks { flex-direction: column; gap: 3rem; }
