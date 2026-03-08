@@ -11,8 +11,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <style>
 :root {
-  --bg: #050505;
-  --text: #F5F5F7;
+  --bg: {{ loja.cor_fundo }};
+  --text: {{ loja.cor_texto }};
   --accent: {{ loja.cor_primaria }};
   --glass: rgba(5, 5, 5, 0.6);
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -431,14 +431,14 @@ nav {
   box-shadow: 0 40px 80px rgba(0,0,0,0.9);
 }
 
-.port-item video {
+.port-item video, .port-item .vimeo-port-bg {
   width: 100%; height: 100%;
   object-fit: cover;
   filter: grayscale(90%) contrast(1.2);
   transition: filter 0.8s var(--ease), transform 0.8s var(--ease);
 }
 
-.port-item:hover video {
+.port-item:hover video, .port-item:hover .vimeo-port-bg {
   filter: grayscale(0%) contrast(1);
   transform: scale(1.08);
 }
@@ -614,7 +614,15 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 
   {% for p in hero_videos %}
   <div class="slide {% if loop.first %}active{% endif %}">
+    
+    {% if 'vimeo.com' in p.link_projeto %}
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1;">
+      <iframe src="{{ p.link_projeto }}{% if '?' in p.link_projeto %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1" style="width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: brightness(0.6);" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+    </div>
+    {% else %}
     <video src="{{ p.link_projeto }}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: -1; filter: brightness(0.6);"></video>
+    {% endif %}
+
     <div class="play-link" onclick="openVideo('{{ p.whatsapp_projeto }}')">
       <div class="play-btn">
         <svg viewBox="0 0 24 24" stroke="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
@@ -680,7 +688,15 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 
       {% for p in port_videos %}
       <div class="port-item {% if loop.index % 3 == 0 %}size-s align-top{% elif loop.index % 2 == 0 %}size-sq align-bottom{% else %}size-l align-center{% endif %}">
+        
+        {% if 'vimeo.com' in p.link_projeto %}
+        <div class="vimeo-port-bg" style="position: absolute; top: 0; left: 0; overflow: hidden; pointer-events: none;">
+          <iframe src="{{ p.link_projeto }}{% if '?' in p.link_projeto %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1" style="width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" frameborder="0" allow="autoplay; fullscreen"></iframe>
+        </div>
+        {% else %}
         <video src="{{ p.link_projeto }}" autoplay loop muted playsinline></video>
+        {% endif %}
+
         <div class="port-info">
           <h3>{{ p.nome }}</h3>
           <p>{{ p.origem }}</p>
@@ -820,7 +836,11 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 
   function openVideo(url) {
     if(!url) return;
-    vimeoPlayer.src = url;
+    let finalUrl = url;
+    if(finalUrl.includes('vimeo.com') && !finalUrl.includes('autoplay=1')) {
+      finalUrl += (finalUrl.includes('?') ? '&' : '?') + 'autoplay=1';
+    }
+    vimeoPlayer.src = finalUrl;
     videoModal.classList.add('active');
     clearInterval(slideInterval);
   }
