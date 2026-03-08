@@ -11,8 +11,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <style>
 :root {
-  --bg: #050505 !important;
-  --text: #F5F5F7 !important;
+  --bg: #050505;
+  --text: #F5F5F7;
   --accent: {{ loja.cor_primaria }};
   --glass: rgba(5, 5, 5, 0.6);
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -83,20 +83,28 @@ nav {
 }
 .search-btn:hover { color: var(--accent); }
 
-/* VÍDEO FIXO NO FUNDO */
-.fixed-bg-container {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  z-index: -2;
-  pointer-events: none;
-  background: #000;
-}
-
 .hero {
   height: 100vh;
   position: relative;
-  background-color: transparent;
+  overflow: hidden;
+  background-color: var(--bg);
+}
+
+.slide {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease), transform 8s linear;
+  transform: scale(1.05);
+  z-index: 1;
+}
+
+.slide.active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 2;
 }
 
 .play-link {
@@ -221,7 +229,7 @@ nav {
   border-bottom: 1px solid rgba(255,255,255,0.1);
   overflow: hidden;
   white-space: nowrap;
-  background: transparent;
+  background: #0a0a0a;
 }
 .marquee {
   display: inline-block;
@@ -233,10 +241,16 @@ nav {
 .marquee span { margin: 0 3rem; }
 @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-.evolve-wrapper { height: 250vh; position: relative; background: transparent; }
+.evolve-wrapper { height: 250vh; position: relative; background: var(--bg); }
 .evolve-sticky {
   position: sticky; top: 0; height: 100vh; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
+}
+.evolve-bg-video {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;
+}
+.evolve-bg-video video {
+  width: 100%; height: 100%; object-fit: cover;
 }
 .evolve-overlay {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,5,5,0.65); z-index: 2;
@@ -568,33 +582,6 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 </head>
 <body>
 
-{% set hero_videos = [] %}
-{% for p in produtos %}
-  {% set p_cat = p.categoria_id.id if p.categoria_id is mapping else p.categoria_id %}
-  {% for c in categorias %}
-    {% if p_cat|string == c.id|string and ('hero' in c.slug|lower or 'hero' in c.nome|lower) %}
-      {% set _ = hero_videos.append(p) %}
-    {% endif %}
-  {% endfor %}
-{% endfor %}
-
-<div class="fixed-bg-container">
-  {% for p in hero_videos %}
-    {% set bg_link = p.link_projeto %}
-    {% if bg_link and 'vimeo.com' in bg_link and 'player.vimeo.com' not in bg_link %}
-      {% set bg_link = bg_link | replace('vimeo.com/', 'player.vimeo.com/video/') %}
-    {% endif %}
-    
-    <div class="bg-slide" id="bg-slide-{{ loop.index0 }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: {% if loop.first %}1{% else %}0{% endif %}; transition: opacity 1.2s var(--ease);">
-      {% if bg_link and 'vimeo.com' in bg_link %}
-      <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1" style="width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: none; filter: brightness(0.6);" allow="autoplay; fullscreen"></iframe>
-      {% elif bg_link %}
-      <video src="{{ bg_link }}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); pointer-events: none;"></video>
-      {% endif %}
-    </div>
-  {% endfor %}
-</div>
-
 <nav>
   <div class="nav-left">
     <button class="menu-btn">
@@ -614,19 +601,43 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 </nav>
 
 <header class="hero" id="hero">
+  {% set hero_videos = [] %}
+  {% for p in produtos %}
+    {% set p_cat = p.categoria_id.id if p.categoria_id is mapping else p.categoria_id %}
+    {% for c in categorias %}
+      {% if p_cat|string == c.id|string and ('hero' in c.slug|lower or 'hero' in c.nome|lower) %}
+        {% set _ = hero_videos.append(p) %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+
   {% for p in hero_videos %}
+    {% set bg_link = p.link_projeto %}
+    {% if bg_link and 'vimeo.com' in bg_link and 'player.vimeo.com' not in bg_link %}
+      {% set bg_link = bg_link | replace('vimeo.com/', 'player.vimeo.com/video/') %}
+    {% endif %}
+
     {% set modal_link = p.whatsapp_projeto %}
     {% if modal_link and 'vimeo.com' in modal_link and 'player.vimeo.com' not in modal_link %}
       {% set modal_link = modal_link | replace('vimeo.com/', 'player.vimeo.com/video/') %}
     {% endif %}
+
+  <div class="slide {% if loop.first %}active{% endif %}">
     
-    <div class="slide-interactive" id="slide-int-{{ loop.index0 }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: {% if loop.first %}block{% else %}none{% endif %}; z-index: 2;">
-      <div class="play-link" onclick="openVideo('{{ modal_link }}')">
-        <div class="play-btn">
-          <svg viewBox="0 0 24 24" stroke="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
-        </div>
+    {% if bg_link and 'vimeo.com' in bg_link %}
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1; pointer-events: none;">
+      <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1" style="width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: none; filter: brightness(0.6);" allow="autoplay; fullscreen"></iframe>
+    </div>
+    {% elif bg_link %}
+    <video src="{{ bg_link }}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: -1; filter: brightness(0.6); pointer-events: none;"></video>
+    {% endif %}
+
+    <div class="play-link" onclick="openVideo('{{ modal_link }}')">
+      <div class="play-btn">
+        <svg viewBox="0 0 24 24" stroke="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
       </div>
     </div>
+  </div>
   {% endfor %}
 
   <div class="hero-titles-list">
@@ -635,7 +646,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
       {% if modal_link and 'vimeo.com' in modal_link and 'player.vimeo.com' not in modal_link %}
         {% set modal_link = modal_link | replace('vimeo.com/', 'player.vimeo.com/video/') %}
       {% endif %}
-      <h1 class="hero-title-item {% if loop.first %}active{% endif %}" onmouseenter="goToSlide({{ loop.index0 }})" onclick="openVideo('{{ modal_link }}')">{{ p.nome }} <span class="year">{{ p.estoque }}</span></h1>
+    <h1 class="hero-title-item {% if loop.first %}active{% endif %}" onmouseenter="goToSlide({{ loop.index0 }})" onclick="openVideo('{{ modal_link }}')">{{ p.nome }} <span class="year">{{ p.estoque }}</span></h1>
     {% endfor %}
   </div>
 
@@ -655,6 +666,11 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 
 <div class="evolve-wrapper">
   <div class="evolve-sticky">
+    <div class="evolve-bg-video">
+      <video autoplay loop muted playsinline>
+        <source src="https://res.cloudinary.com/dzcaxmbjn/video/upload/v1772571265/dynamic-ink-blots-symbolizing-movement-and-fluidit-2026-01-28-04-31-04-utc_eqom6l.mp4" type="video/mp4">
+      </video>
+    </div>
     <div class="evolve-overlay"></div>
     <div class="flash-bang"></div>
     <div class="evolve-texts">
@@ -692,8 +708,8 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
         {% endif %}
 
         {% if bg_link and 'vimeo.com' in bg_link %}
-        <div class="vimeo-port-bg" style="position: absolute; top: 0; left: 0; overflow: hidden; pointer-events: none;">
-          <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1" style="width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" frameborder="0" allow="autoplay; fullscreen"></iframe>
+        <div class="vimeo-port-bg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none;">
+          <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1" style="width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: none;" allow="autoplay; fullscreen"></iframe>
         </div>
         {% elif bg_link %}
         <video src="{{ bg_link }}" autoplay loop muted playsinline></video>
@@ -804,55 +820,39 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   document.querySelectorAll('.fade-in').forEach(element => { observer.observe(element); });
 
   let currentSlide = 0;
-  const bgSlides = document.querySelectorAll('.bg-slide');
-  const intSlides = document.querySelectorAll('.slide-interactive');
+  const slides = document.querySelectorAll('.slide');
   const titleItems = document.querySelectorAll('.hero-title-item');
   let slideInterval;
 
   function goToSlide(index) {
-    if(bgSlides.length <= 1) return; 
-    
-    if(bgSlides[currentSlide]) {
-        bgSlides[currentSlide].classList.remove('active');
-        bgSlides[currentSlide].style.opacity = '0';
-    }
-    if(intSlides[currentSlide]) {
-        intSlides[currentSlide].style.display = 'none';
-    }
-    if(titleItems[currentSlide]) {
-        titleItems[currentSlide].classList.remove('active');
-    }
+    if(slides.length === 0) return;
+    if(index === currentSlide) return;
+
+    if(slides[currentSlide]) slides[currentSlide].classList.remove('active');
+    if(titleItems[currentSlide]) titleItems[currentSlide].classList.remove('active');
     
     currentSlide = index;
     
-    if(bgSlides[currentSlide]) {
-        bgSlides[currentSlide].classList.add('active');
-        bgSlides[currentSlide].style.opacity = '1';
-    }
-    if(intSlides[currentSlide]) {
-        intSlides[currentSlide].style.display = 'block';
-    }
-    if(titleItems[currentSlide]) {
-        titleItems[currentSlide].classList.add('active');
-    }
+    if(slides[currentSlide]) slides[currentSlide].classList.add('active');
+    if(titleItems[currentSlide]) titleItems[currentSlide].classList.add('active');
     
     resetInterval();
   }
 
   function nextSlide() {
-    if(bgSlides.length <= 1) return;
-    let next = (currentSlide + 1) % bgSlides.length;
+    if(slides.length <= 1) return;
+    let next = (currentSlide + 1) % slides.length;
     goToSlide(next);
   }
 
   function resetInterval() {
     if(slideInterval) clearInterval(slideInterval);
-    if(bgSlides.length > 1) {
+    if(slides.length > 1) {
         slideInterval = setInterval(nextSlide, 5000);
     }
   }
 
-  if(bgSlides.length > 1) {
+  if(slides.length > 1) {
     slideInterval = setInterval(nextSlide, 5000);
   }
 
