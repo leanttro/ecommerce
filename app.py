@@ -383,7 +383,13 @@ def index(loja_slug):
             
             # Filtra categoria no Python para garantir que produtos sem categoria apareçam sempre
             if cat_filter:
-                raw_prods = [p for p in raw_prods if str(p.get('categoria_id')) == str(cat_filter) or not p.get('categoria_id')]
+                filtered_prods = []
+                for p in raw_prods:
+                    cv = p.get('categoria_id')
+                    if isinstance(cv, dict): cv = cv.get('id')
+                    if str(cv) == str(cat_filter) or not p.get('categoria_id'):
+                        filtered_prods.append(p)
+                raw_prods = filtered_prods
                 
             # Ordena pela posição e previne erros se o campo sort não existir no banco
             def get_sort_val(p):
@@ -406,10 +412,13 @@ def index(loja_slug):
                 try: estoque_val = int(p.get('estoque')) if p.get('estoque') is not None else 0
                 except: estoque_val = 0
 
+                cat_val = p.get('categoria_id')
+                if isinstance(cat_val, dict): cat_val = cat_val.get('id')
+
                 prod_obj = {
                     "id": p['id'], "nome": p['nome'], "slug": p['slug'],
                     "preco": preco_float,
-                    "imagem": img, "categoria_id": p.get('categoria_id'),
+                    "imagem": img, "categoria_id": cat_val,
                     "variantes": variantes, "origem": p.get('origem'),
                     "urgencia": p.get('status_urgencia'), "classe_frete": p.get('classe_frete'),
                     "estoque": estoque_val, "consulte": p.get('consulte', False),
@@ -481,6 +490,9 @@ def produto(loja_slug, slug):
     
     if r.status_code == 200 and r.json()['data']:
         p = r.json()['data'][0]
+        
+        cv = p.get('categoria_id')
+        if isinstance(cv, dict): p['categoria_id'] = cv.get('id')
         
         p['imagem_destaque'] = get_img_url(p.get('imagem_destaque'))
         p['imagem1'] = get_img_url(p.get('imagem1'))
@@ -654,6 +666,11 @@ def admin_painel(loja_slug):
                 p['imagem_destaque'] = get_img_url(p.get('imagem_destaque'))
                 try: p['preco'] = float(p['preco']) if p.get('preco') else 0.0
                 except: p['preco'] = 0.0
+                
+                # Tratamento: Se a categoria vier como objeto do Directus, extrai o ID
+                cv = p.get('categoria_id')
+                if isinstance(cv, dict): p['categoria_id'] = cv.get('id')
+                
                 produtos.append(p)
 
         r_post = requests.get(f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&limit=20&sort=-date_created&fields=id,titulo,date_created", headers=headers)
@@ -751,8 +768,13 @@ def admin_salvar_produto(loja_slug):
     prod_id = request.form.get('id')
     nome = request.form.get('nome')
     
+    # Busca a categoria garantindo pegar do select ou do hidden da atualização anterior
     cat_id = request.form.get('categoria_id')
-    if not cat_id or cat_id == "": cat_id = None
+    if not cat_id or cat_id.strip() == "": 
+        cat_id = request.form.get('categoria')
+        
+    if not cat_id or cat_id.strip() == "": 
+        cat_id = None
         
     preco = request.form.get('preco')
     try: preco = float(preco) if preco else 0
