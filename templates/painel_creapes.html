@@ -467,7 +467,13 @@
         function editarProduto(prod) {
             document.getElementById('prodId').value = prod.id;
             document.getElementById('prodNome').value = prod.nome;
-            document.getElementById('prodCategoria').value = prod.categoria_id || '';
+            
+            let catId = '';
+            if (prod.categoria_id) {
+                catId = typeof prod.categoria_id === 'object' ? prod.categoria_id.id : prod.categoria_id;
+            }
+            document.getElementById('prodCategoria').value = catId;
+            
             document.getElementById('prodEstoque').value = prod.estoque || '';
             document.getElementById('prodDescricao').value = prod.descricao || '';
             document.getElementById('prodLinkProjeto').value = prod.link_projeto || '';
