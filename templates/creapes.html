@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ loja.nome }} | Elite Audiovisual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+:root {
+  --bg: {{ loja.cor_fundo }};
+  --text: {{ loja.cor_texto }};
+  --accent: {{ loja.cor_primaria }};
+  --glass: rgba(5, 5, 5, 0.6);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .brand {
+  font-family: 'Space Grotesk', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+a { color: var(--text); text-decoration: none; transition: color 0.3s var(--ease); }
+a:hover { color: var(--accent); }
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+nav {
+  position: fixed;
+  top: 0; left: 0; width: 100%;
+  padding: 1.5rem 4rem;
+  display: flex; justify-content: space-between; align-items: center;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+  z-index: 100;
+}
+
+.nav-left, .nav-right { display: flex; align-items: center; flex: 1; }
+.nav-right { justify-content: flex-end; }
+
+.brand { 
+  font-size: 1.5rem; 
+  font-weight: 700; 
+  letter-spacing: 0.1em; 
+  position: absolute; 
+  left: 50%; 
+  transform: translateX(-50%);
+}
+
+.menu-btn {
+  display: flex; align-items: center; gap: 0.8rem;
+  background: none; border: none; color: var(--text);
+  font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500;
+  cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em;
+  transition: color 0.3s var(--ease);
+}
+
+.menu-btn:hover { color: var(--accent); }
+
+.menu-icon { display: flex; flex-direction: column; gap: 4px; }
+.menu-icon span { display: block; width: 24px; height: 1px; background-color: currentColor; transition: background-color 0.3s var(--ease); }
+
+.search-btn {
+  background: none; border: none; color: var(--text); cursor: pointer; transition: color 0.3s var(--ease);
+}
+.search-btn:hover { color: var(--accent); }
+
+.hero {
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg);
+}
+
+.slide {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease), transform 8s linear;
+  transform: scale(1.05);
+  z-index: 1;
+}
+
+.slide.active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 2;
+}
+
+.play-link {
+  display: block; width: 100%; height: 100%; position: relative; cursor: pointer;
+}
+
+.play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  display: flex; justify-content: center; align-items: center;
+  z-index: 3;
+  color: var(--text);
+  transition: all 0.4s var(--ease);
+}
+
+.play-btn svg {
+  width: 100%; height: 100%;
+  fill: transparent;
+  stroke-width: 0.5;
+  transition: all 0.4s var(--ease);
+}
+
+.play-link:hover .play-btn {
+  transform: translate(-50%, -50%) scale(1.1);
+  color: var(--accent);
+}
+
+.play-link:hover .play-btn svg { fill: rgba(208, 255, 0, 0.2); stroke: var(--accent); stroke-width: 1; }
+
+.hero-titles-list {
+  position: absolute;
+  bottom: 4rem;
+  left: 4rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.hero-title-item {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  color: rgba(245, 245, 247, 0.4);
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 0;
+  display: inline-flex;
+  align-items: flex-start;
+}
+
+.hero-title-item.active, .hero-title-item:hover {
+  color: var(--text);
+}
+
+.hero-title-item .year {
+  font-size: 0.8rem;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0;
+  margin-left: 0.8rem;
+  margin-top: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.hero-title-item.active .year, .hero-title-item:hover .year {
+  opacity: 1;
+}
+
+.video-modal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: #000;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease);
+}
+
+.video-modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.iframe-container {
+  width: 90%;
+  height: 90%;
+  max-width: 1600px;
+}
+
+.iframe-container iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.close-modal {
+  position: absolute;
+  top: 2rem;
+  right: 3rem;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  z-index: 10000;
+  transition: color 0.3s;
+}
+
+.close-modal:hover {
+  color: var(--accent);
+}
+
+.marquee-container {
+  padding: 2rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  overflow: hidden;
+  white-space: nowrap;
+  background: #0a0a0a;
+}
+.marquee {
+  display: inline-block;
+  animation: scroll 25s linear infinite;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.2rem;
+  color: rgba(245, 245, 247, 0.4);
+}
+.marquee span { margin: 0 3rem; }
+@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+.evolve-wrapper { height: 250vh; position: relative; background: var(--bg); }
+.evolve-sticky {
+  position: sticky; top: 0; height: 100vh; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.evolve-bg-video {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;
+}
+.evolve-bg-video video {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.evolve-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,5,5,0.65); z-index: 2;
+}
+.flash-bang {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: #fff; opacity: 0; z-index: 3; pointer-events: none; mix-blend-mode: overlay;
+}
+.flash-bang.fire {
+  animation: bang 0.4s cubic-bezier(0.1, 1, 0.2, 1);
+}
+@keyframes bang {
+  0% { opacity: 1; filter: brightness(3); }
+  100% { opacity: 0; filter: brightness(1); }
+}
+
+.evolve-texts { position: relative; z-index: 4; width: 100%; height: clamp(4rem, 8vw, 8rem); display: flex; justify-content: center; align-items: center; perspective: 1000px; }
+.evolve-phrase {
+  position: absolute; width: 100%; text-align: center;
+  font-size: clamp(2.5rem, 5vw, 6rem);
+  opacity: 0;
+  color: var(--text);
+  text-shadow: 0 4px 30px rgba(0,0,0,1);
+  margin: 0; pointer-events: none;
+}
+
+.phrase-1.active { animation: flashStrikeIn 0.5s cubic-bezier(0.1, 1, 0.2, 1) forwards; color: var(--accent); }
+.phrase-1.passed { animation: flashStrikeOut 0.3s forwards; }
+
+.phrase-2.active { animation: glitchStrikeIn 0.6s cubic-bezier(0.1, 1, 0.2, 1) forwards; color: #fff; text-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent); }
+.phrase-2.passed { animation: glitchStrikeOut 0.3s forwards; }
+
+.phrase-3.active { animation: blurStrikeIn 0.5s ease-out forwards; color: var(--accent); }
+.phrase-3.passed { animation: blurStrikeOut 0.3s forwards; }
+
+.phrase-4.active { animation: electricStrikeIn 0.5s forwards; color: #fff; text-shadow: 0 0 10px #fff; }
+.phrase-4.passed { animation: electricStrikeOut 0.3s forwards; }
+
+@keyframes flashStrikeIn {
+  0% { opacity: 0; transform: scale(3) translateZ(200px); filter: brightness(10) blur(20px); }
+  50% { opacity: 1; filter: brightness(5) blur(0px); }
+  100% { opacity: 1; transform: scale(1) translateZ(0); filter: brightness(1) blur(0px); }
+}
+@keyframes flashStrikeOut {
+  0% { opacity: 1; transform: scale(1); filter: brightness(1); }
+  100% { opacity: 0; transform: scale(0.5) translateY(-100px); filter: brightness(5) blur(10px); }
+}
+
+@keyframes glitchStrikeIn {
+  0% { opacity: 0; transform: skewX(-40deg) scale(1.5); filter: brightness(10); clip-path: polygon(0 0, 100% 0, 100% 10%, 0 10%); }
+  15% { opacity: 1; transform: skewX(30deg) scale(1.3); clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); filter: brightness(5); }
+  30% { transform: skewX(-20deg) scale(1.1); clip-path: polygon(0 40%, 100% 40%, 100% 60%, 0 60%); }
+  45% { transform: skewX(10deg) scale(1.05); clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%); }
+  60% { transform: skewX(0deg) scale(1); clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); filter: brightness(3); }
+  100% { opacity: 1; transform: skewX(0deg) scale(1); filter: brightness(1); clip-path: none; }
+}
+@keyframes glitchStrikeOut {
+  0% { opacity: 1; transform: scale(1); filter: brightness(1); }
+  50% { opacity: 1; transform: skewX(20deg) scale(1.2); filter: brightness(5); }
+  100% { opacity: 0; transform: skewX(-40deg) scale(0.2) translateY(-100px); filter: brightness(10); }
+}
+
+@keyframes blurStrikeIn {
+  0% { opacity: 0; transform: translateX(200px) scale(2); filter: blur(30px) brightness(5); letter-spacing: 40px; }
+  100% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0px) brightness(1); letter-spacing: -0.02em; }
+}
+@keyframes blurStrikeOut {
+  0% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0px) brightness(1); }
+  100% { opacity: 0; transform: translateX(-200px) scale(0.5); filter: blur(30px) brightness(5); letter-spacing: -20px; }
+}
+
+@keyframes electricStrikeIn {
+  0% { opacity: 0; filter: contrast(10) brightness(10) invert(1); transform: scale(1.5); }
+  10% { opacity: 1; filter: contrast(1) brightness(1) invert(0); }
+  20% { opacity: 0; filter: contrast(10) brightness(10) invert(1); transform: scale(1.2); }
+  30% { opacity: 1; filter: contrast(1) brightness(1) invert(0); }
+  40% { opacity: 0; filter: contrast(5) brightness(5); }
+  100% { opacity: 1; transform: scale(1); filter: none; }
+}
+@keyframes electricStrikeOut {
+  0% { opacity: 1; transform: scale(1); }
+  10% { opacity: 0; filter: brightness(10); }
+  20% { opacity: 1; filter: brightness(1); }
+  100% { opacity: 0; transform: scale(3); filter: blur(20px) brightness(5); }
+}
+
+.portfolio-horizontal-wrapper {
+  height: 100vh;
+  position: relative;
+  background: var(--bg);
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.portfolio-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.portfolio-bg-animation {
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 150px 150px;
+  transform: perspective(1000px) rotateX(70deg) translateY(-150px) translateZ(-300px);
+  animation: gridMovePortfolio 25s linear infinite;
+  opacity: 0.5;
+}
+
+.portfolio-glow {
+  position: absolute;
+  width: 100vw; height: 100vh;
+  background: radial-gradient(ellipse at center, rgba(208, 255, 0, 0.12) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  animation: pulseBgGlowPortfolio 10s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes gridMovePortfolio {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 300px; }
+}
+
+@keyframes pulseBgGlowPortfolio {
+  0% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+}
+
+.portfolio-section-title {
+  position: absolute;
+  top: 4rem; left: 4rem;
+  z-index: 10;
+  font-size: 2.5rem;
+  opacity: 0.9;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+}
+
+.portfolio-track {
+  display: flex;
+  align-items: flex-start;
+  gap: 6vw;
+  padding: 0 50vw 0 10vw; 
+  width: max-content;
+  height: 80vh;
+  margin-top: 10vh;
+  z-index: 5;
+  will-change: transform;
+}
+
+.port-item {
+  position: relative;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #111;
+  cursor: pointer;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+  opacity: 0.8;
+  transition: opacity 0.5s var(--ease), transform 0.8s var(--ease), box-shadow 0.5s var(--ease);
+}
+
+.port-item:hover {
+  opacity: 1;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.9);
+}
+
+.port-item video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: grayscale(90%) contrast(1.2);
+  transition: filter 0.8s var(--ease), transform 0.8s var(--ease);
+}
+
+.port-item:hover video {
+  filter: grayscale(0%) contrast(1);
+  transform: scale(1.08);
+}
+
+.port-text {
+  flex-shrink: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2vw;
+  color: var(--text);
+  opacity: 0.75;
+  white-space: normal;
+  width: 20vw;
+  margin: 0 2vw;
+  line-height: 1.2;
+}
+
+.size-l { width: 22vw; aspect-ratio: 16/9; }
+.size-sq { width: 14vw; aspect-ratio: 1/1; }
+.size-m { width: 18vw; aspect-ratio: 4/3; margin-top: 5vh; }
+.size-s { width: 12vw; aspect-ratio: 3/4; }
+.size-xs { width: 9vw; aspect-ratio: 4/5; }
+
+.align-top { align-self: flex-start; margin-top: 5vh; }
+.align-center { align-self: center; }
+.align-bottom { align-self: flex-end; margin-bottom: 8vh; }
+
+.port-item:nth-child(even) { transform: translateY(8vh); }
+.port-item:nth-child(3n) { transform: translateY(-5vh); }
+.port-item:nth-child(5n) { transform: translateY(3vh); }
+
+.port-info {
+  position: absolute;
+  bottom: -100%; left: 0; width: 100%;
+  padding: 1.5rem;
+  background: linear-gradient(to top, rgba(5,5,5,0.98), transparent);
+  transition: bottom 0.5s var(--ease);
+  border-bottom: 2px solid var(--accent);
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.port-item:hover .port-info { bottom: 0; }
+.port-info h3 { font-size: 1.2rem; margin-bottom: 0.4rem; color: var(--accent); }
+.port-info p { font-size: 0.9rem; opacity: 0.8; }
+
+.port-item-caption {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+}
+
+.port-item:hover .port-item-caption {
+  opacity: 1;
+}
+
+section { padding: 8rem 4rem; position: relative; z-index: 5; background: var(--bg); }
+.section-title { font-size: 2.5rem; margin-bottom: 4rem; opacity: 0.9; }
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 4rem;
+}
+
+.service-item h3 { font-size: 1.5rem; margin: 1.5rem 0 1rem; }
+.service-item p { line-height: 1.6; color: #aaa; }
+.icon { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; }
+.service-item:hover .icon { filter: brightness(1.2); }
+
+.split-screen { display: flex; gap: 6rem; }
+.manifesto { flex: 1; font-size: 1.5rem; line-height: 1.5; }
+.manifesto span { color: var(--accent); font-weight: 500; }
+
+.team-grid {
+  flex: 1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;
+}
+.team-grid .avatar:first-child { grid-column: span 2; aspect-ratio: 21/9; }
+
+.avatar { background: #222; border-radius: 2px; overflow: hidden; aspect-ratio: 1; }
+.avatar img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: grayscale(100%); transition: filter 0.5s var(--ease), transform 0.5s var(--ease);
+}
+.avatar:hover img { filter: grayscale(0%); transform: scale(1.05); }
+
+footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #111; }
+.footer-blocks { display: flex; gap: 6rem; margin-bottom: 6rem; flex-wrap: wrap;}
+.footer-block { flex: 1; min-width: 300px; }
+.footer-block h2 { font-size: 2rem; margin-bottom: 2rem; }
+
+.contact-form { display: flex; flex-direction: column; gap: 2rem; }
+.input-group input {
+  width: 100%; padding: 1rem 0; background: transparent; border: none;
+  border-bottom: 1px solid #333; color: var(--text);
+  font-family: 'Inter', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.3s;
+}
+.input-group input:focus { border-bottom-color: var(--accent); }
+
+.btn-submit {
+  align-self: flex-start; background: transparent; color: var(--text); border: 1px solid #333;
+  padding: 1rem 2.5rem; font-family: 'Space Grotesk'; cursor: pointer;
+  border-radius: 50px; transition: all 0.3s;
+}
+.btn-submit:hover {
+  border-color: var(--accent); color: var(--bg); background: var(--accent);
+  box-shadow: 0 0 15px rgba(208, 255, 0, 0.3);
+}
+
+.work-with-us { font-size: 1.2rem; line-height: 1.6; color: #888; }
+.arrow-link {
+  display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 2rem;
+  font-family: 'Space Grotesk'; font-size: 1.2rem;
+}
+.arrow-link span { transition: transform 0.3s var(--ease); color: var(--accent); }
+.arrow-link:hover span { transform: translateX(10px); }
+
+.footer-bottom {
+  display: flex; justify-content: space-between; padding-top: 2rem;
+  border-top: 1px solid #111; font-size: 0.8rem; color: #555;
+}
+.social-links { display: flex; gap: 1.5rem; }
+
+@media (max-width: 900px) {
+  nav { padding: 1.5rem 2rem; }
+  .hero-titles-list { left: 2rem; bottom: 3rem; }
+  section { padding: 5rem 2rem; }
+  .split-screen, .footer-blocks { flex-direction: column; gap: 3rem; }
+  .portfolio-track { gap: 8vw; height: 60vh; margin-top: 15vh; padding: 0 60vw 0 10vw; }
+  .size-l, .size-sq, .size-m, .size-s, .size-xs { width: 50vw; }
+  .port-text { font-size: 5vw; width: 60vw; margin: 0 5vw; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <button class="menu-btn">
+      <div class="menu-icon">
+        <span></span>
+        <span></span>
+      </div>
+      Menu
+    </button>
+  </div>
+  <div class="brand">{{ loja.nome }}</div>
+  <div class="nav-right">
+    <button class="search-btn">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    </button>
+  </div>
+</nav>
+
+<header class="hero" id="hero">
+  {% set hero_videos = [] %}
+  {% for p in produtos %}
+    {% for c in categorias %}
+      {% if p.categoria_id|string == c.id|string and c.slug == 'hero' %}
+        {% set _ = hero_videos.append(p) %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+
+  {% for p in hero_videos %}
+  <div class="slide {% if loop.first %}active{% endif %}">
+    <video src="{{ p.link_projeto }}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: -1; filter: brightness(0.6);"></video>
+    <div class="play-link" onclick="openVideo('{{ p.whatsapp_projeto }}')">
+      <div class="play-btn">
+        <svg viewBox="0 0 24 24" stroke="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="hero-titles-list">
+    {% for p in hero_videos %}
+    <h1 class="hero-title-item {% if loop.first %}active{% endif %}" onmouseenter="goToSlide({{ loop.index0 }})" onclick="openVideo('{{ p.whatsapp_projeto }}')">{{ p.nome }} <span class="year">{{ p.estoque }}</span></h1>
+    {% endfor %}
+  </div>
+
+  <div id="videoModal" class="video-modal">
+    <button class="close-modal" onclick="closeVideo()">✕</button>
+    <div class="iframe-container">
+      <iframe id="vimeoPlayer" src="" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</header>
+
+<div class="marquee-container">
+  <div class="marquee">
+    <span>NIKE</span> <span>APPLE</span> <span>PORSCHE</span> <span>RED BULL</span> <span>SONY</span> <span>SAMSUNG</span> <span>NIKE</span> <span>APPLE</span> <span>PORSCHE</span> <span>RED BULL</span> <span>SONY</span> <span>SAMSUNG</span>
+  </div>
+</div>
+
+<div class="evolve-wrapper">
+  <div class="evolve-sticky">
+    <div class="evolve-bg-video">
+      <video autoplay loop muted playsinline>
+        <source src="https://res.cloudinary.com/dzcaxmbjn/video/upload/v1772571265/dynamic-ink-blots-symbolizing-movement-and-fluidit-2026-01-28-04-31-04-utc_eqom6l.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="evolve-overlay"></div>
+    <div class="flash-bang"></div>
+    <div class="evolve-texts">
+      <h2 class="evolve-phrase phrase-1">VAMOS EVOLUIR COM VOCÊ</h2>
+      <h2 class="evolve-phrase phrase-2">LET'S EVOLVE TOGETHER</h2>
+      <h2 class="evolve-phrase phrase-3">ÉVOLUONS ENSEMBLE</h2>
+      <h2 class="evolve-phrase phrase-4">让我们一起努力</h2>
+    </div>
+  </div>
+</div>
+
+<section id="work" class="portfolio-horizontal-wrapper">
+  <div class="portfolio-sticky">
+    <div class="portfolio-bg-animation"></div>
+    <div class="portfolio-glow"></div>
+    <h2 class="portfolio-section-title fade-in">Selected Work</h2>
+    
+    <div class="portfolio-track">
+      {% set port_videos = [] %}
+      {% for p in produtos %}
+        {% for c in categorias %}
+          {% if p.categoria_id|string == c.id|string and c.slug == 'portfolio' %}
+            {% set _ = port_videos.append(p) %}
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+
+      {% for p in port_videos %}
+      <div class="port-item {% if loop.index % 3 == 0 %}size-s align-top{% elif loop.index % 2 == 0 %}size-sq align-bottom{% else %}size-l align-center{% endif %}">
+        <video src="{{ p.link_projeto }}" autoplay loop muted playsinline></video>
+        <div class="port-info">
+          <h3>{{ p.nome }}</h3>
+          <p>{{ p.origem }}</p>
+        </div>
+        <div class="port-item-caption">{{ p.descricao }} | {{ p.estoque }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="services" class="services">
+  <h2 class="section-title fade-in">Capabilities</h2>
+  <div class="services-grid fade-in">
+    {% for post in posts %}
+    <div class="service-item">
+      {% if post.capa %}
+      <img src="{{ post.capa }}" class="icon" alt="Ícone">
+      {% else %}
+      <div class="icon">🎬</div>
+      {% endif %}
+      <h3>{{ post.titulo }}</h3>
+      <p>{{ post.resumo }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="about-team">
+  <div class="split-screen fade-in">
+    <div class="manifesto">
+      <h2 class="section-title" style="margin-bottom: 2rem;">{{ loja.sobre_titulo or 'We Are Creapes' }}</h2>
+      <p>{{ loja.sobre_texto or "Não fazemos apenas vídeos. Esculpimos luz e movimento para criar experiências." }}</p>
+    </div>
+    <div class="team-grid">
+      <div class="avatar">
+        {% if loja.banner1_url %}
+        <img src="{{ loja.banner1_url }}" alt="Diretor 1">
+        {% else %}
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=500&auto=format&fit=crop" alt="Diretor 1">
+        {% endif %}
+      </div>
+      <div class="avatar">
+        {% if loja.bannermenor1_url %}
+        <img src="{{ loja.bannermenor1_url }}" alt="Diretor 2">
+        {% else %}
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=500&auto=format&fit=crop" alt="Diretor 2">
+        {% endif %}
+      </div>
+      <div class="avatar">
+        {% if loja.bannermenor2_url %}
+        <img src="{{ loja.bannermenor2_url }}" alt="Diretor 3">
+        {% else %}
+        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=500&auto=format&fit=crop" alt="Diretor 3">
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="footer-blocks fade-in">
+    <div class="footer-block">
+      <h2>Start a Project</h2>
+      <form class="contact-form">
+        <div class="input-group"><input type="text" placeholder="Seu Nome"></div>
+        <div class="input-group"><input type="email" placeholder="Seu E-mail"></div>
+        <div class="input-group"><input type="text" placeholder="Sobre o que vamos criar?"></div>
+        <button type="button" class="btn-submit">Enviar Briefing</button>
+      </form>
+    </div>
+    <div class="footer-block">
+      <h2>Join the Crew</h2>
+      <p class="work-with-us">Buscamos mentes inquietas. Editores de vídeo, motion designers e coloristas que respiram arte e tecnologia. Se você quer ultrapassar os limites do audiovisual, seu lugar é aqui.</p>
+      <a href="https://wa.me/{{ loja.whatsapp_comercial }}" target="_blank" class="arrow-link">Trabalhe Conosco <span>&rarr;</span></a>
+    </div>
+  </div>
+  <div class="footer-bottom fade-in">
+    <div class="copyright">&copy; 2026 {{ loja.nome }}. All rights reserved.</div>
+    <div class="social-links">
+      {% if loja.instagram_url %}
+      <a href="{{ loja.instagram_url }}" target="_blank">Instagram</a>
+      {% endif %}
+      <a href="#">Vimeo</a>
+      <a href="#">LinkedIn</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.fade-in').forEach(element => { observer.observe(element); });
+
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const titleItems = document.querySelectorAll('.hero-title-item');
+  let slideInterval;
+
+  function goToSlide(index) {
+    if(slides.length === 0) return;
+    slides[currentSlide].classList.remove('active');
+    titleItems[currentSlide].classList.remove('active');
+    currentSlide = index;
+    slides[currentSlide].classList.add('active');
+    titleItems[currentSlide].classList.add('active');
+    resetInterval();
+  }
+
+  function nextSlide() {
+    if(slides.length === 0) return;
+    let next = (currentSlide + 1) % slides.length;
+    goToSlide(next);
+  }
+
+  function resetInterval() {
+    clearInterval(slideInterval);
+    slideInterval = setInterval(nextSlide, 5000);
+  }
+
+  if(slides.length > 0) {
+    slideInterval = setInterval(nextSlide, 5000);
+  }
+
+  const videoModal = document.getElementById('videoModal');
+  const vimeoPlayer = document.getElementById('vimeoPlayer');
+
+  function openVideo(url) {
+    if(!url) return;
+    vimeoPlayer.src = url;
+    videoModal.classList.add('active');
+    clearInterval(slideInterval);
+  }
+
+  function closeVideo() {
+    videoModal.classList.remove('active');
+    vimeoPlayer.src = ""; 
+    resetInterval();
+  }
+
+  const evolveSection = document.querySelector('.evolve-wrapper');
+  const evolvePhrases = document.querySelectorAll('.evolve-phrase');
+  const flashBang = document.querySelector('.flash-bang');
+  let evolveLastIndex = -1;
+
+  let calcScroll = () => {
+    const windowHeight = window.innerHeight;
+
+    if(evolveSection) {
+      const rect = evolveSection.getBoundingClientRect();
+      
+      if (rect.top <= 0 && rect.bottom >= windowHeight) {
+         const totalScroll = rect.height - windowHeight;
+         const currentScroll = -rect.top;
+         let progress = currentScroll / totalScroll;
+
+         let activeIndex = 0;
+         if (progress > 0.75) activeIndex = 3;
+         else if (progress > 0.4) activeIndex = 2;
+         else if (progress > 0.05) activeIndex = 1;
+         else activeIndex = 0;
+
+         if (activeIndex !== evolveLastIndex) {
+             if(flashBang && evolveLastIndex !== -1) {
+                 flashBang.classList.remove('fire');
+                 void flashBang.offsetWidth;
+                 flashBang.classList.add('fire');
+             }
+             evolveLastIndex = activeIndex;
+         }
+
+         evolvePhrases.forEach((phrase, index) => {
+           if (index === activeIndex) {
+             phrase.className = `evolve-phrase phrase-${index + 1} active`;
+           } else if (index < activeIndex) {
+             phrase.className = `evolve-phrase phrase-${index + 1} passed`;
+           } else {
+             phrase.className = `evolve-phrase phrase-${index + 1}`;
+           }
+         });
+      } else if (rect.top > 0) {
+         evolveLastIndex = -1;
+         evolvePhrases.forEach((phrase, i) => {
+            phrase.className = i === 0 ? `evolve-phrase phrase-${i + 1} active` : `evolve-phrase phrase-${i + 1}`;
+         });
+      } else if (rect.bottom < windowHeight) {
+         evolveLastIndex = 3;
+         evolvePhrases.forEach((phrase, i) => {
+            phrase.className = i === 3 ? `evolve-phrase phrase-${i + 1} active` : `evolve-phrase phrase-${i + 1} passed`;
+         });
+      }
+    }
+  };
+
+  window.addEventListener('load', calcScroll);
+  window.addEventListener('resize', calcScroll);
+  window.addEventListener('scroll', calcScroll);
+
+  const portfolioSection = document.querySelector('.portfolio-horizontal-wrapper');
+  const portfolioTrack = document.querySelector('.portfolio-track');
+
+  if (portfolioSection && portfolioTrack) {
+    const scrollWidth = portfolioTrack.scrollWidth;
+    const viewportWidth = window.innerWidth;
+    const scrollDistance = scrollWidth - viewportWidth;
+
+    gsap.to(portfolioTrack, {
+        x: () => -scrollDistance,
+        ease: "none",
+        scrollTrigger: {
+            trigger: portfolioSection,
+            start: "top top",
+            end: () => "+=" + scrollDistance, 
+            pin: true,
+            scrub: 1,
+            anticipatePin: 1
+        }
+    });
+  }
+</script>
+</body>
+</html>
