@@ -11,7 +11,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
 <style>
-    @import url('[https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&display=swap)');
+    @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&display=swap');
     
     :root { 
         --primary: {{ loja.cor_primaria or '#7C3AED' }}; 
@@ -225,7 +225,7 @@
                 <a href="#contato" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
             </nav>
 
-            <a href="[https://wa.me/55](https://wa.me/55){{ loja.whatsapp_comercial }}" class="flex items-center">
+            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="flex items-center">
                 <div class="md:hidden p-3 rounded-full border border-black/10 hover:bg-black/5 transition">
                     <i data-lucide="message-circle" class="w-5 h-5 text-[var(--text-color)]"></i>
                 </div>
@@ -289,41 +289,53 @@
             {% endif %}
 
             <div class="flex flex-col w-full relative border-t border-[rgba(255,255,255,0.3)]" id="locomotive-categories">
+                {% set cat_selecionada = request.args.get('categoria') %}
+                
                 {% for cat in categorias %}
-                    {% set cat_img = namespace(url='') %}
-                    {% for p in produtos %}
-                        {% if (p.categoria_id == cat.id or p.categoria == cat.nome or p.categoria == cat.id) and cat_img.url == '' %}
-                            {% set cat_img.url = p.imagem %}
-                        {% endif %}
-                    {% endfor %}
-                    
-                    {% set words = cat.nome.split(' ') %}
-                    {% if words|length > 1 %}
-                        {% set mid = (words|length / 2) | int %}
-                        {% set p1 = words[:mid] | join(' ') %}
-                        {% set p2 = words[mid:] | join(' ') %}
-                        {% set has_space = true %}
-                    {% else %}
-                        {% set mid = (cat.nome|length / 2) | int %}
-                        {% set p1 = cat.nome[:mid] %}
-                        {% set p2 = cat.nome[mid:] %}
-                        {% set has_space = false %}
-                    {% endif %}
-
-                    <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="group flex items-center justify-center py-12 md:py-16 border-b border-[rgba(255,255,255,0.3)] transition-colors duration-300 relative w-full overflow-hidden">
-                        <h3 class="flex items-center justify-center text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display text-center m-0 p-0" style="color: var(--text-color);">
-                            <span>{{ p1 }}</span>
-                            {% if cat_img.url != '' %}
-                            <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 group-hover:mx-4 relative transform translate-y-[-0.05em] align-middle">
-                                <img src="{{ cat_img.url }}" class="absolute top-0 left-0 w-full h-full object-cover">
-                            </span>
-                            {% else %}
-                            <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 group-hover:mx-4 relative transform translate-y-[-0.05em] align-middle bg-[rgba(255,255,255,0.1)]"></span>
+                    {% if not cat_selecionada or cat.id|string == cat_selecionada|string %}
+                        {% set cat_img = namespace(url='') %}
+                        {% for p in produtos %}
+                            {% if (p.categoria_id == cat.id or p.categoria == cat.nome or p.categoria == cat.id) and cat_img.url == '' %}
+                                {% set cat_img.url = p.imagem %}
                             {% endif %}
-                            <span>{% if has_space %} {% endif %}{{ p2 }}</span>
-                        </h3>
-                    </a>
+                        {% endfor %}
+                        
+                        {% set words = cat.nome.split(' ') %}
+                        {% if words|length > 1 %}
+                            {% set mid = (words|length / 2) | int %}
+                            {% set p1 = words[:mid] | join(' ') %}
+                            {% set p2 = words[mid:] | join(' ') %}
+                            {% set has_space = true %}
+                        {% else %}
+                            {% set mid = (cat.nome|length / 2) | int %}
+                            {% set p1 = cat.nome[:mid] %}
+                            {% set p2 = cat.nome[mid:] %}
+                            {% set has_space = false %}
+                        {% endif %}
+
+                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="group flex items-center justify-center py-8 md:py-16 border-b border-[rgba(255,255,255,0.3)] transition-colors duration-300 relative w-full overflow-hidden px-4">
+                            <h3 class="flex flex-wrap items-center justify-center text-2xl sm:text-4xl md:text-7xl lg:text-8xl font-display text-center m-0 p-0" style="color: var(--text-color);">
+                                <span>{{ p1 }}</span>
+                                {% if cat_img.url != '' %}
+                                <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle">
+                                    <img src="{{ cat_img.url }}" class="absolute top-0 left-0 w-full h-full object-cover">
+                                </span>
+                                {% else %}
+                                <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle bg-[rgba(255,255,255,0.1)]"></span>
+                                {% endif %}
+                                <span>{% if has_space %}&nbsp;{% endif %}{{ p2 }}</span>
+                            </h3>
+                        </a>
+                    {% endif %}
                 {% endfor %}
+                
+                {% if cat_selecionada %}
+                <div class="mt-12 flex justify-center w-full">
+                    <a href="/{{ loja.slug_url }}/#locomotive-section" class="px-8 py-4 rounded-full border text-[var(--text-color)] font-bold tracking-widest uppercase text-xs hover:bg-[var(--text-color)] hover:text-[var(--bg-color)] transition-all" style="border-color: var(--text-color);">
+                        Ver Todos os Segmentos
+                    </a>
+                </div>
+                {% endif %}
             </div>
         </div>
     </section>
@@ -339,7 +351,7 @@
                 </div>
             </div>
             <div class="rounded-2xl overflow-hidden shadow-2xl h-[300px] md:h-[600px] border border-gray-100 w-full max-w-full">
-                <img src="{{ loja.sobre_imagem_url or '[https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000](https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000)' }}" class="w-full h-full object-cover">
+                <img src="{{ loja.sobre_imagem_url or 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000' }}" class="w-full h-full object-cover">
             </div>
         </div>
     </section>
@@ -406,7 +418,7 @@
         </h2>
         
         <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-16 w-full">
-            <a href="[https://wa.me/55](https://wa.me/55){{ loja.whatsapp_comercial }}" class="inline-block text-xl md:text-2xl border-b-2 pb-2 transition text-center" style="border-color: var(--primary);">
+            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="inline-block text-xl md:text-2xl border-b-2 pb-2 transition text-center" style="border-color: var(--primary);">
                 Iniciar Conversa no WhatsApp
             </a>
             
