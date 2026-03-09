@@ -325,7 +325,7 @@ nav {
 }
 
 .cinematic-bar {
-  position: absolute; left: 0; width: 100%; height: 12vh;
+  position: absolute; left: 0; width: 100%; height: 25vh;
   background: #000; z-index: 3; will-change: transform;
 }
 .cinematic-bar.top { top: 0; transform: translateY(-100%); }
@@ -1061,15 +1061,17 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
          let progress = currentScroll / totalScroll;
 
          if(topBar && bottomBar) {
-             let barProgress = Math.min(Math.max(progress / 0.05, 0), 1);
+             // Animação da barra termina bem rápido (aos 8% do scroll)
+             let barProgress = Math.min(Math.max(progress / 0.08, 0), 1);
              topBar.style.transform = `translateY(${ -100 + (barProgress * 100) }%)`;
              bottomBar.style.transform = `translateY(${ 100 - (barProgress * 100) }%)`;
          }
 
          let activeIndex = 0;
-         if (progress > 0.75) activeIndex = 3;
-         else if (progress > 0.4) activeIndex = 2;
-         else if (progress > 0.05) activeIndex = 1;
+         // Inglês agora espera as barras descerem (só entra aos 15% do scroll)
+         if (progress > 0.8) activeIndex = 3;
+         else if (progress > 0.5) activeIndex = 2;
+         else if (progress > 0.15) activeIndex = 1; 
          else activeIndex = 0;
 
          if (activeIndex !== evolveLastIndex) {
