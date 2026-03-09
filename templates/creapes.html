@@ -29,10 +29,10 @@ body {
 }
 
 /* =========================================
-   ESTILOS DO LOADER
+   ESTILOS DO LOADER KINECTYPE
    ========================================= */
 body.loading {
-  overflow: hidden; /* Trava o scroll durante o loading */
+  overflow: hidden;
 }
 
 #loader {
@@ -54,45 +54,33 @@ body.loading {
   position: absolute;
   width: 100%;
   height: 50vh;
-  background: #020202; /* Fundo hiper escuro */
+  background: #020202; 
   z-index: 0;
 }
 .loader-panel.top { top: 0; }
 .loader-panel.bottom { bottom: 0; }
 
-.loader-fast-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(6rem, 20vw, 15rem);
-  font-weight: 700;
-  color: var(--accent);
-  opacity: 0;
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 1;
-  mix-blend-mode: overlay;
-  letter-spacing: -0.05em;
-}
-
 .loader-brand {
   display: flex;
+  gap: 0.4vw;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(2rem, 8vw, 6rem);
+  font-size: clamp(0.9rem, 1.5vw, 1.2rem); /* Pequeno, estilo game */
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.3em;
   color: var(--text);
   z-index: 2;
-  perspective: 1000px;
+}
+
+.loader-char-wrap {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.2rem;
 }
 
 .loader-char {
   display: inline-block;
-  transform: translateY(-200%) rotateX(45deg);
-  opacity: 0;
+  transform-origin: center bottom;
+  will-change: transform, opacity, color;
 }
 /* ========================================= */
 
@@ -654,8 +642,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 <div id="loader">
   <div class="loader-panel top"></div>
   <div class="loader-panel bottom"></div>
-  <div class="loader-fast-text">LOADING</div>
-  <div class="loader-brand" id="loaderBrand" data-name="{{ loja.nome or 'CREAPES' }}"></div>
+  <div class="loader-brand" id="loaderBrand"></div>
 </div>
 
 <nav>
@@ -908,80 +895,75 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   gsap.registerPlugin(ScrollTrigger);
 
   // ==============================================================
-  // ANIMAÇÃO DO LOADER (GSAP TIMELINE)
+  // ANIMAÇÃO KINECTYPE "LOADING" (APPLE STYLE)
   // ==============================================================
   const loaderBrand = document.getElementById('loaderBrand');
-  const brandName = loaderBrand.getAttribute('data-name');
+  const brandName = "LOADING";
   
-  // Divide a tag em Spans dinamicamente para animar letra por letra
+  // Embrulha cada letra para aplicar uma máscara "overflow" invisível
   loaderBrand.innerHTML = brandName.split('').map(char => {
-    return char === ' ' ? '<span class="loader-char">&nbsp;</span>' : `<span class="loader-char">${char}</span>`;
+    return `<span class="loader-char-wrap"><span class="loader-char">${char}</span></span>`;
   }).join('');
 
   const tlLoader = gsap.timeline({
     onComplete: () => {
-      // Destrava a rolagem e remove o loader do DOM
       document.body.classList.remove('loading');
       document.getElementById('loader').style.display = 'none';
-      
-      // Recalcula as lógicas de scroll da tela assim que o loading termina
       if(typeof calcScroll === 'function') calcScroll();
       ScrollTrigger.refresh();
     }
   });
 
-  // 1. Letras caindo letra por letra
-  tlLoader.to('.loader-char', {
-    y: 0,
-    opacity: 1,
-    duration: 0.8,
-    stagger: 0.1,
-    ease: "bounce.out"
-  })
-  // 2. Animação ultra-rápida do texto "LOADING" de fundo
-  .fromTo('.loader-fast-text', 
-    { x: '100vw', opacity: 0, scaleX: 2.5 },
-    { x: '-100vw', opacity: 0.08, scaleX: 1, duration: 1.2, ease: "power4.inOut" },
-    "-=0.6"
-  )
-  // 3. Logo escala ligeiramente, "acende" a cor destaque
+  // Setup inicial: esconde as letras em baixo com uma leve distorção angular
+  tlLoader.set('.loader-char', { yPercent: 120, skewY: 10 })
+  
+  // Fase 1: Reveal extremamente suave (Apple intro)
   .to('.loader-char', {
-    scale: 1.3,
+    yPercent: 0,
+    skewY: 0,
+    duration: 1,
+    stagger: 0.05,
+    ease: "expo.out"
+  })
+  
+  // Fase 2: Distorção Kinectype (A letra estica, acende a cor primária e volta)
+  .to('.loader-char', {
+    scaleY: 0.2,
+    scaleX: 1.5,
     color: 'var(--accent)',
-    textShadow: '0 0 30px var(--accent)',
-    duration: 0.5,
-    stagger: 0.03,
+    duration: 0.3,
+    stagger: { amount: 0.2, from: "center", yoyo: true, repeat: 1 },
     ease: "power2.inOut"
-  })
-  // 4. Efeito de explosão da logo p/ frente enquanto some
+  }, "+=0.2")
+  
+  // Fase 3: Exit "Swoosh" hiper rápido e limpo para cima
   .to('.loader-char', {
-    scale: 15,
-    opacity: 0,
-    duration: 0.7,
-    ease: "power4.in",
-    stagger: 0.02
+    yPercent: -120,
+    skewY: -10,
+    duration: 0.6,
+    stagger: 0.04,
+    ease: "power4.in"
   }, "+=0.1")
-  // 5. Portas cinematográficas abrem revelando a tela
+  
+  // Fase 4: Abertura das portas (Cortina)
   .to('.loader-panel.top', {
     yPercent: -100,
-    duration: 1,
+    duration: 1.2,
     ease: "expo.inOut"
-  }, "-=0.6")
+  }, "-=0.4")
   .to('.loader-panel.bottom', {
     yPercent: 100,
-    duration: 1,
+    duration: 1.2,
     ease: "expo.inOut"
-  }, "-=1")
-  // 6. Finalmente apaga o wrapper
+  }, "-=1.2")
   .to('#loader', {
     opacity: 0,
     duration: 0.3
   }, "-=0.3");
 
   // ==============================================================
-  // RESTANTE DO SEU CÓDIGO ORIGINAL
+  // RESTANTE DO SEU CÓDIGO ORIGINAL INTACTO
   // ==============================================================
-
   const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
   const observer = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
