@@ -64,7 +64,7 @@
         padding-bottom: 24px;
         scroll-behavior: auto;
         -webkit-overflow-scrolling: touch;
-        align-items: center;
+        align-items: stretch;
         min-height: 80vh;
     }
 
@@ -135,8 +135,8 @@
         flex-shrink: 0;
         width: 85vw;
         max-width: 420px;
-        height: auto;
-        align-self: center;
+        height: auto !important;
+        align-self: stretch !important;
         margin-right: 4vw;
         position: relative;
         border-radius: 24px;
@@ -155,7 +155,6 @@
     @media (max-width: 768px) {
         .case-card {
             width: 85vw !important;
-            height: auto !important;
             margin-right: 6vw;
         }
         .case-image-wrapper {
@@ -209,6 +208,7 @@
     }
 
     .case-info-new {
+        flex-grow: 1;
         padding-top: 18px;
         padding-bottom: 8px;
         display: flex;
@@ -494,12 +494,12 @@
     </div>
 </div>
 
-<header class="fixed top-0 w-full z-[1000] py-4 md:py-6">
+<header class="fixed top-0 w-full z-[1000] py-2 md:py-3">
     <div class="container mx-auto px-4 md:px-8">
         <div class="flex flex-row justify-between items-center w-full">
             <a href="/{{ loja.slug_url }}/" class="block">
                 {% if loja.logo %}
-                    <img src="{{ loja.logo }}" class="h-20 md:h-28 w-auto object-contain">
+                    <img src="{{ loja.logo }}" class="h-10 md:h-14 w-auto object-contain">
                 {% else %}
                     <span class="text-2xl md:text-3xl font-bold tracking-tighter text-[var(--text-color)]">{{ loja.nome }}</span>
                 {% endif %}
@@ -529,7 +529,7 @@
                 <div class="md:hidden p-3 rounded-full border border-black/10 hover:bg-black/5 transition">
                     <i data-lucide="message-circle" class="w-5 h-5 text-[var(--text-color)]"></i>
                 </div>
-                <span class="hidden md:block bg-[var(--text-color)] text-[var(--bg-color)] px-10 py-5 rounded-full text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg">
+                <span class="hidden md:block bg-[var(--text-color)] text-[var(--bg-color)] px-6 py-3 rounded-full text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg">
                     Fale Conosco
                 </span>
             </a>
@@ -651,8 +651,8 @@
             <div class="absolute inset-0 bg-black/60"></div>
             <div class="absolute inset-0 flex items-center justify-center p-8 z-10">
                 <div class="max-w-5xl text-center opacity-0 translate-y-20" id="sobre-content">
-                    <h2 class="text-5xl md:text-8xl font-display text-white mb-8 uppercase tracking-tighter">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
-                    <p class="text-xl md:text-3xl text-gray-300 leading-relaxed font-light" id="sobre-desc-text">
+                    <h2 class="text-3xl md:text-5xl font-display text-white mb-8 uppercase tracking-tighter">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
+                    <p class="text-lg md:text-xl text-gray-300 leading-relaxed font-light" id="sobre-desc-text">
                         {{ loja.sobre_texto or 'Adicione a história através do painel na aba Sobre a Empresa' }}
                     </p>
                 </div>
