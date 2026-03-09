@@ -198,7 +198,7 @@
         inset: 0;
         width: 100vw;
         height: 100vh;
-        background-color: transparent;
+        background-color: transparent; /* Deixa transparente para mostrar o site pelo buraco da máscara */
         display: flex;
         justify-content: center;
         align-items: center;
@@ -208,22 +208,32 @@
         perspective: 1200px;
     }
 
-    /* CAMADAS PARA O EFEITO DE LANTERNA / MÁSCARA NO FUNDO TODO */
-    #solid-black {
+    /* CAMADA PRETA COM A MÁSCARA DA LANTERNA + FOLHA PASSANDO */
+    #overlay-masks {
         position: absolute;
         inset: 0;
-        background: #050505;
-        z-index: -3;
-        transition: opacity 1.5s ease-in-out;
-    }
-
-    #flashlight-black {
-        position: absolute;
-        inset: 0;
-        /* Cria um buraco transparente onde o mouse está, e o resto fica preto */
-        background: radial-gradient(circle 350px at var(--x, 50vw) var(--y, 50vh), transparent 0%, rgba(5,5,5,0.98) 50%, #050505 100%);
+        background: #050505; /* O fundo escuro principal */
         z-index: -2;
         pointer-events: none;
+        
+        /* Combina o furo circular do mouse com o rasgo diagonal (a folha) */
+        -webkit-mask-image: 
+            radial-gradient(circle 350px at var(--x, 50vw) var(--y, 50vh), transparent 0%, rgba(0,0,0,1) 50%),
+            linear-gradient(110deg, rgba(0,0,0,1) 45%, transparent 50%, rgba(0,0,0,1) 55%);
+        -webkit-mask-size: 100% 100%, 300% 100%;
+        -webkit-mask-position: center, 200% 0;
+        -webkit-mask-repeat: no-repeat, no-repeat;
+        
+        /* Intersect junta as duas máscaras para vazar nas duas condições */
+        -webkit-mask-composite: source-in;
+        mask-composite: intersect;
+        
+        animation: maskSweep 4s infinite linear;
+    }
+
+    @keyframes maskSweep {
+        0% { -webkit-mask-position: center, 200% 0; mask-position: center, 200% 0; }
+        100% { -webkit-mask-position: center, -100% 0; mask-position: center, -100% 0; }
     }
 
     #loader-overlay .scene {
@@ -366,8 +376,7 @@
 <body style="overflow: hidden;">
 
 <div id="loader-overlay">
-    <div id="solid-black"></div>
-    <div id="flashlight-black"></div>
+    <div id="overlay-masks"></div>
     
     <div class="scene" id="intro-scene">
         <div class="logo-container" id="intro-logoContainer">
@@ -636,18 +645,20 @@
 </footer>
 
 <script>
-    // SCRIPT DO LOADER E EFEITO DE LANTERNA
+    // SCRIPT DO LOADER E EFEITOS
     const loaderOverlay = document.getElementById('loader-overlay');
     const introScene = document.getElementById('intro-scene');
     const introLogoContainer = document.getElementById('intro-logoContainer');
     const introParticles = document.getElementById('intro-particles');
     const purpleLetters = document.querySelectorAll('#loader-overlay .purple');
     const scrollPrompt = document.getElementById('scroll-prompt');
-    const solidBlack = document.getElementById('solid-black');
-    const flashlightBlack = document.getElementById('flashlight-black');
+    const overlayMasks = document.getElementById('overlay-masks');
     let introFinished = false;
 
-    // Atualiza a posição da lanterna e rotaciona o logo 3D
+    // Garante que o usuário inicie do topo
+    window.scrollTo(0, 0);
+
+    // Atualiza a posição da lanterna baseada no mouse e rotaciona o logo 3D
     document.addEventListener('mousemove', (e) => {
         if(loaderOverlay.style.display === 'none') return;
         
@@ -656,9 +667,9 @@
         const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
         introLogoContainer.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
         
-        // Movimento da Lanterna que revela o site no fundo
-        flashlightBlack.style.setProperty('--x', e.clientX + 'px');
-        flashlightBlack.style.setProperty('--y', e.clientY + 'px');
+        // Movimento da Lanterna (atualiza as variáveis CSS para a máscara do overlay-masks)
+        overlayMasks.style.setProperty('--x', e.clientX + 'px');
+        overlayMasks.style.setProperty('--y', e.clientY + 'px');
     });
 
     document.addEventListener('mouseleave', () => {
@@ -716,42 +727,43 @@
             introScene.classList.remove('shake');
         }, 400);
 
-        // Desliga a cor preta sólida (solid-black) para ativar o efeito da máscara (lanterna)
+        // Termina a intro e aguarda o comando do scroll
         setTimeout(() => {
-            solidBlack.style.opacity = '0'; // Isso revela a lanterna gradativamente
             scrollPrompt.style.opacity = '1';
             introFinished = true;
             
-            // Habilita a liberação pro site final ao rolar o scroll
-            window.addEventListener('wheel', handleEntryScroll, { once: true });
-            window.addEventListener('touchstart', handleEntryScroll, { once: true });
+            // Habilita a liberação usando scroll (impede a rolagem padrão da página)
+            window.addEventListener('wheel', handleEntryScroll, { passive: false });
+            window.addEventListener('touchstart', handleEntryScroll, { passive: false });
         }, 1000);
 
     }, 1400); // tempo que as letras roxas batem
 
+    // Função bruta de saída
     function handleEntryScroll(e) {
         if (!introFinished) return;
+        if (e && e.cancelable) e.preventDefault(); // Bloqueia a rolagem natural da página até terminar
+        introFinished = false; // Garante que rode só 1 vez
         
-        // Animação final de saída: o logo vem pra cima e some
-        gsap.to(introLogoContainer.children, {
-            z: 500,
-            scale: 3,
+        gsap.to(scrollPrompt, { opacity: 0, duration: 0.2 });
+
+        // Um soco extra no logo de parallax antes de tudo sumir pra cima
+        gsap.to(introLogoContainer, {
+            y: "-50vh",
+            scale: 0.9,
             opacity: 0,
-            stagger: 0.05,
-            duration: 1.2,
-            ease: "power4.inOut"
+            duration: 0.8,
+            ease: "power4.in"
         });
         
-        gsap.to(scrollPrompt, { opacity: 0, duration: 0.5 });
-        
-        // Oculta completamente todo o overlay e libera o site
+        // Puxa o painel inteiro pra cima (y: -100%) rapidão, soltando a pessoa no topo da página
         gsap.to(loaderOverlay, {
-            opacity: 0,
-            duration: 1.5,
-            delay: 0.5,
+            y: "-100%",
+            duration: 1.2,
+            ease: "expo.inOut",
             onComplete: () => {
                 loaderOverlay.style.display = 'none';
-                document.body.style.overflow = ''; // Libera o site pra rolar normal
+                document.body.style.overflow = ''; // Libera a vida normal no site
             }
         });
     }
