@@ -218,7 +218,7 @@
         transition: opacity 1s ease-in-out;
     }
 
-    /* CAMADA PRETA COM A MÁSCARA DA LANTERNA + FOLHA PASSANDO (Fica por baixo da sólida) */
+    /* CAMADA PRETA COM APENAS O RAIO TRANSPARENTE PASSANDO */
     #overlay-masks {
         position: absolute;
         inset: 0;
@@ -226,22 +226,17 @@
         z-index: -2;
         pointer-events: none;
         
-        -webkit-mask-image: 
-            radial-gradient(circle 350px at var(--x, 50vw) var(--y, 50vh), transparent 0%, rgba(0,0,0,1) 50%),
-            linear-gradient(110deg, rgba(0,0,0,1) 45%, transparent 50%, rgba(0,0,0,1) 55%);
-        -webkit-mask-size: 100% 100%, 300% 100%;
-        -webkit-mask-position: center, 200% 0;
-        -webkit-mask-repeat: no-repeat, no-repeat;
-        
-        -webkit-mask-composite: source-in;
-        mask-composite: intersect;
+        /* Uma única máscara perfeita para não bugar a transparência: tudo preto, exceto o meio do raio */
+        -webkit-mask-image: linear-gradient(110deg, rgba(0,0,0,1) 40%, transparent 50%, rgba(0,0,0,1) 60%);
+        -webkit-mask-size: 300% 100%;
+        -webkit-mask-repeat: no-repeat;
         
         animation: maskSweep 4s infinite linear;
     }
 
     @keyframes maskSweep {
-        0% { -webkit-mask-position: center, 200% 0; mask-position: center, 200% 0; }
-        100% { -webkit-mask-position: center, -100% 0; mask-position: center, -100% 0; }
+        0% { -webkit-mask-position: 200% 0; }
+        100% { -webkit-mask-position: -100% 0; }
     }
 
     #loader-overlay .scene {
@@ -663,24 +658,18 @@
     const purpleLetters = document.querySelectorAll('#loader-overlay .purple');
     const scrollPrompt = document.getElementById('scroll-prompt');
     const solidBlackLayer = document.getElementById('solid-black-layer');
-    const overlayMasks = document.getElementById('overlay-masks');
     let introFinished = false;
 
     // Garante que o usuário inicie do topo
     window.scrollTo(0, 0);
 
-    // Atualiza a posição da lanterna baseada no mouse e rotaciona o logo 3D
+    // Rotaciona o logo 3D com o mouse
     document.addEventListener('mousemove', (e) => {
         if(loaderOverlay.style.display === 'none') return;
         
-        // Rotação 3D do Logo
         const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
         const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
         introLogoContainer.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-        
-        // Movimento da Lanterna (atualiza as variáveis CSS para a máscara do overlay-masks)
-        overlayMasks.style.setProperty('--x', e.clientX + 'px');
-        overlayMasks.style.setProperty('--y', e.clientY + 'px');
     });
 
     document.addEventListener('mouseleave', () => {
@@ -738,7 +727,7 @@
             introScene.classList.remove('shake');
         }, 400);
 
-        // Termina a intro, faz o fundo sólido desaparecer para revelar a máscara/lanterna no fundo
+        // Termina a intro, faz o fundo sólido desaparecer para revelar O RAIO no fundo preto
         setTimeout(() => {
             solidBlackLayer.style.opacity = '0'; // Tira o preto sólido
             scrollPrompt.style.opacity = '1';
