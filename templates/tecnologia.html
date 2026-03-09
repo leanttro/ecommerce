@@ -431,21 +431,22 @@
         pointer-events: none;
     }
 
-    .glass-trail {
-        position: absolute;
-        width: 180px;
-        height: 180px;
+    .hero-bubble {
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.01);
-        backdrop-filter: blur(12px) contrast(1.3) saturate(1.2);
-        -webkit-backdrop-filter: blur(12px) contrast(1.3) saturate(1.2);
-        pointer-events: none;
-        transform: translate(-50%, -50%) scale(0.3);
-        opacity: 1;
-        transition: transform 1.2s cubic-bezier(0.1, 0.8, 0.3, 1), opacity 1.2s cubic-bezier(0.1, 0.8, 0.3, 1);
-        box-shadow: inset 0 0 30px rgba(255,255,255,0.05);
-        z-index: 50;
-        will-change: transform, opacity;
+        backdrop-filter: blur(15px) brightness(1.2) contrast(1.1);
+        -webkit-backdrop-filter: blur(15px) brightness(1.2) contrast(1.1);
+        box-shadow: 
+            inset 0 0 30px rgba(255,255,255,0.4),
+            inset 20px 0 50px rgba(138, 43, 226, 0.4),
+            inset -20px 0 50px rgba(0, 200, 255, 0.3),
+            0 20px 50px rgba(0,0,0,0.5);
+        transform: translate(-50%, -50%);
+        animation: bubble-wobble 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes bubble-wobble {
+        0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: translate(-50%, -50%) rotate(0deg); }
+        100% { border-radius: 60% 40% 30% 70% / 60% 50% 40% 50%; transform: translate(-50%, -50%) rotate(120deg); }
     }
 </style>
 </head>
@@ -561,6 +562,9 @@
             <div class="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505] pointer-events-none opacity-50"></div>
 
             <div id="bubbles-container" class="absolute inset-0 z-30 pointer-events-none overflow-hidden">
+                <div class="bubble-mover bubble-mover-1 absolute top-0 left-0"><div class="hero-bubble w-[250px] h-[250px] sm:w-[400px] sm:h-[400px]"></div></div>
+                <div class="bubble-mover bubble-mover-2 absolute top-0 left-0"><div class="hero-bubble w-[150px] h-[150px] sm:w-[250px] sm:h-[250px]" style="animation-delay: -1.5s;"></div></div>
+                <div class="bubble-mover bubble-mover-3 absolute top-0 left-0"><div class="hero-bubble w-[80px] h-[80px] sm:w-[120px] sm:h-[120px]" style="animation-delay: -3s;"></div></div>
             </div>
         </div>
     </section>
@@ -624,16 +628,19 @@
     {% endif %}
 
     {% if secao == 'sobre' and not loja.ocultar_sobre %}
-    <section class="py-16 md:py-32 w-full" id="sobre" style="background-color: var(--bg-color);">
-        <div class="container mx-auto px-6 md:px-8 grid md:grid-cols-2 gap-10 md:gap-20 items-center w-full max-w-full overflow-hidden">
-            <div class="w-full max-w-full">
-                <h2 class="text-3xl md:text-5xl mb-4 md:mb-8 leading-tight text-[var(--text-color)] break-words w-full">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
-                <div class="text-sm md:text-xl leading-relaxed mb-8 whitespace-pre-line break-words w-full" style="color: var(--text-color); opacity: 0.8;">
-                    {{ loja.sobre_texto or 'Adicione a história através do painel na aba "Sobre a Empresa".' }}
-                </div>
+    <section class="w-full relative bg-[#050505] overflow-hidden" id="sobre">
+        <div class="h-screen w-full relative" id="sobre-container">
+            <div class="absolute inset-0 w-full h-full transform scale-125 origin-center" id="sobre-bg-img">
+                <img src="{{ loja.sobre_imagem_url or 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000' }}" class="w-full h-full object-cover filter brightness-50">
             </div>
-            <div class="rounded-2xl overflow-hidden shadow-2xl h-[300px] md:h-[600px] border border-gray-100 w-full max-w-full">
-                <img src="{{ loja.sobre_imagem_url or 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000' }}" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-black/60"></div>
+            <div class="absolute inset-0 flex items-center justify-center p-8 z-10">
+                <div class="max-w-5xl text-center opacity-0 translate-y-20" id="sobre-content">
+                    <h2 class="text-5xl md:text-8xl font-display text-white mb-8 uppercase tracking-tighter">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
+                    <p class="text-xl md:text-3xl text-gray-300 leading-relaxed font-light">
+                        {{ loja.sobre_texto or 'Adicione a história através do painel na aba Sobre a Empresa' }}
+                    </p>
+                </div>
             </div>
         </div>
     </section>
@@ -667,7 +674,7 @@
             </h2>
         </div>
 
-        <div class="horizontal-container" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
+        <div class="horizontal-container hide-scroll" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
             {% for p in produtos %}
             <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
                 <div class="case-image-wrapper">
@@ -885,14 +892,6 @@
     
     if (container && cards.length > 0) {
         
-        const originalCards = Array.from(cards);
-        originalCards.forEach(card => {
-            const clone = card.cloneNode(true);
-            container.appendChild(clone);
-        });
-
-        const allCards = document.querySelectorAll('.case-card');
-
         const cardObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -906,17 +905,17 @@
             threshold: 0.4 
         });
 
-        allCards.forEach(card => cardObserver.observe(card));
+        cards.forEach(card => cardObserver.observe(card));
 
-        let autoScrollSpeed = 1.0;
+        let autoScrollSpeed = 0.8;
         let autoScrollReq;
 
         const startAutoScroll = () => {
             if (!isInteracting && document.body.style.overflow !== 'hidden') {
                 container.scrollLeft += autoScrollSpeed;
                 
-                if (container.scrollLeft >= container.scrollWidth / 2) {
-                    container.scrollLeft -= container.scrollWidth / 2;
+                if (Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth - 2) {
+                    container.scrollLeft = 0;
                 }
             }
             autoScrollReq = requestAnimationFrame(startAutoScroll);
@@ -928,25 +927,28 @@
         container.addEventListener('mouseleave', () => isInteracting = false);
         container.addEventListener('touchstart', () => isInteracting = true, {passive: true});
         container.addEventListener('touchend', () => {
-            isInteracting = false;
-        });
-
-        container.addEventListener('scroll', () => {
-            if (isInteracting) {
-                if (container.scrollLeft >= container.scrollWidth / 2) {
-                    container.scrollLeft -= container.scrollWidth / 2;
-                } else if (container.scrollLeft <= 0) {
-                    container.scrollLeft += container.scrollWidth / 2;
-                }
-            }
+            setTimeout(() => isInteracting = false, 1500);
         });
 
         container.addEventListener('wheel', (e) => {
             if(document.body.style.overflow === 'hidden') return;
+            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+            
             isInteracting = true; 
             clearTimeout(container.scrollTimeout);
             container.scrollTimeout = setTimeout(() => isInteracting = false, 1500);
-        }, { passive: true });
+
+            const atLeft = container.scrollLeft <= 0;
+            const atRight = Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth;
+            
+            if (e.deltaY > 0 && !atRight) {
+                e.preventDefault();
+                container.scrollLeft += e.deltaY;
+            } else if (e.deltaY < 0 && !atLeft) {
+                e.preventDefault();
+                container.scrollLeft += e.deltaY;
+            }
+        }, { passive: false });
     }
 
     let warpAnimReq;
@@ -1016,44 +1018,63 @@
         draw();
     }
 
+    const bMover1 = document.querySelector('.bubble-mover-1');
+    const bMover2 = document.querySelector('.bubble-mover-2');
+    const bMover3 = document.querySelector('.bubble-mover-3');
     const heroSec = document.getElementById('hero');
-    const bubblesContainer = document.getElementById('bubbles-container');
-    
-    if (heroSec && bubblesContainer) {
-        let lastTrailTime = 0;
+
+    if (bMover1 && bMover2 && bMover3 && heroSec) {
+        let xTo1 = gsap.quickTo(bMover1, "x", {duration: 0.4, ease: "power3"});
+        let yTo1 = gsap.quickTo(bMover1, "y", {duration: 0.4, ease: "power3"});
         
-        const createTrail = (x, y) => {
-            const now = Date.now();
-            if (now - lastTrailTime < 25) return; 
-            lastTrailTime = now;
+        let xTo2 = gsap.quickTo(bMover2, "x", {duration: 0.7, ease: "power3"});
+        let yTo2 = gsap.quickTo(bMover2, "y", {duration: 0.7, ease: "power3"});
+        
+        let xTo3 = gsap.quickTo(bMover3, "x", {duration: 1.0, ease: "power3"});
+        let yTo3 = gsap.quickTo(bMover3, "y", {duration: 1.0, ease: "power3"});
 
-            const trail = document.createElement('div');
-            trail.className = 'glass-trail';
-            trail.style.left = x + 'px';
-            trail.style.top = y + 'px';
-            
-            bubblesContainer.appendChild(trail);
+        let hw = window.innerWidth / 2;
+        let hh = window.innerHeight / 2;
+        xTo1(hw); yTo1(hh); xTo2(hw); yTo2(hh); xTo3(hw); yTo3(hh);
 
-            void trail.offsetWidth;
-
-            trail.style.transform = 'translate(-50%, -50%) scale(2)';
-            trail.style.opacity = '0';
-
-            setTimeout(() => {
-                if (trail.parentNode) trail.remove();
-            }, 1200);
+        const moveBubbles = (x, y) => {
+            xTo1(x); yTo1(y);
+            xTo2(x); yTo2(y);
+            xTo3(x); yTo3(y);
         };
 
         heroSec.addEventListener('mousemove', (e) => {
             const rect = heroSec.getBoundingClientRect();
-            createTrail(e.clientX - rect.left, e.clientY - rect.top);
+            moveBubbles(e.clientX - rect.left, e.clientY - rect.top);
         });
 
         heroSec.addEventListener('touchmove', (e) => {
             const rect = heroSec.getBoundingClientRect();
-            createTrail(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
+            moveBubbles(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
         }, {passive: true});
     }
+
+    if (document.getElementById('sobre')) {
+        let sobreTl = gsap.timeline({
+            scrollTrigger: {
+                trigger: "#sobre",
+                start: "top top",
+                end: "+=100%",
+                pin: true,
+                scrub: 1
+            }
+        });
+        
+        sobreTl.to("#sobre-bg-img", { 
+            scale: 1, 
+            duration: 1 
+        }).to("#sobre-content", { 
+            opacity: 1, 
+            y: 0, 
+            duration: 1 
+        }, "-=0.5");
+    }
+
 </script>
 </body>
 </html>
