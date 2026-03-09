@@ -667,7 +667,7 @@
             </h2>
         </div>
 
-        <div class="horizontal-container hide-scroll" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
+        <div class="horizontal-container" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
             {% for p in produtos %}
             <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
                 <div class="case-image-wrapper">
@@ -885,6 +885,14 @@
     
     if (container && cards.length > 0) {
         
+        const originalCards = Array.from(cards);
+        originalCards.forEach(card => {
+            const clone = card.cloneNode(true);
+            container.appendChild(clone);
+        });
+
+        const allCards = document.querySelectorAll('.case-card');
+
         const cardObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -898,17 +906,17 @@
             threshold: 0.4 
         });
 
-        cards.forEach(card => cardObserver.observe(card));
+        allCards.forEach(card => cardObserver.observe(card));
 
-        let autoScrollSpeed = 0.8;
+        let autoScrollSpeed = 1.0;
         let autoScrollReq;
 
         const startAutoScroll = () => {
             if (!isInteracting && document.body.style.overflow !== 'hidden') {
                 container.scrollLeft += autoScrollSpeed;
                 
-                if (Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth - 2) {
-                    container.scrollLeft = 0;
+                if (container.scrollLeft >= container.scrollWidth / 2) {
+                    container.scrollLeft -= container.scrollWidth / 2;
                 }
             }
             autoScrollReq = requestAnimationFrame(startAutoScroll);
@@ -920,28 +928,25 @@
         container.addEventListener('mouseleave', () => isInteracting = false);
         container.addEventListener('touchstart', () => isInteracting = true, {passive: true});
         container.addEventListener('touchend', () => {
-            setTimeout(() => isInteracting = false, 1500);
+            isInteracting = false;
+        });
+
+        container.addEventListener('scroll', () => {
+            if (isInteracting) {
+                if (container.scrollLeft >= container.scrollWidth / 2) {
+                    container.scrollLeft -= container.scrollWidth / 2;
+                } else if (container.scrollLeft <= 0) {
+                    container.scrollLeft += container.scrollWidth / 2;
+                }
+            }
         });
 
         container.addEventListener('wheel', (e) => {
             if(document.body.style.overflow === 'hidden') return;
-            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-            
             isInteracting = true; 
             clearTimeout(container.scrollTimeout);
             container.scrollTimeout = setTimeout(() => isInteracting = false, 1500);
-
-            const atLeft = container.scrollLeft <= 0;
-            const atRight = Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth;
-            
-            if (e.deltaY > 0 && !atRight) {
-                e.preventDefault();
-                container.scrollLeft += e.deltaY;
-            } else if (e.deltaY < 0 && !atLeft) {
-                e.preventDefault();
-                container.scrollLeft += e.deltaY;
-            }
-        }, { passive: false });
+        }, { passive: true });
     }
 
     let warpAnimReq;
