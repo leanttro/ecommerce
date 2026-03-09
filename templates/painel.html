@@ -16,7 +16,6 @@
         .list-group-item { cursor: move; }
         .list-group-item.sortable-ghost { opacity: 0.4; background-color: #f9fafb; border: 2px dashed #d1d5db; }
         
-        /* Classe utilitária para esconder/mostrar menu suavemente */
         .mobile-nav-hidden { display: none; }
         .mobile-nav-visible { display: block; animation: slideDown 0.3s ease-out; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
@@ -334,7 +333,7 @@
                     <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2"><i data-lucide="palette" class="text-pink-600"></i> Identidade Visual</h2>
 
                     <h3 class="font-bold text-gray-700 border-b pb-2 mt-4 mb-4">Tema da Loja</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
                         <label class="border rounded-xl p-4 cursor-pointer flex flex-col gap-2 transition-colors theme-selector {% if not loja.template_ativo or loja.template_ativo == 'index' %}ring-2 ring-pink-500 border-pink-500 bg-pink-50{% else %}hover:bg-gray-50{% endif %}" onclick="selectTheme(this)">
                             <input type="radio" name="template_ativo" value="index" class="hidden" {% if not loja.template_ativo or loja.template_ativo == 'index' %}checked{% endif %}>
                             <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-gray-200"><i data-lucide="shopping-cart" class="text-gray-500"></i></div>
@@ -349,7 +348,7 @@
                             <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center border border-green-200"><i data-lucide="layout" class="text-green-600"></i></div>
                             <div>
                                 <h4 class="font-bold text-green-700 text-sm">Catálogo Index</h4>
-                                <p class="text-[10px] text-gray-500 mt-1">Sem Carrinho. Visual Index.</p>
+                                <p class="text-[10px] text-gray-500 mt-1">Sem Carrinho.</p>
                             </div>
                         </label>
                         
@@ -375,8 +374,17 @@
                             <input type="radio" name="template_ativo" value="institucional" class="hidden" {% if loja.template_ativo == 'institucional' %}checked{% endif %}>
                             <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center border border-blue-200"><i data-lucide="briefcase" class="text-blue-600"></i></div>
                             <div>
-                                <h4 class="font-bold text-blue-700 text-sm">Portfólio / Institucional</h4>
+                                <h4 class="font-bold text-blue-700 text-sm">Institucional</h4>
                                 <p class="text-[10px] text-gray-500 mt-1">Design de Agência.</p>
+                            </div>
+                        </label>
+                        
+                        <label class="border rounded-xl p-4 cursor-pointer flex flex-col gap-2 transition-colors theme-selector {% if loja.template_ativo == 'tecnologia' %}ring-2 ring-pink-500 border-pink-500 bg-pink-50{% else %}hover:bg-gray-50{% endif %}" onclick="selectTheme(this)">
+                            <input type="radio" name="template_ativo" value="tecnologia" class="hidden" {% if loja.template_ativo == 'tecnologia' %}checked{% endif %}>
+                            <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center border border-indigo-200"><i data-lucide="cpu" class="text-indigo-600"></i></div>
+                            <div>
+                                <h4 class="font-bold text-indigo-700 text-sm">Tecnologia</h4>
+                                <p class="text-[10px] text-gray-500 mt-1">Design Tech.</p>
                             </div>
                         </label>
                     </div>
@@ -738,7 +746,6 @@
     <script>
         lucide.createIcons();
 
-        // --- MENSAGENS FLASH (AUTO-DISMISS) ---
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
                 const alerts = document.querySelectorAll('.flash-message-item');
@@ -747,10 +754,9 @@
                     alert.style.opacity = "0";
                     setTimeout(() => alert.remove(), 500);
                 });
-            }, 4000); // 4 segundos
+            }, 4000); 
         });
 
-        // --- NAVEGAÇÃO ENTRE SEÇÕES ---
         function showSection(sectionId) {
             document.querySelectorAll('main > section, main > form > section').forEach(el => el.classList.add('hidden'));
             
@@ -764,12 +770,10 @@
                 }
             });
 
-            // Salva a aba ativa para restaurar após recarregar
             localStorage.setItem('activePainelTab', sectionId);
             window.history.replaceState(null, null, '#' + sectionId);
         }
 
-        // --- TEMA SELECTOR ---
         function selectTheme(el) {
             document.querySelectorAll('.theme-selector').forEach(label => {
                 label.classList.remove('ring-2', 'ring-pink-500', 'border-pink-500', 'bg-pink-50');
@@ -782,7 +786,7 @@
 
         function selectMenuItem(sectionId) {
             showSection(sectionId);
-            if(window.innerWidth < 768) { // Só fecha se for mobile
+            if(window.innerWidth < 768) { 
                 toggleMobileMenu();
             }
         }
@@ -807,14 +811,12 @@
         showSection(hash || savedTab || 'categorias');
 
 
-        // --- MODAIS ---
         function toggleModal(modalID) {
             document.getElementById(modalID).classList.toggle('opacity-0');
             document.getElementById(modalID).classList.toggle('pointer-events-none');
             document.body.classList.toggle('modal-active');
         }
 
-        // --- CRUD CATEGORIAS ---
         function novaCategoria() {
             document.getElementById('catId').value = '';
             document.getElementById('catNome').value = '';
@@ -828,7 +830,6 @@
             toggleModal('categoriaModal');
         }
 
-        // --- CRUD PRODUTOS E VARIANTES (COM TIPO_PRECO) ---
         let currentVariantes = [];
 
         function renderVariantes() {
@@ -967,7 +968,6 @@
             toggleModal('produtoModal');
         }
         
-        // --- CRUD POSTS ---
         function novoPost() {
             document.getElementById('postId').value = '';
             document.getElementById('postTitulo').value = '';
@@ -987,7 +987,6 @@
             toggleModal('postModal');
         }
 
-        // --- REORDENAÇÃO DO LAYOUT ---
         new Sortable(document.getElementById('layout-sortable'), {
             animation: 150,
             ghostClass: 'sortable-ghost',
@@ -998,7 +997,6 @@
             }
         });
 
-        // --- REORDENAÇÃO DE CATEGORIAS ---
          new Sortable(document.getElementById('lista-categorias'), {
             animation: 150,
             ghostClass: 'sortable-ghost',
