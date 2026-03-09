@@ -322,8 +322,8 @@
                                     </label>
                                     <i data-lucide="message-square" class="text-gray-400 w-4 h-4"></i>
                                 </div>
-                                <input type="text" name="chamada_rodape" value="{{ loja.chamada_rodape or '' }}" class="w-full border rounded p-2 text-sm" placeholder='Ex: VAMOS CRIAR ALGO JUNTOS?'>
-                                <p class="text-[10px] text-gray-500">Deixe em branco para o padrão: "VAMOS CRIAR ALGO JUNTO COM A [NOME]".</p>
+                                <textarea name="chamada_rodape" rows="3" class="w-full border rounded p-2 text-sm" placeholder='Ex: VAMOS CRIAR ALGO JUNTOS?'>{{ loja.chamada_rodape or '' }}</textarea>
+                                <p class="text-[10px] text-gray-500">Pule a linha para adicionar várias frases com transição. Deixe em branco para o padrão: "VAMOS CRIAR ALGO JUNTO COM A [NOME]".</p>
                             </div>
 
                             <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-2">
