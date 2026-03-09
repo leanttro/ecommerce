@@ -509,14 +509,17 @@
     .client-marquee-track img {
         height: 40px;
         width: auto;
+        max-width: 150px;
         object-fit: contain;
-        filter: grayscale(100%) brightness(0) invert(1);
-        opacity: 0.3;
-        transition: opacity 0.4s ease, transform 0.4s ease;
+        filter: grayscale(100%);
+        opacity: 0.5;
+        transition: all 0.4s ease;
         cursor: pointer;
+        border-radius: 4px;
     }
     .client-marquee-track img:hover {
         opacity: 1;
+        filter: grayscale(0%);
         transform: scale(1.05);
     }
     @keyframes scrollMarquee {
@@ -780,16 +783,16 @@
 {% if loja.logos_clientes %}
 <section class="client-marquee-wrapper">
     <div class="client-marquee-track">
-        {% for logo in loja.logos_clientes.splitlines() %}
+        {% for logo in loja.logos_clientes.split() %}
             {% if logo.strip() %}
-            <img src="{{ logo.strip() }}" alt="Cliente">
+            <img src="{{ logo.strip() }}" alt="Cliente" onerror="this.style.display='none'">
             {% endif %}
         {% endfor %}
     </div>
     <div class="client-marquee-track">
-        {% for logo in loja.logos_clientes.splitlines() %}
+        {% for logo in loja.logos_clientes.split() %}
             {% if logo.strip() %}
-            <img src="{{ logo.strip() }}" alt="Cliente">
+            <img src="{{ logo.strip() }}" alt="Cliente" onerror="this.style.display='none'">
             {% endif %}
         {% endfor %}
     </div>
