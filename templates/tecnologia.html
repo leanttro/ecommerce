@@ -86,9 +86,9 @@
 
     @media (min-width: 769px) {
         .case-card {
-            width: 34vw !important; 
-            max-width: 48vh !important; 
-            height: 464px !important;
+            width: 26vw !important; 
+            max-width: 38vh !important; 
+            height: auto !important;
         }
         .case-title-new {
             font-size: clamp(1.4rem, 3.2vw, 2.5rem) !important;
@@ -135,7 +135,7 @@
         flex-shrink: 0;
         width: 85vw;
         max-width: 420px;
-        height: 580px;
+        height: auto;
         align-self: center;
         margin-right: 4vw;
         position: relative;
@@ -186,7 +186,8 @@
 
     .case-image-wrapper {
         width: 100%;
-        flex: 1;
+        flex: none;
+        aspect-ratio: 1 / 1;
         border-radius: 12px;
         overflow: hidden;
         position: relative;
@@ -197,7 +198,7 @@
     .case-image-wrapper img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         transition: transform 1s ease, filter 0.5s ease;
         filter: brightness(0.95);
     }
