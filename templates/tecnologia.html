@@ -431,22 +431,21 @@
         pointer-events: none;
     }
 
-    .hero-bubble {
+    .glass-trail {
+        position: absolute;
+        width: 180px;
+        height: 180px;
         border-radius: 50%;
-        background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.05) 0%, transparent 60%);
-        backdrop-filter: blur(6px) brightness(1.05) contrast(1.05);
-        -webkit-backdrop-filter: blur(6px) brightness(1.05) contrast(1.05);
-        box-shadow: 
-            inset 1px 1px 10px rgba(255,255,255,0.1),
-            inset -1px -1px 10px rgba(0,0,0,0.05);
-        transform: translate(-50%, -50%);
-        animation: bubble-wobble 8s ease-in-out infinite alternate;
+        background: rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(12px) contrast(1.3) saturate(1.2);
+        -webkit-backdrop-filter: blur(12px) contrast(1.3) saturate(1.2);
         pointer-events: none;
-    }
-
-    @keyframes bubble-wobble {
-        0% { border-radius: 40% 60% 65% 35% / 40% 45% 55% 50%; transform: translate(-50%, -50%) rotate(0deg); }
-        100% { border-radius: 60% 40% 35% 65% / 60% 55% 45% 50%; transform: translate(-50%, -50%) rotate(90deg); }
+        transform: translate(-50%, -50%) scale(0.3);
+        opacity: 1;
+        transition: transform 1.2s cubic-bezier(0.1, 0.8, 0.3, 1), opacity 1.2s cubic-bezier(0.1, 0.8, 0.3, 1);
+        box-shadow: inset 0 0 30px rgba(255,255,255,0.05);
+        z-index: 50;
+        will-change: transform, opacity;
     }
 </style>
 </head>
@@ -562,9 +561,6 @@
             <div class="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505] pointer-events-none opacity-50"></div>
 
             <div id="bubbles-container" class="absolute inset-0 z-30 pointer-events-none overflow-hidden">
-                <div class="bubble-mover bubble-mover-1 absolute top-0 left-0"><div class="hero-bubble w-[250px] h-[250px] sm:w-[400px] sm:h-[400px]"></div></div>
-                <div class="bubble-mover bubble-mover-2 absolute top-0 left-0"><div class="hero-bubble w-[150px] h-[150px] sm:w-[250px] sm:h-[250px]" style="animation-delay: -1.5s;"></div></div>
-                <div class="bubble-mover bubble-mover-3 absolute top-0 left-0"><div class="hero-bubble w-[80px] h-[80px] sm:w-[120px] sm:h-[120px]" style="animation-delay: -3s;"></div></div>
             </div>
         </div>
     </section>
@@ -1015,39 +1011,42 @@
         draw();
     }
 
-    const bMover1 = document.querySelector('.bubble-mover-1');
-    const bMover2 = document.querySelector('.bubble-mover-2');
-    const bMover3 = document.querySelector('.bubble-mover-3');
     const heroSec = document.getElementById('hero');
-
-    if (bMover1 && bMover2 && bMover3 && heroSec) {
-        let xTo1 = gsap.quickTo(bMover1, "x", {duration: 0.4, ease: "power3"});
-        let yTo1 = gsap.quickTo(bMover1, "y", {duration: 0.4, ease: "power3"});
+    const bubblesContainer = document.getElementById('bubbles-container');
+    
+    if (heroSec && bubblesContainer) {
+        let lastTrailTime = 0;
         
-        let xTo2 = gsap.quickTo(bMover2, "x", {duration: 0.7, ease: "power3"});
-        let yTo2 = gsap.quickTo(bMover2, "y", {duration: 0.7, ease: "power3"});
-        
-        let xTo3 = gsap.quickTo(bMover3, "x", {duration: 1.0, ease: "power3"});
-        let yTo3 = gsap.quickTo(bMover3, "y", {duration: 1.0, ease: "power3"});
+        const createTrail = (x, y) => {
+            const now = Date.now();
+            if (now - lastTrailTime < 25) return; 
+            lastTrailTime = now;
 
-        let hw = window.innerWidth / 2;
-        let hh = window.innerHeight / 2;
-        xTo1(hw); yTo1(hh); xTo2(hw); yTo2(hh); xTo3(hw); yTo3(hh);
+            const trail = document.createElement('div');
+            trail.className = 'glass-trail';
+            trail.style.left = x + 'px';
+            trail.style.top = y + 'px';
+            
+            bubblesContainer.appendChild(trail);
 
-        const moveBubbles = (x, y) => {
-            xTo1(x); yTo1(y);
-            xTo2(x); yTo2(y);
-            xTo3(x); yTo3(y);
+            void trail.offsetWidth;
+
+            trail.style.transform = 'translate(-50%, -50%) scale(2)';
+            trail.style.opacity = '0';
+
+            setTimeout(() => {
+                if (trail.parentNode) trail.remove();
+            }, 1200);
         };
 
         heroSec.addEventListener('mousemove', (e) => {
             const rect = heroSec.getBoundingClientRect();
-            moveBubbles(e.clientX - rect.left, e.clientY - rect.top);
+            createTrail(e.clientX - rect.left, e.clientY - rect.top);
         });
 
         heroSec.addEventListener('touchmove', (e) => {
             const rect = heroSec.getBoundingClientRect();
-            moveBubbles(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
+            createTrail(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
         }, {passive: true});
     }
 </script>
