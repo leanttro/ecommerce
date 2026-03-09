@@ -152,8 +152,12 @@
     @media (max-width: 768px) {
         .case-card {
             width: 85vw !important;
-            height: 520px;
+            height: auto !important;
             margin-right: 6vw;
+        }
+        .case-image-wrapper {
+            flex: none;
+            aspect-ratio: 1 / 1;
         }
     }
 
@@ -422,7 +426,7 @@
 
     #scroll-prompt {
         position: absolute;
-        bottom: 40px;
+        bottom: 120px;
         color: var(--text-color, #fff);
         opacity: 0;
         transition: opacity 1s;
@@ -552,12 +556,6 @@
     {% if secao == 'categorias' and not loja.ocultar_categorias %}
     <section class="py-16 md:py-24 border-b border-[rgba(255,255,255,0.3)] w-full relative" id="locomotive-section" style="background-color: var(--bg-color);">
         <div class="container mx-auto px-4 md:px-8 relative">
-            
-            {% if loja.titulo_categorias %}
-            <div class="mb-12 border-b pb-4 border-[rgba(255,255,255,0.3)]">
-                <h2 class="text-[var(--text-color)] text-xl md:text-2xl font-bold uppercase tracking-widest">{{ loja.titulo_categorias }}</h2>
-            </div>
-            {% endif %}
 
             <div class="flex flex-col w-full relative border-t border-[rgba(255,255,255,0.3)]" id="locomotive-categories">
                 {% set cat_selecionada = request.args.get('categoria') %}
