@@ -70,7 +70,7 @@
 
     .horizontal-container::-webkit-scrollbar {
         height: 12px;
-        display: block;
+        display: block !important;
     }
 
     .horizontal-container::-webkit-scrollbar-track {
@@ -112,6 +112,12 @@
             min-height: auto;
             padding-left: 5vw;
             padding-right: 5vw;
+            overflow-x: scroll !important;
+            scrollbar-width: thin;
+        }
+        .horizontal-container::-webkit-scrollbar {
+            height: 8px;
+            display: block !important;
         }
         .horizontal-container::-webkit-scrollbar-track {
             margin: 0 5vw;
@@ -128,6 +134,9 @@
             width: 100%;
             font-size: 2.2rem;
             line-height: 1.2;
+        }
+        #loader-overlay .scene {
+            transform: translateY(-100px) !important;
         }
     }
 
@@ -800,9 +809,10 @@
 
 <footer class="py-20 text-center relative w-full overflow-hidden" id="contato" style="background-color: var(--text-color); color: var(--bg-color);">
     <div class="container mx-auto px-6 md:px-8 max-w-full">
-        <h2 class="text-3xl md:text-7xl mb-12 tracking-tighter uppercase w-full">
+        <h2 id="footer-main-heading" class="text-3xl md:text-7xl mb-12 tracking-tighter uppercase w-full min-h-[1.5em] flex items-center justify-center">
             {% if loja.chamada_rodape %}
-                {{ loja.chamada_rodape }}
+                {% set chamadas = loja.chamada_rodape.split('\n') %}
+                {{ chamadas[0] }}
             {% else %}
                 VAMOS CRIAR ALGO JUNTO COM A <span style="color: var(--primary);">{{ loja.nome }}</span>?
             {% endif %}
@@ -929,6 +939,10 @@
             scale: 0.9,
             opacity: 0,
             duration: 0.8,
+            onComplete: () => {
+                // Força desbloqueio imediato do scroll
+                document.body.style.overflow = '';
+            },
             ease: "power4.in"
         });
         
@@ -938,7 +952,6 @@
             ease: "expo.inOut",
             onComplete: () => {
                 loaderOverlay.style.display = 'none';
-                document.body.style.overflow = ''; 
                 
                 const heroWrapper = document.getElementById('hero-banner-wrapper');
                 const dataCanvas = document.getElementById('data-canvas');
@@ -981,6 +994,33 @@
                 }
             }
         }
+
+        // --- TRANSIÇÃO EMOCIONANTE DO RODAPÉ ---
+        const footerTextRaw = `{{ loja.chamada_rodape or '' }}`;
+        const footerPhrases = footerTextRaw.split('\n').map(p => p.trim()).filter(p => p.length > 0);
+        
+        if (footerPhrases.length > 1) {
+            let currentPhraseIndex = 0;
+            const footerHeading = document.getElementById('footer-main-heading');
+            
+            setInterval(() => {
+                gsap.to(footerHeading, {
+                    opacity: 0,
+                    y: -40,
+                    filter: "blur(15px)",
+                    duration: 0.8,
+                    ease: "power4.in",
+                    onComplete: () => {
+                        currentPhraseIndex = (currentPhraseIndex + 1) % footerPhrases.length;
+                        footerHeading.innerHTML = footerPhrases[currentPhraseIndex];
+                        gsap.fromTo(footerHeading, 
+                            { opacity: 0, y: 40, filter: "blur(15px)" },
+                            { opacity: 1, y: 0, filter: "blur(0px)", duration: 1, ease: "elastic.out(1, 0.8)" }
+                        );
+                    }
+                });
+            }, 5000);
+        }
     });
 
     lucide.createIcons();
@@ -1011,7 +1051,8 @@
         let autoScrollReq;
 
         const startAutoScroll = () => {
-            if (!isInteracting && document.body.style.overflow !== 'hidden') {
+            // No mobile, o auto-scroll continua se não houver toque ativo
+            if (!isInteracting) {
                 container.scrollLeft += autoScrollSpeed;
                 
                 if (Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth - 2) {
@@ -1025,10 +1066,16 @@
 
         container.addEventListener('mouseenter', () => isInteracting = true);
         container.addEventListener('mouseleave', () => isInteracting = false);
-        container.addEventListener('touchstart', () => isInteracting = true, {passive: true});
+        
+        // Melhoria no mobile para detectar interação
+        container.addEventListener('touchstart', () => {
+            isInteracting = true;
+        }, {passive: true});
+        
         container.addEventListener('touchend', () => {
-            setTimeout(() => isInteracting = false, 1500);
-        });
+            // Aguarda 2 segundos após soltar para voltar o auto-scroll
+            setTimeout(() => { isInteracting = false; }, 2000);
+        }, {passive: true});
 
         container.addEventListener('wheel', (e) => {
             if(document.body.style.overflow === 'hidden') return;
