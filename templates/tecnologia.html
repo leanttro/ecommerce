@@ -215,6 +215,21 @@
         transform-style: preserve-3d;
     }
 
+    /* SOMBRA PRETA EMBAIXO DO NOME */
+    #text-shadow-bg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(circle at center, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 30%, transparent 70%);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 1.5s ease-in-out;
+        z-index: -1;
+    }
+
     #loader-overlay .logo-container {
         display: flex;
         font-size: clamp(4rem, 10vw, 10rem);
@@ -351,6 +366,8 @@
 
 <div id="loader-overlay">
     <div class="scene" id="intro-scene">
+        <div id="text-shadow-bg"></div>
+        
         <div class="logo-container" id="intro-logoContainer">
             <span class="letter white anim-bounce" style="--delay: 0.1s">L</span>
             <span class="letter white anim-bounce" style="--delay: 0.2s">E</span>
@@ -624,6 +641,7 @@
     const introParticles = document.getElementById('intro-particles');
     const purpleLetters = document.querySelectorAll('#loader-overlay .purple');
     const scrollPrompt = document.getElementById('scroll-prompt');
+    const textShadowBg = document.getElementById('text-shadow-bg');
     let introFinished = false;
 
     // Movimento do mouse no logo 3D
@@ -689,9 +707,10 @@
             introScene.classList.remove('shake');
         }, 400);
 
-        // Deixa o fundo transparente para revelar o site atrás (após 1 segundo do smash)
+        // Deixa o fundo transparente para revelar o site atrás e exibe a sombra preta (após 1 segundo do smash)
         setTimeout(() => {
             loaderOverlay.style.background = 'transparent';
+            textShadowBg.style.opacity = '1'; // Acende a sombra embaixo do nome
             scrollPrompt.style.opacity = '1';
             introFinished = true;
             
@@ -715,7 +734,7 @@
             ease: "power4.inOut"
         });
         
-        gsap.to(scrollPrompt, { opacity: 0, duration: 0.5 });
+        gsap.to([scrollPrompt, textShadowBg], { opacity: 0, duration: 0.5 }); // A sombra também some junto
         
         gsap.to(loaderOverlay, {
             opacity: 0,
