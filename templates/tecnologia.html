@@ -198,8 +198,7 @@
         inset: 0;
         width: 100vw;
         height: 100vh;
-        background-color: #050505;
-        background-image: radial-gradient(circle at center, #151515 0%, #000000 100%);
+        background-color: transparent;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -207,27 +206,29 @@
         z-index: 999999;
         font-family: 'Kanit', sans-serif;
         perspective: 1200px;
-        transition: background 1.5s ease-in-out;
+    }
+
+    /* CAMADAS PARA O EFEITO DE LANTERNA / MÁSCARA NO FUNDO TODO */
+    #solid-black {
+        position: absolute;
+        inset: 0;
+        background: #050505;
+        z-index: -3;
+        transition: opacity 1.5s ease-in-out;
+    }
+
+    #flashlight-black {
+        position: absolute;
+        inset: 0;
+        /* Cria um buraco transparente onde o mouse está, e o resto fica preto */
+        background: radial-gradient(circle 350px at var(--x, 50vw) var(--y, 50vh), transparent 0%, rgba(5,5,5,0.98) 50%, #050505 100%);
+        z-index: -2;
+        pointer-events: none;
     }
 
     #loader-overlay .scene {
         position: relative;
         transform-style: preserve-3d;
-    }
-
-    /* SOMBRA PRETA EMBAIXO DO NOME */
-    #text-shadow-bg {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 100vw;
-        height: 100vh;
-        background: radial-gradient(circle at center, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 30%, transparent 70%);
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 1.5s ease-in-out;
-        z-index: -1;
     }
 
     #loader-overlay .logo-container {
@@ -365,9 +366,10 @@
 <body style="overflow: hidden;">
 
 <div id="loader-overlay">
+    <div id="solid-black"></div>
+    <div id="flashlight-black"></div>
+    
     <div class="scene" id="intro-scene">
-        <div id="text-shadow-bg"></div>
-        
         <div class="logo-container" id="intro-logoContainer">
             <span class="letter white anim-bounce" style="--delay: 0.1s">L</span>
             <span class="letter white anim-bounce" style="--delay: 0.2s">E</span>
@@ -634,22 +636,29 @@
 </footer>
 
 <script>
-    // SCRIPT DO LOADER E ANIMAÇÃO
+    // SCRIPT DO LOADER E EFEITO DE LANTERNA
     const loaderOverlay = document.getElementById('loader-overlay');
     const introScene = document.getElementById('intro-scene');
     const introLogoContainer = document.getElementById('intro-logoContainer');
     const introParticles = document.getElementById('intro-particles');
     const purpleLetters = document.querySelectorAll('#loader-overlay .purple');
     const scrollPrompt = document.getElementById('scroll-prompt');
-    const textShadowBg = document.getElementById('text-shadow-bg');
+    const solidBlack = document.getElementById('solid-black');
+    const flashlightBlack = document.getElementById('flashlight-black');
     let introFinished = false;
 
-    // Movimento do mouse no logo 3D
+    // Atualiza a posição da lanterna e rotaciona o logo 3D
     document.addEventListener('mousemove', (e) => {
         if(loaderOverlay.style.display === 'none') return;
+        
+        // Rotação 3D do Logo
         const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
         const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
         introLogoContainer.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        
+        // Movimento da Lanterna que revela o site no fundo
+        flashlightBlack.style.setProperty('--x', e.clientX + 'px');
+        flashlightBlack.style.setProperty('--y', e.clientY + 'px');
     });
 
     document.addEventListener('mouseleave', () => {
@@ -707,14 +716,13 @@
             introScene.classList.remove('shake');
         }, 400);
 
-        // Deixa o fundo transparente para revelar o site atrás e exibe a sombra preta (após 1 segundo do smash)
+        // Desliga a cor preta sólida (solid-black) para ativar o efeito da máscara (lanterna)
         setTimeout(() => {
-            loaderOverlay.style.background = 'transparent';
-            textShadowBg.style.opacity = '1'; // Acende a sombra embaixo do nome
+            solidBlack.style.opacity = '0'; // Isso revela a lanterna gradativamente
             scrollPrompt.style.opacity = '1';
             introFinished = true;
             
-            // Habilita a liberação por scroll
+            // Habilita a liberação pro site final ao rolar o scroll
             window.addEventListener('wheel', handleEntryScroll, { once: true });
             window.addEventListener('touchstart', handleEntryScroll, { once: true });
         }, 1000);
@@ -724,7 +732,7 @@
     function handleEntryScroll(e) {
         if (!introFinished) return;
         
-        // Animação Foda de saída com GSAP
+        // Animação final de saída: o logo vem pra cima e some
         gsap.to(introLogoContainer.children, {
             z: 500,
             scale: 3,
@@ -734,20 +742,21 @@
             ease: "power4.inOut"
         });
         
-        gsap.to([scrollPrompt, textShadowBg], { opacity: 0, duration: 0.5 }); // A sombra também some junto
+        gsap.to(scrollPrompt, { opacity: 0, duration: 0.5 });
         
+        // Oculta completamente todo o overlay e libera o site
         gsap.to(loaderOverlay, {
             opacity: 0,
             duration: 1.5,
             delay: 0.5,
             onComplete: () => {
                 loaderOverlay.style.display = 'none';
-                document.body.style.overflow = ''; // Libera a rolagem do site
+                document.body.style.overflow = ''; // Libera o site pra rolar normal
             }
         });
     }
 
-    // SCRIPT ORIGINAL DO INSTITUCIONAL
+    // SCRIPT ORIGINAL DO INSTITUCIONAL MANTIDO INTACTO
     document.addEventListener("DOMContentLoaded", function() {
         const params = new URLSearchParams(window.location.search);
         const catId = params.get('categoria');
@@ -769,7 +778,7 @@
     
     if (container) {
         container.addEventListener('wheel', (e) => {
-            // Desabilita rolagem horizontal se o loader ainda estiver ativo
+            // Desabilita rolagem horizontal se o loader ainda estiver trancando a tela
             if(document.body.style.overflow === 'hidden') return;
 
             if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
