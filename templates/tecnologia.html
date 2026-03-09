@@ -511,15 +511,13 @@
         width: auto;
         max-width: 150px;
         object-fit: contain;
-        filter: grayscale(100%);
-        opacity: 0.5;
+        opacity: 1;
         transition: all 0.4s ease;
         cursor: pointer;
         border-radius: 4px;
     }
     .client-marquee-track img:hover {
         opacity: 1;
-        filter: grayscale(0%);
         transform: scale(1.05);
     }
     @keyframes scrollMarquee {
@@ -749,7 +747,7 @@
             </h2>
         </div>
 
-        <div class="horizontal-container hide-scroll" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
+        <div class="horizontal-container" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
             {% for p in produtos %}
             <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
                 <div class="case-image-wrapper">
