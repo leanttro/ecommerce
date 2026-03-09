@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<title>{{ loja.nome }} | Portfolio</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@1,800&display=swap" rel="stylesheet">
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&display=swap');
+    
+    :root { 
+        --primary: {{ loja.cor_primaria or '#7C3AED' }}; 
+        --bg-color: {{ loja.cor_fundo or '#F8F9FA' }};
+        --text-color: {{ loja.cor_titulo or '#111111' }};
+    }
+    
+    html, body { 
+        font-family: 'Inter', sans-serif; 
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        overflow-x: hidden !important;
+        width: 100%;
+        max-width: 100vw;
+        -webkit-text-size-adjust: 100%;
+        touch-action: manipulation;
+    }
+
+    h1, h2, h3, .font-display { 
+        font-family: 'Archivo Black', sans-serif; 
+        text-transform: uppercase;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+        hyphens: none !important;
+        white-space: normal !important;
+    }
+
+    header {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .horizontal-section {
+        width: 100%;
+        max-width: 100vw;
+        padding-top: 100px;
+        padding-bottom: 80px;
+    }
+
+    .horizontal-container {
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+        width: 100%;
+        padding-left: 10vw;
+        padding-right: 10vw;
+        padding-bottom: 24px;
+        scroll-behavior: auto;
+        -webkit-overflow-scrolling: touch;
+        align-items: center;
+        min-height: 80vh;
+    }
+
+    .horizontal-container::-webkit-scrollbar {
+        height: 12px;
+        display: block;
+    }
+
+    .horizontal-container::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.05);
+        border-radius: 10px;
+        margin: 0 10vw;
+    }
+
+    .horizontal-container::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 10px;
+    }
+
+    @media (min-width: 769px) {
+        .case-card {
+            width: 42vw !important; 
+            max-width: 60vh !important; 
+        }
+        .intro-slide {
+            min-width: 65vw !important;
+            width: 65vw !important;
+            padding-right: 12vw !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .horizontal-section {
+            padding-top: 120px;
+            padding-bottom: 50px;
+        }
+        .horizontal-container {
+            min-height: auto;
+            padding-left: 5vw;
+            padding-right: 5vw;
+        }
+        .horizontal-container::-webkit-scrollbar-track {
+            margin: 0 5vw;
+        }
+        .intro-slide {
+            width: 85vw !important;
+            padding-right: 0 !important;
+            align-items: center !important;
+            text-align: center !important;
+            justify-content: center !important;
+        }
+        #titulo-secao-produtos {
+            text-align: center;
+            width: 100%;
+            font-size: 2.2rem;
+            line-height: 1.2;
+        }
+        .case-card {
+            align-self: center !important;
+            width: 85vw !important;
+        }
+    }
+
+    .case-card {
+        flex-shrink: 0;
+        width: 70vw;
+        aspect-ratio: 1 / 1;
+        max-width: 75vh;
+        align-self: center;
+        margin-right: 5vw;
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+    }
+
+    .case-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.5);
+        transition: scale 1s ease;
+    }
+
+    .case-card:hover img { scale: 1.05; }
+
+    .case-info {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        padding: 0 30px;
+        box-sizing: border-box;
+        text-align: center;
+        color: white;
+        z-index: 2;
+    }
+
+    .case-info .flex {
+        justify-content: center;
+    }
+
+    .case-title { 
+        font-size: clamp(1rem, 3.2vw, 2.2rem); 
+        line-height: 1.1; 
+        margin-bottom: 1rem;
+        word-break: keep-all !important;
+        white-space: normal;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg-color); }
+    ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+    .hide-scroll::-webkit-scrollbar { display: none; }
+    .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+    @keyframes arrow-move {
+        0% { transform: translateX(0); opacity: 0.5; }
+        50% { transform: translateX(10px); opacity: 1; }
+        100% { transform: translateX(0); opacity: 0.5; }
+    }
+    .animate-arrow {
+        animation: arrow-move 1.5s ease-in-out infinite;
+    }
+
+    /* ESTILOS DA ANIMAÇÃO ADMIN (LOADER OVERLAY) */
+    #loader-overlay {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #050505;
+        background-image: radial-gradient(circle at center, #151515 0%, #000000 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        z-index: 999999;
+        font-family: 'Kanit', sans-serif;
+        perspective: 1200px;
+        transition: background 1.5s ease-in-out;
+    }
+
+    #loader-overlay .scene {
+        position: relative;
+        transform-style: preserve-3d;
+    }
+
+    #loader-overlay .logo-container {
+        display: flex;
+        font-size: clamp(4rem, 10vw, 10rem);
+        font-weight: 800;
+        font-style: italic;
+        text-transform: uppercase;
+        letter-spacing: -0.04em;
+        transform-style: preserve-3d;
+        transition: transform 0.1s ease-out;
+        line-height: 1;
+    }
+
+    #loader-overlay .letter {
+        display: inline-block;
+        opacity: 0;
+        will-change: transform, opacity, filter;
+        animation-fill-mode: forwards;
+        position: relative;
+        cursor: default;
+        transition: filter 0.3s, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    #loader-overlay .letter:hover {
+        filter: brightness(1.5) contrast(1.2);
+        transform: translateZ(50px) scale(1.1) !important;
+        z-index: 10;
+    }
+
+    #loader-overlay .white {
+        color: #FFFFFF;
+        text-shadow: 0 10px 30px rgba(255, 255, 255, 0.15);
+    }
+
+    #loader-overlay .purple {
+        color: #8A2BE2;
+        text-shadow: 
+            0 0 10px rgba(138, 43, 226, 0.8), 
+            0 0 30px rgba(138, 43, 226, 0.5), 
+            0 0 60px rgba(138, 43, 226, 0.3);
+    }
+
+    #loader-overlay .anim-bounce {
+        animation: bounceUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        animation-delay: var(--delay);
+        transform-origin: bottom center;
+    }
+
+    #loader-overlay .anim-smash {
+        animation: dropSmash 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        animation-delay: var(--delay);
+    }
+
+    @keyframes bounceUp {
+        0% { 
+            opacity: 0; 
+            transform: translateY(150px) translateZ(-200px) rotateX(-80deg); 
+        }
+        100% { 
+            opacity: 1; 
+            transform: translateY(0) translateZ(0) rotateX(0deg); 
+        }
+    }
+
+    @keyframes dropSmash {
+        0% { 
+            opacity: 0; 
+            transform: translateY(-300px) scale(2) rotateZ(10deg); 
+            filter: blur(10px);
+        }
+        70% { 
+            opacity: 1; 
+            transform: translateY(20px) scale(0.9) rotateZ(-2deg); 
+            filter: blur(0px);
+        }
+        100% { 
+            opacity: 1; 
+            transform: translateY(0) scale(1) rotateZ(0deg); 
+        }
+    }
+
+    #loader-overlay .shake {
+        animation: cameraShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes cameraShake {
+        0%, 100% { transform: translate3d(0, 0, 0); }
+        10%, 30%, 50%, 70%, 90% { transform: translate3d(-8px, -8px, 0); }
+        20%, 40%, 60%, 80% { transform: translate3d(8px, 8px, 0); }
+    }
+
+    #loader-overlay .particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    #loader-overlay .particle {
+        position: absolute;
+        background: #8A2BE2;
+        border-radius: 50%;
+        opacity: 0;
+        box-shadow: 0 0 10px #8A2BE2, 0 0 20px #8A2BE2;
+    }
+
+    @keyframes explode {
+        0% { transform: translate(0, 0) scale(1); opacity: 1; }
+        100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+    }
+
+    #scroll-prompt {
+        position: absolute;
+        bottom: 40px;
+        color: var(--text-color, #fff);
+        opacity: 0;
+        transition: opacity 1s;
+        font-family: 'Inter', sans-serif;
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: bold;
+        letter-spacing: 3px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        pointer-events: none;
+    }
+</style>
+</head>
+<body style="overflow: hidden;">
+
+<div id="loader-overlay">
+    <div class="scene" id="intro-scene">
+        <div class="logo-container" id="intro-logoContainer">
+            <span class="letter white anim-bounce" style="--delay: 0.1s">L</span>
+            <span class="letter white anim-bounce" style="--delay: 0.2s">E</span>
+            <span class="letter white anim-bounce" style="--delay: 0.3s">A</span>
+            <span class="letter white anim-bounce" style="--delay: 0.4s">N</span>
+            
+            <span class="letter purple anim-smash" style="--delay: 1.0s">T</span>
+            <span class="letter purple anim-smash" style="--delay: 1.1s">T</span>
+            <span class="letter purple anim-smash" style="--delay: 1.2s">R</span>
+            <span class="letter purple anim-smash" style="--delay: 1.3s">O</span>
+            <span class="letter purple anim-smash" style="--delay: 1.4s">.</span>
+        </div>
+        <div class="particles" id="intro-particles"></div>
+    </div>
+    <div id="scroll-prompt">
+        <span>Role para entrar</span>
+        <i data-lucide="chevron-down" class="w-6 h-6 animate-bounce"></i>
+    </div>
+</div>
+
+<header class="fixed top-0 w-full z-[1000] py-4 md:py-6">
+    <div class="container mx-auto px-4 md:px-8">
+        <div class="flex flex-row justify-between items-center w-full">
+            <a href="/{{ loja.slug_url }}/" class="block">
+                {% if loja.logo %}
+                    <img src="{{ loja.logo }}" class="h-20 md:h-28 w-auto object-contain">
+                {% else %}
+                    <span class="text-2xl md:text-3xl font-bold tracking-tighter text-[var(--text-color)]">{{ loja.nome }}</span>
+                {% endif %}
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-12 text-xs font-bold uppercase tracking-widest opacity-90">
+                {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
+                
+                {% if not loja.ocultar_produtos %}
+                <div class="relative group py-2">
+                    <a href="#portfolio" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 cursor-pointer">
+                        {{ loja.titulo_produtos or 'Nossos Cases' }} <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                    </a>
+                    <div class="absolute left-0 top-full mt-2 w-56 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[999] flex flex-col shadow-2xl overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.1);">
+                        <a href="/{{ loja.slug_url }}/#portfolio" class="px-5 py-3 transition hover:opacity-70 font-bold" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">Todos os Segmentos</a>
+                        {% for cat in categorias %}
+                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-5 py-3 transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">{{ cat.nome }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <a href="#contato" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
+            </nav>
+
+            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="flex items-center">
+                <div class="md:hidden p-3 rounded-full border border-black/10 hover:bg-black/5 transition">
+                    <i data-lucide="message-circle" class="w-5 h-5 text-[var(--text-color)]"></i>
+                </div>
+                <span class="hidden md:block bg-[var(--text-color)] text-[var(--bg-color)] px-10 py-5 rounded-full text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg">
+                    Fale Conosco
+                </span>
+            </a>
+        </div>
+
+        <nav class="md:hidden flex flex-col items-center gap-4 mt-6 text-[11px] font-bold uppercase tracking-widest opacity-90 border-t border-black/5 pt-6 w-full">
+            <div class="flex flex-wrap justify-center gap-6 w-full">
+                {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-80 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
+                
+                {% if not loja.ocultar_produtos %}
+                <div class="relative group flex flex-col items-center">
+                    <button class="opacity-80 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 uppercase tracking-widest" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">
+                        {{ loja.titulo_produtos or 'Nossos Cases' }} <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                    </button>
+                </div>
+                {% endif %}
+                
+                <a href="#contato" class="opacity-80 hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
+            </div>
+            
+            {% if not loja.ocultar_produtos %}
+            <div id="mobile-cat-menu" class="hidden flex-col items-center rounded mt-2 w-[80vw] text-center shadow-lg overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.1);">
+                <a href="/{{ loja.slug_url }}/#portfolio" class="px-4 py-3 w-full transition hover:opacity-70 font-bold" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">Todos</a>
+                {% for cat in categorias %}
+                <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-4 py-3 w-full transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">{{ cat.nome }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+
+{% for secao in layout %}
+
+    {% if secao == 'banner' and not loja.ocultar_banner %}
+    <section class="h-[70vh] md:h-screen w-full relative overflow-hidden" id="hero">
+        {% if loja.banner1 %}
+        <a href="{{ loja.linkbannerprincipal1 or '#' }}" class="block w-full h-full">
+            <img src="{{ loja.banner1 }}" class="w-full h-full object-cover object-center">
+        </a>
+        {% else %}
+        <div class="w-full h-full flex items-center justify-center bg-gray-100">
+            <h1 class="text-4xl opacity-20">Seu Banner Here</h1>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    {% if secao == 'categorias' and not loja.ocultar_categorias %}
+    <section class="py-16 md:py-24 border-b border-[rgba(255,255,255,0.3)] w-full relative" id="locomotive-section" style="background-color: var(--bg-color);">
+        <div class="container mx-auto px-4 md:px-8 relative">
+            
+            {% if loja.titulo_categorias %}
+            <div class="mb-12 border-b pb-4 border-[rgba(255,255,255,0.3)]">
+                <h2 class="text-[var(--text-color)] text-xl md:text-2xl font-bold uppercase tracking-widest">{{ loja.titulo_categorias }}</h2>
+            </div>
+            {% endif %}
+
+            <div class="flex flex-col w-full relative border-t border-[rgba(255,255,255,0.3)]" id="locomotive-categories">
+                {% set cat_selecionada = request.args.get('categoria') %}
+                
+                {% for cat in categorias %}
+                    {% if not cat_selecionada or cat.id|string == cat_selecionada|string %}
+                        {% set cat_img = namespace(url='') %}
+                        {% for p in produtos %}
+                            {% if (p.categoria_id == cat.id or p.categoria == cat.nome or p.categoria == cat.id) and cat_img.url == '' %}
+                                {% set cat_img.url = p.imagem %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% set words = cat.nome.split(' ') %}
+                        {% if words|length > 1 %}
+                            {% set mid = (words|length / 2) | int %}
+                            {% set p1 = words[:mid] | join(' ') %}
+                            {% set p2 = words[mid:] | join(' ') %}
+                            {% set has_space = true %}
+                        {% else %}
+                            {% set mid = (cat.nome|length / 2) | int %}
+                            {% set p1 = cat.nome[:mid] %}
+                            {% set p2 = cat.nome[mid:] %}
+                            {% set has_space = false %}
+                        {% endif %}
+
+                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="group flex items-center justify-center py-8 md:py-16 border-b border-[rgba(255,255,255,0.3)] transition-colors duration-300 relative w-full overflow-hidden px-4">
+                            <h3 class="flex flex-wrap items-center justify-center text-2xl sm:text-4xl md:text-7xl lg:text-8xl font-display text-center m-0 p-0" style="color: var(--text-color);">
+                                <span>{{ p1 }}</span>
+                                {% if cat_img.url != '' %}
+                                <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle">
+                                    <img src="{{ cat_img.url }}" class="absolute top-0 left-0 w-full h-full object-cover">
+                                </span>
+                                {% else %}
+                                <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle bg-[rgba(255,255,255,0.1)]"></span>
+                                {% endif %}
+                                <span>{% if has_space %}&nbsp;{% endif %}{{ p2 }}</span>
+                            </h3>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if cat_selecionada %}
+                <div class="mt-12 flex justify-center w-full">
+                    <a href="/{{ loja.slug_url }}/#locomotive-section" class="px-8 py-4 rounded-full border text-[var(--text-color)] font-bold tracking-widest uppercase text-xs hover:bg-[var(--text-color)] hover:text-[var(--bg-color)] transition-all" style="border-color: var(--text-color);">
+                        Ver Todos os Segmentos
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if secao == 'sobre' and not loja.ocultar_sobre %}
+    <section class="py-16 md:py-32 w-full" id="sobre" style="background-color: var(--bg-color);">
+        <div class="container mx-auto px-6 md:px-8 grid md:grid-cols-2 gap-10 md:gap-20 items-center w-full max-w-full overflow-hidden">
+            <div class="w-full max-w-full">
+                <h2 class="text-3xl md:text-5xl mb-4 md:mb-8 leading-tight text-[var(--text-color)] break-words w-full">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
+                <div class="text-sm md:text-xl leading-relaxed mb-8 whitespace-pre-line break-words w-full" style="color: var(--text-color); opacity: 0.8;">
+                    {{ loja.sobre_texto or 'Adicione a história através do painel na aba "Sobre a Empresa".' }}
+                </div>
+            </div>
+            <div class="rounded-2xl overflow-hidden shadow-2xl h-[300px] md:h-[600px] border border-gray-100 w-full max-w-full">
+                <img src="{{ loja.sobre_imagem_url or 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000' }}" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if secao == 'banners_menores' and not loja.ocultar_banners_menores %}
+    <section class="py-16 w-full" style="background-color: var(--bg-color);">
+        <div class="container mx-auto px-8 max-w-full">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-full">
+                {% if loja.bannermenor1 %}
+                <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl w-full">
+                    <img src="{{ loja.bannermenor1 }}" class="w-full h-auto object-cover">
+                </a>
+                {% endif %}
+                {% if loja.bannermenor2 %}
+                <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl w-full">
+                    <img src="{{ loja.bannermenor2 }}" class="w-full h-auto object-cover">
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if secao == 'produtos' and not loja.ocultar_produtos %}
+    <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color);">
+        <div class="horizontal-container">
+            <div class="intro-slide flex-shrink-0 w-[90vw] sm:w-[70vw] md:w-[50vw] lg:w-[45vw] flex flex-col justify-start md:justify-center pr-6 md:pr-16 lg:pr-20 relative pt-4 md:pt-0">
+                <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] leading-tight md:leading-none">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
+                <i data-lucide="arrow-right" class="w-10 h-10 text-[var(--text-color)] mt-4 mb-2 animate-arrow mx-auto md:mx-0"></i>
+            </div>
+
+            {% for p in produtos %}
+            <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'" style="cursor: pointer;">
+                <img src="{{ p.imagem }}" alt="{{ p.nome }}">
+                <div class="case-info">
+                    <h3 class="case-title">{{ p.nome }}</h3>
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs uppercase tracking-widest opacity-70">Ver detalhes do projeto</span>
+                        <div class="w-12 h-[1px] bg-white opacity-50"></div>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="flex-shrink-0 w-[70vw] h-full mr-[5vw] flex items-center justify-center border rounded-2xl" style="border-color: var(--text-color);">
+                <p class="text-xl font-bold uppercase tracking-widest" style="color: var(--text-color); opacity: 0.5;">Nenhum projeto cadastrado.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+{% endfor %}
+
+<footer class="py-20 text-center relative w-full overflow-hidden" id="contato" style="background-color: var(--text-color); color: var(--bg-color);">
+    <div class="container mx-auto px-6 md:px-8 max-w-full">
+        <h2 class="text-3xl md:text-7xl mb-12 tracking-tighter uppercase w-full">
+            {% if loja.chamada_rodape %}
+                {{ loja.chamada_rodape }}
+            {% else %}
+                VAMOS CRIAR ALGO JUNTO COM A <span style="color: var(--primary);">{{ loja.nome }}</span>?
+            {% endif %}
+        </h2>
+        
+        <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-16 w-full">
+            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="inline-block text-xl md:text-2xl border-b-2 pb-2 transition text-center" style="border-color: var(--primary);">
+                Iniciar Conversa no WhatsApp
+            </a>
+            
+            {% if loja.instagram_url %}
+            <a href="{{ loja.instagram_url }}" target="_blank" class="inline-flex items-center gap-2 text-xl hover:opacity-70 transition">
+                <i data-lucide="instagram" class="w-6 h-6"></i> Instagram
+            </a>
+            {% endif %}
+        </div>
+
+        <p class="mt-24 text-[10px] uppercase tracking-widest opacity-30">© 2026 {{ loja.nome }}. Todos os direitos reservados.</p>
+        
+        <div class="mt-8 pt-8 border-t border-white/10">
+            <a href="/{{ loja.slug_url }}/admin" class="text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 opacity-20 hover:opacity-100 transition">
+                <i data-lucide="lock" class="w-3 h-3"></i> Acesso Lojista
+            </a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // SCRIPT DO LOADER E ANIMAÇÃO
+    const loaderOverlay = document.getElementById('loader-overlay');
+    const introScene = document.getElementById('intro-scene');
+    const introLogoContainer = document.getElementById('intro-logoContainer');
+    const introParticles = document.getElementById('intro-particles');
+    const purpleLetters = document.querySelectorAll('#loader-overlay .purple');
+    const scrollPrompt = document.getElementById('scroll-prompt');
+    let introFinished = false;
+
+    // Movimento do mouse no logo 3D
+    document.addEventListener('mousemove', (e) => {
+        if(loaderOverlay.style.display === 'none') return;
+        const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
+        const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
+        introLogoContainer.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+    });
+
+    document.addEventListener('mouseleave', () => {
+        if(loaderOverlay.style.display === 'none') return;
+        introLogoContainer.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        introLogoContainer.style.transition = `transform 0.5s ease-out`;
+    });
+
+    document.addEventListener('mouseenter', () => {
+        if(loaderOverlay.style.display === 'none') return;
+        introLogoContainer.style.transition = `transform 0.1s ease-out`;
+    });
+
+    function createParticles(x, y) {
+        for (let i = 0; i < 15; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            const size = Math.random() * 6 + 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * 150 + 50;
+            const tx = Math.cos(angle) * distance;
+            const ty = Math.sin(angle) * distance;
+
+            particle.style.setProperty('--tx', `${tx}px`);
+            particle.style.setProperty('--ty', `${ty}px`);
+            particle.style.animation = `explode ${Math.random() * 0.5 + 0.5}s cubic-bezier(0.1, 0.8, 0.3, 1) forwards`;
+
+            introParticles.appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, 1000);
+        }
+    }
+
+    // Fluxo da animação de entrada
+    setTimeout(() => {
+        introScene.classList.add('shake');
+        
+        purpleLetters.forEach(letter => {
+            const rect = letter.getBoundingClientRect();
+            const sceneRect = introScene.getBoundingClientRect();
+            const x = rect.left - sceneRect.left + rect.width / 2;
+            const y = rect.top - sceneRect.top + rect.height;
+            createParticles(x, y);
+        });
+        
+        setTimeout(() => {
+            introScene.classList.remove('shake');
+        }, 400);
+
+        // Deixa o fundo transparente para revelar o site atrás (após 1 segundo do smash)
+        setTimeout(() => {
+            loaderOverlay.style.background = 'transparent';
+            scrollPrompt.style.opacity = '1';
+            introFinished = true;
+            
+            // Habilita a liberação por scroll
+            window.addEventListener('wheel', handleEntryScroll, { once: true });
+            window.addEventListener('touchstart', handleEntryScroll, { once: true });
+        }, 1000);
+
+    }, 1400); // tempo que as letras roxas batem
+
+    function handleEntryScroll(e) {
+        if (!introFinished) return;
+        
+        // Animação Foda de saída com GSAP
+        gsap.to(introLogoContainer.children, {
+            z: 500,
+            scale: 3,
+            opacity: 0,
+            stagger: 0.05,
+            duration: 1.2,
+            ease: "power4.inOut"
+        });
+        
+        gsap.to(scrollPrompt, { opacity: 0, duration: 0.5 });
+        
+        gsap.to(loaderOverlay, {
+            opacity: 0,
+            duration: 1.5,
+            delay: 0.5,
+            onComplete: () => {
+                loaderOverlay.style.display = 'none';
+                document.body.style.overflow = ''; // Libera a rolagem do site
+            }
+        });
+    }
+
+    // SCRIPT ORIGINAL DO INSTITUCIONAL
+    document.addEventListener("DOMContentLoaded", function() {
+        const params = new URLSearchParams(window.location.search);
+        const catId = params.get('categoria');
+        if (catId) {
+            const linkCategoria = document.querySelector('.group a[href*="categoria=' + catId + '"]');
+            if (linkCategoria) {
+                const tituloProdutos = document.getElementById('titulo-secao-produtos');
+                if (tituloProdutos) {
+                    tituloProdutos.innerText = linkCategoria.innerText.trim();
+                }
+            }
+        }
+    });
+
+    lucide.createIcons();
+    gsap.registerPlugin(ScrollTrigger);
+
+    const container = document.querySelector(".horizontal-container");
+    
+    if (container) {
+        container.addEventListener('wheel', (e) => {
+            // Desabilita rolagem horizontal se o loader ainda estiver ativo
+            if(document.body.style.overflow === 'hidden') return;
+
+            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+            
+            const atLeft = container.scrollLeft <= 0;
+            const atRight = Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth;
+            
+            if (e.deltaY > 0 && !atRight) {
+                e.preventDefault();
+                container.scrollLeft += e.deltaY;
+            } else if (e.deltaY < 0 && !atLeft) {
+                e.preventDefault();
+                container.scrollLeft += e.deltaY;
+            }
+        }, { passive: false });
+    }
+</script>
+</body>
+</html>
