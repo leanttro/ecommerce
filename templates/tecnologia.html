@@ -198,7 +198,7 @@
         inset: 0;
         width: 100vw;
         height: 100vh;
-        background-color: transparent; /* Deixa transparente para mostrar o site pelo buraco da máscara */
+        background-color: transparent; 
         display: flex;
         justify-content: center;
         align-items: center;
@@ -208,15 +208,24 @@
         perspective: 1200px;
     }
 
-    /* CAMADA PRETA COM A MÁSCARA DA LANTERNA + FOLHA PASSANDO */
+    /* CAMADA PRETA SÓLIDA INICIAL (Igual ao admin.html original) */
+    #solid-black-layer {
+        position: absolute;
+        inset: 0;
+        background-color: #050505;
+        background-image: radial-gradient(circle at center, #151515 0%, #000000 100%);
+        z-index: -1;
+        transition: opacity 1s ease-in-out;
+    }
+
+    /* CAMADA PRETA COM A MÁSCARA DA LANTERNA + FOLHA PASSANDO (Fica por baixo da sólida) */
     #overlay-masks {
         position: absolute;
         inset: 0;
-        background: #050505; /* O fundo escuro principal */
+        background: #050505;
         z-index: -2;
         pointer-events: none;
         
-        /* Combina o furo circular do mouse com o rasgo diagonal (a folha) */
         -webkit-mask-image: 
             radial-gradient(circle 350px at var(--x, 50vw) var(--y, 50vh), transparent 0%, rgba(0,0,0,1) 50%),
             linear-gradient(110deg, rgba(0,0,0,1) 45%, transparent 50%, rgba(0,0,0,1) 55%);
@@ -224,7 +233,6 @@
         -webkit-mask-position: center, 200% 0;
         -webkit-mask-repeat: no-repeat, no-repeat;
         
-        /* Intersect junta as duas máscaras para vazar nas duas condições */
         -webkit-mask-composite: source-in;
         mask-composite: intersect;
         
@@ -376,6 +384,8 @@
 <body style="overflow: hidden;">
 
 <div id="loader-overlay">
+    <div id="solid-black-layer"></div>
+    
     <div id="overlay-masks"></div>
     
     <div class="scene" id="intro-scene">
@@ -652,6 +662,7 @@
     const introParticles = document.getElementById('intro-particles');
     const purpleLetters = document.querySelectorAll('#loader-overlay .purple');
     const scrollPrompt = document.getElementById('scroll-prompt');
+    const solidBlackLayer = document.getElementById('solid-black-layer');
     const overlayMasks = document.getElementById('overlay-masks');
     let introFinished = false;
 
@@ -711,7 +722,7 @@
         }
     }
 
-    // Fluxo da animação de entrada
+    // Fluxo da animação de entrada exata
     setTimeout(() => {
         introScene.classList.add('shake');
         
@@ -727,8 +738,9 @@
             introScene.classList.remove('shake');
         }, 400);
 
-        // Termina a intro e aguarda o comando do scroll
+        // Termina a intro, faz o fundo sólido desaparecer para revelar a máscara/lanterna no fundo
         setTimeout(() => {
+            solidBlackLayer.style.opacity = '0'; // Tira o preto sólido
             scrollPrompt.style.opacity = '1';
             introFinished = true;
             
@@ -739,7 +751,7 @@
 
     }, 1400); // tempo que as letras roxas batem
 
-    // Função bruta de saída
+    // Função bruta de saída da animação para entrar no site
     function handleEntryScroll(e) {
         if (!introFinished) return;
         if (e && e.cancelable) e.preventDefault(); // Bloqueia a rolagem natural da página até terminar
