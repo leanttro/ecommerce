@@ -430,6 +430,24 @@
         gap: 10px;
         pointer-events: none;
     }
+
+    .hero-bubble {
+        border-radius: 50%;
+        backdrop-filter: blur(15px) brightness(1.2) contrast(1.1);
+        -webkit-backdrop-filter: blur(15px) brightness(1.2) contrast(1.1);
+        box-shadow: 
+            inset 0 0 30px rgba(255,255,255,0.4),
+            inset 20px 0 50px rgba(138, 43, 226, 0.4),
+            inset -20px 0 50px rgba(0, 200, 255, 0.3),
+            0 20px 50px rgba(0,0,0,0.5);
+        transform: translate(-50%, -50%);
+        animation: bubble-wobble 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes bubble-wobble {
+        0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: translate(-50%, -50%) rotate(0deg); }
+        100% { border-radius: 60% 40% 30% 70% / 60% 50% 40% 50%; transform: translate(-50%, -50%) rotate(120deg); }
+    }
 </style>
 </head>
 <body style="overflow: hidden;">
@@ -542,6 +560,12 @@
             </div>
             {% endif %}
             <div class="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505] pointer-events-none opacity-50"></div>
+
+            <div id="bubbles-container" class="absolute inset-0 z-30 pointer-events-none overflow-hidden">
+                <div class="bubble-mover bubble-mover-1 absolute top-0 left-0"><div class="hero-bubble w-[250px] h-[250px] sm:w-[400px] sm:h-[400px]"></div></div>
+                <div class="bubble-mover bubble-mover-2 absolute top-0 left-0"><div class="hero-bubble w-[150px] h-[150px] sm:w-[250px] sm:h-[250px]" style="animation-delay: -1.5s;"></div></div>
+                <div class="bubble-mover bubble-mover-3 absolute top-0 left-0"><div class="hero-bubble w-[80px] h-[80px] sm:w-[120px] sm:h-[120px]" style="animation-delay: -3s;"></div></div>
+            </div>
         </div>
     </section>
     {% endif %}
@@ -989,6 +1013,42 @@
             warpAnimReq = requestAnimationFrame(draw);
         }
         draw();
+    }
+
+    const bMover1 = document.querySelector('.bubble-mover-1');
+    const bMover2 = document.querySelector('.bubble-mover-2');
+    const bMover3 = document.querySelector('.bubble-mover-3');
+    const heroSec = document.getElementById('hero');
+
+    if (bMover1 && bMover2 && bMover3 && heroSec) {
+        let xTo1 = gsap.quickTo(bMover1, "x", {duration: 0.4, ease: "power3"});
+        let yTo1 = gsap.quickTo(bMover1, "y", {duration: 0.4, ease: "power3"});
+        
+        let xTo2 = gsap.quickTo(bMover2, "x", {duration: 0.7, ease: "power3"});
+        let yTo2 = gsap.quickTo(bMover2, "y", {duration: 0.7, ease: "power3"});
+        
+        let xTo3 = gsap.quickTo(bMover3, "x", {duration: 1.0, ease: "power3"});
+        let yTo3 = gsap.quickTo(bMover3, "y", {duration: 1.0, ease: "power3"});
+
+        let hw = window.innerWidth / 2;
+        let hh = window.innerHeight / 2;
+        xTo1(hw); yTo1(hh); xTo2(hw); yTo2(hh); xTo3(hw); yTo3(hh);
+
+        const moveBubbles = (x, y) => {
+            xTo1(x); yTo1(y);
+            xTo2(x); yTo2(y);
+            xTo3(x); yTo3(y);
+        };
+
+        heroSec.addEventListener('mousemove', (e) => {
+            const rect = heroSec.getBoundingClientRect();
+            moveBubbles(e.clientX - rect.left, e.clientY - rect.top);
+        });
+
+        heroSec.addEventListener('touchmove', (e) => {
+            const rect = heroSec.getBoundingClientRect();
+            moveBubbles(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
+        }, {passive: true});
     }
 </script>
 </body>
