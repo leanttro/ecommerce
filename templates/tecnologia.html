@@ -210,7 +210,7 @@
         z-index: 2;
     }
 
-    .case-card:hover .case-image-wrapper .img-main {
+    .case-card:hover .case-image-wrapper.has-hover .img-main {
         opacity: 0;
     }
 
@@ -708,9 +708,11 @@
         <div class="horizontal-container hide-scroll" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
             {% for p in produtos %}
             <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
-                <div class="case-image-wrapper">
+                <div class="case-image-wrapper {% if p.imagem1 or p.imagem_secundaria or p.imagem2 %}has-hover{% endif %}">
                     <img src="{{ p.imagem }}" alt="{{ p.nome }}" class="img-main">
-                    {% if p.imagem_secundaria %}
+                    {% if p.imagem1 %}
+                    <img src="{{ p.imagem1 }}" alt="{{ p.nome }}" class="img-hover">
+                    {% elif p.imagem_secundaria %}
                     <img src="{{ p.imagem_secundaria }}" alt="{{ p.nome }}" class="img-hover">
                     {% elif p.imagem2 %}
                     <img src="{{ p.imagem2 }}" alt="{{ p.nome }}" class="img-hover">
