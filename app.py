@@ -194,6 +194,17 @@ def identificar_loja():
         except Exception as e:
             print(f"Erro Middleware Slug: {e}")
 
+    # 3 FALLBACK PARA DOMÍNIO PRINCIPAL -> TECNOLOGIA (ABRE DIRETO NO DOMÍNIO)
+    if not loja_encontrada and host in ['leanttro.com', 'www.leanttro.com', 'localhost', '127.0.0.1'] and primeiro_segmento not in BLACKLIST_ROTAS:
+        g.slug_atual = "tecnologia"
+        try:
+            url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=tecnologia&fields=*.*"
+            resp = requests.get(url, headers=headers)
+            if resp.status_code == 200 and len(resp.json()['data']) > 0:
+                loja_encontrada = resp.json()['data'][0]
+        except Exception as e:
+            print(f"Erro Middleware Tecnologia Fallback: {e}")
+
     # SE A LOJA FOI IDENTIFICADA Por Domínio ou Slug configura o ambiente
     if loja_encontrada:
         g.loja = loja_encontrada
@@ -211,9 +222,11 @@ def identificar_loja():
         
         g.layout_list = g.loja['layout_order'].split(',')
         
-        # Adiciona URL base para templates Se for domínio próprio pode ser / ou mantém slug
-        # Mantendo compatibilidade com rotas path-based
-        g.loja['base_url'] = f"/{g.slug_atual}"
+        # Adiciona URL base para templates Se for domínio próprio ou tecnologia no domínio principal, base é vazia
+        if g.slug_atual == "tecnologia" and host in ['leanttro.com', 'www.leanttro.com', 'localhost', '127.0.0.1']:
+            g.loja['base_url'] = ""
+        else:
+            g.loja['base_url'] = f"/{g.slug_atual}"
 
 # ROTA RAIZ DO SAAS
 @app.route('/')
