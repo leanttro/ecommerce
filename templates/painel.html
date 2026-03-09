@@ -325,6 +325,17 @@
                                 <input type="text" name="chamada_rodape" value="{{ loja.chamada_rodape or '' }}" class="w-full border rounded p-2 text-sm" placeholder='Ex: VAMOS CRIAR ALGO JUNTOS?'>
                                 <p class="text-[10px] text-gray-500">Deixe em branco para o padrão: "VAMOS CRIAR ALGO JUNTO COM A [NOME]".</p>
                             </div>
+
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <span class="text-sm font-bold text-gray-700">Logos dos Clientes (URLs)</span>
+                                    </label>
+                                    <i data-lucide="image" class="text-gray-400 w-4 h-4"></i>
+                                </div>
+                                <textarea name="logos_clientes" rows="4" class="w-full border rounded p-2 text-sm" placeholder="Cole os links das imagens aqui (um por linha)...">{{ loja.logos_clientes or '' }}</textarea>
+                                <p class="text-[10px] text-gray-500">Insira a URL direta da imagem (uma por linha). Elas aparecerão no carrossel do rodapé na página Tecnologia.</p>
+                            </div>
                         </div>
                     </div>
                 </section>
