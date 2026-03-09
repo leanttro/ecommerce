@@ -418,7 +418,11 @@ def index(loja_slug):
                 prod_obj = {
                     "id": p['id'], "nome": p['nome'], "slug": p['slug'],
                     "preco": preco_float,
-                    "imagem": img, "categoria_id": cat_val,
+                    "imagem": img, 
+                    "imagem1": get_img_url(p.get('imagem1')),
+                    "imagem2": get_img_url(p.get('imagem2')),
+                    "imagem_secundaria": get_img_url(p.get('imagem_secundaria')),
+                    "categoria_id": cat_val,
                     "variantes": variantes, "origem": p.get('origem'),
                     "urgencia": p.get('status_urgencia'), "classe_frete": p.get('classe_frete'),
                     "estoque": estoque_val, "consulte": p.get('consulte', False),
