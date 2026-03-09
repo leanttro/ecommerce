@@ -465,7 +465,7 @@ def index(loja_slug):
         template_name = 'creapes'
     else:
         template_name = g.loja.get('template_ativo') or 'index'
-        if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional']:
+        if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional', 'tecnologia']:
             template_name = 'index'
 
     return render_template(f'{template_name}.html', 
@@ -532,8 +532,8 @@ def produto(loja_slug, slug):
         
         if template_ativo in ['direto', 'direto_index']:
             template_produto = 'direto_produto.html'
-        elif template_ativo == 'institucional':
-            template_produto = 'case.html' # Adicionado para suportar o institucional chique
+        elif template_ativo in ['institucional', 'tecnologia']:
+            template_produto = 'case.html' # Adicionado para suportar o institucional chique e tecnologia
 
         return render_template(template_produto, p=p, loja=loja_visual, directus_url=DIRECTUS_URL)
     
