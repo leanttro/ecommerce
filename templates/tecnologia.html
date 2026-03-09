@@ -86,8 +86,15 @@
 
     @media (min-width: 769px) {
         .case-card {
-            width: 42vw !important; 
-            max-width: 60vh !important; 
+            width: 34vw !important; 
+            max-width: 48vh !important; 
+            height: 464px !important;
+        }
+        .case-title-new {
+            font-size: clamp(1.4rem, 3.2vw, 2.5rem) !important;
+        }
+        .case-subtitle-new {
+            font-size: clamp(0.7rem, 1.6vw, 1rem) !important;
         }
         .intro-slide {
             min-width: 65vw !important;
@@ -447,6 +454,17 @@
         z-index: 50;
         will-change: transform, opacity;
     }
+
+    .typing-cursor::after {
+        content: '|';
+        display: inline-block;
+        animation: blinkCursor 1s step-end infinite;
+        margin-left: 4px;
+    }
+
+    @keyframes blinkCursor {
+        50% { opacity: 0; }
+    }
 </style>
 </head>
 <body style="overflow: hidden;">
@@ -595,8 +613,8 @@
                             {% set has_space = false %}
                         {% endif %}
 
-                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="group flex items-center justify-center py-8 md:py-16 border-b border-[rgba(255,255,255,0.3)] transition-colors duration-300 relative w-full overflow-hidden px-4">
-                            <h3 class="flex flex-wrap items-center justify-center text-2xl sm:text-4xl md:text-7xl lg:text-8xl font-display text-center m-0 p-0" style="color: var(--text-color);">
+                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="group flex items-center justify-center py-8 md:py-10 border-b border-[rgba(255,255,255,0.3)] transition-colors duration-300 relative w-full overflow-hidden px-4">
+                            <h3 class="flex flex-wrap items-center justify-center text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display text-center m-0 p-0" style="color: var(--text-color);">
                                 <span>{{ p1 }}</span>
                                 {% if cat_img.url != '' %}
                                 <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle">
@@ -633,7 +651,7 @@
             <div class="absolute inset-0 flex items-center justify-center p-8 z-10">
                 <div class="max-w-5xl text-center opacity-0 translate-y-20" id="sobre-content">
                     <h2 class="text-5xl md:text-8xl font-display text-white mb-8 uppercase tracking-tighter">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
-                    <p class="text-xl md:text-3xl text-gray-300 leading-relaxed font-light">
+                    <p class="text-xl md:text-3xl text-gray-300 leading-relaxed font-light" id="sobre-desc-text">
                         {{ loja.sobre_texto or 'Adicione a história através do painel na aba Sobre a Empresa' }}
                     </p>
                 </div>
@@ -1072,6 +1090,36 @@
             y: 0, 
             duration: 1 
         }, "-=0.5");
+
+        const sobreDescText = document.getElementById("sobre-desc-text");
+        if (sobreDescText) {
+            const originalText = sobreDescText.innerText.trim();
+            sobreDescText.innerText = "";
+            let isTyping = false;
+
+            ScrollTrigger.create({
+                trigger: "#sobre",
+                start: "top top",
+                onUpdate: (self) => {
+                    if (self.progress > 0.4 && !isTyping) {
+                        isTyping = true;
+                        let i = 0;
+                        sobreDescText.innerHTML = "";
+                        sobreDescText.classList.add("typing-cursor");
+                        function type() {
+                            if (i < originalText.length) {
+                                sobreDescText.innerHTML = originalText.substring(0, i + 1);
+                                i++;
+                                setTimeout(type, 20);
+                            } else {
+                                setTimeout(() => sobreDescText.classList.remove("typing-cursor"), 3000);
+                            }
+                        }
+                        type();
+                    }
+                }
+            });
+        }
     }
 
 </script>
