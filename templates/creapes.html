@@ -28,6 +28,74 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* =========================================
+   ESTILOS DO LOADER
+   ========================================= */
+body.loading {
+  overflow: hidden; /* Trava o scroll durante o loading */
+}
+
+#loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.loader-panel {
+  position: absolute;
+  width: 100%;
+  height: 50vh;
+  background: #020202; /* Fundo hiper escuro */
+  z-index: 0;
+}
+.loader-panel.top { top: 0; }
+.loader-panel.bottom { bottom: 0; }
+
+.loader-fast-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(6rem, 20vw, 15rem);
+  font-weight: 700;
+  color: var(--accent);
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: overlay;
+  letter-spacing: -0.05em;
+}
+
+.loader-brand {
+  display: flex;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2rem, 8vw, 6rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  z-index: 2;
+  perspective: 1000px;
+}
+
+.loader-char {
+  display: inline-block;
+  transform: translateY(-200%) rotateX(45deg);
+  opacity: 0;
+}
+/* ========================================= */
+
 h1, h2, h3, .brand {
   font-family: 'Space Grotesk', sans-serif;
   text-transform: uppercase;
@@ -47,10 +115,9 @@ a:hover { color: var(--accent); }
 nav {
   position: fixed;
   top: 0; left: 0; width: 100%;
-  height: 60px;
-  padding: 0 4rem;
+  padding: 1.5rem 4rem;
   display: flex; justify-content: space-between; align-items: center;
-  background: #000000;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
   z-index: 100;
 }
 
@@ -58,13 +125,12 @@ nav {
 .nav-right { justify-content: flex-end; }
 
 .brand { 
-  font-size: 1.2rem; 
+  font-size: 1.5rem; 
   font-weight: 700; 
   letter-spacing: 0.1em; 
   position: absolute; 
   left: 50%; 
-  top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
 }
 
 .menu-btn {
@@ -573,7 +639,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 .social-links { display: flex; gap: 1.5rem; }
 
 @media (max-width: 900px) {
-  nav { padding: 0 2rem; height: 60px; }
+  nav { padding: 1.5rem 2rem; }
   .hero-titles-list { left: 2rem; bottom: 3rem; }
   section { padding: 5rem 2rem; }
   .split-screen, .footer-blocks { flex-direction: column; gap: 3rem; }
@@ -583,7 +649,14 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 }
 </style>
 </head>
-<body>
+<body class="loading">
+
+<div id="loader">
+  <div class="loader-panel top"></div>
+  <div class="loader-panel bottom"></div>
+  <div class="loader-fast-text">LOADING</div>
+  <div class="loader-brand" id="loaderBrand" data-name="{{ loja.nome or 'CREAPES' }}"></div>
+</div>
 
 <nav>
   <div class="nav-left">
@@ -833,6 +906,81 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 
 <script>
   gsap.registerPlugin(ScrollTrigger);
+
+  // ==============================================================
+  // ANIMAÇÃO DO LOADER (GSAP TIMELINE)
+  // ==============================================================
+  const loaderBrand = document.getElementById('loaderBrand');
+  const brandName = loaderBrand.getAttribute('data-name');
+  
+  // Divide a tag em Spans dinamicamente para animar letra por letra
+  loaderBrand.innerHTML = brandName.split('').map(char => {
+    return char === ' ' ? '<span class="loader-char">&nbsp;</span>' : `<span class="loader-char">${char}</span>`;
+  }).join('');
+
+  const tlLoader = gsap.timeline({
+    onComplete: () => {
+      // Destrava a rolagem e remove o loader do DOM
+      document.body.classList.remove('loading');
+      document.getElementById('loader').style.display = 'none';
+      
+      // Recalcula as lógicas de scroll da tela assim que o loading termina
+      if(typeof calcScroll === 'function') calcScroll();
+      ScrollTrigger.refresh();
+    }
+  });
+
+  // 1. Letras caindo letra por letra
+  tlLoader.to('.loader-char', {
+    y: 0,
+    opacity: 1,
+    duration: 0.8,
+    stagger: 0.1,
+    ease: "bounce.out"
+  })
+  // 2. Animação ultra-rápida do texto "LOADING" de fundo
+  .fromTo('.loader-fast-text', 
+    { x: '100vw', opacity: 0, scaleX: 2.5 },
+    { x: '-100vw', opacity: 0.08, scaleX: 1, duration: 1.2, ease: "power4.inOut" },
+    "-=0.6"
+  )
+  // 3. Logo escala ligeiramente, "acende" a cor destaque
+  .to('.loader-char', {
+    scale: 1.3,
+    color: 'var(--accent)',
+    textShadow: '0 0 30px var(--accent)',
+    duration: 0.5,
+    stagger: 0.03,
+    ease: "power2.inOut"
+  })
+  // 4. Efeito de explosão da logo p/ frente enquanto some
+  .to('.loader-char', {
+    scale: 15,
+    opacity: 0,
+    duration: 0.7,
+    ease: "power4.in",
+    stagger: 0.02
+  }, "+=0.1")
+  // 5. Portas cinematográficas abrem revelando a tela
+  .to('.loader-panel.top', {
+    yPercent: -100,
+    duration: 1,
+    ease: "expo.inOut"
+  }, "-=0.6")
+  .to('.loader-panel.bottom', {
+    yPercent: 100,
+    duration: 1,
+    ease: "expo.inOut"
+  }, "-=1")
+  // 6. Finalmente apaga o wrapper
+  .to('#loader', {
+    opacity: 0,
+    duration: 0.3
+  }, "-=0.3");
+
+  // ==============================================================
+  // RESTANTE DO SEU CÓDIGO ORIGINAL
+  // ==============================================================
 
   const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
   const observer = new IntersectionObserver((entries, observer) => {
