@@ -215,7 +215,7 @@
         font-size: clamp(1.8rem, 4vw, 3.2rem);
         line-height: 0.85;
         text-transform: uppercase;
-        color: #050505; /* Cor preta estonteante nas cores de fundo */
+        color: #050505; 
         margin-bottom: 0;
         word-break: break-word;
         letter-spacing: -0.02em;
@@ -264,7 +264,7 @@
         inset: 0;
         width: 100vw;
         height: 100vh;
-        background-color: transparent;
+        background-color: rgba(5, 5, 5, 0.90); /* MANTIDO COMO VOCÊ PEDIU NO INÍCIO */
         display: flex;
         justify-content: center;
         align-items: center;
@@ -278,7 +278,7 @@
     #overlay-masks {
         position: absolute;
         inset: 0;
-        background: rgba(5, 5, 5, 0.90);
+        background: #050505; /* O fundo escuro principal */
         z-index: -2;
         pointer-events: none;
         
@@ -713,7 +713,7 @@
 </footer>
 
 <script>
-    // SCRIPT DO LOADER E EFEITOS
+    // SCRIPT DO LOADER E EFEITOS (EXATAMENTE COMO ESTAVA NO INÍCIO)
     const loaderOverlay = document.getElementById('loader-overlay');
     const introScene = document.getElementById('intro-scene');
     const introLogoContainer = document.getElementById('intro-logoContainer');
@@ -728,35 +728,30 @@
 
     // Atualiza a posição da lanterna baseada no mouse e rotaciona o logo 3D
     document.addEventListener('mousemove', (e) => {
-        if(loaderOverlay && loaderOverlay.style.display !== 'none') {
-            const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
-            const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
-            if(introLogoContainer) introLogoContainer.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-            
-            if(overlayMasks) {
-                overlayMasks.style.setProperty('--x', e.clientX + 'px');
-                overlayMasks.style.setProperty('--y', e.clientY + 'px');
-            }
-        }
+        if(loaderOverlay.style.display === 'none') return;
+        
+        // Rotação 3D do Logo
+        const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
+        const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
+        introLogoContainer.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        
+        // Movimento da Lanterna (atualiza as variáveis CSS para a máscara do overlay-masks)
+        overlayMasks.style.setProperty('--x', e.clientX + 'px');
+        overlayMasks.style.setProperty('--y', e.clientY + 'px');
     });
 
     document.addEventListener('mouseleave', () => {
-        if(loaderOverlay && loaderOverlay.style.display !== 'none') {
-            if(introLogoContainer) {
-                introLogoContainer.style.transform = `rotateY(0deg) rotateX(0deg)`;
-                introLogoContainer.style.transition = `transform 0.5s ease-out`;
-            }
-        }
+        if(loaderOverlay.style.display === 'none') return;
+        introLogoContainer.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        introLogoContainer.style.transition = `transform 0.5s ease-out`;
     });
 
     document.addEventListener('mouseenter', () => {
-        if(loaderOverlay && loaderOverlay.style.display !== 'none') {
-            if(introLogoContainer) introLogoContainer.style.transition = `transform 0.1s ease-out`;
-        }
+        if(loaderOverlay.style.display === 'none') return;
+        introLogoContainer.style.transition = `transform 0.1s ease-out`;
     });
 
     function createParticles(x, y) {
-        if(!introParticles) return;
         for (let i = 0; i < 15; i++) {
             const particle = document.createElement('div');
             particle.classList.add('particle');
@@ -784,63 +779,64 @@
         }
     }
 
-    if(introScene && purpleLetters.length > 0) {
+    // Fluxo da animação de entrada
+    setTimeout(() => {
+        introScene.classList.add('shake');
+        
+        purpleLetters.forEach(letter => {
+            const rect = letter.getBoundingClientRect();
+            const sceneRect = introScene.getBoundingClientRect();
+            const x = rect.left - sceneRect.left + rect.width / 2;
+            const y = rect.top - sceneRect.top + rect.height;
+            createParticles(x, y);
+        });
+        
         setTimeout(() => {
-            introScene.classList.add('shake');
+            introScene.classList.remove('shake');
+        }, 400);
+
+        // Termina a intro e aguarda o comando do scroll
+        setTimeout(() => {
+            scrollPrompt.style.opacity = '1';
+            introFinished = true;
             
-            purpleLetters.forEach(letter => {
-                const rect = letter.getBoundingClientRect();
-                const sceneRect = introScene.getBoundingClientRect();
-                const x = rect.left - sceneRect.left + rect.width / 2;
-                const y = rect.top - sceneRect.top + rect.height;
-                createParticles(x, y);
-            });
-            
-            setTimeout(() => {
-                introScene.classList.remove('shake');
-            }, 400);
+            // Habilita a liberação usando scroll (impede a rolagem padrão da página)
+            window.addEventListener('wheel', handleEntryScroll, { passive: false });
+            window.addEventListener('touchstart', handleEntryScroll, { passive: false });
+        }, 1000);
 
-            setTimeout(() => {
-                if(scrollPrompt) scrollPrompt.style.opacity = '1';
-                introFinished = true;
-                
-                window.addEventListener('wheel', handleEntryScroll, { passive: false });
-                window.addEventListener('touchstart', handleEntryScroll, { passive: false });
-            }, 1000);
+    }, 1400); // tempo que as letras roxas batem
 
-        }, 1400);
-    }
-
+    // Função bruta de saída
     function handleEntryScroll(e) {
         if (!introFinished) return;
-        if (e && e.cancelable) e.preventDefault();
-        introFinished = false; 
+        if (e && e.cancelable) e.preventDefault(); // Bloqueia a rolagem natural da página até terminar
+        introFinished = false; // Garante que rode só 1 vez
         
-        if(scrollPrompt) gsap.to(scrollPrompt, { opacity: 0, duration: 0.2 });
+        gsap.to(scrollPrompt, { opacity: 0, duration: 0.2 });
 
-        if(introLogoContainer) {
-            gsap.to(introLogoContainer, {
-                y: "-50vh",
-                scale: 0.9,
-                opacity: 0,
-                duration: 0.8,
-                ease: "power4.in"
-            });
-        }
+        // Um soco extra no logo de parallax antes de tudo sumir pra cima
+        gsap.to(introLogoContainer, {
+            y: "-50vh",
+            scale: 0.9,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power4.in"
+        });
         
-        if(loaderOverlay) {
-            gsap.to(loaderOverlay, {
-                y: "-100%",
-                duration: 1.2,
-                ease: "expo.inOut",
-                onComplete: () => {
-                    loaderOverlay.style.display = 'none';
-                    document.body.style.overflow = '';
-                }
-            });
-        }
+        // Puxa o painel inteiro pra cima (y: -100%) rapidão, soltando a pessoa no topo da página
+        gsap.to(loaderOverlay, {
+            y: "-100%",
+            duration: 1.2,
+            ease: "expo.inOut",
+            onComplete: () => {
+                loaderOverlay.style.display = 'none';
+                document.body.style.overflow = ''; // Libera a vida normal no site
+            }
+        });
     }
 
+    // SCRIPT ORIGINAL DO INSTITUCIONAL MANTIDO INTACTO
     document.addEventListener("DOMContentLoaded", function() {
         const params = new URLSearchParams(window.location.search);
         const catId = params.get('categoria');
