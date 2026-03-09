@@ -74,6 +74,9 @@
                 <a href="#sobre" class="flex items-center gap-2 px-4 py-3 text-gray-300 hover:bg-neutral-800 hover:text-yellow-400 rounded-lg transition-colors font-bold" onclick="selectMenuItem('sobre')">
                     <i data-lucide="users"></i> Sobre a Produtora
                 </a>
+                <a href="#visual" class="flex items-center gap-2 px-4 py-3 text-gray-300 hover:bg-neutral-800 hover:text-yellow-400 rounded-lg transition-colors font-bold" onclick="selectMenuItem('visual')">
+                    <i data-lucide="palette"></i> Identidade Visual
+                </a>
                 <a href="#config" class="flex items-center gap-2 px-4 py-3 text-gray-300 hover:bg-neutral-800 hover:text-yellow-400 rounded-lg transition-colors font-bold" onclick="selectMenuItem('config')">
                     <i data-lucide="settings"></i> Configurações Base
                 </a>
@@ -214,6 +217,56 @@
                     </div>
                 </section>
 
+                <section id="visual" class="bg-neutral-900 rounded-lg shadow-sm border border-neutral-800 p-6 hidden space-y-6">
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2 mb-6"><i data-lucide="palette" class="text-yellow-400"></i> Identidade Visual</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold mb-1 text-gray-300">Cor do Fundo</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" name="cor_fundo" value="{{ loja.cor_fundo }}" class="h-10 w-14 p-0 border border-neutral-700 rounded cursor-pointer bg-neutral-800">
+                                <input type="text" value="{{ loja.cor_fundo }}" class="w-full bg-neutral-800 border border-neutral-700 rounded p-2 text-white text-sm uppercase" onchange="this.previousElementSibling.value = this.value">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-1 text-gray-300">Cor do Texto</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" name="cor_texto" value="{{ loja.cor_texto }}" class="h-10 w-14 p-0 border border-neutral-700 rounded cursor-pointer bg-neutral-800">
+                                <input type="text" value="{{ loja.cor_texto }}" class="w-full bg-neutral-800 border border-neutral-700 rounded p-2 text-white text-sm uppercase" onchange="this.previousElementSibling.value = this.value">
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-bold mb-1 text-gray-300">Cor Destaque (Accent)</label>
+                            <div class="flex items-center gap-2 md:w-1/2">
+                                <input type="color" name="cor_primaria" value="{{ loja.cor_primaria }}" class="h-10 w-14 p-0 border border-neutral-700 rounded cursor-pointer bg-neutral-800">
+                                <input type="text" value="{{ loja.cor_primaria }}" class="w-full bg-neutral-800 border border-neutral-700 rounded p-2 text-white text-sm uppercase" onchange="this.previousElementSibling.value = this.value">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-6 border-t border-neutral-800 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold mb-2 text-gray-300">Fonte dos Títulos</label>
+                            <select name="fonte_titulo" class="w-full bg-neutral-800 border border-neutral-700 rounded p-3 text-white focus:border-yellow-500 outline-none">
+                                <option value="'Space Grotesk', sans-serif" {% if loja.fonte_titulo == "'Space Grotesk', sans-serif" %}selected{% endif %}>Space Grotesk</option>
+                                <option value="'Inter', sans-serif" {% if loja.fonte_titulo == "'Inter', sans-serif" %}selected{% endif %}>Inter</option>
+                                <option value="'Playfair Display', serif" {% if loja.fonte_titulo == "'Playfair Display', serif" %}selected{% endif %}>Playfair Display</option>
+                                <option value="'Montserrat', sans-serif" {% if loja.fonte_titulo == "'Montserrat', sans-serif" %}selected{% endif %}>Montserrat</option>
+                                <option value="'Oswald', sans-serif" {% if loja.fonte_titulo == "'Oswald', sans-serif" %}selected{% endif %}>Oswald</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-2 text-gray-300">Fonte dos Textos</label>
+                            <select name="fonte_texto" class="w-full bg-neutral-800 border border-neutral-700 rounded p-3 text-white focus:border-yellow-500 outline-none">
+                                <option value="'Inter', -apple-system, sans-serif" {% if loja.fonte_texto == "'Inter', -apple-system, sans-serif" %}selected{% endif %}>Inter</option>
+                                <option value="'Space Grotesk', sans-serif" {% if loja.fonte_texto == "'Space Grotesk', sans-serif" %}selected{% endif %}>Space Grotesk</option>
+                                <option value="'Roboto', sans-serif" {% if loja.fonte_texto == "'Roboto', sans-serif" %}selected{% endif %}>Roboto</option>
+                                <option value="'Lora', serif" {% if loja.fonte_texto == "'Lora', serif" %}selected{% endif %}>Lora</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
                 <section id="config" class="bg-neutral-900 rounded-lg shadow-sm border border-neutral-800 p-6 hidden space-y-6">
                      <h2 class="text-2xl font-bold text-white flex items-center gap-2 mb-6"><i data-lucide="settings" class="text-yellow-400"></i> Configurações Base</h2>
                     
@@ -229,10 +282,6 @@
                         <div>
                             <label class="block text-sm font-bold mb-2 text-gray-300">Link do Instagram</label>
                             <input type="text" name="instagram_url" value="{{ loja.instagram_url or '' }}" placeholder="https://instagram.com/suaempresa" class="w-full bg-neutral-800 border border-neutral-700 rounded p-2 text-white">
-                        </div>
-                         <div>
-                            <label class="block text-sm font-bold mb-2 text-gray-300">Cor Principal (Accent)</label>
-                            <input type="color" name="cor_primaria" value="{{ loja.cor_primaria }}" class="h-10 w-full p-0 border border-neutral-700 rounded cursor-pointer bg-neutral-800">
                         </div>
                     </div>
 
