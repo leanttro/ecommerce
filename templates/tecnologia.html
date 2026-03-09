@@ -124,9 +124,6 @@
         }
     }
 
-    /* =========================================================
-       NOVO DESIGN DOS CARDS DE PRODUTO (Estilo Leonardo AI)
-       ========================================================= */
     .case-card {
         flex-shrink: 0;
         width: 85vw;
@@ -143,7 +140,6 @@
         padding: 16px;
         background-color: var(--card-bg, var(--primary));
         cursor: pointer;
-        /* Estado inicial da animação (antes de entrar na tela) */
         transform: scale(0.85) translateY(30px) rotate(-3deg); 
         opacity: 0.3;
         border: 2px solid rgba(0,0,0,0.05);
@@ -161,7 +157,6 @@
         }
     }
 
-    /* Classe ativada pelo IntersectionObserver ao entrar na tela */
     .case-card.in-view {
         transform: scale(1) translateY(0) rotate(0deg);
         opacity: 1;
@@ -173,7 +168,6 @@
         z-index: 10;
     }
 
-    /* Degradê automático: Clareando a cor primária para cada card */
     .case-card:nth-child(1) { --card-bg: var(--primary); }
     .case-card:nth-child(2) { --card-bg: color-mix(in srgb, var(--primary) 85%, #ffffff); }
     .case-card:nth-child(3) { --card-bg: color-mix(in srgb, var(--primary) 70%, #ffffff); }
@@ -244,7 +238,6 @@
         padding: 4px;
         display: inline-flex;
     }
-    /* ========================================================= */
 
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: var(--bg-color); }
@@ -262,13 +255,12 @@
         animation: arrow-move 1.5s ease-in-out infinite;
     }
 
-    /* ESTILOS DA ANIMAÇÃO ADMIN (LOADER OVERLAY) */
     #loader-overlay {
         position: fixed;
         inset: 0;
         width: 100vw;
         height: 100vh;
-        background-color: rgba(5, 5, 5, 0.90); /* MANTIDO COMO VOCÊ PEDIU NO INÍCIO */
+        background-color: rgba(5, 5, 5, 0.90); 
         display: flex;
         justify-content: center;
         align-items: center;
@@ -278,15 +270,13 @@
         perspective: 1200px;
     }
 
-    /* CAMADA PRETA COM A MÁSCARA DA LANTERNA + FOLHA PASSANDO */
     #overlay-masks {
         position: absolute;
         inset: 0;
-        background: #050505; /* O fundo escuro principal */
+        background: #050505; 
         z-index: -2;
         pointer-events: none;
         
-        /* Combina o furo circular do mouse com o rasgo diagonal (a folha) */
         -webkit-mask-image: 
             radial-gradient(circle 350px at var(--x, 50vw) var(--y, 50vh), transparent 0%, rgba(0,0,0,1) 50%),
             linear-gradient(110deg, rgba(0,0,0,1) 45%, transparent 50%, rgba(0,0,0,1) 55%);
@@ -294,7 +284,6 @@
         -webkit-mask-position: center, 200% 0;
         -webkit-mask-repeat: no-repeat, no-repeat;
         
-        /* Intersect junta as duas máscaras para vazar nas duas condições */
         -webkit-mask-composite: source-in;
         mask-composite: intersect;
         
@@ -540,16 +529,20 @@
 {% for secao in layout %}
 
     {% if secao == 'banner' and not loja.ocultar_banner %}
-    <section class="h-[70vh] md:h-screen w-full relative overflow-hidden" id="hero">
-        {% if loja.banner1 %}
-        <a href="{{ loja.linkbannerprincipal1 or '#' }}" class="block w-full h-full">
-            <img src="{{ loja.banner1 }}" class="w-full h-full object-cover object-center">
-        </a>
-        {% else %}
-        <div class="w-full h-full flex items-center justify-center bg-gray-100">
-            <h1 class="text-4xl opacity-20">Seu Banner Here</h1>
+    <section class="h-[70vh] md:h-screen w-full relative overflow-hidden bg-[#050505]" id="hero" style="perspective: 1200px;">
+        <canvas id="data-canvas" class="absolute inset-0 w-full h-full z-20"></canvas>
+        <div id="hero-banner-wrapper" class="absolute inset-0 w-full h-full z-10 opacity-0" style="transform: translateZ(-300px) scale(0.8);">
+            {% if loja.banner1 %}
+            <a href="{{ loja.linkbannerprincipal1 or '#' }}" class="block w-full h-full">
+                <img src="{{ loja.banner1 }}" class="w-full h-full object-cover object-center hero-img">
+            </a>
+            {% else %}
+            <div class="w-full h-full flex items-center justify-center bg-gray-100 hero-img">
+                <h1 class="text-4xl opacity-20">Seu Banner Here</h1>
+            </div>
+            {% endif %}
+            <div class="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505] pointer-events-none opacity-50"></div>
         </div>
-        {% endif %}
     </section>
     {% endif %}
 
@@ -711,7 +704,6 @@
 </footer>
 
 <script>
-    // SCRIPT DO LOADER E EFEITOS (EXATAMENTE COMO ESTAVA NO INÍCIO)
     const loaderOverlay = document.getElementById('loader-overlay');
     const introScene = document.getElementById('intro-scene');
     const introLogoContainer = document.getElementById('intro-logoContainer');
@@ -721,19 +713,15 @@
     const overlayMasks = document.getElementById('overlay-masks');
     let introFinished = false;
 
-    // Garante que o usuário inicie do topo
     window.scrollTo(0, 0);
 
-    // Atualiza a posição da lanterna baseada no mouse e rotaciona o logo 3D
     document.addEventListener('mousemove', (e) => {
         if(loaderOverlay.style.display === 'none') return;
         
-        // Rotação 3D do Logo
         const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
         const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
         introLogoContainer.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
         
-        // Movimento da Lanterna (atualiza as variáveis CSS para a máscara do overlay-masks)
         overlayMasks.style.setProperty('--x', e.clientX + 'px');
         overlayMasks.style.setProperty('--y', e.clientY + 'px');
     });
@@ -777,7 +765,6 @@
         }
     }
 
-    // Fluxo da animação de entrada
     setTimeout(() => {
         introScene.classList.add('shake');
         
@@ -793,27 +780,23 @@
             introScene.classList.remove('shake');
         }, 400);
 
-        // Termina a intro e aguarda o comando do scroll
         setTimeout(() => {
             scrollPrompt.style.opacity = '1';
             introFinished = true;
             
-            // Habilita a liberação usando scroll (impede a rolagem padrão da página)
             window.addEventListener('wheel', handleEntryScroll, { passive: false });
             window.addEventListener('touchstart', handleEntryScroll, { passive: false });
         }, 1000);
 
-    }, 1400); // tempo que as letras roxas batem
+    }, 1400); 
 
-    // Função bruta de saída
     function handleEntryScroll(e) {
         if (!introFinished) return;
-        if (e && e.cancelable) e.preventDefault(); // Bloqueia a rolagem natural da página até terminar
-        introFinished = false; // Garante que rode só 1 vez
+        if (e && e.cancelable) e.preventDefault(); 
+        introFinished = false; 
         
         gsap.to(scrollPrompt, { opacity: 0, duration: 0.2 });
 
-        // Um soco extra no logo de parallax antes de tudo sumir pra cima
         gsap.to(introLogoContainer, {
             y: "-50vh",
             scale: 0.9,
@@ -822,19 +805,43 @@
             ease: "power4.in"
         });
         
-        // Puxa o painel inteiro pra cima (y: -100%) rapidão, soltando a pessoa no topo da página
         gsap.to(loaderOverlay, {
             y: "-100%",
             duration: 1.2,
             ease: "expo.inOut",
             onComplete: () => {
                 loaderOverlay.style.display = 'none';
-                document.body.style.overflow = ''; // Libera a vida normal no site
+                document.body.style.overflow = ''; 
+                
+                const heroWrapper = document.getElementById('hero-banner-wrapper');
+                const dataCanvas = document.getElementById('data-canvas');
+                
+                if (dataCanvas && heroWrapper) {
+                    if(typeof startDataWarp === 'function') startDataWarp();
+                    
+                    setTimeout(() => {
+                        gsap.to(dataCanvas, { opacity: 0, duration: 1.5 });
+                        gsap.to(heroWrapper, {
+                            opacity: 1,
+                            z: 0,
+                            scale: 1,
+                            duration: 2.5,
+                            ease: "power4.out"
+                        });
+                        
+                        gsap.to('.hero-img', {
+                            scale: 1.05,
+                            duration: 8,
+                            repeat: -1,
+                            yoyo: true,
+                            ease: "sine.inOut"
+                        });
+                    }, 1000);
+                }
             }
         });
     }
 
-    // SCRIPT ORIGINAL DO INSTITUCIONAL MANTIDO INTACTO
     document.addEventListener("DOMContentLoaded", function() {
         const params = new URLSearchParams(window.location.search);
         const catId = params.get('categoria');
@@ -852,32 +859,27 @@
     lucide.createIcons();
     gsap.registerPlugin(ScrollTrigger);
 
-    // =======================================================
-    // SCROLL HORIZONTAL DOS PRODUTOS (MANUAL + AUTO-SCROLL + OBSERVER)
-    // =======================================================
     const container = document.querySelector(".horizontal-container");
     const cards = document.querySelectorAll('.case-card');
     let isInteracting = false;
     
     if (container && cards.length > 0) {
         
-        // INTERSECTION OBSERVER PARA A "ANIMAÇÃO BEM LEGAL" DO CARTÃO
         const cardObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('in-view');
                 } else {
-                    entry.target.classList.remove('in-view'); // Re-anima quando volta
+                    entry.target.classList.remove('in-view'); 
                 }
             });
         }, {
             root: container,
-            threshold: 0.4 // Dispara quando 40% do cart está visível
+            threshold: 0.4 
         });
 
         cards.forEach(card => cardObserver.observe(card));
 
-        // ROLAGEM AUTOMÁTICA LENTA
         let autoScrollSpeed = 0.8;
         let autoScrollReq;
 
@@ -885,7 +887,6 @@
             if (!isInteracting && document.body.style.overflow !== 'hidden') {
                 container.scrollLeft += autoScrollSpeed;
                 
-                // Se chegou no fim, volta pro começo
                 if (Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth - 2) {
                     container.scrollLeft = 0;
                 }
@@ -895,7 +896,6 @@
         
         autoScrollReq = requestAnimationFrame(startAutoScroll);
 
-        // PAUSA AUTO-SCROLL NA INTERAÇÃO
         container.addEventListener('mouseenter', () => isInteracting = true);
         container.addEventListener('mouseleave', () => isInteracting = false);
         container.addEventListener('touchstart', () => isInteracting = true, {passive: true});
@@ -903,12 +903,11 @@
             setTimeout(() => isInteracting = false, 1500);
         });
 
-        // ROLAGEM MANUAL (Mapeando o Scroll do Mouse)
         container.addEventListener('wheel', (e) => {
             if(document.body.style.overflow === 'hidden') return;
             if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
             
-            isInteracting = true; // Pausa o auto-scroll
+            isInteracting = true; 
             clearTimeout(container.scrollTimeout);
             container.scrollTimeout = setTimeout(() => isInteracting = false, 1500);
 
@@ -923,6 +922,73 @@
                 container.scrollLeft += e.deltaY;
             }
         }, { passive: false });
+    }
+
+    let warpAnimReq;
+    function startDataWarp() {
+        const canvas = document.getElementById('data-canvas');
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let w = canvas.width = window.innerWidth;
+        let h = canvas.height = window.innerHeight;
+        
+        window.addEventListener('resize', () => {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        });
+
+        const nodes = [];
+        for(let i=0; i<300; i++) {
+            nodes.push({
+                x: (Math.random() - 0.5) * w * 2,
+                y: (Math.random() - 0.5) * h * 2,
+                z: Math.random() * 1000,
+                color: Math.random() > 0.6 ? '#8A2BE2' : '#ffffff'
+            });
+        }
+        
+        let speed = 60; 
+        
+        function draw() {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.4)';
+            ctx.fillRect(0, 0, w, h);
+            ctx.save();
+            ctx.translate(w/2, h/2);
+            
+            nodes.forEach(node => {
+                node.z -= speed;
+                if(node.z <= 0) {
+                    node.z = 1000;
+                    node.x = (Math.random() - 0.5) * w * 2;
+                    node.y = (Math.random() - 0.5) * h * 2;
+                }
+                
+                let px = node.x * (1000 / node.z);
+                let py = node.y * (1000 / node.z);
+                let pz = node.z;
+                
+                let size = Math.max(0.5, (1 - pz/1000) * 4);
+                
+                ctx.fillStyle = node.color;
+                ctx.beginPath();
+                ctx.arc(px, py, size, 0, Math.PI*2);
+                ctx.fill();
+                
+                if(pz < 600 && Math.random() > 0.85) {
+                    ctx.strokeStyle = node.color === '#8A2BE2' ? `rgba(138, 43, 226, ${0.8 - pz/600})` : `rgba(255, 255, 255, ${0.5 - pz/600})`;
+                    ctx.lineWidth = size / 2;
+                    ctx.beginPath();
+                    ctx.moveTo(px, py);
+                    ctx.lineTo(px + (Math.random()-0.5)*150, py + (Math.random()-0.5)*150);
+                    ctx.stroke();
+                }
+            });
+            ctx.restore();
+            
+            if(speed > 1.5) speed *= 0.93; 
+            warpAnimReq = requestAnimationFrame(draw);
+        }
+        draw();
     }
 </script>
 </body>
