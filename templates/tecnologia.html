@@ -122,59 +122,125 @@
             font-size: 2.2rem;
             line-height: 1.2;
         }
+    }
+
+    /* =========================================================
+       NOVO DESIGN DOS CARDS DE PRODUTO (Estilo Leonardo AI)
+       ========================================================= */
+    .case-card {
+        flex-shrink: 0;
+        width: 85vw;
+        max-width: 420px;
+        height: 580px;
+        align-self: center;
+        margin-right: 4vw;
+        position: relative;
+        border-radius: 24px;
+        overflow: hidden;
+        transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s;
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+        background-color: var(--card-bg, var(--primary));
+        cursor: pointer;
+        /* Estado inicial da animação (antes de entrar na tela) */
+        transform: scale(0.85) translateY(30px) rotate(-3deg); 
+        opacity: 0.3;
+        border: 2px solid rgba(0,0,0,0.05);
+    }
+
+    @media (max-width: 768px) {
         .case-card {
-            align-self: center !important;
             width: 85vw !important;
+            height: 520px;
+            margin-right: 6vw;
         }
     }
 
-    .case-card {
-        flex-shrink: 0;
-        width: 70vw;
-        aspect-ratio: 1 / 1;
-        max-width: 75vh;
-        align-self: center;
-        margin-right: 5vw;
-        position: relative;
-        border-radius: 20px;
-        overflow: hidden;
-        transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+    /* Classe ativada pelo IntersectionObserver ao entrar na tela */
+    .case-card.in-view {
+        transform: scale(1) translateY(0) rotate(0deg);
+        opacity: 1;
     }
 
-    .case-card img {
+    .case-card:hover {
+        transform: scale(1.02) translateY(-8px) !important;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        z-index: 10;
+    }
+
+    /* Degradê automático: Clareando a cor primária para cada card */
+    .case-card:nth-child(1) { --card-bg: var(--primary); }
+    .case-card:nth-child(2) { --card-bg: color-mix(in srgb, var(--primary) 85%, #ffffff); }
+    .case-card:nth-child(3) { --card-bg: color-mix(in srgb, var(--primary) 70%, #ffffff); }
+    .case-card:nth-child(4) { --card-bg: color-mix(in srgb, var(--primary) 55%, #ffffff); }
+    .case-card:nth-child(5) { --card-bg: color-mix(in srgb, var(--primary) 40%, #ffffff); }
+    .case-card:nth-child(6) { --card-bg: color-mix(in srgb, var(--primary) 25%, #ffffff); }
+    .case-card:nth-child(7) { --card-bg: color-mix(in srgb, var(--primary) 15%, #ffffff); }
+    .case-card:nth-child(n+8) { --card-bg: color-mix(in srgb, var(--primary) 5%, #ffffff); }
+
+    .case-image-wrapper {
+        width: 100%;
+        flex: 1;
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+        border: 2px solid #050505;
+        background: #000;
+    }
+
+    .case-image-wrapper img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        filter: brightness(0.5);
-        transition: scale 1s ease;
+        transition: transform 1s ease, filter 0.5s ease;
+        filter: brightness(0.95);
     }
 
-    .case-card:hover img { scale: 1.05; }
-
-    .case-info {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 100%;
-        padding: 0 30px;
-        box-sizing: border-box;
-        text-align: center;
-        color: white;
-        z-index: 2;
+    .case-card:hover .case-image-wrapper img {
+        transform: scale(1.08);
+        filter: brightness(1.1);
     }
 
-    .case-info .flex {
-        justify-content: center;
+    .case-info-new {
+        padding-top: 18px;
+        padding-bottom: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
     }
 
-    .case-title { 
-        font-size: clamp(1rem, 3.2vw, 2.2rem); 
-        line-height: 1.1; 
-        margin-bottom: 1rem;
-        word-break: keep-all !important;
-        white-space: normal;
+    .case-title-new {
+        font-family: 'Archivo Black', sans-serif;
+        font-size: clamp(1.8rem, 4vw, 3.2rem);
+        line-height: 0.85;
+        text-transform: uppercase;
+        color: #050505; /* Cor preta estonteante nas cores de fundo */
+        margin-bottom: 0;
+        word-break: break-word;
+        letter-spacing: -0.02em;
     }
+
+    .case-subtitle-new {
+        font-family: 'Archivo Black', sans-serif;
+        font-size: clamp(0.9rem, 2vw, 1.3rem);
+        color: #050505;
+        line-height: 1;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    .icon-arrow-card {
+        background: #050505;
+        color: #fff;
+        border-radius: 50%;
+        padding: 4px;
+        display: inline-flex;
+    }
+    /* ========================================================= */
 
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: var(--bg-color); }
@@ -198,7 +264,7 @@
         inset: 0;
         width: 100vw;
         height: 100vh;
-        background-color: rgba(5, 5, 5, 0.90); /* Não deixa transparente total, mantém escuro passando o raio até a rolagem */
+        background-color: transparent;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -212,7 +278,7 @@
     #overlay-masks {
         position: absolute;
         inset: 0;
-        background: #050505; /* O fundo escuro principal */
+        background: rgba(5, 5, 5, 0.90);
         z-index: -2;
         pointer-events: none;
         
@@ -582,27 +648,29 @@
     {% endif %}
 
     {% if secao == 'produtos' and not loja.ocultar_produtos %}
-    <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color);">
-        <div class="horizontal-container">
-            <div class="intro-slide flex-shrink-0 w-[90vw] sm:w-[70vw] md:w-[50vw] lg:w-[45vw] flex flex-col justify-start md:justify-center pr-6 md:pr-16 lg:pr-20 relative pt-4 md:pt-0">
-                <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] leading-tight md:leading-none">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
-                <i data-lucide="arrow-right" class="w-10 h-10 text-[var(--text-color)] mt-4 mb-2 animate-arrow mx-auto md:mx-0"></i>
-            </div>
+    <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color); overflow: hidden;">
+        
+        <div class="container mx-auto px-6 md:px-10 mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[3rem] sm:text-5xl md:text-7xl font-display uppercase tracking-tighter leading-none m-0">
+                {{ loja.titulo_produtos or 'Nossos Cases' }}
+            </h2>
+        </div>
 
+        <div class="horizontal-container hide-scroll" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
             {% for p in produtos %}
-            <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'" style="cursor: pointer;">
-                <img src="{{ p.imagem }}" alt="{{ p.nome }}">
-                <div class="case-info">
-                    <h3 class="case-title">{{ p.nome }}</h3>
-                    <div class="flex items-center gap-4">
-                        <span class="text-xs uppercase tracking-widest opacity-70">Ver detalhes do projeto</span>
-                        <div class="w-12 h-[1px] bg-white opacity-50"></div>
-                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
+                <div class="case-image-wrapper">
+                    <img src="{{ p.imagem }}" alt="{{ p.nome }}">
+                </div>
+                <div class="case-info-new">
+                    <h3 class="case-title-new">{{ p.nome }}</h3>
+                    <div class="case-subtitle-new">
+                        VER PROJETO <i data-lucide="arrow-right" class="w-5 h-5 icon-arrow-card"></i>
                     </div>
                 </div>
             </div>
             {% else %}
-            <div class="flex-shrink-0 w-[70vw] h-full mr-[5vw] flex items-center justify-center border rounded-2xl" style="border-color: var(--text-color);">
+            <div class="flex-shrink-0 w-[70vw] h-[500px] mr-[5vw] flex items-center justify-center border rounded-2xl" style="border-color: var(--text-color);">
                 <p class="text-xl font-bold uppercase tracking-widest" style="color: var(--text-color); opacity: 0.5;">Nenhum projeto cadastrado.</p>
             </div>
             {% endfor %}
@@ -660,30 +728,35 @@
 
     // Atualiza a posição da lanterna baseada no mouse e rotaciona o logo 3D
     document.addEventListener('mousemove', (e) => {
-        if(loaderOverlay.style.display === 'none') return;
-        
-        // Rotação 3D do Logo
-        const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
-        const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
-        introLogoContainer.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-        
-        // Movimento da Lanterna (atualiza as variáveis CSS para a máscara do overlay-masks)
-        overlayMasks.style.setProperty('--x', e.clientX + 'px');
-        overlayMasks.style.setProperty('--y', e.clientY + 'px');
+        if(loaderOverlay && loaderOverlay.style.display !== 'none') {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
+            if(introLogoContainer) introLogoContainer.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            
+            if(overlayMasks) {
+                overlayMasks.style.setProperty('--x', e.clientX + 'px');
+                overlayMasks.style.setProperty('--y', e.clientY + 'px');
+            }
+        }
     });
 
     document.addEventListener('mouseleave', () => {
-        if(loaderOverlay.style.display === 'none') return;
-        introLogoContainer.style.transform = `rotateY(0deg) rotateX(0deg)`;
-        introLogoContainer.style.transition = `transform 0.5s ease-out`;
+        if(loaderOverlay && loaderOverlay.style.display !== 'none') {
+            if(introLogoContainer) {
+                introLogoContainer.style.transform = `rotateY(0deg) rotateX(0deg)`;
+                introLogoContainer.style.transition = `transform 0.5s ease-out`;
+            }
+        }
     });
 
     document.addEventListener('mouseenter', () => {
-        if(loaderOverlay.style.display === 'none') return;
-        introLogoContainer.style.transition = `transform 0.1s ease-out`;
+        if(loaderOverlay && loaderOverlay.style.display !== 'none') {
+            if(introLogoContainer) introLogoContainer.style.transition = `transform 0.1s ease-out`;
+        }
     });
 
     function createParticles(x, y) {
+        if(!introParticles) return;
         for (let i = 0; i < 15; i++) {
             const particle = document.createElement('div');
             particle.classList.add('particle');
@@ -711,64 +784,63 @@
         }
     }
 
-    // Fluxo da animação de entrada
-    setTimeout(() => {
-        introScene.classList.add('shake');
-        
-        purpleLetters.forEach(letter => {
-            const rect = letter.getBoundingClientRect();
-            const sceneRect = introScene.getBoundingClientRect();
-            const x = rect.left - sceneRect.left + rect.width / 2;
-            const y = rect.top - sceneRect.top + rect.height;
-            createParticles(x, y);
-        });
-        
+    if(introScene && purpleLetters.length > 0) {
         setTimeout(() => {
-            introScene.classList.remove('shake');
-        }, 400);
-
-        // Termina a intro e aguarda o comando do scroll
-        setTimeout(() => {
-            scrollPrompt.style.opacity = '1';
-            introFinished = true;
+            introScene.classList.add('shake');
             
-            // Habilita a liberação usando scroll (impede a rolagem padrão da página)
-            window.addEventListener('wheel', handleEntryScroll, { passive: false });
-            window.addEventListener('touchstart', handleEntryScroll, { passive: false });
-        }, 1000);
+            purpleLetters.forEach(letter => {
+                const rect = letter.getBoundingClientRect();
+                const sceneRect = introScene.getBoundingClientRect();
+                const x = rect.left - sceneRect.left + rect.width / 2;
+                const y = rect.top - sceneRect.top + rect.height;
+                createParticles(x, y);
+            });
+            
+            setTimeout(() => {
+                introScene.classList.remove('shake');
+            }, 400);
 
-    }, 1400); // tempo que as letras roxas batem
+            setTimeout(() => {
+                if(scrollPrompt) scrollPrompt.style.opacity = '1';
+                introFinished = true;
+                
+                window.addEventListener('wheel', handleEntryScroll, { passive: false });
+                window.addEventListener('touchstart', handleEntryScroll, { passive: false });
+            }, 1000);
 
-    // Função bruta de saída
-    function handleEntryScroll(e) {
-        if (!introFinished) return;
-        if (e && e.cancelable) e.preventDefault(); // Bloqueia a rolagem natural da página até terminar
-        introFinished = false; // Garante que rode só 1 vez
-        
-        gsap.to(scrollPrompt, { opacity: 0, duration: 0.2 });
-
-        // Um soco extra no logo de parallax antes de tudo sumir pra cima
-        gsap.to(introLogoContainer, {
-            y: "-50vh",
-            scale: 0.9,
-            opacity: 0,
-            duration: 0.8,
-            ease: "power4.in"
-        });
-        
-        // Puxa o painel inteiro pra cima (y: -100%) rapidão, soltando a pessoa no topo da página
-        gsap.to(loaderOverlay, {
-            y: "-100%",
-            duration: 1.2,
-            ease: "expo.inOut",
-            onComplete: () => {
-                loaderOverlay.style.display = 'none';
-                document.body.style.overflow = ''; // Libera a vida normal no site
-            }
-        });
+        }, 1400);
     }
 
-    // SCRIPT ORIGINAL DO INSTITUCIONAL MANTIDO INTACTO
+    function handleEntryScroll(e) {
+        if (!introFinished) return;
+        if (e && e.cancelable) e.preventDefault();
+        introFinished = false; 
+        
+        if(scrollPrompt) gsap.to(scrollPrompt, { opacity: 0, duration: 0.2 });
+
+        if(introLogoContainer) {
+            gsap.to(introLogoContainer, {
+                y: "-50vh",
+                scale: 0.9,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power4.in"
+            });
+        }
+        
+        if(loaderOverlay) {
+            gsap.to(loaderOverlay, {
+                y: "-100%",
+                duration: 1.2,
+                ease: "expo.inOut",
+                onComplete: () => {
+                    loaderOverlay.style.display = 'none';
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
         const params = new URLSearchParams(window.location.search);
         const catId = params.get('categoria');
@@ -786,15 +858,66 @@
     lucide.createIcons();
     gsap.registerPlugin(ScrollTrigger);
 
+    // =======================================================
+    // SCROLL HORIZONTAL DOS PRODUTOS (MANUAL + AUTO-SCROLL + OBSERVER)
+    // =======================================================
     const container = document.querySelector(".horizontal-container");
+    const cards = document.querySelectorAll('.case-card');
+    let isInteracting = false;
     
-    if (container) {
-        container.addEventListener('wheel', (e) => {
-            // Desabilita rolagem horizontal se o loader ainda estiver trancando a tela
-            if(document.body.style.overflow === 'hidden') return;
+    if (container && cards.length > 0) {
+        
+        // INTERSECTION OBSERVER PARA A "ANIMAÇÃO BEM LEGAL" DO CARTÃO
+        const cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                } else {
+                    entry.target.classList.remove('in-view'); // Re-anima quando volta
+                }
+            });
+        }, {
+            root: container,
+            threshold: 0.4 // Dispara quando 40% do cart está visível
+        });
 
+        cards.forEach(card => cardObserver.observe(card));
+
+        // ROLAGEM AUTOMÁTICA LENTA
+        let autoScrollSpeed = 0.8;
+        let autoScrollReq;
+
+        const startAutoScroll = () => {
+            if (!isInteracting && document.body.style.overflow !== 'hidden') {
+                container.scrollLeft += autoScrollSpeed;
+                
+                // Se chegou no fim, volta pro começo
+                if (Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth - 2) {
+                    container.scrollLeft = 0;
+                }
+            }
+            autoScrollReq = requestAnimationFrame(startAutoScroll);
+        };
+        
+        autoScrollReq = requestAnimationFrame(startAutoScroll);
+
+        // PAUSA AUTO-SCROLL NA INTERAÇÃO
+        container.addEventListener('mouseenter', () => isInteracting = true);
+        container.addEventListener('mouseleave', () => isInteracting = false);
+        container.addEventListener('touchstart', () => isInteracting = true, {passive: true});
+        container.addEventListener('touchend', () => {
+            setTimeout(() => isInteracting = false, 1500);
+        });
+
+        // ROLAGEM MANUAL (Mapeando o Scroll do Mouse)
+        container.addEventListener('wheel', (e) => {
+            if(document.body.style.overflow === 'hidden') return;
             if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
             
+            isInteracting = true; // Pausa o auto-scroll
+            clearTimeout(container.scrollTimeout);
+            container.scrollTimeout = setTimeout(() => isInteracting = false, 1500);
+
             const atLeft = container.scrollLeft <= 0;
             const atRight = Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth;
             
