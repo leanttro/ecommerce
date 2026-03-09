@@ -487,6 +487,42 @@
     @keyframes blinkCursor {
         50% { opacity: 0; }
     }
+
+    /* CARROSSEL DE LOGOS DOS CLIENTES */
+    .client-marquee-wrapper {
+        display: flex;
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        padding: 60px 0;
+        background-color: #050505;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .client-marquee-track {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        animation: scrollMarquee 35s linear infinite;
+        gap: 100px;
+        padding-right: 100px;
+    }
+    .client-marquee-track img {
+        height: 40px;
+        width: auto;
+        object-fit: contain;
+        filter: grayscale(100%) brightness(0) invert(1);
+        opacity: 0.3;
+        transition: opacity 0.4s ease, transform 0.4s ease;
+        cursor: pointer;
+    }
+    .client-marquee-track img:hover {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    @keyframes scrollMarquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
+    }
 </style>
 </head>
 <body style="overflow: hidden;">
@@ -740,6 +776,27 @@
     {% endif %}
 
 {% endfor %}
+
+<section class="client-marquee-wrapper">
+    <div class="client-marquee-track">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Cliente 1">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Cliente 2">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Cliente 3">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Cliente 4">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" alt="Cliente 5">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg" alt="Cliente 6">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Slack_Technologies_Logo.svg" alt="Cliente 7">
+    </div>
+    <div class="client-marquee-track">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Cliente 1">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Cliente 2">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Cliente 3">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Cliente 4">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" alt="Cliente 5">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg" alt="Cliente 6">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Slack_Technologies_Logo.svg" alt="Cliente 7">
+    </div>
+</section>
 
 <footer class="py-20 text-center relative w-full overflow-hidden" id="contato" style="background-color: var(--text-color); color: var(--bg-color);">
     <div class="container mx-auto px-6 md:px-8 max-w-full">
