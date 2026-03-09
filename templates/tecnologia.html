@@ -777,26 +777,24 @@
 
 {% endfor %}
 
+{% if loja.logos_clientes %}
 <section class="client-marquee-wrapper">
     <div class="client-marquee-track">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Cliente 1">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Cliente 2">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Cliente 3">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Cliente 4">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" alt="Cliente 5">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg" alt="Cliente 6">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Slack_Technologies_Logo.svg" alt="Cliente 7">
+        {% for logo in loja.logos_clientes.splitlines() %}
+            {% if logo.strip() %}
+            <img src="{{ logo.strip() }}" alt="Cliente">
+            {% endif %}
+        {% endfor %}
     </div>
     <div class="client-marquee-track">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Cliente 1">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Cliente 2">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Cliente 3">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Cliente 4">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" alt="Cliente 5">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg" alt="Cliente 6">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Slack_Technologies_Logo.svg" alt="Cliente 7">
+        {% for logo in loja.logos_clientes.splitlines() %}
+            {% if logo.strip() %}
+            <img src="{{ logo.strip() }}" alt="Cliente">
+            {% endif %}
+        {% endfor %}
     </div>
 </section>
+{% endif %}
 
 <footer class="py-20 text-center relative w-full overflow-hidden" id="contato" style="background-color: var(--text-color); color: var(--bg-color);">
     <div class="container mx-auto px-6 md:px-8 max-w-full">
