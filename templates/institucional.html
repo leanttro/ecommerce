@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
@@ -199,13 +198,15 @@
         <div class="flex flex-row justify-between items-center w-full">
             <a href="/{{ loja.slug_url }}/" class="block">
                 {% if loja.logo %}
-                    <img src="{{ loja.logo }}" class="h-20 md:h-28 w-auto object-contain">
+                    <!-- Logo reduzido 20%: altura 4rem (mobile) e 5.6rem (desktop) -->
+                    <img src="{{ loja.logo }}" class="h-[4rem] md:h-[5.6rem] w-auto object-contain">
                 {% else %}
-                    <span class="text-2xl md:text-3xl font-bold tracking-tighter text-[var(--text-color)]">{{ loja.nome }}</span>
+                    <!-- Texto alternativo reduzido 20% -->
+                    <span class="text-[1.6rem] md:text-[2.4rem] font-bold tracking-tighter text-[var(--text-color)]">{{ loja.nome }}</span>
                 {% endif %}
             </a>
             
-            <nav class="hidden md:flex items-center gap-12 text-xs font-bold uppercase tracking-widest opacity-90">
+            <nav class="hidden md:flex items-center gap-12 text-[0.6rem] font-bold uppercase tracking-widest opacity-90">
                 {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
                 
                 {% if not loja.ocultar_produtos %}
@@ -229,13 +230,15 @@
                 <div class="md:hidden p-3 rounded-full border border-black/10 hover:bg-black/5 transition">
                     <i data-lucide="message-circle" class="w-5 h-5 text-[var(--text-color)]"></i>
                 </div>
-                <span class="hidden md:block bg-[var(--text-color)] text-[var(--bg-color)] px-10 py-5 rounded-full text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg">
+                <!-- Botão reduzido 20%: fonte 9.6px -->
+                <span class="hidden md:block bg-[var(--text-color)] text-[var(--bg-color)] px-10 py-5 rounded-full text-[9.6px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg">
                     Fale Conosco
                 </span>
             </a>
         </div>
 
-        <nav class="md:hidden flex flex-col items-center gap-4 mt-6 text-[11px] font-bold uppercase tracking-widest opacity-90 border-t border-black/5 pt-6 w-full">
+        <!-- Menu mobile com fonte reduzida 20% -->
+        <nav class="md:hidden flex flex-col items-center gap-4 mt-6 text-[8.8px] font-bold uppercase tracking-widest opacity-90 border-t border-black/5 pt-6 w-full">
             <div class="flex flex-wrap justify-center gap-6 w-full">
                 {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-80 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
                 
@@ -314,7 +317,8 @@
                         {% endif %}
 
                         <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="group flex items-center justify-center py-8 md:py-16 border-b border-[rgba(255,255,255,0.3)] transition-colors duration-300 relative w-full overflow-hidden px-4">
-                            <h3 class="flex flex-wrap items-center justify-center text-2xl sm:text-4xl md:text-7xl lg:text-8xl font-display text-center m-0 p-0" style="color: var(--text-color);">
+                            <!-- Nomes das categorias reduzidos: 40% mobile, 70% desktop -->
+                            <h3 class="flex flex-wrap items-center justify-center text-sm sm:text-xl md:text-2xl lg:text-3xl font-display text-center m-0 p-0" style="color: var(--text-color);">
                                 <span>{{ p1 }}</span>
                                 {% if cat_img.url != '' %}
                                 <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle">
