@@ -193,6 +193,12 @@
                             <textarea name="sobre_texto" rows="4" class="w-full bg-neutral-800 border border-neutral-700 rounded p-2 text-white">{{ loja.sobre_texto or '' }}</textarea>
                         </div>
 
+                        <div class="md:col-span-2 bg-neutral-800 p-4 rounded border border-neutral-700">
+                            <h4 class="font-bold text-yellow-400 text-sm mb-3">Logos dos Clientes</h4>
+                            <textarea name="logos_clientes" rows="4" class="w-full bg-neutral-900 border border-neutral-700 rounded p-2 text-white focus:border-yellow-500 outline-none" placeholder="Cole os links das imagens aqui (um por linha)...">{{ loja.logos_clientes or '' }}</textarea>
+                            <p class="text-[10px] text-gray-400 mt-1">Insira a URL direta da imagem (uma por linha). Elas aparecerão na seção Nossos Clientes com movimento.</p>
+                        </div>
+
                         <div class="bg-neutral-800 p-4 rounded border border-neutral-700">
                             <label class="block text-sm font-bold mb-2 text-gray-300">Foto Diretor 1</label>
                             {% if loja.banner1_url %}
