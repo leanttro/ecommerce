@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
@@ -120,16 +119,14 @@
             overflow-x: scroll !important;
             display: flex !important;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 25px !important;
         }
         .horizontal-container::-webkit-scrollbar {
-            height: 6px !important;
+            height: 10px !important;
             display: block !important;
             -webkit-appearance: none !important;
-            opacity: 1 !important;
         }
         .horizontal-container::-webkit-scrollbar-track {
-            background: rgba(128, 128, 128, 0.25) !important;
+            background: rgba(0,0,0,0.1) !important;
             border-radius: 10px !important;
             margin: 0 5vw;
         }
@@ -156,7 +153,7 @@
         }
         /* Ajuste para descer o conteúdo do Hero no Mobile */
         #hero .relative.z-10 {
-            margin-top: 160px !important;
+            margin-top: 60px !important;
         }
     }
 
@@ -1593,7 +1590,8 @@
 
         cards.forEach(card => cardObserver.observe(card));
 
-        let autoScrollSpeed = window.innerWidth < 768 ? 1.5 : 0.8;
+        // Velocidade ajustada: mobile mais rápido (2.5), desktop mantém 0.8
+        let autoScrollSpeed = window.innerWidth < 768 ? 2.5 : 0.8;
         let autoScrollReq;
 
         const startAutoScroll = () => {
