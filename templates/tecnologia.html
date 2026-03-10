@@ -66,22 +66,27 @@
         -webkit-overflow-scrolling: touch;
         align-items: stretch;
         min-height: 80vh;
+        scrollbar-width: auto;
+        scrollbar-color: var(--primary) rgba(0,0,0,0.05);
     }
 
     .horizontal-container::-webkit-scrollbar {
-        height: 12px;
+        height: 12px !important;
         display: block !important;
+        -webkit-appearance: none;
     }
 
     .horizontal-container::-webkit-scrollbar-track {
-        background: rgba(0,0,0,0.05);
-        border-radius: 10px;
+        background: rgba(0,0,0,0.05) !important;
+        border-radius: 10px !important;
         margin: 0 10vw;
     }
 
     .horizontal-container::-webkit-scrollbar-thumb {
-        background: var(--primary);
-        border-radius: 10px;
+        background-color: var(--primary) !important;
+        border-radius: 10px !important;
+        border: 2px solid transparent;
+        background-clip: padding-box;
     }
 
     @media (min-width: 769px) {
@@ -113,11 +118,9 @@
             padding-left: 5vw;
             padding-right: 5vw;
             overflow-x: scroll !important;
-            scrollbar-width: thin;
         }
         .horizontal-container::-webkit-scrollbar {
-            height: 8px;
-            display: block !important;
+            height: 8px !important;
         }
         .horizontal-container::-webkit-scrollbar-track {
             margin: 0 5vw;
@@ -561,11 +564,14 @@
         z-index: 9999;
         box-shadow: 0 0 10px currentColor;
     }
-    .logo-rotate-text {
-        animation: spinRotate 15s linear infinite;
-    }
-    @keyframes spinRotate {
+    
+    @keyframes spinAtom {
+        0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
+    }
+    @keyframes spinAtomReverse {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(-360deg); }
     }
 </style>
 </head>
@@ -884,27 +890,50 @@
             </div>
         </div>
 
-        <div class="w-full flex justify-center items-center py-16 mt-16 relative overflow-hidden border-t border-white/5">
-            <div class="absolute left-0 w-[calc(50%-150px)] h-px bg-gradient-to-r from-transparent to-white/10"></div>
-            <div class="absolute right-0 w-[calc(50%-150px)] h-px bg-gradient-to-l from-transparent to-white/10"></div>
-            
-            <div class="logo-rotate-container relative w-[200px] h-[200px] flex items-center justify-center">
+        <div class="w-full flex justify-center items-center py-24 mt-16 relative overflow-hidden border-t border-black/10" style="background-color: transparent;">
+            <div class="logo-rotate-container relative w-[300px] h-[300px] flex items-center justify-center mx-auto" style="perspective: 1000px;">
+                
                 {% if loja.logo %}
-                <img src="{{ loja.logo }}" class="w-16 h-16 object-contain filter grayscale opacity-70 absolute z-10 hover:scale-110 hover:grayscale-0 transition-all duration-500">
+                <img src="{{ loja.logo }}" class="w-20 h-20 md:w-24 md:h-24 object-contain filter brightness-0 absolute z-20 hover:scale-110 transition-transform duration-500">
                 {% else %}
-                <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center absolute z-10 hover:scale-110 transition-transform duration-500">
-                    <i data-lucide="zap" class="w-8 h-8 text-white/30"></i>
+                <div class="w-20 h-20 md:w-24 md:h-24 bg-black text-white rounded-full flex items-center justify-center absolute z-20 hover:scale-110 transition-transform duration-500">
+                    <i data-lucide="zap" class="w-10 h-10"></i>
                 </div>
                 {% endif %}
                 
-                <svg viewBox="0 0 200 200" class="logo-rotate-text absolute inset-0 w-full h-full opacity-30 hover:opacity-80 transition-opacity duration-500">
-                    <path id="txtPath" fill="none" d="M 100, 100 m -65, 0 a 65,65 0 1,1 130,0 a 65,65 0 1,1 -130,0" />
-                    <text font-family="'Archivo Black', sans-serif" font-size="15" fill="var(--text-color)" letter-spacing="3">
-                        <textPath href="#txtPath" startOffset="0%">
-                            TECNOLOGIA · INOVAÇÃO · TECNOLOGIA · INOVAÇÃO · 
-                        </textPath>
-                    </text>
-                </svg>
+                <div class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="transform: rotateX(65deg) rotateY(-20deg); transform-style: preserve-3d;">
+                    <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtom 12s linear infinite;">
+                        <path id="txtPath1" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
+                        <text font-family="'Archivo Black', sans-serif" font-size="12" fill="#000000" letter-spacing="4">
+                            <textPath href="#txtPath1" startOffset="0%">
+                                TECNOLOGIA · TECNOLOGIA · TECNOLOGIA · 
+                            </textPath>
+                        </text>
+                    </svg>
+                </div>
+                
+                <div class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="transform: rotateX(65deg) rotateY(40deg); transform-style: preserve-3d;">
+                    <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtomReverse 16s linear infinite;">
+                        <path id="txtPath2" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
+                        <text font-family="'Archivo Black', sans-serif" font-size="12" fill="#000000" letter-spacing="4">
+                            <textPath href="#txtPath2" startOffset="0%">
+                                TECNOLOGIA · TECNOLOGIA · TECNOLOGIA · 
+                            </textPath>
+                        </text>
+                    </svg>
+                </div>
+                
+                <div class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="transform: rotateX(75deg) rotateY(-60deg); transform-style: preserve-3d;">
+                    <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtom 20s linear infinite;">
+                        <path id="txtPath3" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
+                        <text font-family="'Archivo Black', sans-serif" font-size="12" fill="#000000" letter-spacing="4" opacity="0.6">
+                            <textPath href="#txtPath3" startOffset="0%">
+                                TECNOLOGIA · INOVAÇÃO · TECNOLOGIA · 
+                            </textPath>
+                        </text>
+                    </svg>
+                </div>
+                
             </div>
         </div>
 
@@ -1317,11 +1346,10 @@
 
         cards.forEach(card => cardObserver.observe(card));
 
-        let autoScrollSpeed = 0.8;
+        let autoScrollSpeed = window.innerWidth < 768 ? 1.5 : 0.8;
         let autoScrollReq;
 
         const startAutoScroll = () => {
-            // No mobile, o auto-scroll continua se não houver toque ativo
             if (!isInteracting) {
                 container.scrollLeft += autoScrollSpeed;
                 
@@ -1334,18 +1362,21 @@
         
         autoScrollReq = requestAnimationFrame(startAutoScroll);
 
-        container.addEventListener('mouseenter', () => isInteracting = true);
-        container.addEventListener('mouseleave', () => isInteracting = false);
+        container.addEventListener('mouseenter', () => { if(window.matchMedia('(pointer: fine)').matches) isInteracting = true; });
+        container.addEventListener('mouseleave', () => { if(window.matchMedia('(pointer: fine)').matches) isInteracting = false; });
         
-        // Melhoria no mobile para detectar interação
-        container.addEventListener('touchstart', () => {
+        container.addEventListener('touchstart', () => { isInteracting = true; }, {passive: true});
+        container.addEventListener('touchend', () => { setTimeout(() => { isInteracting = false; }, 1500); }, {passive: true});
+        container.addEventListener('touchcancel', () => { setTimeout(() => { isInteracting = false; }, 1500); }, {passive: true});
+
+        let interactionTimeout;
+        container.addEventListener('scroll', () => {
             isInteracting = true;
-        }, {passive: true});
-        
-        container.addEventListener('touchend', () => {
-            // Aguarda 2 segundos após soltar para voltar o auto-scroll
-            setTimeout(() => { isInteracting = false; }, 2000);
-        }, {passive: true});
+            clearTimeout(interactionTimeout);
+            interactionTimeout = setTimeout(() => {
+                isInteracting = false;
+            }, 1000);
+        }, { passive: true });
 
         container.addEventListener('wheel', (e) => {
             if(document.body.style.overflow === 'hidden') return;
