@@ -1038,15 +1038,23 @@ def captura_lead(loja_slug):
     nome = request.form.get('nome')
     whatsapp = request.form.get('whatsapp')
     email = request.form.get('email')
+    # O campo profissao deve vir do front-end agora para alimentar a IA
+    profissao = request.form.get('profissao', 'Não informado')
 
     if not all([nome, whatsapp, email]):
-        return jsonify({"erro": "Preencha todos os campos"}), 400
+        return jsonify({"erro": "Preencha todos os campos obrigatórios"}), 400
+
+    # Inicializa o JSON com a profissão. O Directus Flow pode atualizar isso depois.
+    endereco_json = {
+        "profissao": profissao
+    }
 
     payload = {
         "loja_id": g.loja_id,
         "nome": nome,
         "whatsapp": whatsapp,
-        "email": email
+        "email": email,
+        "endereco_json": endereco_json
     }
 
     try:
