@@ -1590,8 +1590,9 @@
 
         cards.forEach(card => cardObserver.observe(card));
 
-        // Velocidade ajustada: mobile mais rápido (2.5), desktop mantém 0.8
-        let autoScrollSpeed = window.innerWidth < 768 ? 2.5 : 0.8;
+        // Velocidade ajustada: 2x mais rápido que o anterior
+        // Anterior: mobile 2.5, desktop 0.8 → agora mobile 5.0, desktop 1.6
+        let autoScrollSpeed = window.innerWidth < 768 ? 5.0 : 1.6;
         let autoScrollReq;
 
         const startAutoScroll = () => {
