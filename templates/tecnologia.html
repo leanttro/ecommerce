@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
@@ -65,7 +66,7 @@
         -webkit-overflow-scrolling: touch;
         align-items: stretch;
         min-height: 80vh;
-        scrollbar-width: thin;
+        scrollbar-width: auto;
         scrollbar-color: var(--primary) rgba(0,0,0,0.05);
     }
 
@@ -84,6 +85,8 @@
     .horizontal-container::-webkit-scrollbar-thumb {
         background-color: var(--primary) !important;
         border-radius: 10px !important;
+        border: 2px solid transparent;
+        background-clip: padding-box;
     }
 
     @media (min-width: 769px) {
@@ -116,12 +119,11 @@
             padding-right: 5vw;
             overflow-x: scroll !important;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 20px;
         }
         .horizontal-container::-webkit-scrollbar {
-            height: 10px !important;
+            height: 8px !important;
             display: block !important;
-            -webkit-appearance: none !important;
+            -webkit-appearance: none;
         }
         .horizontal-container::-webkit-scrollbar-track {
             background: rgba(0,0,0,0.05) !important;
@@ -131,6 +133,8 @@
         .horizontal-container::-webkit-scrollbar-thumb {
             background-color: var(--primary) !important;
             border-radius: 10px !important;
+            border: 2px solid transparent;
+            background-clip: padding-box;
         }
         .intro-slide {
             width: 85vw !important;
@@ -287,7 +291,7 @@
         display: inline-flex;
     }
 
-    ::-webkit-scrollbar { width: 8px; height: 10px; }
+    ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: var(--bg-color); }
     ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
@@ -897,16 +901,16 @@
 {% for secao in layout %}
 
     {% if secao == 'banner' and not loja.ocultar_banner %}
-    <section class="h-[70vh] md:h-screen w-full relative overflow-hidden bg-[#050505] pt-[10vh] md:pt-0" id="hero" style="perspective: 1200px;">
+    <section class="h-[70vh] md:h-screen w-full relative overflow-hidden bg-[#050505]" id="hero" style="perspective: 1200px;">
         <canvas id="data-canvas" class="absolute inset-0 w-full h-full z-20"></canvas>
         <div id="hero-banner-wrapper" class="absolute inset-0 w-full h-full z-10 opacity-0" style="transform: translateZ(-300px) scale(0.8);">
             {% if loja.banner1 %}
             <a href="{{ loja.linkbannerprincipal1 or '#' }}" class="block w-full h-full">
-                <img src="{{ loja.banner1 }}" class="w-full h-full object-contain md:object-cover object-center hero-img">
+                <img src="{{ loja.banner1 }}" class="w-full h-full object-cover object-center hero-img">
             </a>
             {% else %}
             <div class="w-full h-full flex items-center justify-center bg-gray-100 hero-img">
-                <h1 class="text-4xl opacity-60">Seu Banner Here</h1>
+                <h1 class="text-4xl opacity-20">Seu Banner Here</h1>
             </div>
             {% endif %}
             <div class="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505] pointer-events-none opacity-50"></div>
@@ -1013,7 +1017,7 @@
     {% endif %}
 
     {% if secao == 'produtos' and not loja.ocultar_produtos %}
-    <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color); position: relative;">
+    <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color); overflow: hidden;">
         
         <div class="container mx-auto px-6 md:px-10 mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[3rem] sm:text-5xl md:text-7xl font-display uppercase tracking-tighter leading-none m-0">
@@ -1155,7 +1159,7 @@
                 <div class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="transform: rotateX(65deg) rotateY(-20deg); transform-style: preserve-3d;">
                     <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtom 12s linear infinite;">
                         <path id="txtPath1" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
-                        <text font-family="'Archivo Black', sans-serif" font-size="12" fill="currentColor" opacity="0.3" letter-spacing="4">
+                        <text font-family="'Archivo Black', sans-serif" font-size="12" fill="#000000" letter-spacing="4">
                             <textPath href="#txtPath1" startOffset="0%">
                                 TECNOLOGIA · TECNOLOGIA · TECNOLOGIA · 
                             </textPath>
@@ -1166,7 +1170,7 @@
                 <div class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="transform: rotateX(65deg) rotateY(40deg); transform-style: preserve-3d;">
                     <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtomReverse 16s linear infinite;">
                         <path id="txtPath2" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
-                        <text font-family="'Archivo Black', sans-serif" font-size="12" fill="currentColor" opacity="0.3" letter-spacing="4">
+                        <text font-family="'Archivo Black', sans-serif" font-size="12" fill="#000000" letter-spacing="4">
                             <textPath href="#txtPath2" startOffset="0%">
                                 TECNOLOGIA · TECNOLOGIA · TECNOLOGIA · 
                             </textPath>
@@ -1177,7 +1181,7 @@
                 <div class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="transform: rotateX(75deg) rotateY(-60deg); transform-style: preserve-3d;">
                     <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtom 20s linear infinite;">
                         <path id="txtPath3" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
-                        <text font-family="'Archivo Black', sans-serif" font-size="12" fill="currentColor" opacity="0.45" letter-spacing="4">
+                        <text font-family="'Archivo Black', sans-serif" font-size="12" fill="#000000" letter-spacing="4" opacity="0.6">
                             <textPath href="#txtPath3" startOffset="0%">
                                 TECNOLOGIA · INOVAÇÃO · TECNOLOGIA · 
                             </textPath>
