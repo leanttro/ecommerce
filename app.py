@@ -117,7 +117,7 @@ def gerar_slug(texto):
     if not texto: return ""
     import unicodedata
     texto = unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('utf-8')
-    return texto.lower().strip().replace(' ', '-').replace('/', '-').replace('.', '')
+    return texto.lower().strip().replace(' ', '-',).replace('/', '-').replace('.', '')
 
 def send_reset_email(user_email, reset_url, nome_loja):
     if not SMTP_USER or not SMTP_PASS:
@@ -266,7 +266,7 @@ def cadastro():
         slug_input = request.form.get('slug')
         
         # Garante slug limpo
-        slug = slug_input.lower().strip().replace(' ', '-').replace('/', '-').replace('.', '') if slug_input else ""
+        slug = slug_input.lower().strip().replace(' ', '-',).replace('/', '-').replace('.', '') if slug_input else ""
         
         email = request.form.get('email').strip()
         whatsapp = request.form.get('whatsapp', '').replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
