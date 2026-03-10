@@ -534,6 +534,39 @@
         0% { transform: translateX(0); }
         100% { transform: translateX(-100%); }
     }
+
+    /* ESTILOS EXTRAS PARA O FORMULÁRIO 3D EXPLOSIVO E FOOTER LOGO */
+    .btn-3d {
+        transform-style: preserve-3d;
+        transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-3d:active {
+        transform: scale(0.95) translateZ(-10px) !important;
+    }
+    .btn-letter {
+        display: inline-block;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s;
+    }
+    .btn-3d:hover .btn-letter {
+        animation: waveBounce 0.6s ease-in-out both;
+    }
+    @keyframes waveBounce {
+        0%, 100% { transform: translateY(0) scale(1); color: inherit; }
+        50% { transform: translateY(-6px) scale(1.2); color: #fff; text-shadow: 0 0 12px var(--primary); }
+    }
+    .form-particle {
+        position: absolute;
+        pointer-events: none;
+        border-radius: 50%;
+        z-index: 9999;
+        box-shadow: 0 0 10px currentColor;
+    }
+    .logo-rotate-text {
+        animation: spinRotate 15s linear infinite;
+    }
+    @keyframes spinRotate {
+        100% { transform: rotate(360deg); }
+    }
 </style>
 </head>
 <body style="overflow: hidden;">
@@ -830,22 +863,48 @@
             {% endif %}
         </div>
 
-        <div class="max-w-2xl mx-auto bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 md:p-8 mt-12 mb-16 text-left relative overflow-hidden z-10 shadow-2xl" id="lead-form-container">
-            <div class="absolute inset-0 bg-gradient-to-br from-[var(--primary)] to-transparent opacity-10 pointer-events-none"></div>
-            <div class="relative z-10">
-                <h3 class="text-2xl md:text-3xl font-display text-white mb-2 uppercase tracking-tight">Receba 5 Dicas de Ouro</h3>
-                <p class="text-sm text-gray-400 mb-6 uppercase tracking-widest font-bold">Descubra onde sua empresa pode faturar mais com tecnologia. Preencha e receba na hora!</p>
-                <form id="leadForm" class="flex flex-col gap-4">
-                    <input type="text" name="nome" placeholder="Seu Nome" required class="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--primary)] transition">
+        <div class="max-w-2xl mx-auto bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 md:p-8 mt-12 mb-16 text-left relative z-10 shadow-2xl" id="lead-form-container" style="transform-style: preserve-3d; perspective: 1000px; overflow: visible;">
+            <div class="absolute inset-0 bg-gradient-to-br from-[var(--primary)] to-transparent opacity-10 pointer-events-none rounded-2xl"></div>
+            <div class="relative z-10" style="transform: translateZ(40px); transform-style: preserve-3d;">
+                <h3 class="text-2xl md:text-3xl font-display text-white mb-2 uppercase tracking-tight" style="transform: translateZ(20px);">Receba 5 Dicas de Ouro</h3>
+                <p class="text-sm text-gray-400 mb-6 uppercase tracking-widest font-bold" style="transform: translateZ(10px);">Descubra onde sua empresa pode faturar mais com tecnologia. Preencha e receba na hora!</p>
+                <form id="leadForm" class="flex flex-col gap-4" style="transform: translateZ(30px);">
+                    <input type="text" name="nome" placeholder="Seu Nome" required class="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--primary)] transition shadow-[0_10px_20px_rgba(0,0,0,0.3)]">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="text" name="whatsapp" placeholder="WhatsApp (DDD + Número)" required class="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--primary)] transition">
-                        <input type="email" name="email" placeholder="Seu melhor E-mail" required class="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--primary)] transition">
+                        <input type="text" name="whatsapp" placeholder="WhatsApp (DDD + Número)" required class="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--primary)] transition shadow-[0_10px_20px_rgba(0,0,0,0.3)]">
+                        <input type="email" name="email" placeholder="Seu melhor E-mail" required class="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--primary)] transition shadow-[0_10px_20px_rgba(0,0,0,0.3)]">
                     </div>
-                    <button type="submit" class="w-full mt-2 bg-[var(--primary)] text-white font-bold uppercase tracking-widest py-4 rounded-lg hover:opacity-90 transition transform hover:scale-[1.02]">Quero Receber as Dicas</button>
+                    <button type="submit" id="submitBtn3D" class="w-full mt-4 bg-[var(--primary)] text-white font-bold uppercase tracking-widest py-5 rounded-lg hover:opacity-90 transition btn-3d relative flex justify-center items-center shadow-[0_15px_30px_rgba(0,0,0,0.5)] border border-white/20 cursor-pointer">
+                        <span class="btn-text-wrapper relative z-10 flex text-[13px] md:text-sm">QUERO RECEBER AS DICAS</span>
+                    </button>
                 </form>
-                <div id="leadSuccessMsg" class="hidden mt-6 bg-green-500/10 border border-green-500/20 text-green-400 p-4 rounded-lg text-center font-bold tracking-widest uppercase text-sm flex items-center justify-center gap-2">
+                <div id="leadSuccessMsg" class="hidden mt-6 bg-green-500/10 border border-green-500/20 text-green-400 p-4 rounded-lg text-center font-bold tracking-widest uppercase text-sm items-center justify-center gap-2" style="transform: translateZ(30px);">
                     <i data-lucide="check-circle" class="w-5 h-5"></i> Cadastrado com sucesso! Em breve você receberá suas dicas.
                 </div>
+            </div>
+        </div>
+
+        <div class="w-full flex justify-center items-center py-16 mt-16 relative overflow-hidden border-t border-white/5">
+            <div class="absolute left-0 w-[calc(50%-150px)] h-px bg-gradient-to-r from-transparent to-white/10"></div>
+            <div class="absolute right-0 w-[calc(50%-150px)] h-px bg-gradient-to-l from-transparent to-white/10"></div>
+            
+            <div class="logo-rotate-container relative w-[200px] h-[200px] flex items-center justify-center">
+                {% if loja.logo %}
+                <img src="{{ loja.logo }}" class="w-16 h-16 object-contain filter grayscale opacity-70 absolute z-10 hover:scale-110 hover:grayscale-0 transition-all duration-500">
+                {% else %}
+                <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center absolute z-10 hover:scale-110 transition-transform duration-500">
+                    <i data-lucide="zap" class="w-8 h-8 text-white/30"></i>
+                </div>
+                {% endif %}
+                
+                <svg viewBox="0 0 200 200" class="logo-rotate-text absolute inset-0 w-full h-full opacity-30 hover:opacity-80 transition-opacity duration-500">
+                    <path id="txtPath" fill="none" d="M 100, 100 m -65, 0 a 65,65 0 1,1 130,0 a 65,65 0 1,1 -130,0" />
+                    <text font-family="'Archivo Black', sans-serif" font-size="15" fill="var(--text-color)" letter-spacing="3">
+                        <textPath href="#txtPath" startOffset="0%">
+                            TECNOLOGIA · INOVAÇÃO · TECNOLOGIA · INOVAÇÃO · 
+                        </textPath>
+                    </text>
+                </svg>
             </div>
         </div>
 
@@ -1100,14 +1159,112 @@
             }, {passive: true});
         }
         
+        // --- 3D FORM TILT & EXPLOSION ---
+        const formContainer3D = document.getElementById('lead-form-container');
+        if(formContainer3D) {
+            formContainer3D.addEventListener('mousemove', (e) => {
+                const rect = formContainer3D.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -12; 
+                const rotateY = ((x - centerX) / centerX) * 12;
+                
+                gsap.to(formContainer3D, {
+                    rotationX: rotateX,
+                    rotationY: rotateY,
+                    transformPerspective: 1000,
+                    duration: 0.5,
+                    ease: "power2.out",
+                    boxShadow: `${-rotateY * 2}px ${rotateX * 2}px 40px rgba(124, 58, 237, 0.15)`
+                });
+            });
+            
+            formContainer3D.addEventListener('mouseleave', () => {
+                gsap.to(formContainer3D, {
+                    rotationX: 0,
+                    rotationY: 0,
+                    duration: 0.8,
+                    ease: "elastic.out(1, 0.5)",
+                    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+                });
+            });
+        }
+
+        const btn3D = document.getElementById('submitBtn3D');
+        if(btn3D) {
+            const textWrapper = btn3D.querySelector('.btn-text-wrapper');
+            const text = textWrapper.innerText.trim();
+            textWrapper.innerHTML = '';
+            
+            text.split('').forEach((char, i) => {
+                const span = document.createElement('span');
+                span.innerText = char === ' ' ? '\u00A0' : char;
+                span.className = 'btn-letter';
+                span.style.animationDelay = `${i * 0.03}s`;
+                textWrapper.appendChild(span);
+            });
+
+            btn3D.addEventListener('mouseenter', (e) => {
+                createExplosion(e, btn3D, 20, false);
+            });
+            btn3D.addEventListener('click', (e) => {
+                createExplosion(e, btn3D, 50, true);
+            });
+        }
+
+        function createExplosion(e, parent, count, isBig) {
+            const rect = parent.getBoundingClientRect();
+            for(let i=0; i<count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'form-particle';
+                
+                const colors = ['var(--primary)', '#00f2fe', '#ffffff', '#ff00ff'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.backgroundColor = color;
+                particle.style.color = color; 
+                
+                const size = Math.random() * (isBig ? 6 : 3) + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                const startX = rect.left + (e.clientX ? e.clientX - rect.left : rect.width/2) + window.scrollX;
+                const startY = rect.top + (e.clientY ? e.clientY - rect.top : rect.height/2) + window.scrollY;
+                
+                particle.style.left = startX + 'px';
+                particle.style.top = startY + 'px';
+                
+                document.body.appendChild(particle);
+                
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = (Math.random() * (isBig ? 250 : 100)) + 20;
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity;
+                
+                gsap.to(particle, {
+                    x: tx,
+                    y: ty,
+                    opacity: 0,
+                    scale: 0,
+                    duration: Math.random() * 0.6 + 0.4,
+                    ease: "power2.out",
+                    onComplete: () => particle.remove()
+                });
+            }
+        }
+
         // --- ENVIO DO FORMULÁRIO DE LEADS (AJAX) ---
         const leadForm = document.getElementById('leadForm');
         if(leadForm) {
             leadForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const btn = this.querySelector('button');
-                const originalText = btn.innerText;
-                btn.innerText = 'Enviando...';
+                const textWrapper = btn.querySelector('.btn-text-wrapper');
+                
+                // Remove as spans criadas temporariamente para o efeito e coloca texto normal
+                textWrapper.innerHTML = 'ENVIANDO...';
                 btn.disabled = true;
 
                 const formData = new FormData(this);
@@ -1119,15 +1276,17 @@
                     const result = await response.json();
                     if(result.sucesso) {
                         this.style.display = 'none';
-                        document.getElementById('leadSuccessMsg').classList.remove('hidden');
+                        const successMsg = document.getElementById('leadSuccessMsg');
+                        successMsg.classList.remove('hidden');
+                        successMsg.classList.add('flex');
                     } else {
                         alert(result.erro || 'Erro ao enviar. Tente novamente.');
-                        btn.innerText = originalText;
+                        textWrapper.innerHTML = 'QUERO RECEBER AS DICAS';
                         btn.disabled = false;
                     }
                 } catch(err) {
                     alert('Erro de conexão. Verifique sua internet.');
-                    btn.innerText = originalText;
+                    textWrapper.innerHTML = 'QUERO RECEBER AS DICAS';
                     btn.disabled = false;
                 }
             });
