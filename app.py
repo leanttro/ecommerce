@@ -466,6 +466,14 @@ def index(loja_slug):
                 })
     except: pass
 
+    # Recupera o objeto da categoria selecionada (para passar o nome e dados dela pro HTML)
+    cat_obj = None
+    if cat_filter:
+        for c in categorias:
+            if str(c.get('id')) == str(cat_filter):
+                cat_obj = c
+                break
+
     loja_visual = {
         **g.loja,
         "logo": get_img_url(g.loja.get('logo')),
@@ -484,6 +492,10 @@ def index(loja_slug):
         template_name = g.loja.get('template_ativo') or 'index'
         if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional', 'tecnologia']:
             template_name = 'index'
+            
+        # Se for o tema de tecnologia e clicar em uma categoria específica, vai para a página exclusiva de categoria
+        if template_name == 'tecnologia' and cat_filter:
+            template_name = 'categoria_tecnologia'
 
     return render_template(f'{template_name}.html', 
                          loja=loja_visual, 
@@ -492,6 +504,7 @@ def index(loja_slug):
                          produtos=produtos, 
                          novidades=novidades, 
                          posts=posts,
+                         cat_selecionada_obj=cat_obj,
                          directus_url=DIRECTUS_URL)
 
 
