@@ -12,1789 +12,1777 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@1,800&display=swap" rel="stylesheet">
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&display=swap');
-    
-    :root { 
-        --primary: {{ loja.cor_primaria or '#7C3AED' }}; 
-        --bg-color: {{ loja.cor_fundo or '#F8F9FA' }};
-        --text-color: {{ loja.cor_titulo or '#111111' }};
-    }
-    
-    html, body { 
-        font-family: 'Inter', sans-serif; 
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        overflow-x: hidden !important;
-        width: 100%;
-        max-width: 100vw;
-        -webkit-text-size-adjust: 100%;
-        touch-action: manipulation;
-    }
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&display=swap');
 
-    h1, h2, h3, .font-display { 
-        font-family: 'Archivo Black', sans-serif; 
-        text-transform: uppercase;
-        word-break: normal !important;
-        overflow-wrap: normal !important;
-        hyphens: none !important;
-        white-space: normal !important;
-    }
+:root { 
+    --primary: {{ loja.cor_primaria or &#39;#7C3AED&#39; }}; 
+    --bg-color: {{ loja.cor_fundo or &#39;#F8F9FA&#39; }};
+    --text-color: {{ loja.cor_titulo or &#39;#111111&#39; }};
+}
 
-    header {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-    }
+html, body { 
+    font-family: &#39;Inter&#39;, sans-serif; 
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    overflow-x: hidden !important;
+    width: 100%;
+    max-width: 100vw;
+    -webkit-text-size-adjust: 100%;
+    touch-action: manipulation;
+}
 
+h1, h2, h3, .font-display { 
+    font-family: &#39;Archivo Black&#39;, sans-serif; 
+    text-transform: uppercase;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    hyphens: none !important;
+    white-space: normal !important;
+}
+
+header {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.horizontal-section {
+    width: 100%;
+    max-width: 100vw;
+    padding-top: 100px;
+    padding-bottom: 80px;
+}
+
+.horizontal-container {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    padding-left: 10vw;
+    padding-right: 10vw;
+    padding-bottom: 24px;
+    scroll-behavior: auto;
+    -webkit-overflow-scrolling: touch;
+    align-items: stretch;
+    min-height: 80vh;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) rgba(0,0,0,0.05);
+}
+
+.horizontal-container::-webkit-scrollbar {
+    height: 12px !important;
+    display: block !important;
+    -webkit-appearance: none;
+}
+
+.horizontal-container::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.05) !important;
+    border-radius: 10px !important;
+    margin: 0 10vw;
+}
+
+.horizontal-container::-webkit-scrollbar-thumb {
+    background-color: var(--primary) !important;
+    border-radius: 10px !important;
+}
+
+@media (min-width: 769px) {
+    .case-card {
+        width: 26vw !important; 
+        max-width: 38vh !important; 
+        height: auto !important;
+    }
+    .case-title-new {
+        font-size: clamp(1.4rem, 3.2vw, 2.5rem) !important;
+    }
+    .case-subtitle-new {
+        font-size: clamp(0.7rem, 1.6vw, 1rem) !important;
+    }
+    .intro-slide {
+        min-width: 65vw !important;
+        width: 65vw !important;
+        padding-right: 12vw !important;
+    }
+}
+
+@media (max-width: 768px) {
     .horizontal-section {
-        width: 100%;
-        max-width: 100vw;
-        padding-top: 100px;
-        padding-bottom: 80px;
+        padding-top: 120px;
+        padding-bottom: 50px;
     }
-
     .horizontal-container {
-        display: flex;
-        overflow-x: auto;
-        overflow-y: hidden;
-        width: 100%;
-        padding-left: 10vw;
-        padding-right: 10vw;
-        padding-bottom: 24px;
-        scroll-behavior: auto;
+        min-height: auto;
+        padding-left: 5vw;
+        padding-right: 5vw;
+        overflow-x: scroll !important;
         -webkit-overflow-scrolling: touch;
-        align-items: stretch;
-        min-height: 80vh;
-        scrollbar-width: auto;
-        scrollbar-color: var(--primary) rgba(0,0,0,0.05);
+        padding-bottom: 20px;
     }
-
     .horizontal-container::-webkit-scrollbar {
-        height: 12px !important;
+        height: 10px !important;
         display: block !important;
-        -webkit-appearance: none;
+        -webkit-appearance: none !important;
     }
-
     .horizontal-container::-webkit-scrollbar-track {
         background: rgba(0,0,0,0.05) !important;
         border-radius: 10px !important;
-        margin: 0 10vw;
+        margin: 0 5vw;
     }
-
     .horizontal-container::-webkit-scrollbar-thumb {
         background-color: var(--primary) !important;
         border-radius: 10px !important;
-        border: 2px solid transparent;
-        background-clip: padding-box;
     }
-
-    @media (min-width: 769px) {
-        .case-card {
-            width: 26vw !important; 
-            max-width: 38vh !important; 
-            height: auto !important;
-        }
-        .case-title-new {
-            font-size: clamp(1.4rem, 3.2vw, 2.5rem) !important;
-        }
-        .case-subtitle-new {
-            font-size: clamp(0.7rem, 1.6vw, 1rem) !important;
-        }
-        .intro-slide {
-            min-width: 65vw !important;
-            width: 65vw !important;
-            padding-right: 12vw !important;
-        }
+    .intro-slide {
+        width: 85vw !important;
+        padding-right: 0 !important;
+        align-items: center !important;
+        text-align: center !important;
+        justify-content: center !important;
     }
-
-    @media (max-width: 768px) {
-        .horizontal-section {
-            padding-top: 120px;
-            padding-bottom: 50px;
-        }
-        .horizontal-container {
-            min-height: auto;
-            padding-left: 5vw;
-            padding-right: 5vw;
-            overflow-x: scroll !important;
-            -webkit-overflow-scrolling: touch;
-        }
-        .horizontal-container::-webkit-scrollbar {
-            height: 8px !important;
-            display: block !important;
-            -webkit-appearance: none;
-        }
-        .horizontal-container::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.05) !important;
-            border-radius: 10px !important;
-            margin: 0 5vw;
-        }
-        .horizontal-container::-webkit-scrollbar-thumb {
-            background-color: var(--primary) !important;
-            border-radius: 10px !important;
-            border: 2px solid transparent;
-            background-clip: padding-box;
-        }
-        .intro-slide {
-            width: 85vw !important;
-            padding-right: 0 !important;
-            align-items: center !important;
-            text-align: center !important;
-            justify-content: center !important;
-        }
-        #titulo-secao-produtos {
-            text-align: center;
-            width: 100%;
-            font-size: 2.2rem;
-            line-height: 1.2;
-        }
-        #loader-overlay .scene {
-            transform: translateY(-100px) !important;
-        }
-    }
-
-    .case-card {
-        flex-shrink: 0;
-        width: 85vw;
-        max-width: 420px;
-        height: auto !important;
-        align-self: stretch !important;
-        margin-right: 4vw;
-        position: relative;
-        border-radius: 24px;
-        overflow: hidden;
-        transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s;
-        display: flex;
-        flex-direction: column;
-        padding: 16px;
-        background-color: var(--card-bg, var(--primary));
-        cursor: pointer;
-        transform: scale(0.85) translateY(30px) rotate(-3deg); 
-        opacity: 0.3;
-        border: 2px solid rgba(0,0,0,0.05);
-    }
-
-    @media (max-width: 768px) {
-        .case-card {
-            width: 85vw !important;
-            margin-right: 6vw;
-        }
-        .case-image-wrapper {
-            flex: none;
-            aspect-ratio: 1 / 1;
-        }
-    }
-
-    .case-card.in-view {
-        transform: scale(1) translateY(0) rotate(0deg);
-        opacity: 1;
-    }
-
-    .case-card:hover {
-        transform: scale(1.02) translateY(-8px) !important;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        z-index: 10;
-    }
-
-    .case-card:nth-child(1) { --card-bg: var(--primary); }
-    .case-card:nth-child(2) { --card-bg: color-mix(in srgb, var(--primary) 85%, #ffffff); }
-    .case-card:nth-child(3) { --card-bg: color-mix(in srgb, var(--primary) 70%, #ffffff); }
-    .case-card:nth-child(4) { --card-bg: color-mix(in srgb, var(--primary) 55%, #ffffff); }
-    .case-card:nth-child(5) { --card-bg: color-mix(in srgb, var(--primary) 40%, #ffffff); }
-    .case-card:nth-child(6) { --card-bg: color-mix(in srgb, var(--primary) 25%, #ffffff); }
-    .case-card:nth-child(7) { --card-bg: color-mix(in srgb, var(--primary) 15%, #ffffff); }
-    .case-card:nth-child(n+8) { --card-bg: color-mix(in srgb, var(--primary) 5%, #ffffff); }
-
-    .case-image-wrapper {
+    #titulo-secao-produtos {
+        text-align: center;
         width: 100%;
+        font-size: 2.2rem;
+        line-height: 1.2;
+    }
+    #loader-overlay .scene {
+        transform: translateY(-100px) !important;
+    }
+}
+
+.case-card {
+    flex-shrink: 0;
+    width: 85vw;
+    max-width: 420px;
+    height: auto !important;
+    align-self: stretch !important;
+    margin-right: 4vw;
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    background-color: var(--card-bg, var(--primary));
+    cursor: pointer;
+    transform: scale(0.85) translateY(30px) rotate(-3deg); 
+    opacity: 0.3;
+    border: 2px solid rgba(0,0,0,0.05);
+}
+
+@media (max-width: 768px) {
+    .case-card {
+        width: 85vw !important;
+        margin-right: 6vw;
+    }
+    .case-image-wrapper {
         flex: none;
         aspect-ratio: 1 / 1;
-        border-radius: 12px;
-        overflow: hidden;
-        position: relative;
-        border: 2px solid #050505;
-        background: #000;
     }
+}
 
-    .case-image-wrapper img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        transition: transform 1s ease, filter 0.5s ease, opacity 0.4s ease;
-        filter: brightness(0.95);
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
+.case-card.in-view {
+    transform: scale(1) translateY(0) rotate(0deg);
+    opacity: 1;
+}
 
-    .case-image-wrapper .img-hover {
-        opacity: 0;
-        z-index: 2;
-    }
+.case-card:hover {
+    transform: scale(1.02) translateY(-8px) !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    z-index: 10;
+}
 
-    .case-image-wrapper .img-main {
-        opacity: 1;
-        z-index: 1;
-    }
+.case-card:nth-child(1) { --card-bg: var(--primary); }
+.case-card:nth-child(2) { --card-bg: color-mix(in srgb, var(--primary) 85%, #ffffff); }
+.case-card:nth-child(3) { --card-bg: color-mix(in srgb, var(--primary) 70%, #ffffff); }
+.case-card:nth-child(4) { --card-bg: color-mix(in srgb, var(--primary) 55%, #ffffff); }
+.case-card:nth-child(5) { --card-bg: color-mix(in srgb, var(--primary) 40%, #ffffff); }
+.case-card:nth-child(6) { --card-bg: color-mix(in srgb, var(--primary) 25%, #ffffff); }
+.case-card:nth-child(7) { --card-bg: color-mix(in srgb, var(--primary) 15%, #ffffff); }
+.case-card:nth-child(n+8) { --card-bg: color-mix(in srgb, var(--primary) 5%, #ffffff); }
 
-    .case-card:hover .case-image-wrapper img {
-        transform: scale(1.08);
-        filter: brightness(1.1);
-    }
+.case-image-wrapper {
+    width: 100%;
+    flex: none;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    border: 2px solid #050505;
+    background: #000;
+}
 
-    .case-card:hover .case-image-wrapper .img-hover {
-        opacity: 1;
-    }
+.case-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 1s ease, filter 0.5s ease, opacity 0.4s ease;
+    filter: brightness(0.95);
+    position: absolute;
+    top: 0;
+    left: 0;
+}
 
-    .case-card:hover .case-image-wrapper .img-hover + .img-main {
-        opacity: 0;
-    }
+.case-image-wrapper .img-hover {
+    opacity: 0;
+    z-index: 2;
+}
 
-    .case-info-new {
-        flex-grow: 1;
-        padding-top: 18px;
-        padding-bottom: 8px;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-    }
+.case-image-wrapper .img-main {
+    opacity: 1;
+    z-index: 1;
+}
 
-    .case-title-new {
-        font-family: 'Archivo Black', sans-serif;
-        font-size: clamp(1.8rem, 4vw, 3.2rem);
-        line-height: 0.85;
-        text-transform: uppercase;
-        color: #050505; 
-        margin-bottom: 0;
-        word-break: break-word;
-        letter-spacing: -0.02em;
-    }
+.case-card:hover .case-image-wrapper img {
+    transform: scale(1.08);
+    filter: brightness(1.1);
+}
 
-    .case-subtitle-new {
-        font-family: 'Archivo Black', sans-serif;
-        font-size: clamp(0.9rem, 2vw, 1.3rem);
-        color: #050505;
-        line-height: 1;
-        text-transform: uppercase;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-top: 10px;
-    }
+.case-card:hover .case-image-wrapper .img-hover {
+    opacity: 1;
+}
 
-    .icon-arrow-card {
-        background: #050505;
-        color: #fff;
-        border-radius: 50%;
-        padding: 4px;
-        display: inline-flex;
-    }
+.case-card:hover .case-image-wrapper .img-hover + .img-main {
+    opacity: 0;
+}
 
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: var(--bg-color); }
-    ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+.case-info-new {
+    flex-grow: 1;
+    padding-top: 18px;
+    padding-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
 
-    .hide-scroll::-webkit-scrollbar { display: none; }
-    .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+.case-title-new {
+    font-family: &#39;Archivo Black&#39;, sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3.2rem);
+    line-height: 0.85;
+    text-transform: uppercase;
+    color: #050505; 
+    margin-bottom: 0;
+    word-break: break-word;
+    letter-spacing: -0.02em;
+}
 
-    @keyframes arrow-move {
-        0% { transform: translateX(0); opacity: 0.5; }
-        50% { transform: translateX(10px); opacity: 1; }
-        100% { transform: translateX(0); opacity: 0.5; }
-    }
-    .animate-arrow {
-        animation: arrow-move 1.5s ease-in-out infinite;
-    }
+.case-subtitle-new {
+    font-family: &#39;Archivo Black&#39;, sans-serif;
+    font-size: clamp(0.9rem, 2vw, 1.3rem);
+    color: #050505;
+    line-height: 1;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+}
 
-    #loader-overlay {
-        position: fixed;
-        inset: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(5, 5, 5, 0.90); 
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-        z-index: 999999;
-        font-family: 'Kanit', sans-serif;
-        perspective: 1200px;
-    }
+.icon-arrow-card {
+    background: #050505;
+    color: #fff;
+    border-radius: 50%;
+    padding: 4px;
+    display: inline-flex;
+}
 
-    #overlay-masks {
-        position: absolute;
-        inset: 0;
-        background: #050505; 
-        z-index: -2;
-        pointer-events: none;
-        
-        -webkit-mask-image: 
-            radial-gradient(circle 350px at var(--x, 50vw) var(--y, 50vh), transparent 0%, rgba(0,0,0,1) 50%),
-            linear-gradient(110deg, rgba(0,0,0,1) 45%, transparent 50%, rgba(0,0,0,1) 55%);
-        -webkit-mask-size: 100% 100%, 300% 100%;
-        -webkit-mask-position: center, 200% 0;
-        -webkit-mask-repeat: no-repeat, no-repeat;
-        
-        -webkit-mask-composite: source-in;
-        mask-composite: intersect;
-        
-        animation: maskSweep 4s infinite linear;
-    }
+::-webkit-scrollbar { width: 8px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-color); }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
-    @keyframes maskSweep {
-        0% { -webkit-mask-position: center, 200% 0; mask-position: center, 200% 0; }
-        100% { -webkit-mask-position: center, -100% 0; mask-position: center, -100% 0; }
-    }
+.hide-scroll::-webkit-scrollbar { display: none; }
+.hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
-    #loader-overlay .scene {
-        position: relative;
-        transform-style: preserve-3d;
-    }
+@keyframes arrow-move {
+    0% { transform: translateX(0); opacity: 0.5; }
+    50% { transform: translateX(10px); opacity: 1; }
+    100% { transform: translateX(0); opacity: 0.5; }
+}
+.animate-arrow {
+    animation: arrow-move 1.5s ease-in-out infinite;
+}
 
-    #loader-overlay .logo-container {
-        display: flex;
-        font-size: clamp(4rem, 10vw, 10rem);
-        font-weight: 800;
-        font-style: italic;
-        text-transform: uppercase;
-        letter-spacing: -0.04em;
-        transform-style: preserve-3d;
-        transition: transform 0.1s ease-out;
-        line-height: 1;
-    }
+#loader-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(5, 5, 5, 0.90); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    z-index: 999999;
+    font-family: &#39;Kanit&#39;, sans-serif;
+    perspective: 1200px;
+}
 
-    #loader-overlay .letter {
-        display: inline-block;
-        opacity: 0;
-        will-change: transform, opacity, filter;
-        animation-fill-mode: forwards;
-        position: relative;
-        cursor: default;
-        transition: filter 0.3s, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    #loader-overlay .letter:hover {
-        filter: brightness(1.5) contrast(1.2);
-        transform: translateZ(50px) scale(1.1) !important;
-        z-index: 10;
-    }
-
-    #loader-overlay .white {
-        color: #FFFFFF;
-        text-shadow: 0 10px 30px rgba(255, 255, 255, 0.15);
-    }
-
-    #loader-overlay .purple {
-        color: #8A2BE2;
-        text-shadow: 
-            0 0 10px rgba(138, 43, 226, 0.8), 
-            0 0 30px rgba(138, 43, 226, 0.5), 
-            0 0 60px rgba(138, 43, 226, 0.3);
-    }
-
-    #loader-overlay .anim-bounce {
-        animation: bounceUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        animation-delay: var(--delay);
-        transform-origin: bottom center;
-    }
-
-    #loader-overlay .anim-smash {
-        animation: dropSmash 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        animation-delay: var(--delay);
-    }
-
-    @keyframes bounceUp {
-        0% { 
-            opacity: 0; 
-            transform: translateY(150px) translateZ(-200px) rotateX(-80deg); 
-        }
-        100% { 
-            opacity: 1; 
-            transform: translateY(0) translateZ(0) rotateX(0deg); 
-        }
-    }
-
-    @keyframes dropSmash {
-        0% { 
-            opacity: 0; 
-            transform: translateY(-300px) scale(2) rotateZ(10deg); 
-            filter: blur(10px);
-        }
-        70% { 
-            opacity: 1; 
-            transform: translateY(20px) scale(0.9) rotateZ(-2deg); 
-            filter: blur(0px);
-        }
-        100% { 
-            opacity: 1; 
-            transform: translateY(0) scale(1) rotateZ(0deg); 
-        }
-    }
-
-    #loader-overlay .shake {
-        animation: cameraShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-    }
-
-    @keyframes cameraShake {
-        0%, 100% { transform: translate3d(0, 0, 0); }
-        10%, 30%, 50%, 70%, 90% { transform: translate3d(-8px, -8px, 0); }
-        20%, 40%, 60%, 80% { transform: translate3d(8px, 8px, 0); }
-    }
-
-    #loader-overlay .particles {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: -1;
-    }
-
-    #loader-overlay .particle {
-        position: absolute;
-        background: #8A2BE2;
-        border-radius: 50%;
-        opacity: 0;
-        box-shadow: 0 0 10px #8A2BE2, 0 0 20px #8A2BE2;
-    }
-
-    @keyframes explode {
-        0% { transform: translate(0, 0) scale(1); opacity: 1; }
-        100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
-    }
-
-    #scroll-prompt {
-        position: absolute;
-        bottom: 120px;
-        color: var(--text-color, #fff);
-        opacity: 0;
-        transition: opacity 1s;
-        font-family: 'Inter', sans-serif;
-        text-transform: uppercase;
-        font-size: 14px;
-        font-weight: bold;
-        letter-spacing: 3px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        pointer-events: none;
-    }
-
-    .glass-trail {
-        position: absolute;
-        width: 180px;
-        height: 180px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.01);
-        backdrop-filter: blur(12px) contrast(1.3) saturate(1.2);
-        -webkit-backdrop-filter: blur(12px) contrast(1.3) saturate(1.2);
-        pointer-events: none;
-        transform: translate(-50%, -50%) scale(0.3);
-        opacity: 1;
-        transition: transform 1.2s cubic-bezier(0.1, 0.8, 0.3, 1), opacity 1.2s cubic-bezier(0.1, 0.8, 0.3, 1);
-        box-shadow: inset 0 0 30px rgba(255,255,255,0.05);
-        z-index: 50;
-        will-change: transform, opacity;
-    }
-
-    .typing-cursor::after {
-        content: '|';
-        display: inline-block;
-        animation: blinkCursor 1s step-end infinite;
-        margin-left: 4px;
-    }
-
-    @keyframes blinkCursor {
-        50% { opacity: 0; }
-    }
-
-    .client-marquee-wrapper {
-        display: flex;
-        width: 100%;
-        overflow: hidden;
-        position: relative;
-        padding: 60px 0;
-        background-color: #050505;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .client-marquee-track {
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
-        min-width: 100%;
-        animation: scrollMarquee 35s linear infinite;
-        gap: 100px;
-        padding-right: 100px;
-    }
-    .client-marquee-track img {
-        height: 75px;
-        width: auto;
-        max-width: 250px;
-        object-fit: contain;
-        opacity: 1;
-        transition: all 0.4s ease;
-        cursor: pointer;
-        border-radius: 4px;
-    }
-    .client-marquee-track img:hover {
-        opacity: 1;
-        transform: scale(1.05);
-    }
-    @keyframes scrollMarquee {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-100%); }
-    }
-
-    .btn-3d {
-        transform-style: preserve-3d;
-        transition: transform 0.1s, box-shadow 0.1s;
-    }
-    .btn-3d:active {
-        transform: scale(0.95) translateZ(-10px) !important;
-    }
-    .btn-letter {
-        display: inline-block;
-        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s;
-    }
-    .btn-3d:hover .btn-letter {
-        animation: waveBounce 0.6s ease-in-out both;
-    }
-    @keyframes waveBounce {
-        0%, 100% { transform: translateY(0) scale(1); color: inherit; }
-        50% { transform: translateY(-6px) scale(1.2); color: #fff; text-shadow: 0 0 12px var(--primary); }
-    }
-    .form-particle {
-        position: absolute;
-        pointer-events: none;
-        border-radius: 50%;
-        z-index: 9999;
-        box-shadow: 0 0 10px currentColor;
-    }
+#overlay-masks {
+    position: absolute;
+    inset: 0;
+    background: #050505; 
+    z-index: -2;
+    pointer-events: none;
     
-    @keyframes spinAtom {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    @keyframes spinAtomReverse {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(-360deg); }
-    }
+    -webkit-mask-image: 
+        radial-gradient(circle 350px at var(--x, 50vw) var(--y, 50vh), transparent 0%, rgba(0,0,0,1) 50%),
+        linear-gradient(110deg, rgba(0,0,0,1) 45%, transparent 50%, rgba(0,0,0,1) 55%);
+    -webkit-mask-size: 100% 100%, 300% 100%;
+    -webkit-mask-position: center, 200% 0;
+    -webkit-mask-repeat: no-repeat, no-repeat;
+    
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+    
+    animation: maskSweep 4s infinite linear;
+}
 
-    .show-milhao-section {
-        background-color: #050505;
-        position: relative;
-        overflow: hidden;
-        padding: 8rem 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
+@keyframes maskSweep {
+    0% { -webkit-mask-position: center, 200% 0; mask-position: center, 200% 0; }
+    100% { -webkit-mask-position: center, -100% 0; mask-position: center, -100% 0; }
+}
 
-    .sm-glow-bg {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 80vw;
-        height: 80vw;
-        max-width: 800px;
-        max-height: 800px;
-        background: radial-gradient(circle, color-mix(in srgb, var(--primary) 20%, transparent) 0%, transparent 70%);
-        pointer-events: none;
-        z-index: 0;
-    }
+#loader-overlay .scene {
+    position: relative;
+    transform-style: preserve-3d;
+}
 
-    .sm-laser-beam {
-        position: absolute;
-        background: linear-gradient(90deg, transparent, var(--primary), transparent);
-        height: 2px;
-        width: 100%;
-        opacity: 0.3;
-        z-index: 0;
-        box-shadow: 0 0 20px var(--primary);
-    }
+#loader-overlay .logo-container {
+    display: flex;
+    font-size: clamp(4rem, 10vw, 10rem);
+    font-weight: 800;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+    line-height: 1;
+}
 
-    .sm-laser-1 { top: 20%; transform: rotate(15deg); animation: pulseBeam 4s infinite alternate; }
-    .sm-laser-2 { top: 80%; transform: rotate(-15deg); animation: pulseBeam 5s infinite alternate-reverse; }
+#loader-overlay .letter {
+    display: inline-block;
+    opacity: 0;
+    will-change: transform, opacity, filter;
+    animation-fill-mode: forwards;
+    position: relative;
+    cursor: default;
+    transition: filter 0.3s, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 
-    @keyframes pulseBeam {
-        0% { opacity: 0.1; box-shadow: 0 0 10px var(--primary); }
-        100% { opacity: 0.5; box-shadow: 0 0 30px var(--primary); }
-    }
+#loader-overlay .letter:hover {
+    filter: brightness(1.5) contrast(1.2);
+    transform: translateZ(50px) scale(1.1) !important;
+    z-index: 10;
+}
 
-    .sm-form-container {
-        position: relative;
-        z-index: 10;
-        perspective: 1200px;
-        max-width: 600px;
-        margin: 0 auto;
-    }
+#loader-overlay .white {
+    color: #FFFFFF;
+    text-shadow: 0 10px 30px rgba(255, 255, 255, 0.15);
+}
 
-    .sm-3d-box {
-        background: rgba(10, 10, 10, 0.8);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 2px solid rgba(255, 255, 255, 0.1);
-        border-radius: 24px;
-        padding: 3rem 2.5rem;
-        transform-style: preserve-3d;
-        box-shadow: 
-            0 30px 60px rgba(0,0,0,0.5),
-            inset 0 0 0 1px rgba(255,255,255,0.05),
-            0 0 40px color-mix(in srgb, var(--primary) 20%, transparent);
-        transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
+#loader-overlay .purple {
+    color: #8A2BE2;
+    text-shadow: 
+        0 0 10px rgba(138, 43, 226, 0.8), 
+        0 0 30px rgba(138, 43, 226, 0.5), 
+        0 0 60px rgba(138, 43, 226, 0.3);
+}
 
-    .sm-title-wrapper {
-        transform: translateZ(60px);
-        text-align: center;
-        margin-bottom: 2.5rem;
-    }
+#loader-overlay .anim-bounce {
+    animation: bounceUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation-delay: var(--delay);
+    transform-origin: bottom center;
+}
 
-    .sm-title {
-        font-family: 'Archivo Black', sans-serif;
-        font-size: clamp(2rem, 5vw, 3.5rem);
-        line-height: 1;
-        text-transform: uppercase;
-        color: #fff;
-        text-shadow: 3px 3px 0px color-mix(in srgb, var(--primary) 60%, #000), 
-                     6px 6px 0px color-mix(in srgb, var(--primary) 30%, #000);
-        margin-bottom: 1rem;
-        letter-spacing: -0.03em;
-    }
+#loader-overlay .anim-smash {
+    animation: dropSmash 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation-delay: var(--delay);
+}
 
-    .sm-subtitle {
-        font-family: 'Inter', sans-serif;
-        font-weight: 700;
-        font-size: 0.9rem;
-        color: var(--primary);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        background: color-mix(in srgb, var(--primary) 10%, transparent);
-        padding: 0.5rem 1rem;
-        border-radius: 50px;
-        display: inline-block;
-        border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+@keyframes bounceUp {
+    0% { 
+        opacity: 0; 
+        transform: translateY(150px) translateZ(-200px) rotateX(-80deg); 
     }
+    100% { 
+        opacity: 1; 
+        transform: translateY(0) translateZ(0) rotateX(0deg); 
+    }
+}
 
-    .sm-input-group {
-        transform: translateZ(30px);
-        margin-bottom: 1.5rem;
+@keyframes dropSmash {
+    0% { 
+        opacity: 0; 
+        transform: translateY(-300px) scale(2) rotateZ(10deg); 
+        filter: blur(10px);
     }
+    70% { 
+        opacity: 1; 
+        transform: translateY(20px) scale(0.9) rotateZ(-2deg); 
+        filter: blur(0px);
+    }
+    100% { 
+        opacity: 1; 
+        transform: translateY(0) scale(1) rotateZ(0deg); 
+    }
+}
 
-    .sm-input {
-        width: 100%;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 1.2rem;
-        color: #fff;
-        font-family: 'Inter', sans-serif;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
-    }
+#loader-overlay .shake {
+    animation: cameraShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
 
-    .sm-input:focus {
-        outline: none;
-        border-color: var(--primary);
-        background: rgba(255, 255, 255, 0.08);
-        box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), 0 0 15px color-mix(in srgb, var(--primary) 40%, transparent);
-    }
+@keyframes cameraShake {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    10%, 30%, 50%, 70%, 90% { transform: translate3d(-8px, -8px, 0); }
+    20%, 40%, 60%, 80% { transform: translate3d(8px, 8px, 0); }
+}
 
-    .sm-input::placeholder {
-        color: rgba(255, 255, 255, 0.3);
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 1px;
-        font-weight: 600;
-    }
+#loader-overlay .particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
 
-    .sm-submit-btn {
-        transform: translateZ(50px);
-        width: 100%;
-        background: #7943e3;
-        color: #fff;
-        font-family: 'Archivo Black', sans-serif;
-        font-size: 1.2rem;
-        text-transform: uppercase;
-        padding: 1.2rem;
-        border-radius: 12px;
-        border: none;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 10px 30px color-mix(in srgb, var(--primary) 40%, transparent),
-                    inset 0 2px 0 rgba(255,255,255,0.3);
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
+#loader-overlay .particle {
+    position: absolute;
+    background: #8A2BE2;
+    border-radius: 50%;
+    opacity: 0;
+    box-shadow: 0 0 10px #8A2BE2, 0 0 20px #8A2BE2;
+}
 
-    .sm-submit-btn:hover {
-        transform: translateZ(50px) scale(1.02);
-        box-shadow: 0 15px 40px color-mix(in srgb, var(--primary) 50%, transparent),
-                    inset 0 2px 0 rgba(255,255,255,0.4);
-    }
+@keyframes explode {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
 
-    .sm-submit-btn:active {
-        transform: translateZ(50px) scale(0.98);
-    }
+#scroll-prompt {
+    position: absolute;
+    bottom: 120px;
+    color: var(--text-color, #fff);
+    opacity: 0;
+    transition: opacity 1s;
+    font-family: &#39;Inter&#39;, sans-serif;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none;
+}
 
-    .sm-submit-btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 50%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-        transform: skewX(-25deg);
-        animation: shine 3s infinite;
-    }
+.glass-trail {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.01);
+    backdrop-filter: blur(12px) contrast(1.3) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) contrast(1.3) saturate(1.2);
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 1;
+    transition: transform 1.2s cubic-bezier(0.1, 0.8, 0.3, 1), opacity 1.2s cubic-bezier(0.1, 0.8, 0.3, 1);
+    box-shadow: inset 0 0 30px rgba(255,255,255,0.05);
+    z-index: 50;
+    will-change: transform, opacity;
+}
 
-    @keyframes shine {
-        0% { left: -100%; }
-        20% { left: 200%; }
-        100% { left: 200%; }
-    }
+.typing-cursor::after {
+    content: &#39;|&#39;;
+    display: inline-block;
+    animation: blinkCursor 1s step-end infinite;
+    margin-left: 4px;
+}
 
-    .sm-ia-badge {
-        position: absolute;
-        top: -15px;
-        right: -15px;
-        background: var(--text-color);
-        color: var(--bg-color);
-        font-family: 'Archivo Black', sans-serif;
-        font-size: 0.8rem;
-        padding: 10px 15px;
-        border-radius: 50px;
-        transform: translateZ(80px) rotate(10deg);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        border: 2px solid var(--primary);
-        z-index: 20;
-        animation: floatBadge 3s ease-in-out infinite;
-    }
+@keyframes blinkCursor {
+    50% { opacity: 0; }
+}
 
-    @keyframes floatBadge {
-        0%, 100% { transform: translateZ(80px) rotate(10deg) translateY(0); }
-        50% { transform: translateZ(80px) rotate(12deg) translateY(-10px); }
-    }
+.client-marquee-wrapper {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    padding: 60px 0;
+    background-color: #050505;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.client-marquee-track {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    min-width: 100%;
+    animation: scrollMarquee 35s linear infinite;
+    gap: 100px;
+    padding-right: 100px;
+}
+.client-marquee-track img {
+    height: 75px;
+    width: auto;
+    max-width: 250px;
+    object-fit: contain;
+    opacity: 1;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.client-marquee-track img:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+@keyframes scrollMarquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
 
-    .sm-coin {
-        position: absolute;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #FFD700, #DAA520);
-        box-shadow: inset 0 0 10px rgba(255,255,255,0.8), 
-                    inset 0 0 20px rgba(0,0,0,0.5), 
-                    0 10px 20px rgba(0,0,0,0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: rgba(0,0,0,0.5);
-        font-family: 'Archivo Black', sans-serif;
-        font-size: 1.5rem;
-        transform-style: preserve-3d;
-        z-index: 5;
-    }
+.btn-3d {
+    transform-style: preserve-3d;
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+.btn-3d:active {
+    transform: scale(0.95) translateZ(-10px) !important;
+}
+.btn-letter {
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s;
+}
+.btn-3d:hover .btn-letter {
+    animation: waveBounce 0.6s ease-in-out both;
+}
+@keyframes waveBounce {
+    0%, 100% { transform: translateY(0) scale(1); color: inherit; }
+    50% { transform: translateY(-6px) scale(1.2); color: #fff; text-shadow: 0 0 12px var(--primary); }
+}
+.form-particle {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50%;
+    z-index: 9999;
+    box-shadow: 0 0 10px currentColor;
+}
 
-    .sm-coin::after {
-        content: '$';
-        transform: translateZ(2px);
-    }
+@keyframes spinAtom {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+@keyframes spinAtomReverse {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(-360deg); }
+}
+
+.show-milhao-section {
+    background-color: #050505;
+    position: relative;
+    overflow: hidden;
+    padding: 8rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sm-glow-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    height: 80vw;
+    max-width: 800px;
+    max-height: 800px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--primary) 20%, transparent) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.sm-laser-beam {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    height: 2px;
+    width: 100%;
+    opacity: 0.3;
+    z-index: 0;
+    box-shadow: 0 0 20px var(--primary);
+}
+
+.sm-laser-1 { top: 20%; transform: rotate(15deg); animation: pulseBeam 4s infinite alternate; }
+.sm-laser-2 { top: 80%; transform: rotate(-15deg); animation: pulseBeam 5s infinite alternate-reverse; }
+
+@keyframes pulseBeam {
+    0% { opacity: 0.1; box-shadow: 0 0 10px var(--primary); }
+    100% { opacity: 0.5; box-shadow: 0 0 30px var(--primary); }
+}
+
+.sm-form-container {
+    position: relative;
+    z-index: 10;
+    perspective: 1200px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.sm-3d-box {
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+    transform-style: preserve-3d;
+    box-shadow: 
+        0 30px 60px rgba(0,0,0,0.5),
+        inset 0 0 0 1px rgba(255,255,255,0.05),
+        0 0 40px color-mix(in srgb, var(--primary) 20%, transparent);
+    transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.sm-title-wrapper {
+    transform: translateZ(60px);
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.sm-title {
+    font-family: &#39;Archivo Black&#39;, sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 3px 3px 0px color-mix(in srgb, var(--primary) 60%, #000), 
+                 6px 6px 0px color-mix(in srgb, var(--primary) 30%, #000);
+    margin-bottom: 1rem;
+    letter-spacing: -0.03em;
+}
+
+.sm-subtitle {
+    font-family: &#39;Inter&#39;, sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    display: inline-block;
+    border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.sm-input-group {
+    transform: translateZ(30px);
+    margin-bottom: 1.5rem;
+}
+
+.sm-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.2rem;
+    color: #fff;
+    font-family: &#39;Inter&#39;, sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.sm-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), 0 0 15px color-mix(in srgb, var(--primary) 40%, transparent);
+}
+
+.sm-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.sm-submit-btn {
+    transform: translateZ(50px);
+    width: 100%;
+    background: #7943e3;
+    color: #fff;
+    font-family: &#39;Archivo Black&#39;, sans-serif;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    padding: 1.2rem;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px color-mix(in srgb, var(--primary) 40%, transparent),
+                inset 0 2px 0 rgba(255,255,255,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.sm-submit-btn:hover {
+    transform: translateZ(50px) scale(1.02);
+    box-shadow: 0 15px 40px color-mix(in srgb, var(--primary) 50%, transparent),
+                inset 0 2px 0 rgba(255,255,255,0.4);
+}
+
+.sm-submit-btn:active {
+    transform: translateZ(50px) scale(0.98);
+}
+
+.sm-submit-btn::before {
+    content: &#39;&#39;;
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: skewX(-25deg);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { left: -100%; }
+    20% { left: 200%; }
+    100% { left: 200%; }
+}
+
+.sm-ia-badge {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background: var(--text-color);
+    color: var(--bg-color);
+    font-family: &#39;Archivo Black&#39;, sans-serif;
+    font-size: 0.8rem;
+    padding: 10px 15px;
+    border-radius: 50px;
+    transform: translateZ(80px) rotate(10deg);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border: 2px solid var(--primary);
+    z-index: 20;
+    animation: floatBadge 3s ease-in-out infinite;
+}
+
+@keyframes floatBadge {
+    0%, 100% { transform: translateZ(80px) rotate(10deg) translateY(0); }
+    50% { transform: translateZ(80px) rotate(12deg) translateY(-10px); }
+}
+
+.sm-coin {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFD700, #DAA520);
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.8), 
+                inset 0 0 20px rgba(0,0,0,0.5), 
+                0 10px 20px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0,0,0,0.5);
+    font-family: &#39;Archivo Black&#39;, sans-serif;
+    font-size: 1.5rem;
+    transform-style: preserve-3d;
+    z-index: 5;
+}
+
+.sm-coin::after {
+    content: &#39;$&#39;;
+    transform: translateZ(2px);
+}
 </style>
+
 </head>
 <body style="overflow: hidden;">
 
 <div id="loader-overlay">
-    <div id="overlay-masks"></div>
-    
-    <div class="scene" id="intro-scene">
-        <div class="logo-container" id="intro-logoContainer">
-            <span class="letter white anim-bounce" style="--delay: 0.1s">L</span>
-            <span class="letter white anim-bounce" style="--delay: 0.2s">E</span>
-            <span class="letter white anim-bounce" style="--delay: 0.3s">A</span>
-            <span class="letter white anim-bounce" style="--delay: 0.4s">N</span>
-            
-            <span class="letter purple anim-smash" style="--delay: 1.0s">T</span>
-            <span class="letter purple anim-smash" style="--delay: 1.1s">T</span>
-            <span class="letter purple anim-smash" style="--delay: 1.2s">R</span>
-            <span class="letter purple anim-smash" style="--delay: 1.3s">O</span>
-            <span class="letter purple anim-smash" style="--delay: 1.4s">.</span>
-        </div>
-        <div class="particles" id="intro-particles"></div>
+<div id="overlay-masks"></div>
+
+<div class="scene" id="intro-scene">
+    <div class="logo-container" id="intro-logoContainer">
+        <span class="letter white anim-bounce" style="--delay: 0.1s">L</span>
+        <span class="letter white anim-bounce" style="--delay: 0.2s">E</span>
+        <span class="letter white anim-bounce" style="--delay: 0.3s">A</span>
+        <span class="letter white anim-bounce" style="--delay: 0.4s">N</span>
+        
+        <span class="letter purple anim-smash" style="--delay: 1.0s">T</span>
+        <span class="letter purple anim-smash" style="--delay: 1.1s">T</span>
+        <span class="letter purple anim-smash" style="--delay: 1.2s">R</span>
+        <span class="letter purple anim-smash" style="--delay: 1.3s">O</span>
+        <span class="letter purple anim-smash" style="--delay: 1.4s">.</span>
     </div>
-    <div id="scroll-prompt">
-        <span>Role para entrar</span>
-        <i data-lucide="chevron-down" class="w-6 h-6 animate-bounce"></i>
-    </div>
+    <div class="particles" id="intro-particles"></div>
+</div>
+<div id="scroll-prompt">
+    <span>Role para entrar</span>
+    <i data-lucide="chevron-down" class="w-6 h-6 animate-bounce"></i>
+</div>
 </div>
 
 <header class="fixed top-0 w-full z-[1000] py-2 md:py-3">
-    <div class="container mx-auto px-4 md:px-8">
-        <div class="flex flex-row justify-between items-center w-full">
-            <a href="/{{ loja.slug_url }}/" class="block">
-                {% if loja.logo %}
-                    <img src="{{ loja.logo }}" class="h-10 md:h-14 w-auto object-contain">
-                {% else %}
-                    <span class="text-2xl md:text-3xl font-bold tracking-tighter text-[var(--text-color)]">{{ loja.nome }}</span>
-                {% endif %}
-            </a>
-            
-            <nav class="hidden md:flex items-center gap-12 text-xs font-bold uppercase tracking-widest opacity-90">
-                {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
-                
-                {% if not loja.ocultar_produtos %}
-                <div class="relative group py-2">
-                    <a href="#portfolio" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 cursor-pointer">
-                        {{ loja.titulo_produtos or 'Nossos Cases' }} <i data-lucide="chevron-down" class="w-3 h-3"></i>
-                    </a>
-                    <div class="absolute left-0 top-full mt-2 w-56 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[999] flex flex-col shadow-2xl overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.1);">
-                        <a href="/{{ loja.slug_url }}/#portfolio" class="px-5 py-3 transition hover:opacity-70 font-bold" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">Todos os Segmentos</a>
-                        {% for cat in categorias %}
-                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-5 py-3 transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">{{ cat.nome }}</a>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
-                
-                <a href="#contato" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
-            </nav>
+<div class="container mx-auto px-4 md:px-8">
+<div class="flex flex-row justify-between items-center w-full">
+<a href="/{{ loja.slug_url }}/" class="block">
+{% if loja.logo %}
+<img src="{{ loja.logo }}" class="h-10 md:h-14 w-auto object-contain">
+{% else %}
+<span class="text-2xl md:text-3xl font-bold tracking-tighter text-[var(--text-color)]">{{ loja.nome }}</span>
+{% endif %}
+</a>
 
-            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="flex items-center">
-                <div class="md:hidden p-3 rounded-full border border-black/10 hover:bg-black/5 transition">
-                    <i data-lucide="message-circle" class="w-5 h-5 text-[var(--text-color)]"></i>
-                </div>
-                <span class="hidden md:block bg-[var(--text-color)] text-[var(--bg-color)] px-6 py-3 rounded-full text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg">
-                    Fale Conosco
-                </span>
-            </a>
-        </div>
-
-        <nav class="md:hidden flex flex-col items-center gap-4 mt-6 text-[11px] font-bold uppercase tracking-widest opacity-90 border-t border-black/5 pt-6 w-full">
-            <div class="flex flex-wrap justify-center gap-6 w-full">
-                {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-80 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
-                
-                {% if not loja.ocultar_produtos %}
-                <div class="relative group flex flex-col items-center">
-                    <button class="opacity-80 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 uppercase tracking-widest" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">
-                        {{ loja.titulo_produtos or 'Nossos Cases' }} <i data-lucide="chevron-down" class="w-3 h-3"></i>
-                    </button>
-                </div>
-                {% endif %}
-                
-                <a href="#contato" class="opacity-80 hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
-            </div>
+        <nav class="hidden md:flex items-center gap-12 text-xs font-bold uppercase tracking-widest opacity-90">
+            {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
             
             {% if not loja.ocultar_produtos %}
-            <div id="mobile-cat-menu" class="hidden flex-col items-center rounded mt-2 w-[80vw] text-center shadow-lg overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.1);">
-                <a href="/{{ loja.slug_url }}/#portfolio" class="px-4 py-3 w-full transition hover:opacity-70 font-bold" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">Todos</a>
-                {% for cat in categorias %}
-                <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-4 py-3 w-full transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">{{ cat.nome }}</a>
-                {% endfor %}
+            <div class="relative group py-2">
+                <a href="#portfolio" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 cursor-pointer">
+                    {{ loja.titulo_produtos or 'Nossos Cases' }} <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                </a>
+                <div class="absolute left-0 top-full mt-2 w-56 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[999] flex flex-col shadow-2xl overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.1);">
+                    <a href="/{{ loja.slug_url }}/#portfolio" class="px-5 py-3 transition hover:opacity-70 font-bold" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">Todos os Segmentos</a>
+                    {% for cat in categorias %}
+                    <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-5 py-3 transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">{{ cat.nome }}</a>
+                    {% endfor %}
+                </div>
             </div>
             {% endif %}
+            
+            <a href="#contato" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
         </nav>
+
+        <a href="[https://wa.me/55](https://wa.me/55){{ loja.whatsapp_comercial }}" class="flex items-center">
+            <div class="md:hidden p-3 rounded-full border border-black/10 hover:bg-black/5 transition">
+                <i data-lucide="message-circle" class="w-5 h-5 text-[var(--text-color)]"></i>
+            </div>
+            <span class="hidden md:block bg-[var(--text-color)] text-[var(--bg-color)] px-6 py-3 rounded-full text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg">
+                Fale Conosco
+            </span>
+        </a>
     </div>
+
+    <nav class="md:hidden flex flex-col items-center gap-4 mt-6 text-[11px] font-bold uppercase tracking-widest opacity-90 border-t border-black/5 pt-6 w-full">
+        <div class="flex flex-wrap justify-center gap-6 w-full">
+            {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-80 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
+            
+            {% if not loja.ocultar_produtos %}
+            <div class="relative group flex flex-col items-center">
+                <button class="opacity-80 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 uppercase tracking-widest" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">
+                    {{ loja.titulo_produtos or 'Nossos Cases' }} <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                </button>
+            </div>
+            {% endif %}
+            
+            <a href="#contato" class="opacity-80 hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
+        </div>
+        
+        {% if not loja.ocultar_produtos %}
+        <div id="mobile-cat-menu" class="hidden flex-col items-center rounded mt-2 w-[80vw] text-center shadow-lg overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.1);">
+            <a href="/{{ loja.slug_url }}/#portfolio" class="px-4 py-3 w-full transition hover:opacity-70 font-bold" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">Todos</a>
+            {% for cat in categorias %}
+            <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-4 py-3 w-full transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">{{ cat.nome }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </nav>
+</div>
 </header>
 
 {% for secao in layout %}
 
-    {% if secao == 'banner' and not loja.ocultar_banner %}
-    <section class="h-[70vh] md:h-screen w-full relative overflow-hidden bg-[#050505]" id="hero" style="perspective: 1200px;">
-        <canvas id="data-canvas" class="absolute inset-0 w-full h-full z-10 opacity-30"></canvas>
-        <div id="hero-banner-wrapper" class="absolute inset-0 w-full h-full z-20 opacity-0 flex items-center justify-center bg-[#050505]" style="transform: translateZ(-300px) scale(0.8);">
-            
-            <div class="absolute inset-0 flex flex-col justify-center gap-2 opacity-[0.03] pointer-events-none overflow-hidden z-0" style="font-family: 'Archivo Black', sans-serif;">
-                <div class="whitespace-nowrap text-[15vw] leading-none tracking-tighter text-white" style="animation: scrollMarquee 25s linear infinite;">AUTOMAÇÃO IA AUTOMAÇÃO IA AUTOMAÇÃO IA</div>
-                <div class="whitespace-nowrap text-[15vw] leading-none tracking-tighter text-transparent" style="animation: scrollMarquee 35s linear infinite reverse; -webkit-text-stroke: 2px var(--primary);">DADOS LUCRO DADOS LUCRO DADOS LUCRO</div>
-                <div class="whitespace-nowrap text-[15vw] leading-none tracking-tighter text-white" style="animation: scrollMarquee 20s linear infinite;">TECNOLOGIA TECNOLOGIA TECNOLOGIA TECNOLOGIA</div>
-            </div>
-
-            <div class="relative z-10 flex flex-col items-center text-center px-4 w-full mt-10">
-                <h1 class="font-display text-white text-[clamp(3rem,8vw,8rem)] leading-[0.85] tracking-tighter uppercase mb-6 drop-shadow-2xl hero-title" style="text-shadow: 0 20px 40px rgba(0,0,0,0.5);">
-                    AUTOMAÇÃO E IA<br>
-                    <span style="color: var(--primary);">SOB MEDIDA.</span>
-                </h1>
-                <p class="text-gray-300 text-[clamp(1rem,2vw,1.5rem)] font-light max-w-3xl mx-auto uppercase tracking-widest hero-subtitle">
-                    Tecnologia exclusiva aplicada diretamente ao lucro operacional.
-                </p>
-                <a href="#contato" class="mt-10 bg-[var(--primary)] text-white px-8 py-4 rounded-full text-sm font-bold uppercase tracking-widest hover:scale-105 transition shadow-[0_10px_30px_rgba(124,58,237,0.3)] hero-title border border-white/20">
-                    Falar com Especialista
-                </a>
-            </div>
-
-            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505] pointer-events-none z-20"></div>
-
-            <div id="bubbles-container" class="absolute inset-0 z-30 pointer-events-none overflow-hidden"></div>
+{% if secao == 'banner' and not loja.ocultar_banner %}
+<section class="h-[70vh] md:h-screen w-full relative overflow-hidden bg-[#050505] pt-[10vh] md:pt-0" id="hero" style="perspective: 1200px;">
+    <canvas id="data-canvas" class="absolute inset-0 w-full h-full z-20"></canvas>
+    <div id="hero-banner-wrapper" class="absolute inset-0 w-full h-full z-10 opacity-0" style="transform: translateZ(-300px) scale(0.8);">
+        {% if loja.banner1 %}
+        <a href="{{ loja.linkbannerprincipal1 or '#' }}" class="block w-full h-full">
+            <img src="{{ loja.banner1 }}" class="w-full h-full object-contain md:object-cover object-center hero-img">
+        </a>
+        {% else %}
+        <div class="w-full h-full flex items-center justify-center bg-gray-100 hero-img">
+            <h1 class="text-4xl opacity-20">Seu Banner Here</h1>
         </div>
-    </section>
-    {% endif %}
+        {% endif %}
+        <div class="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505] pointer-events-none opacity-50"></div>
 
-    {% if secao == 'categorias' and not loja.ocultar_categorias %}
-    <section class="py-16 md:py-24 border-b border-[rgba(255,255,255,0.3)] w-full relative" id="locomotive-section" style="background-color: var(--bg-color);">
-        <div class="container mx-auto px-4 md:px-8 relative">
-
-            <div class="flex flex-col w-full relative border-t border-[rgba(255,255,255,0.3)]" id="locomotive-categories">
-                {% set cat_selecionada = request.args.get('categoria') %}
-                
-                {% for cat in categorias %}
-                    {% if not cat_selecionada or cat.id|string == cat_selecionada|string %}
-                        {% set cat_img = namespace(url='') %}
-                        {% for p in produtos %}
-                            {% if (p.categoria_id == cat.id or p.categoria == cat.nome or p.categoria == cat.id) and cat_img.url == '' %}
-                                {% set cat_img.url = p.imagem %}
-                            {% endif %}
-                        {% endfor %}
-                        
-                        {% set words = cat.nome.split(' ') %}
-                        {% if words|length > 1 %}
-                            {% set mid = (words|length / 2) | int %}
-                            {% set p1 = words[:mid] | join(' ') %}
-                            {% set p2 = words[mid:] | join(' ') %}
-                            {% set has_space = true %}
-                        {% else %}
-                            {% set mid = (cat.nome|length / 2) | int %}
-                            {% set p1 = cat.nome[:mid] %}
-                            {% set p2 = cat.nome[mid:] %}
-                            {% set has_space = false %}
-                        {% endif %}
-
-                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="group flex items-center justify-center py-8 md:py-10 border-b border-[rgba(255,255,255,0.3)] transition-colors duration-300 relative w-full overflow-hidden px-4">
-                            <h3 class="flex flex-wrap items-center justify-center text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display text-center m-0 p-0" style="color: var(--text-color);">
-                                <span>{{ p1 }}</span>
-                                {% if cat_img.url != '' %}
-                                <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle">
-                                    <img src="{{ cat_img.url }}" class="absolute top-0 left-0 w-full h-full object-cover">
-                                </span>
-                                {% else %}
-                                <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle bg-[rgba(255,255,255,0.1)]"></span>
-                                {% endif %}
-                                <span>{% if has_space %}&nbsp;{% endif %}{{ p2 }}</span>
-                            </h3>
-                        </a>
-                    {% endif %}
-                {% endfor %}
-                
-                {% if cat_selecionada %}
-                <div class="mt-12 flex justify-center w-full">
-                    <a href="/{{ loja.slug_url }}/#locomotive-section" class="px-8 py-4 rounded-full border text-[var(--text-color)] font-bold tracking-widest uppercase text-xs hover:bg-[var(--text-color)] hover:text-[var(--bg-color)] transition-all" style="border-color: var(--text-color);">
-                        Ver Todos os Segmentos
-                    </a>
-                </div>
-                {% endif %}
-            </div>
+        <div id="bubbles-container" class="absolute inset-0 z-30 pointer-events-none overflow-hidden">
         </div>
-    </section>
-    {% endif %}
-
-    {% if secao == 'sobre' and not loja.ocultar_sobre %}
-    <section class="w-full relative bg-[#050505] overflow-hidden" id="sobre">
-        <div class="h-screen w-full relative" id="sobre-container">
-            <div class="absolute inset-0 w-full h-full transform scale-125 origin-center" id="sobre-bg-img">
-                <img src="{{ loja.sobre_imagem_url or 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000' }}" class="w-full h-full object-cover filter brightness-50">
-            </div>
-            <div class="absolute inset-0 bg-black/60"></div>
-            <div class="absolute inset-0 flex items-center justify-center p-8 z-10">
-                <div class="max-w-5xl text-center opacity-0 translate-y-20" id="sobre-content">
-                    <h2 class="text-3xl md:text-5xl font-display text-white mb-8 uppercase tracking-tighter">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
-                    <p class="text-lg md:text-xl text-gray-300 leading-relaxed font-light" id="sobre-desc-text">
-                        {{ loja.sobre_texto or 'Adicione a história através do painel na aba Sobre a Empresa' }}
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-    {% endif %}
-
-    {% if secao == 'banners_menores' and not loja.ocultar_banners_menores %}
-    <section class="py-16 w-full" style="background-color: var(--bg-color);">
-        <div class="container mx-auto px-8 max-w-full">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-full">
-                {% if loja.bannermenor1 %}
-                <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl w-full">
-                    <img src="{{ loja.bannermenor1 }}" class="w-full h-auto object-cover">
-                </a>
-                {% endif %}
-                {% if loja.bannermenor2 %}
-                <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl w-full">
-                    <img src="{{ loja.bannermenor2 }}" class="w-full h-auto object-cover">
-                </a>
-                {% endif %}
-            </div>
-        </div>
-    </section>
-    {% endif %}
-
-    {% if secao == 'produtos' and not loja.ocultar_produtos %}
-    <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color); overflow: hidden;">
-        
-        <div class="container mx-auto px-6 md:px-10 mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[3rem] sm:text-5xl md:text-7xl font-display uppercase tracking-tighter leading-none m-0">
-                {{ loja.titulo_produtos or 'Nossos Cases' }}
-            </h2>
-        </div>
-
-        <div class="horizontal-container" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
-            {% for p in produtos %}
-            <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
-                <div class="case-image-wrapper">
-                    {% if p.imagem1 %}
-                    <img src="{{ p.imagem1 }}" alt="{{ p.nome }}" class="img-hover">
-                    {% elif p.imagem_secundaria %}
-                    <img src="{{ p.imagem_secundaria }}" alt="{{ p.nome }}" class="img-hover">
-                    {% elif p.imagem2 %}
-                    <img src="{{ p.imagem2 }}" alt="{{ p.nome }}" class="img-hover">
-                    {% endif %}
-                    <img src="{{ p.imagem }}" alt="{{ p.nome }}" class="img-main">
-                </div>
-                <div class="case-info-new">
-                    <h3 class="case-title-new">{{ p.nome }}</h3>
-                    <div class="case-subtitle-new">
-                        VER PROJETO <i data-lucide="arrow-right" class="w-5 h-5 icon-arrow-card"></i>
-                    </div>
-                </div>
-            </div>
-            {% else %}
-            <div class="flex-shrink-0 w-[70vw] h-[500px] mr-[5vw] flex items-center justify-center border rounded-2xl" style="border-color: var(--text-color);">
-                <p class="text-xl font-bold uppercase tracking-widest" style="color: var(--text-color); opacity: 0.5;">Nenhum projeto cadastrado.</p>
-            </div>
-            {% endfor %}
-        </div>
-    </section>
-    {% endif %}
-
-{% endfor %}
-
-{% if loja.logos_clientes %}
-<section class="client-marquee-wrapper">
-    <div class="client-marquee-track">
-        {% for logo in loja.logos_clientes.split() %}
-            {% if logo.strip() %}
-            <img src="{{ logo.strip() }}" alt="Cliente" onerror="this.style.display='none'">
-            {% endif %}
-        {% endfor %}
-    </div>
-    <div class="client-marquee-track">
-        {% for logo in loja.logos_clientes.split() %}
-            {% if logo.strip() %}
-            <img src="{{ logo.strip() }}" alt="Cliente" onerror="this.style.display='none'">
-            {% endif %}
-        {% endfor %}
     </div>
 </section>
 {% endif %}
 
-<section class="show-milhao-section" id="dicas-de-ouro">
-    <div class="sm-glow-bg"></div>
-    <div class="sm-laser-beam sm-laser-1"></div>
-    <div class="sm-laser-beam sm-laser-2"></div>
-    
-    <div class="sm-coin" style="width: 80px; height: 80px; top: 15%; left: 10%; transform: rotateY(30deg) rotateZ(15deg);"></div>
-    <div class="sm-coin" style="width: 50px; height: 50px; top: 25%; right: 15%; transform: rotateY(-40deg) rotateZ(-20deg);"></div>
-    <div class="sm-coin" style="width: 100px; height: 100px; bottom: 10%; right: 5%; transform: rotateY(-20deg) rotateX(20deg);"></div>
-    <div class="sm-coin" style="width: 60px; height: 60px; bottom: 20%; left: 15%; transform: rotateY(50deg) rotateZ(10deg);"></div>
+{% if secao == 'categorias' and not loja.ocultar_categorias %}
+<section class="py-16 md:py-24 border-b border-[rgba(255,255,255,0.3)] w-full relative" id="locomotive-section" style="background-color: var(--bg-color);">
+    <div class="container mx-auto px-4 md:px-8 relative">
 
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="sm-form-container" id="sm-form-container">
-            <div class="sm-ia-badge">ANÁLISE IA EXCLUSIVA</div>
+        <div class="flex flex-col w-full relative border-t border-[rgba(255,255,255,0.3)]" id="locomotive-categories">
+            {% set cat_selecionada = request.args.get('categoria') %}
             
-            <div class="sm-3d-box">
-                <div class="sm-title-wrapper">
-                    <h2 class="sm-title">DICAS DE<br>OURO</h2>
-                    <div class="sm-subtitle">Fature mais com Tecnologia</div>
-                </div>
-                
-                <form id="leadForm" class="flex flex-col">
-                    <div class="sm-input-group">
-                        <input type="text" name="nome" placeholder="Seu Nome Completo" required class="sm-input">
-                    </div>
+            {% for cat in categorias %}
+                {% if not cat_selecionada or cat.id|string == cat_selecionada|string %}
+                    {% set cat_img = namespace(url='') %}
+                    {% for p in produtos %}
+                        {% if (p.categoria_id == cat.id or p.categoria == cat.nome or p.categoria == cat.id) and cat_img.url == '' %}
+                            {% set cat_img.url = p.imagem %}
+                        {% endif %}
+                    {% endfor %}
                     
-                    <div class="sm-input-group">
-                        <input type="text" name="profissao" placeholder="Seu Cargo / Profissão (Crucial para a IA)" required class="sm-input" style="border-color: rgba(124, 58, 237, 0.5);">
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm-input-group">
-                        <input type="text" name="whatsapp" placeholder="WhatsApp (DDD+Número)" required class="sm-input">
-                        <input type="email" name="email" placeholder="Seu Melhor E-mail" required class="sm-input">
-                    </div>
-                    
-                    <button type="submit" id="submitBtn3D" class="sm-submit-btn">
-                        <span class="btn-text-wrapper relative z-10">GERAR MINHAS DICAS AGORA</span>
-                    </button>
-                </form>
-                
-                <div id="leadSuccessMsg" class="hidden mt-6 bg-green-500/20 border border-green-500/50 text-green-400 p-4 rounded-xl text-center font-bold tracking-widest uppercase text-sm items-center justify-center gap-2" style="transform: translateZ(30px);">
-                    <i data-lucide="check-circle" class="w-6 h-6"></i> Análise iniciada! Em instantes você receberá suas dicas exclusivas.
-                </div>
+                    {% set words = cat.nome.split(' ') %}
+                    {% if words|length > 1 %}
+                        {% set mid = (words|length / 2) | int %}
+                        {% set p1 = words[:mid] | join(' ') %}
+                        {% set p2 = words[mid:] | join(' ') %}
+                        {% set has_space = true %}
+                    {% else %}
+                        {% set mid = (cat.nome|length / 2) | int %}
+                        {% set p1 = cat.nome[:mid] %}
+                        {% set p2 = cat.nome[mid:] %}
+                        {% set has_space = false %}
+                    {% endif %}
+
+                    <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="group flex items-center justify-center py-8 md:py-10 border-b border-[rgba(255,255,255,0.3)] transition-colors duration-300 relative w-full overflow-hidden px-4">
+                        <h3 class="flex flex-wrap items-center justify-center text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display text-center m-0 p-0" style="color: var(--text-color);">
+                            <span>{{ p1 }}</span>
+                            {% if cat_img.url != '' %}
+                            <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle">
+                                <img src="{{ cat_img.url }}" class="absolute top-0 left-0 w-full h-full object-cover">
+                            </span>
+                            {% else %}
+                            <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle bg-[rgba(255,255,255,0.1)]"></span>
+                            {% endif %}
+                            <span>{% if has_space %}&nbsp;{% endif %}{{ p2 }}</span>
+                        </h3>
+                    </a>
+                {% endif %}
+            {% endfor %}
+            
+            {% if cat_selecionada %}
+            <div class="mt-12 flex justify-center w-full">
+                <a href="/{{ loja.slug_url }}/#locomotive-section" class="px-8 py-4 rounded-full border text-[var(--text-color)] font-bold tracking-widest uppercase text-xs hover:bg-[var(--text-color)] hover:text-[var(--bg-color)] transition-all" style="border-color: var(--text-color);">
+                    Ver Todos os Segmentos
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if secao == 'sobre' and not loja.ocultar_sobre %}
+<section class="w-full relative bg-[#050505] overflow-hidden" id="sobre">
+    <div class="h-screen w-full relative" id="sobre-container">
+        <div class="absolute inset-0 w-full h-full transform scale-125 origin-center" id="sobre-bg-img">
+            <img src="{{ loja.sobre_imagem_url or '[https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000](https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000)' }}" class="w-full h-full object-cover filter brightness-50">
+        </div>
+        <div class="absolute inset-0 bg-black/60"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-8 z-10">
+            <div class="max-w-5xl text-center opacity-0 translate-y-20" id="sobre-content">
+                <h2 class="text-3xl md:text-5xl font-display text-white mb-8 uppercase tracking-tighter">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
+                <p class="text-lg md:text-xl text-gray-300 leading-relaxed font-light" id="sobre-desc-text">
+                    {{ loja.sobre_texto or 'Adicione a história através do painel na aba Sobre a Empresa' }}
+                </p>
             </div>
         </div>
     </div>
 </section>
+{% endif %}
 
-<footer class="py-20 text-center relative w-full overflow-hidden" id="contato" style="background-color: var(--text-color); color: var(--bg-color);">
-    <div class="container mx-auto px-6 md:px-8 max-w-full">
-        <h2 id="footer-main-heading" class="text-3xl md:text-7xl mb-12 tracking-tighter uppercase w-full min-h-[1.5em] flex items-center justify-center" style="perspective: 1000px; transform-style: preserve-3d;">
-            {% if loja.chamada_rodape %}
-                {% set chamadas = loja.chamada_rodape.split('\n') %}
-                {{ chamadas[0] }}
-            {% else %}
-                VAMOS CRIAR ALGO JUNTO COM A <span style="color: var(--primary);">{{ loja.nome }}</span>?
-            {% endif %}
-        </h2>
-        
-        <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-16 w-full">
-            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="inline-block text-xl md:text-2xl border-b-2 pb-2 transition text-center" style="border-color: var(--primary);">
-                Iniciar Conversa no WhatsApp
-            </a>
-            
-            {% if loja.instagram_url %}
-            <a href="{{ loja.instagram_url }}" target="_blank" class="inline-flex items-center gap-2 text-xl hover:opacity-70 transition">
-                <i data-lucide="instagram" class="w-6 h-6"></i> Instagram
+{% if secao == 'banners_menores' and not loja.ocultar_banners_menores %}
+<section class="py-16 w-full" style="background-color: var(--bg-color);">
+    <div class="container mx-auto px-8 max-w-full">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-full">
+            {% if loja.bannermenor1 %}
+            <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl w-full">
+                <img src="{{ loja.bannermenor1 }}" class="w-full h-auto object-cover">
             </a>
             {% endif %}
-        </div>
-
-        <div class="w-full flex justify-center items-center py-24 mt-16 relative overflow-hidden border-t border-black/10" style="background-color: transparent;">
-            <div class="logo-rotate-container relative w-[300px] h-[300px] flex items-center justify-center mx-auto" style="perspective: 1000px;">
-                
-                {% if loja.logo %}
-                <img src="{{ loja.logo }}" class="w-20 h-20 md:w-24 md:h-24 object-contain filter brightness-0 absolute z-20 hover:scale-110 transition-transform duration-500">
-                {% else %}
-                <div class="w-20 h-20 md:w-24 md:h-24 bg-black text-white rounded-full flex items-center justify-center absolute z-20 hover:scale-110 transition-transform duration-500">
-                    <i data-lucide="zap" class="w-10 h-10"></i>
-                </div>
-                {% endif %}
-                
-                <div class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="transform: rotateX(65deg) rotateY(-20deg); transform-style: preserve-3d;">
-                    <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtom 12s linear infinite;">
-                        <path id="txtPath1" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
-                        <text font-family="'Archivo Black', sans-serif" font-size="12" fill="#000000" letter-spacing="4">
-                            <textPath href="#txtPath1" startOffset="0%">
-                                TECNOLOGIA · TECNOLOGIA · TECNOLOGIA · 
-                            </textPath>
-                        </text>
-                    </svg>
-                </div>
-                
-                <div class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="transform: rotateX(65deg) rotateY(40deg); transform-style: preserve-3d;">
-                    <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtomReverse 16s linear infinite;">
-                        <path id="txtPath2" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
-                        <text font-family="'Archivo Black', sans-serif" font-size="12" fill="#000000" letter-spacing="4">
-                            <textPath href="#txtPath2" startOffset="0%">
-                                TECNOLOGIA · TECNOLOGIA · TECNOLOGIA · 
-                            </textPath>
-                        </text>
-                    </svg>
-                </div>
-                
-                <div class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="transform: rotateX(75deg) rotateY(-60deg); transform-style: preserve-3d;">
-                    <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtom 20s linear infinite;">
-                        <path id="txtPath3" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
-                        <text font-family="'Archivo Black', sans-serif" font-size="12" fill="#000000" letter-spacing="4" opacity="0.6">
-                            <textPath href="#txtPath3" startOffset="0%">
-                                TECNOLOGIA · INOVAÇÃO · TECNOLOGIA · 
-                            </textPath>
-                        </text>
-                    </svg>
-                </div>
-                
-            </div>
-        </div>
-
-        <p class="mt-8 text-[10px] uppercase tracking-widest opacity-30">© 2026 {{ loja.nome }}. Todos os direitos reservados.</p>
-        
-        <div class="mt-8 pt-8 border-t border-white/10">
-            <a href="/{{ loja.slug_url }}/admin" class="text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 opacity-20 hover:opacity-100 transition">
-                <i data-lucide="lock" class="w-3 h-3"></i> Acesso Lojista
+            {% if loja.bannermenor2 %}
+            <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl w-full">
+                <img src="{{ loja.bannermenor2 }}" class="w-full h-auto object-cover">
             </a>
+            {% endif %}
         </div>
     </div>
+</section>
+{% endif %}
+
+{% if secao == 'produtos' and not loja.ocultar_produtos %}
+<section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color); position: relative;">
+    
+    <div class="container mx-auto px-6 md:px-10 mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[3rem] sm:text-5xl md:text-7xl font-display uppercase tracking-tighter leading-none m-0">
+            {{ loja.titulo_produtos or 'Nossos Cases' }}
+        </h2>
+    </div>
+
+    <div class="horizontal-container" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
+        {% for p in produtos %}
+        <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
+            <div class="case-image-wrapper">
+                {% if p.imagem1 %}
+                <img src="{{ p.imagem1 }}" alt="{{ p.nome }}" class="img-hover">
+                {% elif p.imagem_secundaria %}
+                <img src="{{ p.imagem_secundaria }}" alt="{{ p.nome }}" class="img-hover">
+                {% elif p.imagem2 %}
+                <img src="{{ p.imagem2 }}" alt="{{ p.nome }}" class="img-hover">
+                {% endif %}
+                <img src="{{ p.imagem }}" alt="{{ p.nome }}" class="img-main">
+            </div>
+            <div class="case-info-new">
+                <h3 class="case-title-new">{{ p.nome }}</h3>
+                <div class="case-subtitle-new">
+                    VER PROJETO <i data-lucide="arrow-right" class="w-5 h-5 icon-arrow-card"></i>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="flex-shrink-0 w-[70vw] h-[500px] mr-[5vw] flex items-center justify-center border rounded-2xl" style="border-color: var(--text-color);">
+            <p class="text-xl font-bold uppercase tracking-widest" style="color: var(--text-color); opacity: 0.5;">Nenhum projeto cadastrado.</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endfor %}
+
+{% if loja.logos_clientes %}
+
+<section class="client-marquee-wrapper">
+<div class="client-marquee-track">
+{% for logo in loja.logos_clientes.split() %}
+{% if logo.strip() %}
+<img src="{{ logo.strip() }}" alt="Cliente" onerror="this.style.display='none'">
+{% endif %}
+{% endfor %}
+</div>
+<div class="client-marquee-track">
+{% for logo in loja.logos_clientes.split() %}
+{% if logo.strip() %}
+<img src="{{ logo.strip() }}" alt="Cliente" onerror="this.style.display='none'">
+{% endif %}
+{% endfor %}
+</div>
+</section>
+{% endif %}
+
+<section class="show-milhao-section" id="dicas-de-ouro">
+<div class="sm-glow-bg"></div>
+<div class="sm-laser-beam sm-laser-1"></div>
+<div class="sm-laser-beam sm-laser-2"></div>
+
+<div class="sm-coin" style="width: 80px; height: 80px; top: 15%; left: 10%; transform: rotateY(30deg) rotateZ(15deg);"></div>
+<div class="sm-coin" style="width: 50px; height: 50px; top: 25%; right: 15%; transform: rotateY(-40deg) rotateZ(-20deg);"></div>
+<div class="sm-coin" style="width: 100px; height: 100px; bottom: 10%; right: 5%; transform: rotateY(-20deg) rotateX(20deg);"></div>
+<div class="sm-coin" style="width: 60px; height: 60px; bottom: 20%; left: 15%; transform: rotateY(50deg) rotateZ(10deg);"></div>
+
+<div class="container mx-auto px-4 relative z-10">
+    <div class="sm-form-container" id="sm-form-container">
+        <div class="sm-ia-badge">ANÁLISE IA EXCLUSIVA</div>
+        
+        <div class="sm-3d-box">
+            <div class="sm-title-wrapper">
+                <h2 class="sm-title">DICAS DE<br>OURO</h2>
+                <div class="sm-subtitle">Fature mais com Tecnologia</div>
+            </div>
+            
+            <form id="leadForm" class="flex flex-col">
+                <div class="sm-input-group">
+                    <input type="text" name="nome" placeholder="Seu Nome Completo" required class="sm-input">
+                </div>
+                
+                <div class="sm-input-group">
+                    <input type="text" name="profissao" placeholder="Seu Cargo / Profissão (Crucial para a IA)" required class="sm-input" style="border-color: rgba(124, 58, 237, 0.5);">
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm-input-group">
+                    <input type="text" name="whatsapp" placeholder="WhatsApp (DDD+Número)" required class="sm-input">
+                    <input type="email" name="email" placeholder="Seu Melhor E-mail" required class="sm-input">
+                </div>
+                
+                <button type="submit" id="submitBtn3D" class="sm-submit-btn">
+                    <span class="btn-text-wrapper relative z-10">GERAR MINHAS DICAS AGORA</span>
+                </button>
+            </form>
+            
+            <div id="leadSuccessMsg" class="hidden mt-6 bg-green-500/20 border border-green-500/50 text-green-400 p-4 rounded-xl text-center font-bold tracking-widest uppercase text-sm items-center justify-center gap-2" style="transform: translateZ(30px);">
+                <i data-lucide="check-circle" class="w-6 h-6"></i> Análise iniciada! Em instantes você receberá suas dicas exclusivas.
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+<footer class="py-20 text-center relative w-full overflow-hidden" id="contato" style="background-color: var(--text-color); color: var(--bg-color);">
+<div class="container mx-auto px-6 md:px-8 max-w-full">
+<h2 id="footer-main-heading" class="text-3xl md:text-7xl mb-12 tracking-tighter uppercase w-full min-h-[1.5em] flex items-center justify-center" style="perspective: 1000px; transform-style: preserve-3d;">
+{% if loja.chamada_rodape %}
+{% set chamadas = loja.chamada_rodape.split('\n') %}
+{{ chamadas[0] }}
+{% else %}
+VAMOS CRIAR ALGO JUNTO COM A <span style="color: var(--primary);">{{ loja.nome }}</span>?
+{% endif %}
+</h2>
+
+    <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-16 w-full">
+        <a href="[https://wa.me/55](https://wa.me/55){{ loja.whatsapp_comercial }}" class="inline-block text-xl md:text-2xl border-b-2 pb-2 transition text-center" style="border-color: var(--primary);">
+            Iniciar Conversa no WhatsApp
+        </a>
+        
+        {% if loja.instagram_url %}
+        <a href="{{ loja.instagram_url }}" target="_blank" class="inline-flex items-center gap-2 text-xl hover:opacity-70 transition">
+            <i data-lucide="instagram" class="w-6 h-6"></i> Instagram
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="w-full flex justify-center items-center py-24 mt-16 relative overflow-hidden border-t border-black/10" style="background-color: transparent;">
+        <div class="logo-rotate-container relative w-[300px] h-[300px] flex items-center justify-center mx-auto" style="perspective: 1000px;">
+            
+            {% if loja.logo %}
+            <img src="{{ loja.logo }}" class="w-20 h-20 md:w-24 md:h-24 object-contain filter brightness-0 absolute z-20 hover:scale-110 transition-transform duration-500">
+            {% else %}
+            <div class="w-20 h-20 md:w-24 md:h-24 bg-black text-white rounded-full flex items-center justify-center absolute z-20 hover:scale-110 transition-transform duration-500">
+                <i data-lucide="zap" class="w-10 h-10"></i>
+            </div>
+            {% endif %}
+            
+            <div class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="transform: rotateX(65deg) rotateY(-20deg); transform-style: preserve-3d;">
+                <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtom 12s linear infinite;">
+                    <path id="txtPath1" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
+                    <text font-family="'Archivo Black', sans-serif" font-size="12" fill="currentColor" opacity="0.3" letter-spacing="4">
+                        <textPath href="#txtPath1" startOffset="0%">
+                            TECNOLOGIA · TECNOLOGIA · TECNOLOGIA · 
+                        </textPath>
+                    </text>
+                </svg>
+            </div>
+            
+            <div class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="transform: rotateX(65deg) rotateY(40deg); transform-style: preserve-3d;">
+                <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtomReverse 16s linear infinite;">
+                    <path id="txtPath2" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
+                    <text font-family="'Archivo Black', sans-serif" font-size="12" fill="currentColor" opacity="0.3" letter-spacing="4">
+                        <textPath href="#txtPath2" startOffset="0%">
+                            TECNOLOGIA · TECNOLOGIA · TECNOLOGIA · 
+                        </textPath>
+                    </text>
+                </svg>
+            </div>
+            
+            <div class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="transform: rotateX(75deg) rotateY(-60deg); transform-style: preserve-3d;">
+                <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtom 20s linear infinite;">
+                    <path id="txtPath3" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
+                    <text font-family="'Archivo Black', sans-serif" font-size="12" fill="currentColor" opacity="0.45" letter-spacing="4">
+                        <textPath href="#txtPath3" startOffset="0%">
+                            TECNOLOGIA · INOVAÇÃO · TECNOLOGIA · 
+                        </textPath>
+                    </text>
+                </svg>
+            </div>
+            
+        </div>
+    </div>
+
+    <p class="mt-8 text-[10px] uppercase tracking-widest opacity-30">© 2026 {{ loja.nome }}. Todos os direitos reservados.</p>
+    
+    <div class="mt-8 pt-8 border-t border-white/10">
+        <a href="/{{ loja.slug_url }}/admin" class="text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 opacity-20 hover:opacity-100 transition">
+            <i data-lucide="lock" class="w-3 h-3"></i> Acesso Lojista
+        </a>
+    </div>
+</div>
 </footer>
 
 <script>
-    const loaderOverlay = document.getElementById('loader-overlay');
-    const introScene = document.getElementById('intro-scene');
-    const introLogoContainer = document.getElementById('intro-logoContainer');
-    const introParticles = document.getElementById('intro-particles');
-    const purpleLetters = document.querySelectorAll('#loader-overlay .purple');
-    const scrollPrompt = document.getElementById('scroll-prompt');
-    const overlayMasks = document.getElementById('overlay-masks');
-    let introFinished = false;
+const loaderOverlay = document.getElementById('loader-overlay');
+const introScene = document.getElementById('intro-scene');
+const introLogoContainer = document.getElementById('intro-logoContainer');
+const introParticles = document.getElementById('intro-particles');
+const purpleLetters = document.querySelectorAll('#loader-overlay .purple');
+const scrollPrompt = document.getElementById('scroll-prompt');
+const overlayMasks = document.getElementById('overlay-masks');
+let introFinished = false;
 
-    window.scrollTo(0, 0);
+window.scrollTo(0, 0);
 
-    document.addEventListener('mousemove', (e) => {
-        if(loaderOverlay.style.display === 'none') return;
+document.addEventListener(&#39;mousemove&#39;, (e) =&gt; {
+    if(loaderOverlay.style.display === &#39;none&#39;) return;
+    
+    const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
+    const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
+    introLogoContainer.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+    
+    overlayMasks.style.setProperty(&#39;--x&#39;, e.clientX + &#39;px&#39;);
+    overlayMasks.style.setProperty(&#39;--y&#39;, e.clientY + &#39;px&#39;);
+});
+
+document.addEventListener(&#39;mouseleave&#39;, () =&gt; {
+    if(loaderOverlay.style.display === &#39;none&#39;) return;
+    introLogoContainer.style.transform = `rotateY(0deg) rotateX(0deg)`;
+    introLogoContainer.style.transition = `transform 0.5s ease-out`;
+});
+
+document.addEventListener(&#39;mouseenter&#39;, () =&gt; {
+    if(loaderOverlay.style.display === &#39;none&#39;) return;
+    introLogoContainer.style.transition = `transform 0.1s ease-out`;
+});
+
+function createParticles(x, y) {
+    for (let i = 0; i &lt; 15; i++) {
+        const particle = document.createElement(&#39;div&#39;);
+        particle.classList.add(&#39;particle&#39;);
         
-        const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
-        const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
-        introLogoContainer.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-        
-        overlayMasks.style.setProperty('--x', e.clientX + 'px');
-        overlayMasks.style.setProperty('--y', e.clientY + 'px');
-    });
+        const size = Math.random() * 6 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
 
-    document.addEventListener('mouseleave', () => {
-        if(loaderOverlay.style.display === 'none') return;
-        introLogoContainer.style.transform = `rotateY(0deg) rotateX(0deg)`;
-        introLogoContainer.style.transition = `transform 0.5s ease-out`;
-    });
+        const angle = Math.random() * Math.PI * 2;
+        const distance = Math.random() * 150 + 50;
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance;
 
-    document.addEventListener('mouseenter', () => {
-        if(loaderOverlay.style.display === 'none') return;
-        introLogoContainer.style.transition = `transform 0.1s ease-out`;
-    });
+        particle.style.setProperty(&#39;--tx&#39;, `${tx}px`);
+        particle.style.setProperty(&#39;--ty&#39;, `${ty}px`);
+        particle.style.animation = `explode ${Math.random() * 0.5 + 0.5}s cubic-bezier(0.1, 0.8, 0.3, 1) forwards`;
 
-    function createParticles(x, y) {
-        for (let i = 0; i < 15; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            
-            const size = Math.random() * 6 + 2;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.left = `${x}px`;
-            particle.style.top = `${y}px`;
+        introParticles.appendChild(particle);
 
-            const angle = Math.random() * Math.PI * 2;
-            const distance = Math.random() * 150 + 50;
-            const tx = Math.cos(angle) * distance;
-            const ty = Math.sin(angle) * distance;
-
-            particle.style.setProperty('--tx', `${tx}px`);
-            particle.style.setProperty('--ty', `${ty}px`);
-            particle.style.animation = `explode ${Math.random() * 0.5 + 0.5}s cubic-bezier(0.1, 0.8, 0.3, 1) forwards`;
-
-            introParticles.appendChild(particle);
-
-            setTimeout(() => {
-                particle.remove();
-            }, 1000);
-        }
-    }
-
-    setTimeout(() => {
-        introScene.classList.add('shake');
-        
-        purpleLetters.forEach(letter => {
-            const rect = letter.getBoundingClientRect();
-            const sceneRect = introScene.getBoundingClientRect();
-            const x = rect.left - sceneRect.left + rect.width / 2;
-            const y = rect.top - sceneRect.top + rect.height;
-            createParticles(x, y);
-        });
-        
-        setTimeout(() => {
-            introScene.classList.remove('shake');
-        }, 400);
-
-        setTimeout(() => {
-            scrollPrompt.style.opacity = '1';
-            introFinished = true;
-            
-            window.addEventListener('wheel', handleEntryScroll, { passive: false });
-            window.addEventListener('touchstart', handleEntryScroll, { passive: false });
+        setTimeout(() =&gt; {
+            particle.remove();
         }, 1000);
-
-    }, 1400); 
-
-    function handleEntryScroll(e) {
-        if (!introFinished) return;
-        if (e && e.cancelable) e.preventDefault(); 
-        introFinished = false; 
-        
-        gsap.to(scrollPrompt, { opacity: 0, duration: 0.2 });
-
-        gsap.to(introLogoContainer, {
-            y: "-50vh",
-            scale: 0.9,
-            opacity: 0,
-            duration: 0.8,
-            onComplete: () => {
-                document.body.style.overflow = '';
-            },
-            ease: "power4.in"
-        });
-        
-        gsap.to(loaderOverlay, {
-            y: "-100%",
-            duration: 1.2,
-            ease: "expo.inOut",
-            onComplete: () => {
-                loaderOverlay.style.display = 'none';
-                
-                const heroWrapper = document.getElementById('hero-banner-wrapper');
-                const dataCanvas = document.getElementById('data-canvas');
-                
-                if (dataCanvas && heroWrapper) {
-                    if(typeof startDataWarp === 'function') startDataWarp();
-                    
-                    setTimeout(() => {
-                        gsap.to(dataCanvas, { opacity: 0, duration: 1.5 });
-                        gsap.to(heroWrapper, {
-                            opacity: 1,
-                            z: 0,
-                            scale: 1,
-                            duration: 2.5,
-                            ease: "power4.out"
-                        });
-                        
-                        gsap.to('.hero-title', {
-                            scale: 1.03,
-                            duration: 6,
-                            repeat: -1,
-                            yoyo: true,
-                            ease: "sine.inOut"
-                        });
-                    }, 1000);
-                }
-            }
-        });
     }
+}
 
-    document.addEventListener("DOMContentLoaded", function() {
-        const params = new URLSearchParams(window.location.search);
-        const catId = params.get('categoria');
-        if (catId) {
-            const linkCategoria = document.querySelector('.group a[href*="categoria=' + catId + '"]');
-            if (linkCategoria) {
-                const tituloProdutos = document.getElementById('titulo-secao-produtos');
-                if (tituloProdutos) {
-                    tituloProdutos.innerText = linkCategoria.innerText.trim();
-                }
+setTimeout(() =&gt; {
+    introScene.classList.add(&#39;shake&#39;);
+    
+    purpleLetters.forEach(letter =&gt; {
+        const rect = letter.getBoundingClientRect();
+        const sceneRect = introScene.getBoundingClientRect();
+        const x = rect.left - sceneRect.left + rect.width / 2;
+        const y = rect.top - sceneRect.top + rect.height;
+        createParticles(x, y);
+    });
+    
+    setTimeout(() =&gt; {
+        introScene.classList.remove(&#39;shake&#39;);
+    }, 400);
+
+    setTimeout(() =&gt; {
+        scrollPrompt.style.opacity = &#39;1&#39;;
+        introFinished = true;
+        
+        window.addEventListener(&#39;wheel&#39;, handleEntryScroll, { passive: false });
+        window.addEventListener(&#39;touchstart&#39;, handleEntryScroll, { passive: false });
+    }, 1000);
+
+}, 1400); 
+
+function handleEntryScroll(e) {
+    if (!introFinished) return;
+    if (e &amp;&amp; e.cancelable) e.preventDefault(); 
+    introFinished = false; 
+    
+    gsap.to(scrollPrompt, { opacity: 0, duration: 0.2 });
+
+    gsap.to(introLogoContainer, {
+        y: &quot;-50vh&quot;,
+        scale: 0.9,
+        opacity: 0,
+        duration: 0.8,
+        onComplete: () =&gt; {
+            document.body.style.overflow = &#39;&#39;;
+        },
+        ease: &quot;power4.in&quot;
+    });
+    
+    gsap.to(loaderOverlay, {
+        y: &quot;-100%&quot;,
+        duration: 1.2,
+        ease: &quot;expo.inOut&quot;,
+        onComplete: () =&gt; {
+            loaderOverlay.style.display = &#39;none&#39;;
+            
+            const heroWrapper = document.getElementById(&#39;hero-banner-wrapper&#39;);
+            const dataCanvas = document.getElementById(&#39;data-canvas&#39;);
+            
+            if (dataCanvas &amp;&amp; heroWrapper) {
+                if(typeof startDataWarp === &#39;function&#39;) startDataWarp();
+                
+                setTimeout(() =&gt; {
+                    gsap.to(dataCanvas, { opacity: 0, duration: 1.5 });
+                    gsap.to(heroWrapper, {
+                        opacity: 1,
+                        z: 0,
+                        scale: 1,
+                        duration: 2.5,
+                        ease: &quot;power4.out&quot;
+                    });
+                    
+                    gsap.to(&#39;.hero-img&#39;, {
+                        scale: 1.05,
+                        duration: 8,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: &quot;sine.inOut&quot;
+                    });
+                }, 1000);
             }
         }
+    });
+}
 
-        const footerTextRaw = `{{ loja.chamada_rodape or '' }}`;
-        const footerPhrases = footerTextRaw.split('\n').map(p => p.trim()).filter(p => p.length > 0);
+document.addEventListener(&quot;DOMContentLoaded&quot;, function() {
+    const params = new URLSearchParams(window.location.search);
+    const catId = params.get(&#39;categoria&#39;);
+    if (catId) {
+        const linkCategoria = document.querySelector(&#39;.group a[href*=&quot;categoria=&#39; + catId + &#39;&quot;]&#39;);
+        if (linkCategoria) {
+            const tituloProdutos = document.getElementById(&#39;titulo-secao-produtos&#39;);
+            if (tituloProdutos) {
+                tituloProdutos.innerText = linkCategoria.innerText.trim();
+            }
+        }
+    }
+
+    const footerTextRaw = `{{ loja.chamada_rodape or &#39;&#39; }}`;
+    const footerPhrases = footerTextRaw.split(&#39;\n&#39;).map(p =&gt; p.trim()).filter(p =&gt; p.length &gt; 0);
+    
+    if (footerPhrases.length &gt; 1) {
+        let currentPhraseIndex = 0;
+        const footerHeading = document.getElementById(&#39;footer-main-heading&#39;);
+        let isAnimatingPhrase = false;
+        let phraseTimer;
+
+        const nextFooterPhrase = () =&gt; {
+            if (isAnimatingPhrase) return;
+            isAnimatingPhrase = true;
+            clearTimeout(phraseTimer);
+
+            gsap.to(footerHeading, {
+                opacity: 0,
+                y: -40,
+                scale: 0.9,
+                rotationX: 45,
+                filter: &quot;blur(15px)&quot;,
+                duration: 0.6,
+                ease: &quot;back.in(1.5)&quot;,
+                onComplete: () =&gt; {
+                    currentPhraseIndex = (currentPhraseIndex + 1) % footerPhrases.length;
+                    footerHeading.innerHTML = footerPhrases[currentPhraseIndex];
+                    gsap.fromTo(footerHeading, 
+                        { opacity: 0, y: 40, scale: 1.1, rotationX: -45, filter: &quot;blur(15px)&quot; },
+                        { opacity: 1, y: 0, scale: 1, rotationX: 0, filter: &quot;blur(0px)&quot;, duration: 1.2, ease: &quot;elastic.out(1.2, 0.5)&quot;, onComplete: () =&gt; {
+                            isAnimatingPhrase = false;
+                            startPhraseTimer();
+                        }}
+                    );
+                }
+            });
+        };
+
+        const startPhraseTimer = () =&gt; {
+            clearTimeout(phraseTimer);
+            phraseTimer = setTimeout(() =&gt; {
+                nextFooterPhrase();
+            }, 4000);
+        };
+
+        let footerVisible = false;
+        const footerObserver = new IntersectionObserver((entries) =&gt; {
+            entries.forEach(entry =&gt; {
+                if (entry.isIntersecting) {
+                    footerVisible = true;
+                    startPhraseTimer();
+                } else {
+                    footerVisible = false;
+                    clearTimeout(phraseTimer);
+                }
+            });
+        }, { threshold: 0.2 });
         
-        if (footerPhrases.length > 1) {
-            let currentPhraseIndex = 0;
-            const footerHeading = document.getElementById('footer-main-heading');
-            let isAnimatingPhrase = false;
-            let phraseTimer;
+        footerObserver.observe(document.getElementById(&#39;contato&#39;));
 
-            const nextFooterPhrase = () => {
-                if (isAnimatingPhrase) return;
-                isAnimatingPhrase = true;
-                clearTimeout(phraseTimer);
-
-                gsap.to(footerHeading, {
-                    opacity: 0,
-                    y: -40,
-                    scale: 0.9,
-                    rotationX: 45,
-                    filter: "blur(15px)",
-                    duration: 0.6,
-                    ease: "back.in(1.5)",
-                    onComplete: () => {
-                        currentPhraseIndex = (currentPhraseIndex + 1) % footerPhrases.length;
-                        footerHeading.innerHTML = footerPhrases[currentPhraseIndex];
-                        gsap.fromTo(footerHeading, 
-                            { opacity: 0, y: 40, scale: 1.1, rotationX: -45, filter: "blur(15px)" },
-                            { opacity: 1, y: 0, scale: 1, rotationX: 0, filter: "blur(0px)", duration: 1.2, ease: "elastic.out(1.2, 0.5)", onComplete: () => {
-                                isAnimatingPhrase = false;
-                                startPhraseTimer();
-                            }}
-                        );
-                    }
-                });
-            };
-
-            const startPhraseTimer = () => {
-                clearTimeout(phraseTimer);
-                phraseTimer = setTimeout(() => {
+        window.addEventListener(&#39;wheel&#39;, (e) =&gt; {
+            if (footerVisible &amp;&amp; e.deltaY &gt; 0 &amp;&amp; !isAnimatingPhrase) {
+                if ((window.innerHeight + window.scrollY) &gt;= document.body.offsetHeight - 50) {
+                    e.preventDefault(); 
                     nextFooterPhrase();
-                }, 4000);
-            };
+                }
+            }
+        }, { passive: false });
 
-            let footerVisible = false;
-            const footerObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        footerVisible = true;
-                        startPhraseTimer();
-                    } else {
-                        footerVisible = false;
-                        clearTimeout(phraseTimer);
-                    }
-                });
-            }, { threshold: 0.2 });
-            
-            footerObserver.observe(document.getElementById('contato'));
+        let lastTouchY = 0;
+        window.addEventListener(&#39;touchstart&#39;, (e) =&gt; {
+            lastTouchY = e.touches[0].clientY;
+        }, {passive: true});
 
-            window.addEventListener('wheel', (e) => {
-                if (footerVisible && e.deltaY > 0 && !isAnimatingPhrase) {
-                    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
-                        e.preventDefault(); 
+        window.addEventListener(&#39;touchmove&#39;, (e) =&gt; {
+            if (footerVisible &amp;&amp; !isAnimatingPhrase) {
+                let currentY = e.touches[0].clientY;
+                if (lastTouchY &gt; currentY) { 
+                    if ((window.innerHeight + window.scrollY) &gt;= document.body.offsetHeight - 50) {
                         nextFooterPhrase();
                     }
                 }
-            }, { passive: false });
-
-            let lastTouchY = 0;
-            window.addEventListener('touchstart', (e) => {
-                lastTouchY = e.touches[0].clientY;
-            }, {passive: true});
-
-            window.addEventListener('touchmove', (e) => {
-                if (footerVisible && !isAnimatingPhrase) {
-                    let currentY = e.touches[0].clientY;
-                    if (lastTouchY > currentY) { 
-                        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
-                            nextFooterPhrase();
-                        }
-                    }
-                    lastTouchY = currentY;
-                }
-            }, {passive: true});
-        }
-        
-        const smFormContainer = document.getElementById('sm-form-container');
-        if(smFormContainer) {
-            smFormContainer.addEventListener('mousemove', (e) => {
-                const rect = smFormContainer.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const rotateX = ((y - centerY) / centerY) * -10; 
-                const rotateY = ((x - centerX) / centerX) * 10;
-                
-                gsap.to(smFormContainer.querySelector('.sm-3d-box'), {
-                    rotationX: rotateX,
-                    rotationY: rotateY,
-                    duration: 0.5,
-                    ease: "power2.out"
-                });
-                
-                const coins = document.querySelectorAll('.sm-coin');
-                coins.forEach((coin, index) => {
-                    const depth = (index + 1) * 0.05;
-                    gsap.to(coin, {
-                        x: (x - centerX) * depth,
-                        y: (y - centerY) * depth,
-                        duration: 1,
-                        ease: "power2.out"
-                    });
-                });
-            });
-            
-            smFormContainer.addEventListener('mouseleave', () => {
-                gsap.to(smFormContainer.querySelector('.sm-3d-box'), {
-                    rotationX: 0,
-                    rotationY: 0,
-                    duration: 0.8,
-                    ease: "elastic.out(1, 0.5)"
-                });
-                
-                const coins = document.querySelectorAll('.sm-coin');
-                coins.forEach((coin) => {
-                    gsap.to(coin, {
-                        x: 0,
-                        y: 0,
-                        duration: 1.5,
-                        ease: "elastic.out(1, 0.3)"
-                    });
-                });
-            });
-            
-            gsap.from(smFormContainer, {
-                scrollTrigger: {
-                    trigger: ".show-milhao-section",
-                    start: "top 70%"
-                },
-                y: 100,
-                opacity: 0,
-                rotationX: -20,
-                duration: 1.5,
-                ease: "power4.out"
-            });
-            
-            gsap.from('.sm-coin', {
-                scrollTrigger: {
-                    trigger: ".show-milhao-section",
-                    start: "top 70%"
-                },
-                scale: 0,
-                rotationY: 720,
-                opacity: 0,
-                duration: 2,
-                stagger: 0.2,
-                ease: "elastic.out(1, 0.3)"
-            });
-        }
-
-        const leadForm = document.getElementById('leadForm');
-        if(leadForm) {
-            leadForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                const btn = this.querySelector('button');
-                const textWrapper = btn.querySelector('.btn-text-wrapper');
-                
-                textWrapper.innerHTML = 'PROCESSANDO IA...';
-                btn.disabled = true;
-
-                const formData = new FormData(this);
-                try {
-                    const response = await fetch('/{{ loja.slug_url }}/captura-lead', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const result = await response.json();
-                    if(result.sucesso) {
-                        this.style.display = 'none';
-                        const successMsg = document.getElementById('leadSuccessMsg');
-                        successMsg.classList.remove('hidden');
-                        successMsg.classList.add('flex');
-                    } else {
-                        alert(result.erro || 'Erro ao enviar. Tente novamente.');
-                        textWrapper.innerHTML = 'GERAR MINHAS DICAS AGORA';
-                        btn.disabled = false;
-                    }
-                } catch(err) {
-                    alert('Erro de conexão. Verifique sua internet.');
-                    textWrapper.innerHTML = 'GERAR MINHAS DICAS AGORA';
-                    btn.disabled = false;
-                }
-            });
-        }
-    });
-
-    lucide.createIcons();
-    gsap.registerPlugin(ScrollTrigger);
-
-    const container = document.querySelector(".horizontal-container");
-    const cards = document.querySelectorAll('.case-card');
-    let isInteracting = false;
-    
-    if (container && cards.length > 0) {
-        
-        const cardObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('in-view');
-                } else {
-                    entry.target.classList.remove('in-view'); 
-                }
-            });
-        }, {
-            root: container,
-            threshold: 0.4 
-        });
-
-        cards.forEach(card => cardObserver.observe(card));
-
-        let autoScrollSpeed = window.innerWidth < 768 ? 1.5 : 0.8;
-        let autoScrollReq;
-
-        const startAutoScroll = () => {
-            if (!isInteracting) {
-                if (Math.ceil(container.scrollLeft + container.clientWidth) < container.scrollWidth - 2) {
-                    container.scrollLeft += autoScrollSpeed;
-                }
+                lastTouchY = currentY;
             }
-            autoScrollReq = requestAnimationFrame(startAutoScroll);
-        };
-        
-        autoScrollReq = requestAnimationFrame(startAutoScroll);
-
-        container.addEventListener('mouseenter', () => { if(window.matchMedia('(pointer: fine)').matches) isInteracting = true; });
-        container.addEventListener('mouseleave', () => { if(window.matchMedia('(pointer: fine)').matches) isInteracting = false; });
-        
-        container.addEventListener('touchstart', () => { isInteracting = true; }, {passive: true});
-        container.addEventListener('touchend', () => { setTimeout(() => { isInteracting = false; }, 1500); }, {passive: true});
-        container.addEventListener('touchcancel', () => { setTimeout(() => { isInteracting = false; }, 1500); }, {passive: true});
-
-        let interactionTimeout;
-        container.addEventListener('scroll', () => {
-            isInteracting = true;
-            clearTimeout(interactionTimeout);
-            interactionTimeout = setTimeout(() => {
-                isInteracting = false;
-            }, 1000);
-        }, { passive: true });
-
-        container.addEventListener('wheel', (e) => {
-            if(document.body.style.overflow === 'hidden') return;
-            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-            
-            isInteracting = true; 
-            clearTimeout(container.scrollTimeout);
-            container.scrollTimeout = setTimeout(() => isInteracting = false, 1500);
-
-            const atLeft = container.scrollLeft <= 0;
-            const atRight = Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth;
-            
-            if (e.deltaY > 0 && !atRight) {
-                e.preventDefault();
-                container.scrollLeft += e.deltaY;
-            } else if (e.deltaY < 0 && !atLeft) {
-                e.preventDefault();
-                container.scrollLeft += e.deltaY;
-            }
-        }, { passive: false });
-    }
-
-    let warpAnimReq;
-    function startDataWarp() {
-        const canvas = document.getElementById('data-canvas');
-        if(!canvas) return;
-        const ctx = canvas.getContext('2d');
-        let w = canvas.width = window.innerWidth;
-        let h = canvas.height = window.innerHeight;
-        
-        window.addEventListener('resize', () => {
-            w = canvas.width = window.innerWidth;
-            h = canvas.height = window.innerHeight;
-        });
-
-        const nodes = [];
-        for(let i=0; i<300; i++) {
-            nodes.push({
-                x: (Math.random() - 0.5) * w * 2,
-                y: (Math.random() - 0.5) * h * 2,
-                z: Math.random() * 1000,
-                color: Math.random() > 0.6 ? '#8A2BE2' : '#ffffff'
-            });
-        }
-        
-        let speed = 60; 
-        
-        function draw() {
-            ctx.fillStyle = 'rgba(5, 5, 5, 0.4)';
-            ctx.fillRect(0, 0, w, h);
-            ctx.save();
-            ctx.translate(w/2, h/2);
-            
-            nodes.forEach(node => {
-                node.z -= speed;
-                if(node.z <= 0) {
-                    node.z = 1000;
-                    node.x = (Math.random() - 0.5) * w * 2;
-                    node.y = (Math.random() - 0.5) * h * 2;
-                }
-                
-                let px = node.x * (1000 / node.z);
-                let py = node.y * (1000 / node.z);
-                let pz = node.z;
-                
-                let size = Math.max(0.5, (1 - pz/1000) * 4);
-                
-                ctx.fillStyle = node.color;
-                ctx.beginPath();
-                ctx.arc(px, py, size, 0, Math.PI*2);
-                ctx.fill();
-                
-                if(pz < 600 && Math.random() > 0.85) {
-                    ctx.strokeStyle = node.color === '#8A2BE2' ? `rgba(138, 43, 226, ${0.8 - pz/600})` : `rgba(255, 255, 255, ${0.5 - pz/600})`;
-                    ctx.lineWidth = size / 2;
-                    ctx.beginPath();
-                    ctx.moveTo(px, py);
-                    ctx.lineTo(px + (Math.random()-0.5)*150, py + (Math.random()-0.5)*150);
-                    ctx.stroke();
-                }
-            });
-            ctx.restore();
-            
-            if(speed > 1.5) speed *= 0.93; 
-            warpAnimReq = requestAnimationFrame(draw);
-        }
-        draw();
-    }
-
-    const heroSec = document.getElementById('hero');
-    const bubblesContainer = document.getElementById('bubbles-container');
-    
-    if (heroSec && bubblesContainer) {
-        let lastTrailTime = 0;
-        
-        const createTrail = (x, y) => {
-            const now = Date.now();
-            if (now - lastTrailTime < 25) return; 
-            lastTrailTime = now;
-
-            const trail = document.createElement('div');
-            trail.className = 'glass-trail';
-            trail.style.left = x + 'px';
-            trail.style.top = y + 'px';
-            
-            bubblesContainer.appendChild(trail);
-
-            void trail.offsetWidth;
-
-            trail.style.transform = 'translate(-50%, -50%) scale(2)';
-            trail.style.opacity = '0';
-
-            setTimeout(() => {
-                if (trail.parentNode) trail.remove();
-            }, 1200);
-        };
-
-        heroSec.addEventListener('mousemove', (e) => {
-            const rect = heroSec.getBoundingClientRect();
-            createTrail(e.clientX - rect.left, e.clientY - rect.top);
-        });
-
-        heroSec.addEventListener('touchmove', (e) => {
-            const rect = heroSec.getBoundingClientRect();
-            createTrail(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
         }, {passive: true});
     }
-
-    if (document.getElementById('sobre')) {
-        let sobreTl = gsap.timeline({
-            scrollTrigger: {
-                trigger: "#sobre",
-                start: "top top",
-                end: "+=100%",
-                pin: true,
-                scrub: 1
-            }
+    
+    const smFormContainer = document.getElementById(&#39;sm-form-container&#39;);
+    if(smFormContainer) {
+        smFormContainer.addEventListener(&#39;mousemove&#39;, (e) =&gt; {
+            const rect = smFormContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = ((y - centerY) / centerY) * -10; 
+            const rotateY = ((x - centerX) / centerX) * 10;
+            
+            gsap.to(smFormContainer.querySelector(&#39;.sm-3d-box&#39;), {
+                rotationX: rotateX,
+                rotationY: rotateY,
+                duration: 0.5,
+                ease: &quot;power2.out&quot;
+            });
+            
+            const coins = document.querySelectorAll(&#39;.sm-coin&#39;);
+            coins.forEach((coin, index) =&gt; {
+                const depth = (index + 1) * 0.05;
+                gsap.to(coin, {
+                    x: (x - centerX) * depth,
+                    y: (y - centerY) * depth,
+                    duration: 1,
+                    ease: &quot;power2.out&quot;
+                });
+            });
         });
         
-        sobreTl.to("#sobre-bg-img", { 
-            scale: 1, 
-            duration: 1 
-        }).to("#sobre-content", { 
-            opacity: 1, 
-            y: 0, 
-            duration: 1 
-        }, "-=0.5");
-
-        const sobreDescText = document.getElementById("sobre-desc-text");
-        if (sobreDescText) {
-            const originalText = sobreDescText.innerText.trim();
-            sobreDescText.innerText = "";
-            let isTyping = false;
-
-            ScrollTrigger.create({
-                trigger: "#sobre",
-                start: "top top",
-                onUpdate: (self) => {
-                    if (self.progress > 0.4 && !isTyping) {
-                        isTyping = true;
-                        let i = 0;
-                        sobreDescText.innerHTML = "";
-                        sobreDescText.classList.add("typing-cursor");
-                        function type() {
-                            if (i < originalText.length) {
-                                sobreDescText.innerHTML = originalText.substring(0, i + 1);
-                                i++;
-                                setTimeout(type, 20);
-                            } else {
-                                setTimeout(() => sobreDescText.classList.remove("typing-cursor"), 3000);
-                            }
-                        }
-                        type();
-                    }
-                }
+        smFormContainer.addEventListener(&#39;mouseleave&#39;, () =&gt; {
+            gsap.to(smFormContainer.querySelector(&#39;.sm-3d-box&#39;), {
+                rotationX: 0,
+                rotationY: 0,
+                duration: 0.8,
+                ease: &quot;elastic.out(1, 0.5)&quot;
             });
-        }
+            
+            const coins = document.querySelectorAll(&#39;.sm-coin&#39;);
+            coins.forEach((coin) =&gt; {
+                gsap.to(coin, {
+                    x: 0,
+                    y: 0,
+                    duration: 1.5,
+                    ease: &quot;elastic.out(1, 0.3)&quot;
+                });
+            });
+        });
+        
+        gsap.from(smFormContainer, {
+            scrollTrigger: {
+                trigger: &quot;.show-milhao-section&quot;,
+                start: &quot;top 70%&quot;
+            },
+            y: 100,
+            opacity: 0,
+            rotationX: -20,
+            duration: 1.5,
+            ease: &quot;power4.out&quot;
+        });
+        
+        gsap.from(&#39;.sm-coin&#39;, {
+            scrollTrigger: {
+                trigger: &quot;.show-milhao-section&quot;,
+                start: &quot;top 70%&quot;
+            },
+            scale: 0,
+            rotationY: 720,
+            opacity: 0,
+            duration: 2,
+            stagger: 0.2,
+            ease: &quot;elastic.out(1, 0.3)&quot;
+        });
     }
 
+    const leadForm = document.getElementById(&#39;leadForm&#39;);
+    if(leadForm) {
+        leadForm.addEventListener(&#39;submit&#39;, async function(e) {
+            e.preventDefault();
+            const btn = this.querySelector(&#39;button&#39;);
+            const textWrapper = btn.querySelector(&#39;.btn-text-wrapper&#39;);
+            
+            textWrapper.innerHTML = &#39;PROCESSANDO IA...&#39;;
+            btn.disabled = true;
+
+            const formData = new FormData(this);
+            try {
+                const response = await fetch(&#39;/{{ loja.slug_url }}/captura-lead&#39;, {
+                    method: &#39;POST&#39;,
+                    body: formData
+                });
+                const result = await response.json();
+                if(result.sucesso) {
+                    this.style.display = &#39;none&#39;;
+                    const successMsg = document.getElementById(&#39;leadSuccessMsg&#39;);
+                    successMsg.classList.remove(&#39;hidden&#39;);
+                    successMsg.classList.add(&#39;flex&#39;);
+                } else {
+                    alert(result.erro || &#39;Erro ao enviar. Tente novamente.&#39;);
+                    textWrapper.innerHTML = &#39;GERAR MINHAS DICAS AGORA&#39;;
+                    btn.disabled = false;
+                }
+            } catch(err) {
+                alert(&#39;Erro de conexão. Verifique sua internet.&#39;);
+                textWrapper.innerHTML = &#39;GERAR MINHAS DICAS AGORA&#39;;
+                btn.disabled = false;
+            }
+        });
+    }
+});
+
+lucide.createIcons();
+gsap.registerPlugin(ScrollTrigger);
+
+const container = document.querySelector(&quot;.horizontal-container&quot;);
+const cards = document.querySelectorAll(&#39;.case-card&#39;);
+let isInteracting = false;
+
+if (container &amp;&amp; cards.length &gt; 0) {
+    
+    const cardObserver = new IntersectionObserver((entries) =&gt; {
+        entries.forEach(entry =&gt; {
+            if (entry.isIntersecting) {
+                entry.target.classList.add(&#39;in-view&#39;);
+            } else {
+                entry.target.classList.remove(&#39;in-view&#39;); 
+            }
+        });
+    }, {
+        root: container,
+        threshold: 0.4 
+    });
+
+    cards.forEach(card =&gt; cardObserver.observe(card));
+
+    let autoScrollSpeed = window.innerWidth &lt; 768 ? 1.5 : 0.8;
+    let autoScrollReq;
+
+    const startAutoScroll = () =&gt; {
+        if (!isInteracting) {
+            if (Math.ceil(container.scrollLeft + container.clientWidth) &lt; container.scrollWidth - 2) {
+                container.scrollLeft += autoScrollSpeed;
+            }
+        }
+        autoScrollReq = requestAnimationFrame(startAutoScroll);
+    };
+    
+    autoScrollReq = requestAnimationFrame(startAutoScroll);
+
+    container.addEventListener(&#39;mouseenter&#39;, () =&gt; { if(window.matchMedia(&#39;(pointer: fine)&#39;).matches) isInteracting = true; });
+    container.addEventListener(&#39;mouseleave&#39;, () =&gt; { if(window.matchMedia(&#39;(pointer: fine)&#39;).matches) isInteracting = false; });
+    
+    container.addEventListener(&#39;touchstart&#39;, () =&gt; { isInteracting = true; }, {passive: true});
+    container.addEventListener(&#39;touchend&#39;, () =&gt; { setTimeout(() =&gt; { isInteracting = false; }, 1500); }, {passive: true});
+    container.addEventListener(&#39;touchcancel&#39;, () =&gt; { setTimeout(() =&gt; { isInteracting = false; }, 1500); }, {passive: true});
+
+    let interactionTimeout;
+    container.addEventListener(&#39;scroll&#39;, () =&gt; {
+        isInteracting = true;
+        clearTimeout(interactionTimeout);
+        interactionTimeout = setTimeout(() =&gt; {
+            isInteracting = false;
+        }, 1000);
+    }, { passive: true });
+
+    container.addEventListener(&#39;wheel&#39;, (e) =&gt; {
+        if(document.body.style.overflow === &#39;hidden&#39;) return;
+        if (Math.abs(e.deltaX) &gt; Math.abs(e.deltaY)) return;
+        
+        isInteracting = true; 
+        clearTimeout(container.scrollTimeout);
+        container.scrollTimeout = setTimeout(() =&gt; isInteracting = false, 1500);
+
+        const atLeft = container.scrollLeft &lt;= 0;
+        const atRight = Math.ceil(container.scrollLeft + container.clientWidth) &gt;= container.scrollWidth;
+        
+        if (e.deltaY &gt; 0 &amp;&amp; !atRight) {
+            e.preventDefault();
+            container.scrollLeft += e.deltaY;
+        } else if (e.deltaY &lt; 0 &amp;&amp; !atLeft) {
+            e.preventDefault();
+            container.scrollLeft += e.deltaY;
+        }
+    }, { passive: false });
+}
+
+let warpAnimReq;
+function startDataWarp() {
+    const canvas = document.getElementById(&#39;data-canvas&#39;);
+    if(!canvas) return;
+    const ctx = canvas.getContext(&#39;2d&#39;);
+    let w = canvas.width = window.innerWidth;
+    let h = canvas.height = window.innerHeight;
+    
+    window.addEventListener(&#39;resize&#39;, () =&gt; {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+    });
+
+    const nodes = [];
+    for(let i=0; i&lt;300; i++) {
+        nodes.push({
+            x: (Math.random() - 0.5) * w * 2,
+            y: (Math.random() - 0.5) * h * 2,
+            z: Math.random() * 1000,
+            color: Math.random() &gt; 0.6 ? &#39;#8A2BE2&#39; : &#39;#ffffff&#39;
+        });
+    }
+    
+    let speed = 60; 
+    
+    function draw() {
+        ctx.fillStyle = &#39;rgba(5, 5, 5, 0.4)&#39;;
+        ctx.fillRect(0, 0, w, h);
+        ctx.save();
+        ctx.translate(w/2, h/2);
+        
+        nodes.forEach(node =&gt; {
+            node.z -= speed;
+            if(node.z &lt;= 0) {
+                node.z = 1000;
+                node.x = (Math.random() - 0.5) * w * 2;
+                node.y = (Math.random() - 0.5) * h * 2;
+            }
+            
+            let px = node.x * (1000 / node.z);
+            let py = node.y * (1000 / node.z);
+            let pz = node.z;
+            
+            let size = Math.max(0.5, (1 - pz/1000) * 4);
+            
+            ctx.fillStyle = node.color;
+            ctx.beginPath();
+            ctx.arc(px, py, size, 0, Math.PI*2);
+            ctx.fill();
+            
+            if(pz &lt; 600 &amp;&amp; Math.random() &gt; 0.85) {
+                ctx.strokeStyle = node.color === &#39;#8A2BE2&#39; ? `rgba(138, 43, 226, ${0.8 - pz/600})` : `rgba(255, 255, 255, ${0.5 - pz/600})`;
+                ctx.lineWidth = size / 2;
+                ctx.beginPath();
+                ctx.moveTo(px, py);
+                ctx.lineTo(px + (Math.random()-0.5)*150, py + (Math.random()-0.5)*150);
+                ctx.stroke();
+            }
+        });
+        ctx.restore();
+        
+        if(speed &gt; 1.5) speed *= 0.93; 
+        warpAnimReq = requestAnimationFrame(draw);
+    }
+    draw();
+}
+
+const heroSec = document.getElementById(&#39;hero&#39;);
+const bubblesContainer = document.getElementById(&#39;bubbles-container&#39;);
+
+if (heroSec &amp;&amp; bubblesContainer) {
+    let lastTrailTime = 0;
+    
+    const createTrail = (x, y) =&gt; {
+        const now = Date.now();
+        if (now - lastTrailTime &lt; 25) return; 
+        lastTrailTime = now;
+
+        const trail = document.createElement(&#39;div&#39;);
+        trail.className = &#39;glass-trail&#39;;
+        trail.style.left = x + &#39;px&#39;;
+        trail.style.top = y + &#39;px&#39;;
+        
+        bubblesContainer.appendChild(trail);
+
+        void trail.offsetWidth;
+
+        trail.style.transform = &#39;translate(-50%, -50%) scale(2)&#39;;
+        trail.style.opacity = &#39;0&#39;;
+
+        setTimeout(() =&gt; {
+            if (trail.parentNode) trail.remove();
+        }, 1200);
+    };
+
+    heroSec.addEventListener(&#39;mousemove&#39;, (e) =&gt; {
+        const rect = heroSec.getBoundingClientRect();
+        createTrail(e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    heroSec.addEventListener(&#39;touchmove&#39;, (e) =&gt; {
+        const rect = heroSec.getBoundingClientRect();
+        createTrail(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
+    }, {passive: true});
+}
+
+if (document.getElementById(&#39;sobre&#39;)) {
+    let sobreTl = gsap.timeline({
+        scrollTrigger: {
+            trigger: &quot;#sobre&quot;,
+            start: &quot;top top&quot;,
+            end: &quot;+=100%&quot;,
+            pin: true,
+            scrub: 1
+        }
+    });
+    
+    sobreTl.to(&quot;#sobre-bg-img&quot;, { 
+        scale: 1, 
+        duration: 1 
+    }).to(&quot;#sobre-content&quot;, { 
+        opacity: 1, 
+        y: 0, 
+        duration: 1 
+    }, &quot;-=0.5&quot;);
+
+    const sobreDescText = document.getElementById(&quot;sobre-desc-text&quot;);
+    if (sobreDescText) {
+        const originalText = sobreDescText.innerText.trim();
+        sobreDescText.innerText = &quot;&quot;;
+        let isTyping = false;
+
+        ScrollTrigger.create({
+            trigger: &quot;#sobre&quot;,
+            start: &quot;top top&quot;,
+            onUpdate: (self) =&gt; {
+                if (self.progress &gt; 0.4 &amp;&amp; !isTyping) {
+                    isTyping = true;
+                    let i = 0;
+                    sobreDescText.innerHTML = &quot;&quot;;
+                    sobreDescText.classList.add(&quot;typing-cursor&quot;);
+                    function type() {
+                        if (i &lt; originalText.length) {
+                            sobreDescText.innerHTML = originalText.substring(0, i + 1);
+                            i++;
+                            setTimeout(type, 20);
+                        } else {
+                            setTimeout(() =&gt; sobreDescText.classList.remove(&quot;typing-cursor&quot;), 3000);
+                        }
+                    }
+                    type();
+                }
+            }
+        });
+    }
+}
 </script>
+
 </body>
 </html>
