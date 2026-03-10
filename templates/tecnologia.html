@@ -1593,7 +1593,7 @@
 
         cards.forEach(card => cardObserver.observe(card));
 
-        let autoScrollSpeed = window.innerWidth < 768 ? 1.5 : 0.8;
+        let autoScrollSpeed = window.innerWidth < 768 ? 2.5 : 0.8; // Aumentado de 1.5 para 2.5 no mobile
         let autoScrollReq;
 
         const startAutoScroll = () => {
