@@ -573,6 +573,227 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(-360deg); }
     }
+
+    /* SHOW DO MILHÃO INSPIRED FORM STYLES */
+    .show-milhao-section {
+        background-color: #050505;
+        position: relative;
+        overflow: hidden;
+        padding: 8rem 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .sm-glow-bg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80vw;
+        height: 80vw;
+        max-width: 800px;
+        max-height: 800px;
+        background: radial-gradient(circle, color-mix(in srgb, var(--primary) 20%, transparent) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .sm-laser-beam {
+        position: absolute;
+        background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        height: 2px;
+        width: 100%;
+        opacity: 0.3;
+        z-index: 0;
+        box-shadow: 0 0 20px var(--primary);
+    }
+
+    .sm-laser-1 { top: 20%; transform: rotate(15deg); animation: pulseBeam 4s infinite alternate; }
+    .sm-laser-2 { top: 80%; transform: rotate(-15deg); animation: pulseBeam 5s infinite alternate-reverse; }
+
+    @keyframes pulseBeam {
+        0% { opacity: 0.1; box-shadow: 0 0 10px var(--primary); }
+        100% { opacity: 0.5; box-shadow: 0 0 30px var(--primary); }
+    }
+
+    .sm-form-container {
+        position: relative;
+        z-index: 10;
+        perspective: 1200px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .sm-3d-box {
+        background: rgba(10, 10, 10, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 3rem 2.5rem;
+        transform-style: preserve-3d;
+        box-shadow: 
+            0 30px 60px rgba(0,0,0,0.5),
+            inset 0 0 0 1px rgba(255,255,255,0.05),
+            0 0 40px color-mix(in srgb, var(--primary) 20%, transparent);
+        transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .sm-title-wrapper {
+        transform: translateZ(60px);
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .sm-title {
+        font-family: 'Archivo Black', sans-serif;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        line-height: 1;
+        text-transform: uppercase;
+        color: #fff;
+        text-shadow: 3px 3px 0px color-mix(in srgb, var(--primary) 60%, #000), 
+                     6px 6px 0px color-mix(in srgb, var(--primary) 30%, #000);
+        margin-bottom: 1rem;
+        letter-spacing: -0.03em;
+    }
+
+    .sm-subtitle {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        background: color-mix(in srgb, var(--primary) 10%, transparent);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        display: inline-block;
+        border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+    }
+
+    .sm-input-group {
+        transform: translateZ(30px);
+        margin-bottom: 1.5rem;
+    }
+
+    .sm-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1.2rem;
+        color: #fff;
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    .sm-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), 0 0 15px color-mix(in srgb, var(--primary) 40%, transparent);
+    }
+
+    .sm-input::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    .sm-submit-btn {
+        transform: translateZ(50px);
+        width: 100%;
+        background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 60%, #fff));
+        color: #fff;
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        padding: 1.2rem;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px color-mix(in srgb, var(--primary) 40%, transparent),
+                    inset 0 2px 0 rgba(255,255,255,0.3);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .sm-submit-btn:hover {
+        transform: translateZ(50px) scale(1.02);
+        box-shadow: 0 15px 40px color-mix(in srgb, var(--primary) 50%, transparent),
+                    inset 0 2px 0 rgba(255,255,255,0.4);
+    }
+
+    .sm-submit-btn:active {
+        transform: translateZ(50px) scale(0.98);
+    }
+
+    .sm-submit-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        transform: skewX(-25deg);
+        animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+        0% { left: -100%; }
+        20% { left: 200%; }
+        100% { left: 200%; }
+    }
+
+    .sm-ia-badge {
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        background: var(--text-color);
+        color: var(--bg-color);
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 0.8rem;
+        padding: 10px 15px;
+        border-radius: 50px;
+        transform: translateZ(80px) rotate(10deg);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        border: 2px solid var(--primary);
+        z-index: 20;
+        animation: floatBadge 3s ease-in-out infinite;
+    }
+
+    @keyframes floatBadge {
+        0%, 100% { transform: translateZ(80px) rotate(10deg) translateY(0); }
+        50% { transform: translateZ(80px) rotate(12deg) translateY(-10px); }
+    }
+
+    .sm-coin {
+        position: absolute;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #FFD700, #DAA520);
+        box-shadow: inset 0 0 10px rgba(255,255,255,0.8), 
+                    inset 0 0 20px rgba(0,0,0,0.5), 
+                    0 10px 20px rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(0,0,0,0.5);
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 1.5rem;
+        transform-style: preserve-3d;
+        z-index: 5;
+    }
+
+    .sm-coin::after {
+        content: '$';
+        transform: translateZ(2px);
+    }
 </style>
 </head>
 <body style="overflow: hidden;">
@@ -846,6 +1067,53 @@
 </section>
 {% endif %}
 
+<section class="show-milhao-section" id="dicas-de-ouro">
+    <div class="sm-glow-bg"></div>
+    <div class="sm-laser-beam sm-laser-1"></div>
+    <div class="sm-laser-beam sm-laser-2"></div>
+    
+    <div class="sm-coin" style="width: 80px; height: 80px; top: 15%; left: 10%; transform: rotateY(30deg) rotateZ(15deg);"></div>
+    <div class="sm-coin" style="width: 50px; height: 50px; top: 25%; right: 15%; transform: rotateY(-40deg) rotateZ(-20deg);"></div>
+    <div class="sm-coin" style="width: 100px; height: 100px; bottom: 10%; right: 5%; transform: rotateY(-20deg) rotateX(20deg);"></div>
+    <div class="sm-coin" style="width: 60px; height: 60px; bottom: 20%; left: 15%; transform: rotateY(50deg) rotateZ(10deg);"></div>
+
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="sm-form-container" id="sm-form-container">
+            <div class="sm-ia-badge">🤖 ANÁLISE IA EXCLUSIVA</div>
+            
+            <div class="sm-3d-box">
+                <div class="sm-title-wrapper">
+                    <h2 class="sm-title">DICAS DE<br>OURO</h2>
+                    <div class="sm-subtitle">Fature mais com Tecnologia</div>
+                </div>
+                
+                <form id="leadForm" class="flex flex-col">
+                    <div class="sm-input-group">
+                        <input type="text" name="nome" placeholder="Seu Nome Completo" required class="sm-input">
+                    </div>
+                    
+                    <div class="sm-input-group">
+                        <input type="text" name="profissao" placeholder="Seu Cargo / Profissão (Crucial para a IA)" required class="sm-input" style="border-color: rgba(124, 58, 237, 0.5);">
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm-input-group">
+                        <input type="text" name="whatsapp" placeholder="WhatsApp (DDD+Número)" required class="sm-input">
+                        <input type="email" name="email" placeholder="Seu Melhor E-mail" required class="sm-input">
+                    </div>
+                    
+                    <button type="submit" id="submitBtn3D" class="sm-submit-btn">
+                        <span class="btn-text-wrapper relative z-10">GERAR MINHAS DICAS AGORA</span>
+                    </button>
+                </form>
+                
+                <div id="leadSuccessMsg" class="hidden mt-6 bg-green-500/20 border border-green-500/50 text-green-400 p-4 rounded-xl text-center font-bold tracking-widest uppercase text-sm items-center justify-center gap-2" style="transform: translateZ(30px);">
+                    <i data-lucide="check-circle" class="w-6 h-6"></i> Análise iniciada! Em instantes você receberá suas dicas exclusivas.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <footer class="py-20 text-center relative w-full overflow-hidden" id="contato" style="background-color: var(--text-color); color: var(--bg-color);">
     <div class="container mx-auto px-6 md:px-8 max-w-full">
         <h2 id="footer-main-heading" class="text-3xl md:text-7xl mb-12 tracking-tighter uppercase w-full min-h-[1.5em] flex items-center justify-center" style="perspective: 1000px; transform-style: preserve-3d;">
@@ -867,27 +1135,6 @@
                 <i data-lucide="instagram" class="w-6 h-6"></i> Instagram
             </a>
             {% endif %}
-        </div>
-
-        <div class="max-w-2xl mx-auto bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 md:p-8 mt-12 mb-16 text-left relative z-10 shadow-2xl" id="lead-form-container" style="transform-style: preserve-3d; perspective: 1000px; overflow: visible;">
-            <div class="absolute inset-0 bg-gradient-to-br from-[var(--primary)] to-transparent opacity-10 pointer-events-none rounded-2xl"></div>
-            <div class="relative z-10" style="transform: translateZ(40px); transform-style: preserve-3d;">
-                <h3 class="text-2xl md:text-3xl font-display text-white mb-2 uppercase tracking-tight" style="transform: translateZ(20px);">Receba 5 Dicas de Ouro</h3>
-                <p class="text-sm text-gray-400 mb-6 uppercase tracking-widest font-bold" style="transform: translateZ(10px);">Descubra onde sua empresa pode faturar mais com tecnologia. Preencha e receba na hora!</p>
-                <form id="leadForm" class="flex flex-col gap-4" style="transform: translateZ(30px);">
-                    <input type="text" name="nome" placeholder="Seu Nome" required class="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--primary)] transition shadow-[0_10px_20px_rgba(0,0,0,0.3)]">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="text" name="whatsapp" placeholder="WhatsApp (DDD + Número)" required class="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--primary)] transition shadow-[0_10px_20px_rgba(0,0,0,0.3)]">
-                        <input type="email" name="email" placeholder="Seu melhor E-mail" required class="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--primary)] transition shadow-[0_10px_20px_rgba(0,0,0,0.3)]">
-                    </div>
-                    <button type="submit" id="submitBtn3D" class="w-full mt-4 bg-[var(--primary)] text-white font-bold uppercase tracking-widest py-5 rounded-lg hover:opacity-90 transition btn-3d relative flex justify-center items-center shadow-[0_15px_30px_rgba(0,0,0,0.5)] border border-white/20 cursor-pointer">
-                        <span class="btn-text-wrapper relative z-10 flex text-[13px] md:text-sm">QUERO RECEBER AS DICAS</span>
-                    </button>
-                </form>
-                <div id="leadSuccessMsg" class="hidden mt-6 bg-green-500/10 border border-green-500/20 text-green-400 p-4 rounded-lg text-center font-bold tracking-widest uppercase text-sm items-center justify-center gap-2" style="transform: translateZ(30px);">
-                    <i data-lucide="check-circle" class="w-5 h-5"></i> Cadastrado com sucesso! Em breve você receberá suas dicas.
-                </div>
-            </div>
         </div>
 
         <div class="w-full flex justify-center items-center py-24 mt-16 relative overflow-hidden border-t border-black/10" style="background-color: transparent;">
@@ -1047,7 +1294,6 @@
             opacity: 0,
             duration: 0.8,
             onComplete: () => {
-                // Força desbloqueio imediato do scroll
                 document.body.style.overflow = '';
             },
             ease: "power4.in"
@@ -1188,100 +1434,84 @@
             }, {passive: true});
         }
         
-        // --- 3D FORM TILT & EXPLOSION ---
-        const formContainer3D = document.getElementById('lead-form-container');
-        if(formContainer3D) {
-            formContainer3D.addEventListener('mousemove', (e) => {
-                const rect = formContainer3D.getBoundingClientRect();
+        // --- 3D FORM TILT PARA O NOVO SHOW DO MILHÃO FORM ---
+        const smFormContainer = document.getElementById('sm-form-container');
+        if(smFormContainer) {
+            smFormContainer.addEventListener('mousemove', (e) => {
+                const rect = smFormContainer.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 const centerX = rect.width / 2;
                 const centerY = rect.height / 2;
                 
-                const rotateX = ((y - centerY) / centerY) * -12; 
-                const rotateY = ((x - centerX) / centerX) * 12;
+                const rotateX = ((y - centerY) / centerY) * -10; 
+                const rotateY = ((x - centerX) / centerX) * 10;
                 
-                gsap.to(formContainer3D, {
+                gsap.to(smFormContainer.querySelector('.sm-3d-box'), {
                     rotationX: rotateX,
                     rotationY: rotateY,
-                    transformPerspective: 1000,
                     duration: 0.5,
-                    ease: "power2.out",
-                    boxShadow: `${-rotateY * 2}px ${rotateX * 2}px 40px rgba(124, 58, 237, 0.15)`
+                    ease: "power2.out"
+                });
+                
+                // Parallax nas moedas
+                const coins = document.querySelectorAll('.sm-coin');
+                coins.forEach((coin, index) => {
+                    const depth = (index + 1) * 0.05;
+                    gsap.to(coin, {
+                        x: (x - centerX) * depth,
+                        y: (y - centerY) * depth,
+                        duration: 1,
+                        ease: "power2.out"
+                    });
                 });
             });
             
-            formContainer3D.addEventListener('mouseleave', () => {
-                gsap.to(formContainer3D, {
+            smFormContainer.addEventListener('mouseleave', () => {
+                gsap.to(smFormContainer.querySelector('.sm-3d-box'), {
                     rotationX: 0,
                     rotationY: 0,
                     duration: 0.8,
-                    ease: "elastic.out(1, 0.5)",
-                    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+                    ease: "elastic.out(1, 0.5)"
+                });
+                
+                const coins = document.querySelectorAll('.sm-coin');
+                coins.forEach((coin) => {
+                    gsap.to(coin, {
+                        x: 0,
+                        y: 0,
+                        duration: 1.5,
+                        ease: "elastic.out(1, 0.3)"
+                    });
                 });
             });
-        }
-
-        const btn3D = document.getElementById('submitBtn3D');
-        if(btn3D) {
-            const textWrapper = btn3D.querySelector('.btn-text-wrapper');
-            const text = textWrapper.innerText.trim();
-            textWrapper.innerHTML = '';
             
-            text.split('').forEach((char, i) => {
-                const span = document.createElement('span');
-                span.innerText = char === ' ' ? '\u00A0' : char;
-                span.className = 'btn-letter';
-                span.style.animationDelay = `${i * 0.03}s`;
-                textWrapper.appendChild(span);
+            // Animação de entrada do formulário
+            gsap.from(smFormContainer, {
+                scrollTrigger: {
+                    trigger: ".show-milhao-section",
+                    start: "top 70%"
+                },
+                y: 100,
+                opacity: 0,
+                rotationX: -20,
+                duration: 1.5,
+                ease: "power4.out"
             });
-
-            btn3D.addEventListener('mouseenter', (e) => {
-                createExplosion(e, btn3D, 20, false);
+            
+            // Animação das moedas entrando
+            gsap.from('.sm-coin', {
+                scrollTrigger: {
+                    trigger: ".show-milhao-section",
+                    start: "top 70%"
+                },
+                scale: 0,
+                rotationY: 720,
+                opacity: 0,
+                duration: 2,
+                stagger: 0.2,
+                ease: "elastic.out(1, 0.3)"
             });
-            btn3D.addEventListener('click', (e) => {
-                createExplosion(e, btn3D, 50, true);
-            });
-        }
-
-        function createExplosion(e, parent, count, isBig) {
-            const rect = parent.getBoundingClientRect();
-            for(let i=0; i<count; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'form-particle';
-                
-                const colors = ['var(--primary)', '#00f2fe', '#ffffff', '#ff00ff'];
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.backgroundColor = color;
-                particle.style.color = color; 
-                
-                const size = Math.random() * (isBig ? 6 : 3) + 2;
-                particle.style.width = size + 'px';
-                particle.style.height = size + 'px';
-                
-                const startX = rect.left + (e.clientX ? e.clientX - rect.left : rect.width/2) + window.scrollX;
-                const startY = rect.top + (e.clientY ? e.clientY - rect.top : rect.height/2) + window.scrollY;
-                
-                particle.style.left = startX + 'px';
-                particle.style.top = startY + 'px';
-                
-                document.body.appendChild(particle);
-                
-                const angle = Math.random() * Math.PI * 2;
-                const velocity = (Math.random() * (isBig ? 250 : 100)) + 20;
-                const tx = Math.cos(angle) * velocity;
-                const ty = Math.sin(angle) * velocity;
-                
-                gsap.to(particle, {
-                    x: tx,
-                    y: ty,
-                    opacity: 0,
-                    scale: 0,
-                    duration: Math.random() * 0.6 + 0.4,
-                    ease: "power2.out",
-                    onComplete: () => particle.remove()
-                });
-            }
         }
 
         // --- ENVIO DO FORMULÁRIO DE LEADS (AJAX) ---
@@ -1292,8 +1522,7 @@
                 const btn = this.querySelector('button');
                 const textWrapper = btn.querySelector('.btn-text-wrapper');
                 
-                // Remove as spans criadas temporariamente para o efeito e coloca texto normal
-                textWrapper.innerHTML = 'ENVIANDO...';
+                textWrapper.innerHTML = 'PROCESSANDO IA...';
                 btn.disabled = true;
 
                 const formData = new FormData(this);
@@ -1310,12 +1539,12 @@
                         successMsg.classList.add('flex');
                     } else {
                         alert(result.erro || 'Erro ao enviar. Tente novamente.');
-                        textWrapper.innerHTML = 'QUERO RECEBER AS DICAS';
+                        textWrapper.innerHTML = 'GERAR MINHAS DICAS AGORA';
                         btn.disabled = false;
                     }
                 } catch(err) {
                     alert('Erro de conexão. Verifique sua internet.');
-                    textWrapper.innerHTML = 'QUERO RECEBER AS DICAS';
+                    textWrapper.innerHTML = 'GERAR MINHAS DICAS AGORA';
                     btn.disabled = false;
                 }
             });
