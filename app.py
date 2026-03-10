@@ -662,6 +662,7 @@ def admin_painel(loja_slug):
     categorias = []
     produtos = []
     posts = []
+    inscritos = [] # Adicionado para os leads do formulário
 
     try:
         r_cat = requests.get(f"{DIRECTUS_URL}/items/categorias?filter[loja_id][_eq]={g.loja_id}&sort=sort", headers=headers)
@@ -693,6 +694,11 @@ def admin_painel(loja_slug):
 
         r_post = requests.get(f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&limit=20&sort=-date_created&fields=id,titulo,date_created", headers=headers)
         if r_post.status_code == 200: posts = r_post.json()['data']
+        
+        # BUSCA DE LEADS / INSCRITOS
+        r_leads = requests.get(f"{DIRECTUS_URL}/items/clientes_loja?filter[loja_id][_eq]={g.loja_id}&sort=-date_created", headers=headers)
+        if r_leads.status_code == 200: inscritos = r_leads.json()['data']
+        
     except Exception as e:
         print(f"Erro ao carregar dados do painel: {e}")
 
@@ -722,7 +728,8 @@ def admin_painel(loja_slug):
                            loja=loja_visual, 
                            categorias=categorias, 
                            produtos=produtos, 
-                           posts=posts)
+                           posts=posts,
+                           inscritos=inscritos)
 
 # CRUD CATEGORIAS
 # Atualizado removeu prefixo loja
@@ -1007,6 +1014,35 @@ def reset_senha(token):
             error = "A senha não pode ficar em branco."
 
     return render_template('reset_senha.html', error=error, success=success, token=token, loja=loja_alvo)
+
+
+# ROTA CAPTURA DE LEADS (TECNOLOGIA)
+@app.route('/<loja_slug>/captura-lead', methods=['POST'])
+def captura_lead(loja_slug):
+    if not g.loja:
+        return jsonify({"erro": "Loja não encontrada"}), 404
+
+    nome = request.form.get('nome')
+    whatsapp = request.form.get('whatsapp')
+    email = request.form.get('email')
+
+    if not all([nome, whatsapp, email]):
+        return jsonify({"erro": "Preencha todos os campos"}), 400
+
+    payload = {
+        "loja_id": g.loja_id,
+        "nome": nome,
+        "whatsapp": whatsapp,
+        "email": email
+    }
+
+    try:
+        r = requests.post(f"{DIRECTUS_URL}/items/clientes_loja", headers=get_headers(), json=payload)
+        if r.status_code in [200, 201]:
+            return jsonify({"sucesso": True, "mensagem": "Cadastrado com sucesso!"})
+        return jsonify({"erro": "Erro ao salvar no banco de dados."}), 500
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
 
 
 # API FRETE
