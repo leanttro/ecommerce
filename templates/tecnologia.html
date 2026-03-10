@@ -118,23 +118,23 @@
             padding-left: 5vw;
             padding-right: 5vw;
             overflow-x: scroll !important;
+            display: flex !important;
             -webkit-overflow-scrolling: touch;
         }
         .horizontal-container::-webkit-scrollbar {
-            height: 8px !important;
+            height: 10px !important;
             display: block !important;
-            -webkit-appearance: none;
+            -webkit-appearance: none !important;
         }
         .horizontal-container::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.05) !important;
+            background: rgba(0,0,0,0.1) !important;
             border-radius: 10px !important;
             margin: 0 5vw;
         }
         .horizontal-container::-webkit-scrollbar-thumb {
             background-color: var(--primary) !important;
             border-radius: 10px !important;
-            border: 2px solid transparent;
-            background-clip: padding-box;
+            min-width: 40px;
         }
         .intro-slide {
             width: 85vw !important;
@@ -151,6 +151,10 @@
         }
         #loader-overlay .scene {
             transform: translateY(-100px) !important;
+        }
+        /* Ajuste para descer o conteúdo do Hero no Mobile */
+        #hero .relative.z-10 {
+            margin-top: 60px !important;
         }
     }
 
@@ -905,7 +909,7 @@
         <canvas id="data-canvas" class="absolute inset-0 w-full h-full z-10 opacity-30"></canvas>
         <div id="hero-banner-wrapper" class="absolute inset-0 w-full h-full z-20 opacity-0 flex items-center justify-center bg-[#050505]" style="transform: translateZ(-300px) scale(0.8);">
             
-            <div class="absolute inset-0 flex flex-col justify-center gap-2 opacity-[0.03] pointer-events-none overflow-hidden z-0" style="font-family: 'Archivo Black', sans-serif;">
+            <div class="absolute inset-0 flex flex-col justify-center gap-2 opacity-[0.12] pointer-events-none overflow-hidden z-0" style="font-family: 'Archivo Black', sans-serif;">
                 <div class="whitespace-nowrap text-[15vw] leading-none tracking-tighter text-white" style="animation: scrollMarquee 25s linear infinite;">AUTOMAÇÃO IA AUTOMAÇÃO IA AUTOMAÇÃO IA</div>
                 <div class="whitespace-nowrap text-[15vw] leading-none tracking-tighter text-transparent" style="animation: scrollMarquee 35s linear infinite reverse; -webkit-text-stroke: 2px var(--primary);">DADOS LUCRO DADOS LUCRO DADOS LUCRO</div>
                 <div class="whitespace-nowrap text-[15vw] leading-none tracking-tighter text-white" style="animation: scrollMarquee 20s linear infinite;">TECNOLOGIA TECNOLOGIA TECNOLOGIA TECNOLOGIA</div>
