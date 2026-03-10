@@ -902,21 +902,31 @@
 
     {% if secao == 'banner' and not loja.ocultar_banner %}
     <section class="h-[70vh] md:h-screen w-full relative overflow-hidden bg-[#050505]" id="hero" style="perspective: 1200px;">
-        <canvas id="data-canvas" class="absolute inset-0 w-full h-full z-20"></canvas>
-        <div id="hero-banner-wrapper" class="absolute inset-0 w-full h-full z-10 opacity-0" style="transform: translateZ(-300px) scale(0.8);">
-            {% if loja.banner1 %}
-            <a href="{{ loja.linkbannerprincipal1 or '#' }}" class="block w-full h-full">
-                <img src="{{ loja.banner1 }}" class="w-full h-full object-cover object-center hero-img">
-            </a>
-            {% else %}
-            <div class="w-full h-full flex items-center justify-center bg-gray-100 hero-img">
-                <h1 class="text-4xl opacity-20">Seu Banner Here</h1>
+        <canvas id="data-canvas" class="absolute inset-0 w-full h-full z-10 opacity-30"></canvas>
+        <div id="hero-banner-wrapper" class="absolute inset-0 w-full h-full z-20 opacity-0 flex items-center justify-center bg-[#050505]" style="transform: translateZ(-300px) scale(0.8);">
+            
+            <div class="absolute inset-0 flex flex-col justify-center gap-2 opacity-[0.03] pointer-events-none overflow-hidden z-0" style="font-family: 'Archivo Black', sans-serif;">
+                <div class="whitespace-nowrap text-[15vw] leading-none tracking-tighter text-white" style="animation: scrollMarquee 25s linear infinite;">AUTOMAÇÃO IA AUTOMAÇÃO IA AUTOMAÇÃO IA</div>
+                <div class="whitespace-nowrap text-[15vw] leading-none tracking-tighter text-transparent" style="animation: scrollMarquee 35s linear infinite reverse; -webkit-text-stroke: 2px var(--primary);">DADOS LUCRO DADOS LUCRO DADOS LUCRO</div>
+                <div class="whitespace-nowrap text-[15vw] leading-none tracking-tighter text-white" style="animation: scrollMarquee 20s linear infinite;">TECNOLOGIA TECNOLOGIA TECNOLOGIA TECNOLOGIA</div>
             </div>
-            {% endif %}
-            <div class="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505] pointer-events-none opacity-50"></div>
 
-            <div id="bubbles-container" class="absolute inset-0 z-30 pointer-events-none overflow-hidden">
+            <div class="relative z-10 flex flex-col items-center text-center px-4 w-full mt-10">
+                <h1 class="font-display text-white text-[clamp(3rem,8vw,8rem)] leading-[0.85] tracking-tighter uppercase mb-6 drop-shadow-2xl hero-title" style="text-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+                    AUTOMAÇÃO E IA<br>
+                    <span style="color: var(--primary);">SOB MEDIDA.</span>
+                </h1>
+                <p class="text-gray-300 text-[clamp(1rem,2vw,1.5rem)] font-light max-w-3xl mx-auto uppercase tracking-widest hero-subtitle">
+                    Tecnologia exclusiva aplicada diretamente ao lucro operacional.
+                </p>
+                <a href="#contato" class="mt-10 bg-[var(--primary)] text-white px-8 py-4 rounded-full text-sm font-bold uppercase tracking-widest hover:scale-105 transition shadow-[0_10px_30px_rgba(124,58,237,0.3)] hero-title border border-white/20">
+                    Falar com Especialista
+                </a>
             </div>
+
+            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505] pointer-events-none z-20"></div>
+
+            <div id="bubbles-container" class="absolute inset-0 z-30 pointer-events-none overflow-hidden"></div>
         </div>
     </section>
     {% endif %}
@@ -1330,9 +1340,9 @@
                             ease: "power4.out"
                         });
                         
-                        gsap.to('.hero-img', {
-                            scale: 1.05,
-                            duration: 8,
+                        gsap.to('.hero-title', {
+                            scale: 1.03,
+                            duration: 6,
                             repeat: -1,
                             yoyo: true,
                             ease: "sine.inOut"
