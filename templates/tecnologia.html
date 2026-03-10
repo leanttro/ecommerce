@@ -830,7 +830,26 @@
             {% endif %}
         </div>
 
-        <p class="mt-24 text-[10px] uppercase tracking-widest opacity-30">© 2026 {{ loja.nome }}. Todos os direitos reservados.</p>
+        <div class="max-w-2xl mx-auto bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 md:p-8 mt-12 mb-16 text-left relative overflow-hidden z-10 shadow-2xl" id="lead-form-container">
+            <div class="absolute inset-0 bg-gradient-to-br from-[var(--primary)] to-transparent opacity-10 pointer-events-none"></div>
+            <div class="relative z-10">
+                <h3 class="text-2xl md:text-3xl font-display text-white mb-2 uppercase tracking-tight">Receba 5 Dicas de Ouro</h3>
+                <p class="text-sm text-gray-400 mb-6 uppercase tracking-widest font-bold">Descubra onde sua empresa pode faturar mais com tecnologia. Preencha e receba na hora!</p>
+                <form id="leadForm" class="flex flex-col gap-4">
+                    <input type="text" name="nome" placeholder="Seu Nome" required class="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--primary)] transition">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" name="whatsapp" placeholder="WhatsApp (DDD + Número)" required class="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--primary)] transition">
+                        <input type="email" name="email" placeholder="Seu melhor E-mail" required class="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--primary)] transition">
+                    </div>
+                    <button type="submit" class="w-full mt-2 bg-[var(--primary)] text-white font-bold uppercase tracking-widest py-4 rounded-lg hover:opacity-90 transition transform hover:scale-[1.02]">Quero Receber as Dicas</button>
+                </form>
+                <div id="leadSuccessMsg" class="hidden mt-6 bg-green-500/10 border border-green-500/20 text-green-400 p-4 rounded-lg text-center font-bold tracking-widest uppercase text-sm flex items-center justify-center gap-2">
+                    <i data-lucide="check-circle" class="w-5 h-5"></i> Cadastrado com sucesso! Em breve você receberá suas dicas.
+                </div>
+            </div>
+        </div>
+
+        <p class="mt-8 text-[10px] uppercase tracking-widest opacity-30">© 2026 {{ loja.nome }}. Todos os direitos reservados.</p>
         
         <div class="mt-8 pt-8 border-t border-white/10">
             <a href="/{{ loja.slug_url }}/admin" class="text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 opacity-20 hover:opacity-100 transition">
@@ -1079,6 +1098,39 @@
                     lastTouchY = currentY;
                 }
             }, {passive: true});
+        }
+        
+        // --- ENVIO DO FORMULÁRIO DE LEADS (AJAX) ---
+        const leadForm = document.getElementById('leadForm');
+        if(leadForm) {
+            leadForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const btn = this.querySelector('button');
+                const originalText = btn.innerText;
+                btn.innerText = 'Enviando...';
+                btn.disabled = true;
+
+                const formData = new FormData(this);
+                try {
+                    const response = await fetch('/{{ loja.slug_url }}/captura-lead', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if(result.sucesso) {
+                        this.style.display = 'none';
+                        document.getElementById('leadSuccessMsg').classList.remove('hidden');
+                    } else {
+                        alert(result.erro || 'Erro ao enviar. Tente novamente.');
+                        btn.innerText = originalText;
+                        btn.disabled = false;
+                    }
+                } catch(err) {
+                    alert('Erro de conexão. Verifique sua internet.');
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+            });
         }
     });
 
