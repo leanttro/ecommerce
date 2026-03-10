@@ -549,8 +549,10 @@ def produto(loja_slug, slug):
         
         if template_ativo in ['direto', 'direto_index']:
             template_produto = 'direto_produto.html'
-        elif template_ativo in ['institucional', 'tecnologia']:
-            template_produto = 'case.html' # Adicionado para suportar o institucional chique e tecnologia
+        elif template_ativo == 'institucional':
+            template_produto = 'case.html'
+        elif template_ativo == 'tecnologia':
+            template_produto = 'case_tecnologia.html'
 
         return render_template(template_produto, p=p, loja=loja_visual, directus_url=DIRECTUS_URL)
     
@@ -662,7 +664,7 @@ def admin_painel(loja_slug):
     categorias = []
     produtos = []
     posts = []
-    inscritos = [] # Adicionado para os leads do formulário
+    inscritos = []
 
     try:
         r_cat = requests.get(f"{DIRECTUS_URL}/items/categorias?filter[loja_id][_eq]={g.loja_id}&sort=sort", headers=headers)
@@ -695,7 +697,6 @@ def admin_painel(loja_slug):
         r_post = requests.get(f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&limit=20&sort=-date_created&fields=id,titulo,date_created", headers=headers)
         if r_post.status_code == 200: posts = r_post.json()['data']
         
-        # BUSCA DE LEADS / INSCRITOS
         r_leads = requests.get(f"{DIRECTUS_URL}/items/clientes_loja?filter[loja_id][_eq]={g.loja_id}&sort=-date_created", headers=headers)
         if r_leads.status_code == 200: inscritos = r_leads.json()['data']
         
@@ -1014,7 +1015,6 @@ def reset_senha(token):
             error = "A senha não pode ficar em branco."
 
     return render_template('reset_senha.html', error=error, success=success, token=token, loja=loja_alvo)
-
 
 # ROTA CAPTURA DE LEADS (TECNOLOGIA)
 @app.route('/<loja_slug>/captura-lead', methods=['POST'])
