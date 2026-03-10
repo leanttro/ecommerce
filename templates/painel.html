@@ -72,6 +72,9 @@
                 <a href="#blog" class="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors font-bold" onclick="selectMenuItem('blog')">
                     <i data-lucide="file-text"></i> Blog (Posts)
                 </a>
+                <a href="#inscritos" class="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors font-bold" onclick="selectMenuItem('inscritos')">
+                    <i data-lucide="users"></i> Inscritos (Leads)
+                </a>
                 <a href="#sobre" class="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors font-bold" onclick="selectMenuItem('sobre')">
                     <i data-lucide="user"></i> Sobre a Empresa
                 </a>
@@ -183,6 +186,40 @@
                     {% else %}
                     <div class="p-6 text-center text-gray-500">Nenhum post cadastrado.</div>
                     {% endfor %}
+                </div>
+            </section>
+
+            <section id="inscritos" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2"><i data-lucide="users" class="text-pink-600"></i> Todos os Inscritos (Leads)</h2>
+                </div>
+                <div class="overflow-x-auto bg-gray-50 rounded-lg border border-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Nome</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">WhatsApp</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">E-mail</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Data</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for lead in inscritos %}
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4"><div class="text-sm font-bold text-gray-900">{{ lead.nome }}</div></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-bold">
+                                    <a href="https://wa.me/55{{ lead.whatsapp|replace(' ', '')|replace('-', '')|replace('(', '')|replace(')', '') }}" target="_blank" class="text-green-600 hover:text-green-800 flex items-center gap-1">
+                                        <i data-lucide="message-circle" class="w-4 h-4"></i> {{ lead.whatsapp }}
+                                    </a>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ lead.email }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ lead.date_created[:10] if lead.date_created else '--' }}</td>
+                            </tr>
+                             {% else %}
+                            <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Nenhum lead inscrito ainda.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
