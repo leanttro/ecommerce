@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>{{ p.nome }} | {{ loja.nome }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&display=swap');
+        
+        :root { 
+            --primary: {{ loja.cor_primaria or '#7C3AED' }}; 
+            --bg-color: {{ loja.cor_fundo or '#050505' }};
+            --text-color: {{ loja.cor_titulo or '#ffffff' }};
+        }
+        
+        html, body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden !important;
+        }
+
+        h1, h2, h3, .font-display { 
+            font-family: 'Archivo Black', sans-serif; 
+            text-transform: uppercase;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .full-hero { 
+            height: 70vh; 
+            position: relative; 
+            overflow: hidden; 
+            background: #000;
+        }
+        
+        .full-hero img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0.5;
+            transition: transform 10s ease-out;
+        }
+
+        .full-hero:hover img {
+            transform: scale(1.05);
+        }
+
+        .description-prose { 
+            font-size: 1.1rem; 
+            line-height: 1.8; 
+            color: rgba(255,255,255,0.7); 
+        }
+        
+        .description-prose p { margin-bottom: 1.5rem; }
+
+        .btn-neon {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px transparent;
+        }
+
+        .btn-neon:hover {
+            box-shadow: 0 0 20px var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* TELA DE LOADING ESTILO TERMINAL */
+        #tech-loader {
+            position: fixed;
+            inset: 0;
+            background-color: #050505;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            color: var(--primary);
+        }
+
+        .terminal-box {
+            width: 90%;
+            max-width: 600px;
+            padding: 2rem;
+            border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+            background: rgba(0,0,0,0.8);
+            box-shadow: 0 0 30px color-mix(in srgb, var(--primary) 10%, transparent);
+        }
+
+        .blinking-cursor::after {
+            content: '█';
+            animation: blink 1s step-end infinite;
+            margin-left: 5px;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        #data-canvas {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body style="overflow: hidden;">
+
+    <div id="tech-loader">
+        <div class="terminal-box" id="terminal-container">
+            <div class="flex justify-between w-full border-b border-white/10 pb-2 mb-4 text-xs opacity-50">
+                <span>SYSTEM_BOOT_SEQUENCE</span>
+                <span>SECURE_LINK</span>
+            </div>
+            <div class="flex flex-col gap-2 text-sm md:text-base">
+                <div id="term-line-1" class="opacity-0">> INICIANDO PROTOCOLO DE CONEXÃO...</div>
+                <div id="term-line-2" class="opacity-0">> ACESSANDO BANCO DE DADOS...</div>
+                <div id="term-line-3" class="opacity-0">> RECUPERANDO ARQUIVOS DO PROJETO...</div>
+                <div id="term-line-4" class="opacity-0 mt-6 flex items-center gap-4 text-white">
+                    <span class="animate-spin"><i data-lucide="loader-2" class="w-5 h-5"></i></span> 
+                    <span>DECODIFICANDO: <span id="decoder-text" class="text-[var(--primary)] font-bold tracking-widest text-lg md:text-xl blinking-cursor"></span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="fixed top-0 w-full z-50 p-6 flex justify-between items-center mix-blend-difference text-white">
+        <a href="/{{ loja.slug_url }}/#portfolio" class="flex items-center gap-2 font-bold uppercase tracking-widest text-[10px] hover:opacity-70 transition-opacity">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i> VOLTAR AO SISTEMA
+        </a>
+    </nav>
+
+    <div class="full-hero" id="hero-section">
+        <canvas id="data-canvas"></canvas>
+        <img src="{{ p.imagem_destaque or p.imagem1 }}" alt="{{ p.nome }}" id="hero-img">
+        <div class="absolute inset-0 bg-gradient-to-t from-[var(--bg-color)] via-transparent to-transparent z-10"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent z-10"></div>
+        
+        <div class="absolute bottom-10 left-6 md:bottom-20 md:left-20 text-white z-20 hero-content opacity-0 translate-y-10">
+            <p class="text-[10px] md:text-sm uppercase tracking-[0.4em] font-bold text-[var(--primary)] mb-4 flex items-center gap-2">
+                <i data-lucide="box" class="w-4 h-4"></i> ACESSO CONCEDIDO
+            </p>
+            <h1 class="text-4xl md:text-7xl lg:text-8xl leading-none mb-4 font-display" style="text-shadow: 0 10px 30px rgba(0,0,0,0.8);">{{ p.nome }}</h1>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 md:px-20 py-20 relative z-20">
+        <div class="grid md:grid-cols-3 gap-12 md:gap-20">
+            
+            <div class="md:col-span-2 gs-reveal">
+                <h2 class="text-sm uppercase tracking-[0.2em] mb-8 font-bold flex items-center gap-3" style="color: var(--primary);">
+                    <i data-lucide="terminal" class="w-5 h-5"></i> RELATÓRIO DO PROJETO
+                </h2>
+                <div class="description-prose p-6 md:p-10 glass-panel rounded-2xl relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1 h-full" style="background-color: var(--primary);"></div>
+                    {{ p.descricao | safe }}
+                </div>
+            </div>
+            
+            <div class="space-y-8 gs-reveal">
+                <div class="glass-panel p-6 md:p-8 rounded-2xl border-t-4" style="border-top-color: var(--primary);">
+                    <h4 class="text-[10px] uppercase tracking-widest font-bold opacity-50 mb-6 flex items-center gap-2">
+                        <i data-lucide="cpu" class="w-4 h-4"></i> ESPECIFICAÇÕES TÉCNICAS
+                    </h4>
+                    <ul class="space-y-4">
+                        {% if p.variantes %}
+                            {% for grupo in p.variantes %}
+                                {% for op in grupo.opcoes %}
+                                <li class="text-sm font-semibold flex items-start gap-3 text-gray-300">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 mt-0.5" style="color: var(--primary);"></i>
+                                    {{ op.nome }}
+                                </li>
+                                {% endfor %}
+                            {% endfor %}
+                        {% else %}
+                            <li class="text-sm font-semibold flex items-start gap-3 text-gray-300">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 mt-0.5" style="color: var(--primary);"></i> Projeto Customizado
+                            </li>
+                            <li class="text-sm font-semibold flex items-start gap-3 text-gray-300">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 mt-0.5" style="color: var(--primary);"></i> Identidade & Tecnologia
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    {% if p.link_projeto %}
+                    <a href="{{ p.link_projeto }}" target="_blank" class="w-full glass-panel text-white py-5 text-center font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-white/10 transition btn-neon">
+                        VISUALIZAR APLICAÇÃO
+                    </a>
+                    {% endif %}
+
+                    <button onclick="window.open('https://wa.me/55{{ p.whatsapp_projeto or loja.whatsapp_comercial }}?text=Olá, vi o projeto {{ p.nome }} e gostaria de saber mais sobre as tecnologias envolvidas.')" class="w-full text-white py-5 font-bold uppercase tracking-[0.2em] text-[10px] transition flex items-center justify-center gap-2 btn-neon rounded-lg" style="background-color: var(--primary);">
+                        <i data-lucide="message-square" class="w-4 h-4"></i> INICIAR COMUNICAÇÃO
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 md:px-20 pb-40">
+        <div class="grid md:grid-cols-2 gap-6">
+            {% if p.imagem1 %}
+            <div class="glass-panel p-2 rounded-2xl gs-reveal overflow-hidden group">
+                <div class="w-full h-[400px] md:h-[600px] overflow-hidden rounded-xl">
+                    <img src="{{ p.imagem1 }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:filter group-hover:brightness-110">
+                </div>
+            </div>
+            {% endif %}
+            {% if p.imagem2 %}
+            <div class="glass-panel p-2 rounded-2xl gs-reveal overflow-hidden group mt-10 md:mt-24">
+                <div class="w-full h-[400px] md:h-[600px] overflow-hidden rounded-xl">
+                    <img src="{{ p.imagem2 }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:filter group-hover:brightness-110">
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        gsap.registerPlugin(ScrollTrigger);
+
+        // BACKGROUND CANVAS WARP EFFECT
+        function startDataWarp() {
+            const canvas = document.getElementById('data-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w = canvas.width = window.innerWidth;
+            let h = canvas.height = window.innerHeight;
+            
+            window.addEventListener('resize', () => {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            });
+
+            const nodes = [];
+            for(let i=0; i<150; i++) {
+                nodes.push({
+                    x: (Math.random() - 0.5) * w * 2,
+                    y: (Math.random() - 0.5) * h * 2,
+                    z: Math.random() * 1000,
+                    color: Math.random() > 0.5 ? '{{ loja.cor_primaria or "#7C3AED" }}' : '#ffffff'
+                });
+            }
+            
+            let speed = 2; 
+            
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+                ctx.save();
+                ctx.translate(w/2, h/2);
+                
+                nodes.forEach(node => {
+                    node.z -= speed;
+                    if(node.z <= 0) {
+                        node.z = 1000;
+                        node.x = (Math.random() - 0.5) * w * 2;
+                        node.y = (Math.random() - 0.5) * h * 2;
+                    }
+                    
+                    let px = node.x * (1000 / node.z);
+                    let py = node.y * (1000 / node.z);
+                    let pz = node.z;
+                    
+                    let size = Math.max(0.2, (1 - pz/1000) * 3);
+                    
+                    ctx.fillStyle = node.color;
+                    ctx.beginPath();
+                    ctx.arc(px, py, size, 0, Math.PI*2);
+                    ctx.fill();
+                    
+                    if(pz < 400 && Math.random() > 0.9) {
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 - pz/2000})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(px, py);
+                        ctx.lineTo(px + (Math.random()-0.5)*100, py + (Math.random()-0.5)*100);
+                        ctx.stroke();
+                    }
+                });
+                ctx.restore();
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // LOADER ANIMATION
+        document.addEventListener("DOMContentLoaded", () => {
+            const tl = gsap.timeline();
+            
+            tl.to("#term-line-1", { opacity: 1, duration: 0.1, delay: 0.2 })
+              .to("#term-line-2", { opacity: 1, duration: 0.1, delay: 0.3 })
+              .to("#term-line-3", { opacity: 1, duration: 0.1, delay: 0.4 })
+              .to("#term-line-4", { opacity: 1, duration: 0.1, delay: 0.2, onComplete: runDecoder });
+
+            function runDecoder() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*X_';
+                const targetText = '{{ p.nome | upper }}';
+                let iterations = 0;
+                const decoderEl = document.getElementById('decoder-text');
+                
+                const interval = setInterval(() => {
+                    decoderEl.innerText = targetText.split('').map((letter, index) => {
+                        if (index < iterations) return targetText[index];
+                        return chars[Math.floor(Math.random() * chars.length)];
+                    }).join('');
+                    
+                    if (iterations >= targetText.length) {
+                        clearInterval(interval);
+                        finishLoading();
+                    }
+                    iterations += 1/2; 
+                }, 40);
+            }
+
+            function finishLoading() {
+                decoderEl = document.getElementById('decoder-text');
+                decoderEl.classList.remove('blinking-cursor');
+                
+                const outroTl = gsap.timeline();
+                outroTl.to("#terminal-container", { scale: 0.9, opacity: 0, duration: 0.4, delay: 0.5, ease: "power2.in" })
+                       .to("#tech-loader", { yPercent: -100, duration: 0.8, ease: "expo.inOut" })
+                       .to(".hero-content", { y: 0, opacity: 1, duration: 1, ease: "back.out(1.2)" }, "-=0.2")
+                       .add(() => {
+                           document.body.style.overflow = '';
+                           startDataWarp();
+                       });
+            }
+
+            // Scroll animations for body content
+            gsap.utils.toArray('.gs-reveal').forEach(function(elem) {
+                ScrollTrigger.create({
+                    trigger: elem,
+                    start: "top 85%",
+                    onEnter: function() {
+                        gsap.fromTo(elem, 
+                            { y: 50, opacity: 0 }, 
+                            { y: 0, opacity: 1, duration: 1, ease: "power3.out" }
+                        );
+                    },
+                    once: true
+                });
+            });
+        });
+    </script>
+</body>
+</html>
