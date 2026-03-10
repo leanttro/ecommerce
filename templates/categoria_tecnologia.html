@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>{{ cat_selecionada_obj.nome if cat_selecionada_obj else 'Categoria' }} | {{ loja.nome }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&display=swap');
+        
+        :root { 
+            --primary: {{ loja.cor_primaria or '#7C3AED' }}; 
+            --bg-color: {{ loja.cor_fundo or '#050505' }};
+            --text-color: {{ loja.cor_titulo or '#ffffff' }};
+        }
+        
+        html, body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden !important;
+        }
+
+        h1, h2, h3, .font-display { 
+            font-family: 'Archivo Black', sans-serif; 
+            text-transform: uppercase;
+        }
+
+        .glass-card {
+            background: rgba(10, 10, 10, 0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transform-style: preserve-3d;
+        }
+        .glass-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px color-mix(in srgb, var(--primary) 20%, transparent);
+        }
+
+        #grid-bg {
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(500px) rotateX(60deg) scale(2) translateY(-100px);
+            transform-origin: top;
+            animation: gridMove 15s linear infinite;
+            mask-image: linear-gradient(to bottom, black 20%, transparent 80%);
+            -webkit-mask-image: linear-gradient(to bottom, black 20%, transparent 80%);
+        }
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 50px; }
+        }
+        
+        .gs-fade-down { transform: translateY(-30px); opacity: 0; }
+        .gs-title-3d { transform: rotateX(45deg) translateY(50px); opacity: 0; transform-style: preserve-3d; }
+        .gs-fade-up { transform: translateY(30px); opacity: 0; }
+
+        .card-inner-img {
+            transform: translateZ(20px) scale(1.05);
+            transition: filter 0.5s ease;
+        }
+        .card-inner-content {
+            transform: translateZ(40px);
+        }
+    </style>
+</head>
+<body style="overflow: hidden;">
+
+    <div id="tech-loader" class="fixed inset-0 z-[999999] bg-[#050505] flex flex-col items-center justify-center font-mono text-[var(--primary)]">
+        <div class="w-64 relative mb-4">
+            <div class="h-1 w-full bg-white/10 rounded overflow-hidden">
+                <div id="loader-bar" class="h-full bg-[var(--primary)] w-0 transition-all duration-100"></div>
+            </div>
+        </div>
+        <div class="flex justify-between w-64 text-[10px] font-bold tracking-widest mb-2">
+            <span id="loader-status">INICIALIZANDO...</span>
+            <span id="loader-count">0%</span>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 z-0 pointer-events-none h-screen overflow-hidden">
+        <div id="grid-bg" class="w-full h-full"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-[var(--bg-color)]"></div>
+    </div>
+
+    <nav class="fixed top-0 w-full z-50 p-6 md:p-8 flex justify-between items-center mix-blend-difference text-white">
+        <a href="/{{ loja.slug_url }}/#portfolio" class="flex items-center gap-2 font-bold uppercase tracking-widest text-[10px] md:text-xs hover:text-[var(--primary)] transition-colors group">
+            <div class="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[var(--primary)] transition-colors">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            </div>
+            VOLTAR AO SISTEMA PRINCIPAL
+        </a>
+    </nav>
+
+    <div class="pt-40 md:pt-48 pb-16 px-6 md:px-20 relative w-full text-center z-10" style="perspective: 1000px;">
+        <p class="text-[var(--primary)] uppercase tracking-[0.5em] text-[10px] md:text-xs font-bold mb-4 gs-fade-down flex items-center justify-center gap-2">
+            <i data-lucide="folder-open" class="w-4 h-4"></i> DIRETÓRIO DE DADOS
+        </p>
+        <h1 class="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-display uppercase text-white mb-6 gs-title-3d break-words">
+            {{ cat_selecionada_obj.nome if cat_selecionada_obj else 'Projetos' }}
+        </h1>
+        <p class="text-gray-400 text-xs md:text-sm max-w-2xl mx-auto uppercase tracking-widest gs-fade-up border border-white/10 py-2 px-6 rounded-full glass-card inline-block">
+            PROCESSANDO {{ produtos|length }} PROJETOS CATALOGADOS
+        </p>
+    </div>
+
+    <div class="container mx-auto px-6 md:px-12 pb-40 relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10" id="cases-grid">
+            {% for p in produtos %}
+            <div class="glass-card group cursor-pointer relative rounded-2xl overflow-hidden aspect-[4/5] md:aspect-[3/4]" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
+                <img src="{{ p.imagem_destaque or p.imagem }}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,1,0.5,1)] filter brightness-[0.6] group-hover:brightness-100 card-inner-img pointer-events-none">
+                
+                <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-500 pointer-events-none"></div>
+                
+                <div class="absolute bottom-0 left-0 w-full p-6 md:p-8 transform translate-y-6 group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] card-inner-content pointer-events-none">
+                    <h3 class="text-2xl md:text-3xl font-display text-white mb-3 leading-none drop-shadow-lg">{{ p.nome }}</h3>
+                    <div class="flex items-center gap-2 text-[var(--primary)] text-[10px] md:text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                        <span class="bg-[var(--primary)]/20 px-3 py-1.5 rounded-full flex items-center gap-2 border border-[var(--primary)]/50 backdrop-blur-md">
+                            ACESSAR DETALHES <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="absolute top-4 right-4 border border-[var(--primary)]/50 text-[var(--primary)] text-[8px] md:text-[9px] px-2 py-1 rounded bg-black/50 font-mono backdrop-blur-md card-inner-content pointer-events-none">
+                    ID_{{ p.id[:4] if p.id else loop.index0 }}
+                </div>
+                <div class="absolute top-4 left-4 flex gap-1 card-inner-content pointer-events-none">
+                    <div class="w-1 h-1 rounded-full bg-red-500/50"></div>
+                    <div class="w-1 h-1 rounded-full bg-yellow-500/50"></div>
+                    <div class="w-1 h-1 rounded-full bg-green-500/50 group-hover:bg-green-400 group-hover:shadow-[0_0_8px_#4ade80] transition-colors"></div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-span-full py-32 flex flex-col items-center justify-center text-gray-500 uppercase tracking-widest glass-card rounded-2xl border-dashed">
+                <i data-lucide="file-x-2" class="w-12 h-12 mb-4 opacity-50"></i>
+                <p class="text-sm">Nenhum dado encontrado neste diretório.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        gsap.registerPlugin(ScrollTrigger);
+
+        // LOADER E ANIMAÇÃO INICIAL
+        const loader = document.getElementById('tech-loader');
+        const countText = document.getElementById('loader-count');
+        const termText = document.getElementById('loader-status');
+        const loaderBar = document.getElementById('loader-bar');
+        
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.floor(Math.random() * 15) + 5;
+            if (progress > 100) progress = 100;
+            countText.innerText = progress + '%';
+            loaderBar.style.width = progress + '%';
+            
+            if (progress < 30) termText.innerText = "ESTABELECENDO CONEXÃO...";
+            else if (progress < 60) termText.innerText = "FILTRANDO CATEGORIA...";
+            else if (progress < 90) termText.innerText = "CARREGANDO MATRIZ DE PROJETOS...";
+            else termText.innerText = "PRONTO.";
+
+            if (progress === 100) {
+                clearInterval(interval);
+                setTimeout(revealPage, 600);
+            }
+        }, 80);
+
+        function revealPage() {
+            const tl = gsap.timeline();
+            tl.to("#tech-loader", { opacity: 0, duration: 0.6, onComplete: () => {
+                loader.style.display = 'none';
+                document.body.style.overflow = '';
+            }})
+              .to(".gs-fade-down", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.2")
+              .to(".gs-title-3d", { opacity: 1, rotationX: 0, y: 0, duration: 1.2, ease: "back.out(1.4)" }, "-=0.6")
+              .to(".gs-fade-up", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.8");
+
+            // Stagger nos cards da grid
+            gsap.fromTo(".glass-card", 
+                { opacity: 0, y: 100, rotationX: 15, scale: 0.9 },
+                { 
+                    opacity: 1, 
+                    y: 0, 
+                    rotationX: 0, 
+                    scale: 1,
+                    duration: 1, 
+                    stagger: 0.15, 
+                    ease: "power3.out", 
+                    scrollTrigger: { 
+                        trigger: "#cases-grid", 
+                        start: "top 85%" 
+                    } 
+                }
+            );
+        }
+
+        // PARALAXE 3D AVANÇADO NOS CARDS
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Rotaciona o card oposto ao mouse
+                const rotateX = ((y - centerY) / centerY) * -12;
+                const rotateY = ((x - centerX) / centerX) * 12;
+                
+                gsap.to(card, {
+                    rotationX: rotateX,
+                    rotationY: rotateY,
+                    transformPerspective: 1000,
+                    duration: 0.4,
+                    ease: "power1.out"
+                });
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, {
+                    rotationX: 0,
+                    rotationY: 0,
+                    duration: 0.6,
+                    ease: "power1.out"
+                });
+            });
+        });
+    </script>
+</body>
+</html>
