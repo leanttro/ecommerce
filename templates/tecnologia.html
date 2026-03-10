@@ -118,12 +118,23 @@
             padding-left: 5vw;
             padding-right: 5vw;
             overflow-x: scroll !important;
+            -webkit-overflow-scrolling: touch;
         }
         .horizontal-container::-webkit-scrollbar {
             height: 8px !important;
+            display: block !important;
+            -webkit-appearance: none;
         }
         .horizontal-container::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05) !important;
+            border-radius: 10px !important;
             margin: 0 5vw;
+        }
+        .horizontal-container::-webkit-scrollbar-thumb {
+            background-color: var(--primary) !important;
+            border-radius: 10px !important;
+            border: 2px solid transparent;
+            background-clip: padding-box;
         }
         .intro-slide {
             width: 85vw !important;
@@ -500,7 +511,6 @@
         50% { opacity: 0; }
     }
 
-    /* CARROSSEL DE LOGOS DOS CLIENTES */
     .client-marquee-wrapper {
         display: flex;
         width: 100%;
@@ -538,7 +548,6 @@
         100% { transform: translateX(-100%); }
     }
 
-    /* ESTILOS EXTRAS PARA O FORMULÁRIO 3D EXPLOSIVO E FOOTER LOGO */
     .btn-3d {
         transform-style: preserve-3d;
         transition: transform 0.1s, box-shadow 0.1s;
@@ -574,7 +583,6 @@
         100% { transform: rotate(-360deg); }
     }
 
-    /* SHOW DO MILHÃO INSPIRED FORM STYLES */
     .show-milhao-section {
         background-color: #050505;
         position: relative;
@@ -707,7 +715,7 @@
     .sm-submit-btn {
         transform: translateZ(50px);
         width: 100%;
-        background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 60%, #fff));
+        background: #7943e3;
         color: #fff;
         font-family: 'Archivo Black', sans-serif;
         font-size: 1.2rem;
@@ -1348,7 +1356,6 @@
             }
         }
 
-        // --- TRANSIÇÃO EMOCIONANTE DO RODAPÉ ---
         const footerTextRaw = `{{ loja.chamada_rodape or '' }}`;
         const footerPhrases = footerTextRaw.split('\n').map(p => p.trim()).filter(p => p.length > 0);
         
@@ -1434,7 +1441,6 @@
             }, {passive: true});
         }
         
-        // --- 3D FORM TILT PARA O NOVO SHOW DO MILHÃO FORM ---
         const smFormContainer = document.getElementById('sm-form-container');
         if(smFormContainer) {
             smFormContainer.addEventListener('mousemove', (e) => {
@@ -1454,7 +1460,6 @@
                     ease: "power2.out"
                 });
                 
-                // Parallax nas moedas
                 const coins = document.querySelectorAll('.sm-coin');
                 coins.forEach((coin, index) => {
                     const depth = (index + 1) * 0.05;
@@ -1486,7 +1491,6 @@
                 });
             });
             
-            // Animação de entrada do formulário
             gsap.from(smFormContainer, {
                 scrollTrigger: {
                     trigger: ".show-milhao-section",
@@ -1499,7 +1503,6 @@
                 ease: "power4.out"
             });
             
-            // Animação das moedas entrando
             gsap.from('.sm-coin', {
                 scrollTrigger: {
                     trigger: ".show-milhao-section",
@@ -1514,7 +1517,6 @@
             });
         }
 
-        // --- ENVIO DO FORMULÁRIO DE LEADS (AJAX) ---
         const leadForm = document.getElementById('leadForm');
         if(leadForm) {
             leadForm.addEventListener('submit', async function(e) {
@@ -1580,10 +1582,8 @@
 
         const startAutoScroll = () => {
             if (!isInteracting) {
-                container.scrollLeft += autoScrollSpeed;
-                
-                if (Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth - 2) {
-                    container.scrollLeft = 0;
+                if (Math.ceil(container.scrollLeft + container.clientWidth) < container.scrollWidth - 2) {
+                    container.scrollLeft += autoScrollSpeed;
                 }
             }
             autoScrollReq = requestAnimationFrame(startAutoScroll);
