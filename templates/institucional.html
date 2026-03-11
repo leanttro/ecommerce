@@ -11,7 +11,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;500;600;700&display=swap');
     
     :root { 
         --primary: {{ loja.cor_primaria or '#7C3AED' }}; 
@@ -37,6 +37,7 @@
         overflow-wrap: normal !important;
         hyphens: none !important;
         white-space: normal !important;
+        letter-spacing: -0.02em;
     }
 
     header {
@@ -44,12 +45,13 @@
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
         border-bottom: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.4s ease;
     }
 
     .horizontal-section {
         width: 100%;
         max-width: 100vw;
-        padding-top: 100px;
+        padding-top: 80px;
         padding-bottom: 80px;
     }
 
@@ -64,16 +66,16 @@
         scroll-behavior: auto;
         -webkit-overflow-scrolling: touch;
         align-items: center;
-        min-height: 80vh;
+        min-height: 70vh;
     }
 
     .horizontal-container::-webkit-scrollbar {
-        height: 12px;
+        height: 8px;
         display: block;
     }
 
     .horizontal-container::-webkit-scrollbar-track {
-        background: rgba(0,0,0,0.05);
+        background: rgba(0,0,0,0.03);
         border-radius: 10px;
         margin: 0 10vw;
     }
@@ -85,19 +87,19 @@
 
     @media (min-width: 769px) {
         .case-card {
-            width: 42vw !important; 
-            max-width: 60vh !important; 
+            width: 35vw !important; 
+            max-width: 50vh !important; 
         }
         .intro-slide {
-            min-width: 65vw !important;
-            width: 65vw !important;
-            padding-right: 12vw !important;
+            min-width: 50vw !important;
+            width: 50vw !important;
+            padding-right: 8vw !important;
         }
     }
 
     @media (max-width: 768px) {
         .horizontal-section {
-            padding-top: 120px;
+            padding-top: 100px;
             padding-bottom: 50px;
         }
         .horizontal-container {
@@ -118,7 +120,7 @@
         #titulo-secao-produtos {
             text-align: center;
             width: 100%;
-            font-size: 2.2rem;
+            font-size: 2rem;
             line-height: 1.2;
         }
         .case-card {
@@ -133,22 +135,22 @@
         aspect-ratio: 1 / 1;
         max-width: 75vh;
         align-self: center;
-        margin-right: 5vw;
+        margin-right: 4vw;
         position: relative;
-        border-radius: 20px;
+        border-radius: 12px;
         overflow: hidden;
-        transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .case-card img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        filter: brightness(0.5);
-        transition: scale 1s ease;
+        filter: brightness(0.6);
+        transition: scale 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .case-card:hover img { scale: 1.05; }
+    .case-card:hover img { scale: 1.08; filter: brightness(0.4); }
 
     .case-info {
         position: absolute;
@@ -168,8 +170,8 @@
     }
 
     .case-title { 
-        font-size: clamp(1rem, 3.2vw, 2.2rem); 
-        line-height: 1.1; 
+        font-size: clamp(1rem, 2.5vw, 1.8rem); 
+        line-height: 1.2; 
         margin-bottom: 1rem;
         word-break: keep-all !important;
         white-space: normal;
@@ -184,77 +186,77 @@
 
     @keyframes arrow-move {
         0% { transform: translateX(0); opacity: 0.5; }
-        50% { transform: translateX(10px); opacity: 1; }
+        50% { transform: translateX(8px); opacity: 1; }
         100% { transform: translateX(0); opacity: 0.5; }
     }
     .animate-arrow {
-        animation: arrow-move 1.5s ease-in-out infinite;
+        animation: arrow-move 2s ease-in-out infinite;
     }
 </style>
 </head>
 <body>
 
-<header class="fixed top-0 w-full z-[1000] py-4 md:py-6">
+<header class="fixed top-0 w-full z-[1000] py-3 md:py-4">
     <div class="container mx-auto px-4 md:px-8">
         <div class="flex flex-row justify-between items-center w-full">
             <a href="/{{ loja.slug_url }}/" class="block">
                 {% if loja.logo %}
-                    <img src="{{ loja.logo }}" class="h-20 md:h-28 w-auto object-contain">
+                    <img src="{{ loja.logo }}" class="h-12 md:h-16 w-auto object-contain transition-all duration-300">
                 {% else %}
-                    <span class="text-2xl md:text-3xl font-bold tracking-tighter text-[var(--text-color)]">{{ loja.nome }}</span>
+                    <span class="text-xl md:text-2xl font-bold tracking-tighter text-[var(--text-color)]">{{ loja.nome }}</span>
                 {% endif %}
             </a>
             
-            <nav class="hidden md:flex items-center gap-12 text-xs font-bold uppercase tracking-widest opacity-90">
-                {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
+            <nav class="hidden md:flex items-center gap-10 text-[11px] font-semibold uppercase tracking-widest opacity-90">
+                {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-60 hover:opacity-100 transition-opacity duration-300 text-[var(--text-color)]">Sobre</a>{% endif %}
                 
                 {% if not loja.ocultar_produtos %}
                 <div class="relative group py-2">
-                    <a href="#portfolio" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 cursor-pointer">
+                    <a href="#portfolio" class="opacity-60 hover:opacity-100 transition-opacity duration-300 text-[var(--text-color)] flex items-center gap-1 cursor-pointer">
                         {{ loja.titulo_produtos or 'Nossos Cases' }} <i data-lucide="chevron-down" class="w-3 h-3"></i>
                     </a>
-                    <div class="absolute left-0 top-full mt-2 w-56 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[999] flex flex-col shadow-2xl overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.1);">
-                        <a href="/{{ loja.slug_url }}/#portfolio" class="px-5 py-3 transition hover:opacity-70 font-bold" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">Todos os Segmentos</a>
+                    <div class="absolute left-0 top-full mt-2 w-56 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[999] flex flex-col shadow-xl overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.05);">
+                        <a href="/{{ loja.slug_url }}/#portfolio" class="px-5 py-3 transition hover:opacity-60 font-semibold" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.03);">Todos os Segmentos</a>
                         {% for cat in categorias %}
-                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-5 py-3 transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">{{ cat.nome }}</a>
+                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-5 py-3 transition hover:opacity-60" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.03);">{{ cat.nome }}</a>
                         {% endfor %}
                     </div>
                 </div>
                 {% endif %}
                 
-                <a href="#contato" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
+                <a href="#contato" class="opacity-60 hover:opacity-100 transition-opacity duration-300 text-[var(--text-color)]">Contato</a>
             </nav>
 
             <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="flex items-center">
-                <div class="md:hidden p-3 rounded-full border border-black/10 hover:bg-black/5 transition">
-                    <i data-lucide="message-circle" class="w-5 h-5 text-[var(--text-color)]"></i>
+                <div class="md:hidden p-2 rounded-full border border-black/5 hover:bg-black/5 transition">
+                    <i data-lucide="message-circle" class="w-4 h-4 text-[var(--text-color)]"></i>
                 </div>
-                <span class="hidden md:block bg-[var(--text-color)] text-[var(--bg-color)] px-10 py-5 rounded-full text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg">
+                <span class="hidden md:block bg-[var(--text-color)] text-[var(--bg-color)] px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-transform duration-300 shadow-sm">
                     Fale Conosco
                 </span>
             </a>
         </div>
 
-        <nav class="md:hidden flex flex-col items-center gap-4 mt-6 text-[11px] font-bold uppercase tracking-widest opacity-90 border-t border-black/5 pt-6 w-full">
+        <nav class="md:hidden flex flex-col items-center gap-4 mt-4 text-[10px] font-semibold uppercase tracking-widest opacity-90 border-t border-black/5 pt-4 w-full">
             <div class="flex flex-wrap justify-center gap-6 w-full">
-                {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-80 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
+                {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
                 
                 {% if not loja.ocultar_produtos %}
                 <div class="relative group flex flex-col items-center">
-                    <button class="opacity-80 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 uppercase tracking-widest" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">
+                    <button class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 uppercase tracking-widest" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">
                         {{ loja.titulo_produtos or 'Nossos Cases' }} <i data-lucide="chevron-down" class="w-3 h-3"></i>
                     </button>
                 </div>
                 {% endif %}
                 
-                <a href="#contato" class="opacity-80 hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
+                <a href="#contato" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
             </div>
             
             {% if not loja.ocultar_produtos %}
-            <div id="mobile-cat-menu" class="hidden flex-col items-center rounded mt-2 w-[80vw] text-center shadow-lg overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.1);">
-                <a href="/{{ loja.slug_url }}/#portfolio" class="px-4 py-3 w-full transition hover:opacity-70 font-bold" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">Todos</a>
+            <div id="mobile-cat-menu" class="hidden flex-col items-center rounded mt-2 w-[80vw] text-center shadow-lg overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.05);">
+                <a href="/{{ loja.slug_url }}/#portfolio" class="px-4 py-3 w-full transition hover:opacity-60 font-semibold" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.03);">Todos</a>
                 {% for cat in categorias %}
-                <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-4 py-3 w-full transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">{{ cat.nome }}</a>
+                <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-4 py-3 w-full transition hover:opacity-60" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.03);">{{ cat.nome }}</a>
                 {% endfor %}
             </div>
             {% endif %}
@@ -265,30 +267,31 @@
 {% for secao in layout %}
 
     {% if secao == 'banner' and not loja.ocultar_banner %}
-    <section class="h-[70vh] md:h-screen w-full relative overflow-hidden" id="hero">
+    <section class="h-[60vh] md:h-[85vh] w-full relative overflow-hidden" id="hero">
+        <div class="hero-overlay absolute inset-0 bg-black/10 z-10 pointer-events-none"></div>
         {% if loja.banner1 %}
         <a href="{{ loja.linkbannerprincipal1 or '#' }}" class="block w-full h-full">
-            <img src="{{ loja.banner1 }}" class="w-full h-full object-cover object-center">
+            <img src="{{ loja.banner1 }}" class="hero-img w-full h-full object-cover object-center transform scale-105">
         </a>
         {% else %}
-        <div class="w-full h-full flex items-center justify-center bg-gray-100">
-            <h1 class="text-4xl opacity-20">Seu Banner Here</h1>
+        <div class="w-full h-full flex items-center justify-center bg-gray-50">
+            <h1 class="text-2xl font-light opacity-30">Seu Banner Aqui</h1>
         </div>
         {% endif %}
     </section>
     {% endif %}
 
     {% if secao == 'categorias' and not loja.ocultar_categorias %}
-    <section class="py-16 md:py-24 border-b border-[rgba(255,255,255,0.3)] w-full relative" id="locomotive-section" style="background-color: var(--bg-color);">
+    <section class="py-16 md:py-20 border-b border-[rgba(0,0,0,0.05)] w-full relative overflow-hidden" id="locomotive-section" style="background-color: var(--bg-color);">
         <div class="container mx-auto px-4 md:px-8 relative">
             
             {% if loja.titulo_categorias %}
-            <div class="mb-12 border-b pb-4 border-[rgba(255,255,255,0.3)]">
-                <h2 class="text-[var(--text-color)] text-xl md:text-2xl font-bold uppercase tracking-widest">{{ loja.titulo_categorias }}</h2>
+            <div class="mb-10 border-b pb-4 border-[rgba(0,0,0,0.05)] fade-up">
+                <h2 class="text-[var(--text-color)] text-sm md:text-base font-semibold uppercase tracking-[0.2em] opacity-60">{{ loja.titulo_categorias }}</h2>
             </div>
             {% endif %}
 
-            <div class="flex flex-col w-full relative border-t border-[rgba(255,255,255,0.3)]" id="locomotive-categories">
+            <div class="flex flex-col w-full relative border-t border-[rgba(0,0,0,0.05)]" id="locomotive-categories">
                 {% set cat_selecionada = request.args.get('categoria') %}
                 
                 {% for cat in categorias %}
@@ -313,15 +316,15 @@
                             {% set has_space = false %}
                         {% endif %}
 
-                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="group flex items-center justify-center py-8 md:py-16 border-b border-[rgba(255,255,255,0.3)] transition-colors duration-300 relative w-full overflow-hidden px-4">
-                            <h3 class="flex flex-wrap items-center justify-center text-2xl sm:text-4xl md:text-7xl lg:text-8xl font-display text-center m-0 p-0" style="color: var(--text-color);">
+                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="cat-item group flex items-center justify-center py-6 md:py-10 border-b border-[rgba(0,0,0,0.05)] transition-colors duration-500 relative w-full overflow-hidden px-4 hover:bg-[rgba(0,0,0,0.01)]">
+                            <h3 class="flex flex-wrap items-center justify-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display text-center m-0 p-0" style="color: var(--text-color);">
                                 <span>{{ p1 }}</span>
                                 {% if cat_img.url != '' %}
-                                <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle">
+                                <span class="inline-block h-[0.65em] w-0 group-hover:w-[1.8em] overflow-hidden transition-all duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] rounded-lg mx-0 md:group-hover:mx-3 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle shadow-md">
                                     <img src="{{ cat_img.url }}" class="absolute top-0 left-0 w-full h-full object-cover">
                                 </span>
                                 {% else %}
-                                <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle bg-[rgba(255,255,255,0.1)]"></span>
+                                <span class="inline-block h-[0.65em] w-0 group-hover:w-[1.8em] overflow-hidden transition-all duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] rounded-lg mx-0 md:group-hover:mx-3 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle bg-[rgba(0,0,0,0.05)]"></span>
                                 {% endif %}
                                 <span>{% if has_space %}&nbsp;{% endif %}{{ p2 }}</span>
                             </h3>
@@ -330,8 +333,8 @@
                 {% endfor %}
                 
                 {% if cat_selecionada %}
-                <div class="mt-12 flex justify-center w-full">
-                    <a href="/{{ loja.slug_url }}/#locomotive-section" class="px-8 py-4 rounded-full border text-[var(--text-color)] font-bold tracking-widest uppercase text-xs hover:bg-[var(--text-color)] hover:text-[var(--bg-color)] transition-all" style="border-color: var(--text-color);">
+                <div class="mt-12 flex justify-center w-full fade-up">
+                    <a href="/{{ loja.slug_url }}/#locomotive-section" class="px-6 py-3 rounded-full border text-[var(--text-color)] font-semibold tracking-[0.15em] uppercase text-[10px] hover:bg-[var(--text-color)] hover:text-[var(--bg-color)] transition-all duration-300" style="border-color: var(--text-color);">
                         Ver Todos os Segmentos
                     </a>
                 </div>
@@ -342,33 +345,33 @@
     {% endif %}
 
     {% if secao == 'sobre' and not loja.ocultar_sobre %}
-    <section class="py-16 md:py-32 w-full" id="sobre" style="background-color: var(--bg-color);">
-        <div class="container mx-auto px-6 md:px-8 grid md:grid-cols-2 gap-10 md:gap-20 items-center w-full max-w-full overflow-hidden">
-            <div class="w-full max-w-full">
-                <h2 class="text-3xl md:text-5xl mb-4 md:mb-8 leading-tight text-[var(--text-color)] break-words w-full">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
-                <div class="text-sm md:text-xl leading-relaxed mb-8 whitespace-pre-line break-words w-full" style="color: var(--text-color); opacity: 0.8;">
+    <section class="py-20 md:py-28 w-full overflow-hidden" id="sobre" style="background-color: var(--bg-color);">
+        <div class="container mx-auto px-6 md:px-8 grid md:grid-cols-12 gap-12 md:gap-16 items-center w-full max-w-full">
+            <div class="w-full max-w-full md:col-span-5 fade-up">
+                <h2 class="text-2xl md:text-4xl mb-6 md:mb-8 leading-tight text-[var(--text-color)] break-words font-display tracking-tight">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
+                <div class="text-sm md:text-base leading-relaxed mb-8 whitespace-pre-line break-words w-full font-light" style="color: var(--text-color); opacity: 0.75;">
                     {{ loja.sobre_texto or 'Adicione a história através do painel na aba "Sobre a Empresa".' }}
                 </div>
             </div>
-            <div class="rounded-2xl overflow-hidden shadow-2xl h-[300px] md:h-[600px] border border-gray-100 w-full max-w-full">
-                <img src="{{ loja.sobre_imagem_url or 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000' }}" class="w-full h-full object-cover">
+            <div class="md:col-span-7 rounded-xl overflow-hidden shadow-lg h-[400px] md:h-[550px] border border-black/5 w-full max-w-full img-reveal relative">
+                <img src="{{ loja.sobre_imagem_url or 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000' }}" class="w-full h-full object-cover parallax-img">
             </div>
         </div>
     </section>
     {% endif %}
 
     {% if secao == 'banners_menores' and not loja.ocultar_banners_menores %}
-    <section class="py-16 w-full" style="background-color: var(--bg-color);">
-        <div class="container mx-auto px-8 max-w-full">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-full">
+    <section class="py-12 md:py-16 w-full" style="background-color: var(--bg-color);">
+        <div class="container mx-auto px-6 md:px-8 max-w-full">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-full max-w-full">
                 {% if loja.bannermenor1 %}
-                <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl w-full">
-                    <img src="{{ loja.bannermenor1 }}" class="w-full h-auto object-cover">
+                <a href="{{ loja.linkbannermenor1 or '#' }}" class="banner-min block overflow-hidden rounded-xl hover:shadow-lg transition-all duration-500 w-full group">
+                    <img src="{{ loja.bannermenor1 }}" class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105">
                 </a>
                 {% endif %}
                 {% if loja.bannermenor2 %}
-                <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl w-full">
-                    <img src="{{ loja.bannermenor2 }}" class="w-full h-auto object-cover">
+                <a href="{{ loja.linkbannermenor2 or '#' }}" class="banner-min block overflow-hidden rounded-xl hover:shadow-lg transition-all duration-500 w-full group">
+                    <img src="{{ loja.bannermenor2 }}" class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105">
                 </a>
                 {% endif %}
             </div>
@@ -379,26 +382,28 @@
     {% if secao == 'produtos' and not loja.ocultar_produtos %}
     <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color);">
         <div class="horizontal-container">
-            <div class="intro-slide flex-shrink-0 w-[90vw] sm:w-[70vw] md:w-[50vw] lg:w-[45vw] flex flex-col justify-start md:justify-center pr-6 md:pr-16 lg:pr-20 relative pt-4 md:pt-0">
-                <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] leading-tight md:leading-none">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
-                <i data-lucide="arrow-right" class="w-10 h-10 text-[var(--text-color)] mt-4 mb-2 animate-arrow mx-auto md:mx-0"></i>
+            <div class="intro-slide flex-shrink-0 w-[90vw] sm:w-[60vw] md:w-[45vw] lg:w-[40vw] flex flex-col justify-start md:justify-center pr-6 md:pr-12 relative pt-4 md:pt-0 fade-up">
+                <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[2rem] sm:text-4xl md:text-5xl lg:text-6xl leading-tight font-display tracking-tight">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
+                <div class="mt-6 md:mt-8 flex items-center gap-4 opacity-50">
+                    <span class="text-[10px] uppercase tracking-[0.2em] font-semibold">Deslize</span>
+                    <i data-lucide="arrow-right" class="w-6 h-6 text-[var(--text-color)] animate-arrow"></i>
+                </div>
             </div>
 
             {% for p in produtos %}
             <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'" style="cursor: pointer;">
                 <img src="{{ p.imagem }}" alt="{{ p.nome }}">
                 <div class="case-info">
-                    <h3 class="case-title">{{ p.nome }}</h3>
-                    <div class="flex items-center gap-4">
-                        <span class="text-xs uppercase tracking-widest opacity-70">Ver detalhes do projeto</span>
-                        <div class="w-12 h-[1px] bg-white opacity-50"></div>
-                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    <h3 class="case-title font-display">{{ p.nome }}</h3>
+                    <div class="flex items-center gap-3">
+                        <span class="text-[10px] uppercase tracking-widest font-semibold opacity-80">Explorar</span>
+                        <div class="w-8 h-[1px] bg-white opacity-60"></div>
                     </div>
                 </div>
             </div>
             {% else %}
-            <div class="flex-shrink-0 w-[70vw] h-full mr-[5vw] flex items-center justify-center border rounded-2xl" style="border-color: var(--text-color);">
-                <p class="text-xl font-bold uppercase tracking-widest" style="color: var(--text-color); opacity: 0.5;">Nenhum projeto cadastrado.</p>
+            <div class="flex-shrink-0 w-[50vw] h-[40vh] mr-[4vw] flex items-center justify-center border rounded-xl" style="border-color: rgba(0,0,0,0.1);">
+                <p class="text-sm font-semibold uppercase tracking-[0.15em]" style="color: var(--text-color); opacity: 0.4;">Nenhum projeto cadastrado.</p>
             </div>
             {% endfor %}
         </div>
@@ -407,33 +412,33 @@
 
 {% endfor %}
 
-<footer class="py-20 text-center relative w-full overflow-hidden" id="contato" style="background-color: var(--text-color); color: var(--bg-color);">
-    <div class="container mx-auto px-6 md:px-8 max-w-full">
-        <h2 class="text-3xl md:text-7xl mb-12 tracking-tighter uppercase w-full">
+<footer class="py-16 md:py-24 text-center relative w-full overflow-hidden" id="contato" style="background-color: var(--text-color); color: var(--bg-color);">
+    <div class="container mx-auto px-6 md:px-8 max-w-full fade-up">
+        <h2 class="text-2xl md:text-4xl lg:text-5xl mb-10 tracking-tight uppercase w-full font-display">
             {% if loja.chamada_rodape %}
                 {{ loja.chamada_rodape }}
             {% else %}
-                VAMOS CRIAR ALGO JUNTO COM A <span style="color: var(--primary);">{{ loja.nome }}</span>?
+                Vamos criar algo incrível com a <span style="color: var(--primary);">{{ loja.nome }}</span>?
             {% endif %}
         </h2>
         
-        <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-16 w-full">
-            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="inline-block text-xl md:text-2xl border-b-2 pb-2 transition text-center" style="border-color: var(--primary);">
+        <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 mb-16 w-full">
+            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="inline-block text-lg md:text-xl border-b pb-1 hover:opacity-70 transition-opacity text-center font-light" style="border-color: var(--primary);">
                 Iniciar Conversa no WhatsApp
             </a>
             
             {% if loja.instagram_url %}
-            <a href="{{ loja.instagram_url }}" target="_blank" class="inline-flex items-center gap-2 text-xl hover:opacity-70 transition">
-                <i data-lucide="instagram" class="w-6 h-6"></i> Instagram
+            <a href="{{ loja.instagram_url }}" target="_blank" class="inline-flex items-center gap-2 text-lg hover:opacity-70 transition-opacity font-light">
+                <i data-lucide="instagram" class="w-5 h-5"></i> Instagram
             </a>
             {% endif %}
         </div>
 
-        <p class="mt-24 text-[10px] uppercase tracking-widest opacity-30">© 2026 {{ loja.nome }}. Todos os direitos reservados.</p>
+        <p class="mt-20 text-[9px] uppercase tracking-[0.2em] font-semibold opacity-40">© 2026 {{ loja.nome }}. Todos os direitos reservados.</p>
         
-        <div class="mt-8 pt-8 border-t border-white/10">
-            <a href="/{{ loja.slug_url }}/admin" class="text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 opacity-20 hover:opacity-100 transition">
-                <i data-lucide="lock" class="w-3 h-3"></i> Acesso Lojista
+        <div class="mt-6 pt-6 border-t border-white/5">
+            <a href="/{{ loja.slug_url }}/admin" class="text-[9px] font-semibold uppercase tracking-[0.2em] flex items-center justify-center gap-2 opacity-30 hover:opacity-100 transition-opacity">
+                <i data-lucide="lock" class="w-3 h-3"></i> Acesso Restrito
             </a>
         </div>
     </div>
@@ -475,6 +480,99 @@
             }
         }, { passive: false });
     }
+
+    // GSAP ANIMATIONS FOR CHIC MOVEMENT
+    
+    // Hero Banner Image Zoom out slightly on load
+    if(document.querySelector('.hero-img')) {
+        gsap.to('.hero-img', {
+            scale: 1,
+            duration: 2.5,
+            ease: "power2.out"
+        });
+    }
+
+    // Fade Up General Elements
+    gsap.utils.toArray('.fade-up').forEach(element => {
+        gsap.fromTo(element, 
+            { y: 40, opacity: 0 },
+            { 
+                y: 0, 
+                opacity: 1, 
+                duration: 1.2, 
+                ease: "power3.out", 
+                scrollTrigger: {
+                    trigger: element,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                }
+            }
+        );
+    });
+
+    // Staggered Category Reveal
+    gsap.utils.toArray('.cat-item').forEach((item, index) => {
+        gsap.fromTo(item,
+            { y: 30, opacity: 0 },
+            {
+                y: 0,
+                opacity: 1,
+                duration: 1,
+                delay: index * 0.1,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: "#locomotive-categories",
+                    start: "top 85%"
+                }
+            }
+        );
+    });
+
+    // Image Parallax / Reveal Effect in Sobre section
+    if(document.querySelector('.img-reveal')) {
+        gsap.fromTo('.img-reveal', 
+            { clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)" },
+            { 
+                clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", 
+                duration: 1.5, 
+                ease: "power3.inOut",
+                scrollTrigger: {
+                    trigger: ".img-reveal",
+                    start: "top 85%"
+                }
+            }
+        );
+        gsap.fromTo('.parallax-img',
+            { scale: 1.2 },
+            {
+                scale: 1,
+                duration: 1.5,
+                ease: "power3.inOut",
+                scrollTrigger: {
+                    trigger: ".img-reveal",
+                    start: "top 85%"
+                }
+            }
+        );
+    }
+
+    // Banners Min Reveal
+    gsap.utils.toArray('.banner-min').forEach((banner, index) => {
+        gsap.fromTo(banner,
+            { y: 30, opacity: 0 },
+            {
+                y: 0,
+                opacity: 1,
+                duration: 1.2,
+                delay: index * 0.2,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: banner,
+                    start: "top 90%"
+                }
+            }
+        );
+    });
 </script>
 </body>
 </html>
