@@ -98,10 +98,10 @@
 </div>
 {% endif %}
 
-<header class="sticky top-0 z-40 transition-colors py-4 bg-theme shadow-md">
+<header class="sticky top-0 z-40 transition-colors py-4 shadow-md" style="background-color: var(--color-bg);">
     <div class="container mx-auto px-4 min-h-[70px] flex items-center justify-between relative">
         
-        <button onclick="toggleMobileMenu()" class="md:hidden p-2 hover:opacity-70 transition z-20" style="color: var(--color-bg);">
+        <button onclick="toggleMobileMenu()" class="md:hidden p-2 hover:opacity-70 transition z-20" style="color: var(--color-title);">
             <i data-lucide="menu" class="w-7 h-7"></i>
         </button>
 
@@ -109,12 +109,12 @@
             {% if loja.logo %}
                 <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="h-16 md:h-20 w-auto object-contain transition-all">
             {% else %}
-                <span class="text-2xl font-bold tracking-tight" style="color: var(--color-bg);">{{ loja.nome }}</span>
+                <span class="text-2xl font-bold tracking-tight" style="color: var(--color-title);">{{ loja.nome }}</span>
             {% endif %}
         </a>
 
         <div class="hidden md:flex justify-center flex-1 mx-8">
-            <ul class="flex gap-8 text-sm font-bold uppercase tracking-widest opacity-90" style="color: var(--color-bg);">
+            <ul class="flex gap-8 text-sm font-bold uppercase tracking-widest opacity-90" style="color: var(--color-title);">
                 <li><a href="/{{ loja.slug_url }}/" class="hover:opacity-70 transition">Início</a></li>
                 <li class="relative group">
                     <a href="#categorias" class="hover:opacity-70 transition flex items-center gap-1 cursor-pointer">Produtos <i data-lucide="chevron-down" class="w-4 h-4"></i></a>
@@ -130,11 +130,11 @@
             </ul>
         </div>
 
-        <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="hidden md:flex px-6 py-3 rounded-full text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg z-20 items-center gap-2" style="background-color: var(--color-bg); color: var(--primary);">
+        <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="hidden md:flex px-6 py-3 rounded-full text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg z-20 items-center gap-2" style="background-color: var(--primary); color: var(--color-bg);">
             <i data-lucide="message-circle" class="w-4 h-4"></i> Atendimento
         </a>
         
-        <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="md:hidden p-2 hover:opacity-70 transition z-20" style="color: var(--color-bg);">
+        <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="md:hidden p-2 hover:opacity-70 transition z-20" style="color: var(--color-title);">
             <i data-lucide="message-circle" class="w-7 h-7"></i>
         </a>
     </div>
@@ -198,7 +198,7 @@
     {% endif %}
 
     {% if secao == 'busca' and not loja.ocultar_busca %}
-        <div class="py-8 border-b gsap-reveal bg-theme" style="border-color: rgba(255,255,255,0.1);">
+        <div class="py-8 border-b gsap-reveal" style="background-color: var(--color-bg); border-color: var(--primary);">
             <div class="container mx-auto px-4 max-w-3xl">
                 <form action="/{{ loja.slug_url }}/" method="GET" class="relative">
                     <input type="text" name="busca" placeholder="O que você procura hoje?" class="w-full p-4 pl-12 rounded-full border focus:outline-none shadow-sm transition-shadow focus:shadow-md" style="background-color: var(--color-bg); color: var(--color-text); border-color: var(--primary);">
@@ -434,7 +434,7 @@
                     {% if link.strip() %}
                         {% if 'instagram.com' in link %}
                             <div class="snap-start flex-none w-[320px] rounded-2xl overflow-hidden shadow-lg border" style="border-color: var(--primary); background-color: var(--color-bg);">
-                                <iframe src="{{ link.strip().split('?')[0] | replace('/embed', '') }}/embed" width="320" height="540" frameborder="0" scrolling="no" allowtransparency="true" style="background: white;"></iframe>
+                                <iframe src="{{ link.strip().split('?')[0].rstrip('/') | replace('/embed', '') }}/embed" width="320" height="540" frameborder="0" scrolling="no" allowtransparency="true" style="background: white;"></iframe>
                             </div>
                         {% else %}
                             <div class="snap-start flex-none flex items-center justify-center p-6 rounded-2xl border" style="border-color: var(--primary); background-color: var(--color-bg); min-width: 200px;">
@@ -448,28 +448,28 @@
     </div>
 </section>
 
-<footer class="py-16 mt-auto bg-theme border-t" id="footer" style="border-color: rgba(255,255,255,0.1);">
+<footer class="py-16 mt-auto border-t" id="footer" style="background-color: var(--color-bg); border-color: var(--primary);">
     <div class="container mx-auto px-6 text-center max-w-4xl">
-        <h4 class="font-bold text-3xl mb-8 tracking-tight" style="color: var(--color-bg);">{{ loja.nome }}</h4>
+        <h4 class="font-bold text-3xl mb-8 tracking-tight" style="color: var(--color-title);">{{ loja.nome }}</h4>
         
         <div class="flex flex-col md:flex-row justify-center items-center gap-8 mb-12">
-            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="flex items-center gap-2 text-lg hover:opacity-70 transition" style="color: var(--color-bg);">
+            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="flex items-center gap-2 text-lg hover:opacity-70 transition" style="color: var(--color-text);">
                 <i data-lucide="message-circle" class="w-6 h-6"></i> {{ loja.whatsapp_comercial }}
             </a>
             {% if loja.instagram_url %}
-            <a href="{{ loja.instagram_url }}" target="_blank" class="flex items-center gap-2 text-lg hover:opacity-70 transition" style="color: var(--color-bg);">
+            <a href="{{ loja.instagram_url }}" target="_blank" class="flex items-center gap-2 text-lg hover:opacity-70 transition" style="color: var(--color-text);">
                 <i data-lucide="instagram" class="w-6 h-6"></i> Instagram
             </a>
             {% endif %}
         </div>
 
-        <p class="text-sm mb-8" style="color: var(--color-bg); opacity: 0.8;">© 2026 {{ loja.nome }}. Todos os direitos reservados.</p>
+        <p class="text-sm mb-8" style="color: var(--color-text); opacity: 0.8;">© 2026 {{ loja.nome }}. Todos os direitos reservados.</p>
         
-        <div class="mt-12 pt-8 border-t flex flex-col items-center gap-6" style="border-color: rgba(255,255,255,0.2);">
-            <a href="/{{ loja.slug_url }}/admin" class="text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition hover:opacity-100" style="color: var(--color-bg); opacity: 0.6;">
+        <div class="mt-12 pt-8 border-t flex flex-col items-center gap-6" style="border-color: var(--primary);">
+            <a href="/{{ loja.slug_url }}/admin" class="text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition hover:opacity-100" style="color: var(--color-text); opacity: 0.6;">
                 <i data-lucide="lock" class="w-4 h-4"></i> Área do Lojista
             </a>
-            <div class="text-[10px] flex flex-col items-center" style="color: var(--color-bg); opacity: 0.6;">
+            <div class="text-[10px] flex flex-col items-center" style="color: var(--color-text); opacity: 0.6;">
                 <span>Desenvolvido por Leanttro Tecnology</span>
             </div>
         </div>
