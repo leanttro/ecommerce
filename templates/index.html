@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
@@ -7,6 +6,8 @@
 <title>{{ loja.nome }}</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family={{ loja.font_titulo }}:wght@400;700&family={{ loja.font_corpo }}:wght@300;400;600&display=swap');
@@ -26,6 +27,8 @@
         font-family: var(--font-body); 
         font-size: var(--font-size-base);
         color: var(--color-text);
+        background-color: var(--color-bg);
+        overflow-x: hidden;
     }
     
     h1, h2, h3, h4, .font-display { 
@@ -37,8 +40,6 @@
     .bg-theme { background-color: var(--primary); }
     .border-theme { border-color: var(--primary); }
     .hover\:bg-theme:hover { background-color: var(--primary); }
-    
-    .custom-bg { background-color: var(--color-bg); }
     .custom-title-color { color: var(--color-title); }
     
     .ticker-wrap {
@@ -70,17 +71,54 @@
         100% { transform: translateX(-50%); }
     }
 
-    .hide-scroll::-webkit-scrollbar {
-        display: none;
+    .hide-scroll::-webkit-scrollbar { display: none; }
+    .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+    header {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
     }
-    .hide-scroll {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
+
+    .gsap-reveal { opacity: 0; transform: translateY(30px); }
+
+    .client-marquee-wrapper {
+        display: flex;
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        padding: 40px 0;
+        background-color: var(--color-bg);
+        border-top: 1px solid rgba(0,0,0,0.05);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
     }
-    
+    .client-marquee-track {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        min-width: 100%;
+        animation: scrollMarquee 30s linear infinite;
+        gap: 60px;
+        padding-right: 60px;
+    }
+    .client-marquee-track img {
+        height: 60px;
+        width: auto;
+        max-width: 200px;
+        object-fit: contain;
+        opacity: 0.8;
+        transition: all 0.3s ease;
+        border-radius: 4px;
+    }
+    .client-marquee-track img:hover { opacity: 1; transform: scale(1.05); }
+    @keyframes scrollMarquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
+    }
 </style>
 </head>
-<body class="custom-bg flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen">
 
 {% if loja.frase1 or loja.frase2 or loja.frase3 %}
 <div class="ticker-wrap">
@@ -101,46 +139,48 @@
 </div>
 {% endif %}
 
-<nav class="sticky top-0 z-40 shadow-sm border-b border-gray-100 transition-colors custom-bg py-4 relative">
-    <div class="container mx-auto px-4 min-h-[90px] flex items-center justify-center relative">
+<header class="sticky top-0 z-40 transition-colors py-4">
+    <div class="container mx-auto px-4 min-h-[70px] flex items-center justify-between relative">
         
-        <a href="/{{ loja.slug_url }}/" class="flex items-center justify-center z-10 transform -translate-y-2 md:-translate-y-3">
+        <button onclick="toggleMobileMenu()" class="md:hidden p-2 custom-title-color hover:opacity-70 transition z-20">
+            <i data-lucide="menu" class="w-7 h-7"></i>
+        </button>
+
+        <a href="/{{ loja.slug_url }}/" class="flex items-center justify-center z-10 mx-auto md:mx-0">
             {% if loja.logo %}
-                <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="h-20 md:h-28 w-auto object-contain transition-all">
+                <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="h-16 md:h-20 w-auto object-contain transition-all">
             {% else %}
-                <span class="text-3xl font-bold tracking-tight custom-title-color">{{ loja.nome }}</span>
+                <span class="text-2xl font-bold tracking-tight custom-title-color">{{ loja.nome }}</span>
             {% endif %}
         </a>
 
-        <div class="absolute right-4 flex items-center gap-2 md:gap-4 z-20">
-             <button onclick="toggleMobileMenu()" class="md:hidden p-2 custom-title-color hover:opacity-70 transition">
-                <i data-lucide="menu" class="w-7 h-7"></i>
-            </button>
-            
-            <button onclick="toggleCart()" class="relative p-2 hover:opacity-70 transition custom-title-color">
-                <i data-lucide="shopping-bag" class="w-7 h-7"></i>
-                <span id="cart-count-badge" class="absolute top-0 right-0 bg-theme text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold hidden">0</span>
-            </button>
+        <div class="hidden md:flex justify-center flex-1 mx-8">
+            <ul class="flex gap-8 text-sm font-bold uppercase tracking-widest custom-title-color opacity-90">
+                <li><a href="/{{ loja.slug_url }}/" class="hover:text-theme transition">Início</a></li>
+                <li class="relative group">
+                    <a href="#categorias" class="hover:text-theme transition flex items-center gap-1 cursor-pointer">Produtos <i data-lucide="chevron-down" class="w-4 h-4"></i></a>
+                    <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-48 bg-white shadow-xl border border-gray-100 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 flex flex-col py-2">
+                        <a href="/{{ loja.slug_url }}/" class="px-4 py-2 hover:bg-gray-50 hover:text-theme transition text-xs text-left normal-case tracking-normal">Todos</a>
+                        {% for cat in categorias %}
+                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="px-4 py-2 hover:bg-gray-50 hover:text-theme transition text-xs text-left normal-case tracking-normal">{{ cat.nome }}</a>
+                        {% endfor %}
+                    </div>
+                </li>
+                <li><a href="#sobre" class="hover:text-theme transition">Sobre</a></li>
+                <li><a href="#footer" class="hover:text-theme transition">Contato</a></li>
+            </ul>
         </div>
-    </div>
-    
-    <div class="hidden md:flex justify-center border-t border-gray-50 py-3 custom-bg">
-        <ul class="flex gap-8 text-sm font-bold uppercase tracking-widest custom-title-color opacity-80">
-            <li><a href="/{{ loja.slug_url }}/" class="hover:text-theme transition">Início</a></li>
-            <li class="relative group">
-                <a href="#categorias" class="hover:text-theme transition flex items-center gap-1 cursor-pointer">Produtos <i data-lucide="chevron-down" class="w-4 h-4"></i></a>
-                <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-48 bg-white shadow-xl border border-gray-100 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 flex flex-col py-2">
-                    <a href="/{{ loja.slug_url }}/" class="px-4 py-2 hover:bg-gray-50 hover:text-theme transition text-xs text-left normal-case tracking-normal">Todos</a>
-                    {% for cat in categorias %}
-                    <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="px-4 py-2 hover:bg-gray-50 hover:text-theme transition text-xs text-left normal-case tracking-normal">{{ cat.nome }}</a>
-                    {% endfor %}
-                </div>
-            </li>
-            <li><a href="#footer" class="hover:text-theme transition">Contato</a></li>
-        </ul>
+
+        <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="hidden md:flex bg-theme text-white px-6 py-3 rounded-full text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg z-20 items-center gap-2">
+            <i data-lucide="message-circle" class="w-4 h-4"></i> Atendimento
+        </a>
+        
+        <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="md:hidden p-2 custom-title-color hover:opacity-70 transition z-20">
+            <i data-lucide="message-circle" class="w-7 h-7"></i>
+        </a>
     </div>
 
-    <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full custom-bg border-t border-gray-100 shadow-lg z-50">
+    <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-lg z-50">
         <ul class="flex flex-col p-4 space-y-4 font-bold uppercase tracking-widest text-sm custom-title-color text-center">
             <li><a href="/{{ loja.slug_url }}/" class="block hover:text-theme py-2" onclick="toggleMobileMenu()">Início</a></li>
             <li>
@@ -152,78 +192,75 @@
                     {% endfor %}
                 </div>
             </li>
+            <li><a href="#sobre" class="block hover:text-theme py-2" onclick="toggleMobileMenu()">Sobre</a></li>
             <li><a href="#footer" class="block hover:text-theme py-2" onclick="toggleMobileMenu()">Contato</a></li>
         </ul>
     </div>
-</nav>
+</header>
 
 {% for secao in layout %}
     
     {% if secao == 'banner' and not loja.ocultar_banner %}
-        <section class="slider-container relative w-full overflow-hidden group bg-gray-50/50">
-            
+        <section class="slider-container relative w-full overflow-hidden group bg-gray-50/50 gsap-reveal">
             <div id="banner-slider" class="flex transition-transform duration-500 ease-in-out w-full">
-                
                 {% if loja.banner1 %}
                 <div class="w-full flex-none relative">
                     {% if loja.linkbannerprincipal1 and loja.linkbannerprincipal1 != '#' %}
                     <a href="{{ loja.linkbannerprincipal1 }}" class="block w-full h-full">
                     {% endif %}
-                        <img src="{{ loja.banner1 }}" class="w-full h-[300px] md:h-[450px] lg:h-[500px] object-cover object-center">
+                        <img src="{{ loja.banner1 }}" class="w-full h-[400px] md:h-[600px] object-cover object-center">
                     {% if loja.linkbannerprincipal1 and loja.linkbannerprincipal1 != '#' %}
                     </a>
                     {% endif %}
                 </div>
                 {% endif %}
-                
                 {% if loja.banner2 %}
                 <div class="w-full flex-none relative">
                     {% if loja.linkbannerprincipal2 and loja.linkbannerprincipal2 != '#' %}
                     <a href="{{ loja.linkbannerprincipal2 }}" class="block w-full h-full">
                     {% endif %}
-                        <img src="{{ loja.banner2 }}" class="w-full h-[300px] md:h-[450px] lg:h-[500px] object-cover object-center">
+                        <img src="{{ loja.banner2 }}" class="w-full h-[400px] md:h-[600px] object-cover object-center">
                     {% if loja.linkbannerprincipal2 and loja.linkbannerprincipal2 != '#' %}
                     </a>
                     {% endif %}
                 </div>
                 {% endif %}
-
             </div>
             
             {% if loja.banner1 and loja.banner2 %}
-            <button onclick="moveBanner(-1)" class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 md:p-3 rounded-full shadow-lg hover:bg-white transition text-gray-700 opacity-80 hover:opacity-100 flex items-center justify-center">
-                <i data-lucide="chevron-left" class="w-5 h-5 md:w-6 h-6"></i>
+            <button onclick="moveBanner(-1)" class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-10 bg-white/90 p-3 md:p-4 rounded-full shadow-xl hover:bg-white transition text-gray-800 opacity-0 group-hover:opacity-100 flex items-center justify-center">
+                <i data-lucide="chevron-left" class="w-6 h-6"></i>
             </button>
-            <button onclick="moveBanner(1)" class="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 md:p-3 rounded-full shadow-lg hover:bg-white transition text-gray-700 opacity-80 hover:opacity-100 flex items-center justify-center">
-                <i data-lucide="chevron-right" class="w-5 h-5 md:w-6 h-6"></i>
+            <button onclick="moveBanner(1)" class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-10 bg-white/90 p-3 md:p-4 rounded-full shadow-xl hover:bg-white transition text-gray-800 opacity-0 group-hover:opacity-100 flex items-center justify-center">
+                <i data-lucide="chevron-right" class="w-6 h-6"></i>
             </button>
             {% endif %}
-
         </section>
     {% endif %}
 
     {% if secao == 'busca' and not loja.ocultar_busca %}
-        <div class="py-6 bg-gray-50 border-b border-gray-100">
-            <div class="container mx-auto px-4">
-                <form action="/{{ loja.slug_url }}/" method="GET">
-                    <input type="text" name="busca" placeholder="O que você procura hoje?" class="w-full p-4 rounded-full border border-gray-200 focus:border-theme outline-none text-center">
+        <div class="py-8 border-b border-gray-100 gsap-reveal" style="background-color: var(--color-bg);">
+            <div class="container mx-auto px-4 max-w-3xl">
+                <form action="/{{ loja.slug_url }}/" method="GET" class="relative">
+                    <input type="text" name="busca" placeholder="O que você procura hoje?" class="w-full p-4 pl-12 rounded-full border border-gray-200 focus:border-theme outline-none shadow-sm transition-shadow focus:shadow-md text-gray-700 bg-white">
+                    <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"></i>
                 </form>
             </div>
         </div>
     {% endif %}
 
     {% if secao == 'banners_menores' and not loja.ocultar_banners_menores %}
-    <section class="w-full custom-bg py-8">
+    <section class="w-full py-12 gsap-reveal" style="background-color: var(--color-bg);">
         <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {% if loja.bannermenor1 %}
-                <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-xl hover:opacity-90 transition">
-                    <img src="{{ loja.bannermenor1 }}" loading="lazy" class="w-full h-auto object-cover">
+                <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-lg">
+                    <img src="{{ loja.bannermenor1 }}" loading="lazy" class="w-full h-auto object-cover hover:scale-105 transition-transform duration-700">
                 </a>
                 {% endif %}
                 {% if loja.bannermenor2 %}
-                <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-xl hover:opacity-90 transition">
-                    <img src="{{ loja.bannermenor2 }}" loading="lazy" class="w-full h-auto object-cover">
+                <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-lg">
+                    <img src="{{ loja.bannermenor2 }}" loading="lazy" class="w-full h-auto object-cover hover:scale-105 transition-transform duration-700">
                 </a>
                 {% endif %}
             </div>
@@ -232,16 +269,15 @@
     {% endif %}
 
     {% if secao == 'categorias' and not loja.ocultar_categorias %}
-        <section class="w-full custom-bg py-4" id="categorias">
+        <section class="w-full py-8 gsap-reveal" id="categorias" style="background-color: var(--color-bg);">
             <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold mb-6 text-center custom-title-color px-2">{{ loja.titulo_categorias or '' }}</h2>
-                <div class="flex gap-4 overflow-x-auto pb-2 pt-1 justify-start md:justify-center category-scroll hide-scroll px-2">
-                    <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color font-bold bg-white/50">
+                <h2 class="text-3xl font-bold mb-8 text-center custom-title-color">{{ loja.titulo_categorias or 'Categorias' }}</h2>
+                <div class="flex gap-4 overflow-x-auto pb-4 pt-2 justify-start md:justify-center hide-scroll px-2">
+                    <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-8 py-3 rounded-full border border-gray-200 hover:bg-theme hover:border-theme hover:text-white transition custom-title-color font-bold bg-white shadow-sm">
                         Todos
                     </a>
-                    
                     {% for cat in categorias %}
-                    <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-6 py-2 rounded-full border border-gray-200 hover:bg-theme hover:text-white transition custom-title-color bg-white/50">
+                    <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-8 py-3 rounded-full border border-gray-200 hover:bg-theme hover:border-theme hover:text-white transition custom-title-color font-bold bg-white shadow-sm">
                         {{ cat.nome }}
                     </a>
                     {% endfor %}
@@ -251,66 +287,69 @@
     {% endif %}
 
     {% if secao == 'produtos' and not loja.ocultar_produtos %}
-        <section class="w-full custom-bg pt-6 pb-12" id="produtos">
+        <section class="w-full pt-8 pb-16 gsap-reveal" id="produtos" style="background-color: var(--color-bg);">
             <div class="container mx-auto px-4 relative">
-                
-                <div class="relative flex justify-center items-center mb-8 px-2">
-                    <h2 id="titulo-secao-produtos" class="text-3xl font-bold text-center custom-title-color">{{ loja.titulo_produtos or 'Nossos Produtos' }}</h2>
-                    <button onclick="toggleLayout()" class="absolute right-0 p-2 border rounded-full hover:bg-gray-100 text-gray-600 transition" title="Mudar visualização">
+                <div class="relative flex justify-center items-center mb-10">
+                    <h2 id="titulo-secao-produtos" class="text-4xl font-bold text-center custom-title-color tracking-tight">{{ loja.titulo_produtos or 'Nossos Produtos' }}</h2>
+                    <button onclick="toggleLayout()" class="absolute right-0 p-2 border border-gray-200 rounded-full hover:bg-gray-50 text-gray-600 transition shadow-sm bg-white" title="Mudar visualização">
                         <i id="layout-icon" data-lucide="grid" class="w-5 h-5"></i>
                     </button>
                 </div>
 
                 <div class="relative group">
-                    
-                    <button onclick="scrollCarousel(-1)" id="btn-prev" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition hidden md:flex">
-                        <i data-lucide="chevron-left" class="w-6 h-6 text-gray-700"></i>
+                    <button onclick="scrollCarousel(-1)" id="btn-prev" class="absolute -left-4 top-1/2 -translate-y-1/2 z-10 bg-white p-3 rounded-full shadow-xl hover:scale-110 transition hidden md:flex border border-gray-100">
+                        <i data-lucide="chevron-left" class="w-6 h-6 text-gray-800"></i>
                     </button>
 
-                    <div id="products-container" class="flex gap-6 overflow-x-auto snap-x scroll-smooth pb-4 hide-scroll">
+                    <div id="products-container" class="flex gap-6 overflow-x-auto snap-x scroll-smooth pb-8 hide-scroll px-2">
                         {% for p in produtos %}
-                            <div class="min-w-[160px] w-[160px] md:min-w-[230px] md:w-[230px] flex-none border rounded-lg overflow-hidden hover:shadow-lg transition bg-white relative snap-start">
+                            <div class="min-w-[200px] w-[200px] md:min-w-[280px] md:w-[280px] flex-none border border-gray-100 rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 bg-white relative snap-start group/card">
                                 {% if p.estoque == 0 %}
-                                    <div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded z-10">
-                                        INDISPONÍVEL
-                                    </div>
+                                    <div class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full z-10 shadow-sm">ESGOTADO</div>
                                 {% endif %}
                                 
-                                <div class="relative">
-                                    <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
-                                        <img src="{{ p.imagem }}" loading="lazy" class="w-full aspect-square object-cover {{ 'opacity-50' if p.estoque == 0 }}">
+                                <div class="relative overflow-hidden aspect-square">
+                                    <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}" class="block w-full h-full">
+                                        <img src="{{ p.imagem }}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110 {{ 'opacity-50' if p.estoque == 0 }}">
+                                        {% if p.imagem1 or p.imagem2 or p.imagem_secundaria %}
+                                        <img src="{{ p.imagem1 or p.imagem2 or p.imagem_secundaria }}" loading="lazy" class="w-full h-full object-cover absolute top-0 left-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500">
+                                        {% endif %}
                                     </a>
-                                    {% if p.estoque > 0 and not p.consulte %}
-                                    <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-2 right-2 bg-theme text-white w-8 h-8 rounded-full shadow-lg hover:scale-110 transition flex items-center justify-center z-20">
-                                        <i data-lucide="plus" class="w-5 h-5"></i>
-                                    </button>
-                                    {% endif %}
                                 </div>
 
-                                <div class="p-4 text-center"> 
+                                <div class="p-6 flex flex-col h-[180px]"> 
                                     <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
-                                        <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight hover:text-theme transition">{{ p.nome }}</h3>
+                                        <h3 class="font-bold custom-title-color text-base text-center line-clamp-2 leading-tight hover:text-theme transition mb-2">{{ p.nome }}</h3>
                                     </a>
                                     
-                                    {% if p.consulte %}
-                                        <p class="text-blue-600 font-bold text-lg mt-1 text-center">Consulte-nos</p>
-                                    {% elif p.estoque == 0 %}
-                                        <p class="text-gray-400 font-bold text-sm mt-1 text-center">Sem Estoque</p>
-                                    {% else %}
-                                        {% if p.a_partir_de %}<p class="text-[10px] text-gray-500 uppercase font-bold text-center leading-none mt-2 mb-0">A partir de</p>{% endif %}
-                                        <p class="text-theme font-bold text-lg text-center {{ 'mt-1' if not p.a_partir_de else '' }}">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                    <div class="mt-auto">
+                                        {% if p.consulte %}
+                                            <p class="text-blue-600 font-bold text-xl text-center">Sob Consulta</p>
+                                        {% elif p.estoque == 0 %}
+                                            <p class="text-gray-400 font-bold text-base text-center">Sem Estoque</p>
+                                        {% else %}
+                                            {% if p.a_partir_de %}<p class="text-xs text-gray-500 uppercase font-bold text-center mt-2 mb-0 tracking-wide">A partir de</p>{% endif %}
+                                            <p class="text-theme font-extrabold text-2xl text-center {{ 'mt-1' if not p.a_partir_de else '' }}">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    {% if p.estoque > 0 %}
+                                    <a href="https://wa.me/55{{ loja.whatsapp_comercial }}?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20produto%3A%20{{ p.nome }}" target="_blank" class="mt-4 w-full bg-gray-900 hover:bg-theme text-white text-sm font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors">
+                                        <i data-lucide="message-circle" class="w-4 h-4"></i> Orçar no WhatsApp
+                                    </a>
                                     {% endif %}
                                 </div>
                             </div>
                         {% else %}
-                            <div class="col-span-full text-center text-gray-400 py-10 w-full">
-                                <p>Nenhum produto encontrado.</p>
+                            <div class="col-span-full text-center text-gray-400 py-16 w-full">
+                                <i data-lucide="package-x" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
+                                <p class="text-lg">Nenhum produto cadastrado no momento.</p>
                             </div>
                         {% endfor %}
                     </div>
 
-                    <button onclick="scrollCarousel(1)" id="btn-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition flex">
-                        <i data-lucide="chevron-right" class="w-6 h-6 text-gray-700"></i>
+                    <button onclick="scrollCarousel(1)" id="btn-next" class="absolute -right-4 top-1/2 -translate-y-1/2 z-10 bg-white p-3 rounded-full shadow-xl hover:scale-110 transition hidden md:flex border border-gray-100">
+                        <i data-lucide="chevron-right" class="w-6 h-6 text-gray-800"></i>
                     </button>
                 </div>
             </div>
@@ -318,32 +357,34 @@
     {% endif %}
     
     {% if secao == 'novidades' and novidades and not loja.ocultar_novidades %}
-        <section class="py-12 bg-gray-50">
+        <section class="py-16 bg-gray-50 border-t border-gray-100 gsap-reveal">
             <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold mb-8 text-center">{{ loja.titulo_novidades or 'Novidades' }}</h2>
+                <h2 class="text-4xl font-bold mb-10 text-center tracking-tight custom-title-color">{{ loja.titulo_novidades or 'Lançamentos' }}</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                      {% for p in novidades %}
-                    <div class="border rounded-lg overflow-hidden bg-white hover:shadow-lg transition">
-                        <div class="relative">
-                            <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
-                                <img src="{{ p.imagem }}" loading="lazy" class="w-full aspect-square object-cover">
+                    <div class="border border-gray-100 rounded-2xl overflow-hidden bg-white hover:shadow-xl transition-all duration-300 group/card flex flex-col">
+                        <div class="relative overflow-hidden aspect-square">
+                            <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}" class="block w-full h-full">
+                                <img src="{{ p.imagem }}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110">
                             </a>
-                            {% if p.estoque > 0 and not p.consulte %}
-                            <button onclick='addToCartPage({{ p | tojson }})' class="absolute bottom-2 right-2 bg-theme text-white w-8 h-8 rounded-full shadow-lg hover:scale-110 transition flex items-center justify-center z-20">
-                                <i data-lucide="plus" class="w-5 h-5"></i>
-                            </button>
-                            {% endif %}
                         </div>
-                        <div class="p-4 text-center">
+                        <div class="p-5 flex flex-col flex-1 text-center">
                             <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">
-                                <h3 class="font-bold custom-title-color text-sm text-center h-10 flex items-center justify-center line-clamp-2 leading-tight hover:text-theme transition">{{ p.nome }}</h3>
+                                <h3 class="font-bold custom-title-color text-sm line-clamp-2 leading-tight hover:text-theme transition mb-3">{{ p.nome }}</h3>
                             </a>
-                            {% if p.consulte %}
-                                <p class="text-blue-600 font-bold text-lg mt-1 text-center">Consulte-nos</p>
-                            {% else %}
-                                {% if p.a_partir_de %}<p class="text-[10px] text-gray-500 uppercase font-bold text-center leading-none mt-2 mb-0">A partir de</p>{% endif %}
-                                <p class="text-theme font-bold text-lg text-center {{ 'mt-1' if not p.a_partir_de else '' }}">R$ {{ "%.2f"|format(p.preco) }}</p>
-                            {% endif %}
+                            <div class="mt-auto">
+                                {% if p.consulte %}
+                                    <p class="text-blue-600 font-bold text-lg">Sob Consulta</p>
+                                {% else %}
+                                    {% if p.a_partir_de %}<p class="text-[10px] text-gray-500 uppercase font-bold tracking-wide mb-1">A partir de</p>{% endif %}
+                                    <p class="text-theme font-extrabold text-xl">R$ {{ "%.2f"|format(p.preco) }}</p>
+                                {% endif %}
+                                {% if p.estoque > 0 %}
+                                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20produto%3A%20{{ p.nome }}" target="_blank" class="mt-3 inline-flex bg-gray-100 hover:bg-theme hover:text-white text-gray-800 text-xs font-bold py-2 px-4 rounded-lg items-center gap-1 transition-colors">
+                                    <i data-lucide="message-circle" class="w-3 h-3"></i> WhatsApp
+                                </a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                     {% endfor %}
@@ -353,19 +394,23 @@
     {% endif %}
 
     {% if secao == 'blog' and posts and not loja.ocultar_blog %}
-        <section class="py-12 container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-8 text-center custom-title-color">{{ loja.titulo_blog or 'Blog' }}</h2>
+        <section class="py-16 container mx-auto px-4 gsap-reveal">
+            <h2 class="text-4xl font-bold mb-10 text-center custom-title-color tracking-tight">{{ loja.titulo_blog or 'Nosso Blog' }}</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {% for post in posts %}
-                <div class="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
+                <div class="border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 bg-white flex flex-col">
                     {% if post.capa %}
-                    <img src="{{ post.capa }}" loading="lazy" class="w-full h-48 object-cover">
+                    <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}" class="block overflow-hidden">
+                        <img src="{{ post.capa }}" loading="lazy" class="w-full h-56 object-cover hover:scale-105 transition-transform duration-500">
+                    </a>
                     {% endif %}
-                    <div class="p-6">
-                        <span class="text-xs font-bold text-gray-400 uppercase">{{ post.data }}</span>
-                        <h3 class="font-bold text-xl mt-2 mb-2">{{ post.titulo }}</h3>
-                        <p class="text-sm text-gray-600 line-clamp-3">{{ post.resumo }}</p>
-                        <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}" class="inline-block mt-4 text-theme font-bold text-sm">Ler mais</a>
+                    <div class="p-8 flex flex-col flex-1">
+                        <span class="text-xs font-bold text-theme uppercase tracking-wider">{{ post.data }}</span>
+                        <h3 class="font-bold text-2xl mt-3 mb-3 custom-title-color leading-tight">{{ post.titulo }}</h3>
+                        <p class="text-sm text-gray-600 line-clamp-3 mb-6 flex-1">{{ post.resumo }}</p>
+                        <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}" class="inline-flex items-center gap-2 text-gray-900 font-bold text-sm hover:text-theme transition group">
+                            Ler artigo completo <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                        </a>
                     </div>
                 </div>
                 {% endfor %}
@@ -374,15 +419,16 @@
     {% endif %}
 
     {% if secao == 'sobre' and not loja.ocultar_sobre %}
-    <section class="py-16 md:py-32 w-full custom-bg" id="sobre">
-        <div class="container mx-auto px-6 md:px-8 grid md:grid-cols-2 gap-10 md:gap-20 items-center w-full max-w-full overflow-hidden">
-            <div class="w-full max-w-full">
-                <h2 class="text-3xl md:text-5xl mb-4 md:mb-8 leading-tight custom-title-color break-words w-full" style="word-break: break-word;">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
-                <div class="text-sm md:text-xl leading-relaxed mb-8 whitespace-pre-line break-words w-full" style="word-break: break-word; color: var(--color-text); opacity: 0.8;">
+    <section class="py-20 md:py-32 w-full gsap-reveal" id="sobre" style="background-color: var(--color-bg);">
+        <div class="container mx-auto px-6 md:px-8 grid md:grid-cols-2 gap-12 md:gap-24 items-center w-full max-w-7xl">
+            <div class="w-full relative">
+                <div class="absolute -left-10 -top-10 w-32 h-32 bg-theme opacity-10 rounded-full blur-3xl"></div>
+                <h2 class="text-4xl md:text-6xl mb-6 md:mb-10 leading-tight custom-title-color font-bold tracking-tighter relative z-10">{{ loja.sobre_titulo or 'Nossa História' }}</h2>
+                <div class="text-base md:text-lg leading-relaxed whitespace-pre-line text-gray-600 font-light relative z-10">
                     {{ loja.sobre_texto or 'Adicione a história através do painel na aba "Sobre a Empresa".' }}
                 </div>
             </div>
-            <div class="rounded-2xl overflow-hidden shadow-2xl h-[300px] md:h-[600px] border border-gray-100 w-full max-w-full">
+            <div class="rounded-3xl overflow-hidden shadow-2xl h-[400px] md:h-[600px] border border-gray-100 w-full relative">
                 <img src="{{ loja.sobre_imagem_url or 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000' }}" loading="lazy" class="w-full h-full object-cover">
             </div>
         </div>
@@ -391,76 +437,104 @@
 
 {% endfor %}
 
-<footer class="bg-theme text-white py-12 mt-auto" style="background-color: var(--primary);" id="footer">
-    <div class="container mx-auto px-4 text-center">
-        <h4 class="font-bold text-lg mb-4">{{ loja.nome }}</h4>
-        <p class="text-sm mb-6 opacity-80">Todos os direitos reservados.</p>
+{% if not loja.ocultar_formulario %}
+<section class="py-20 bg-gray-50 border-t border-gray-100 gsap-reveal">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 md:p-16">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-5xl font-bold custom-title-color tracking-tight mb-4">{{ loja.titulo_formulario or 'Fale com um Especialista' }}</h2>
+                <p class="text-gray-500">Deixe seus dados e entraremos em contato rapidamente.</p>
+            </div>
+            
+            <form id="leadForm" class="space-y-6">
+                <div>
+                    <input type="text" name="nome" placeholder="Seu Nome Completo" required class="w-full border border-gray-200 rounded-xl p-4 bg-gray-50 focus:bg-white focus:border-theme focus:ring-2 focus:ring-theme/20 transition outline-none">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <input type="text" name="whatsapp" placeholder="WhatsApp (DDD+Número)" required class="w-full border border-gray-200 rounded-xl p-4 bg-gray-50 focus:bg-white focus:border-theme focus:ring-2 focus:ring-theme/20 transition outline-none">
+                    <input type="email" name="email" placeholder="Seu Melhor E-mail" required class="w-full border border-gray-200 rounded-xl p-4 bg-gray-50 focus:bg-white focus:border-theme focus:ring-2 focus:ring-theme/20 transition outline-none">
+                </div>
+                <button type="submit" class="w-full bg-theme text-white font-bold text-lg py-5 rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+                    <span class="btn-text-wrapper">ENVIAR AGORA</span> <i data-lucide="send" class="w-5 h-5"></i>
+                </button>
+            </form>
+            
+            <div id="leadSuccessMsg" class="hidden mt-6 bg-green-50 text-green-700 border border-green-200 p-6 rounded-xl text-center font-bold items-center justify-center gap-2">
+                <i data-lucide="check-circle" class="w-6 h-6"></i> Dados enviados com sucesso! Entraremos em contato.
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="gsap-reveal w-full" id="social-proof-section">
+    {% if loja.logos_clientes %}
+        <div class="client-marquee-wrapper">
+            <div class="client-marquee-track">
+                {% for logo in loja.logos_clientes.split() %}
+                    {% if logo.strip() %}
+                    <img src="{{ logo.strip() }}" alt="Cliente" onerror="this.style.display='none'">
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="client-marquee-track">
+                {% for logo in loja.logos_clientes.split() %}
+                    {% if logo.strip() %}
+                    <img src="{{ logo.strip() }}" alt="Cliente" onerror="this.style.display='none'">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <div id="espacoInsta" class="flex justify-center py-16 bg-gray-50 border-y border-gray-100 w-full overflow-hidden"></div>
+    {% endif %}
+</section>
+
+<footer class="bg-gray-900 text-white py-16 mt-auto" id="footer">
+    <div class="container mx-auto px-6 text-center max-w-4xl">
+        <h4 class="font-bold text-3xl mb-8 tracking-tight">{{ loja.nome }}</h4>
         
-        <div class="flex justify-center gap-4 text-sm mb-6">
-            <a href="#" class="hover:underline">Política de Privacidade</a>
-            <a href="#" class="hover:underline">Termos de Uso</a>
+        <div class="flex flex-col md:flex-row justify-center items-center gap-8 mb-12">
+            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="flex items-center gap-2 text-lg hover:text-theme transition">
+                <i data-lucide="message-circle" class="w-6 h-6"></i> {{ loja.whatsapp_comercial }}
+            </a>
+            {% if loja.instagram_url %}
+            <a href="{{ loja.instagram_url }}" target="_blank" class="flex items-center gap-2 text-lg hover:text-theme transition">
+                <i data-lucide="instagram" class="w-6 h-6"></i> Instagram
+            </a>
+            {% endif %}
         </div>
 
-        <div class="mt-8 pt-8 border-t border-white/20 flex flex-col items-center gap-4">
-            <a href="/{{ loja.slug_url }}/admin" class="text-xs font-bold uppercase tracking-widest hover:text-white flex items-center justify-center gap-2">
-                <i data-lucide="lock" class="w-3 h-3"></i> Área do Lojista
+        <p class="text-sm mb-8 text-gray-400">© 2026 {{ loja.nome }}. Todos os direitos reservados.</p>
+        
+        <div class="mt-12 pt-8 border-t border-white/10 flex flex-col items-center gap-6">
+            <a href="/{{ loja.slug_url }}/admin" class="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white flex items-center justify-center gap-2 transition">
+                <i data-lucide="lock" class="w-4 h-4"></i> Área do Lojista
             </a>
-            <div class="text-[10px] opacity-80 flex flex-col items-center">
+            <div class="text-[10px] text-gray-600 flex flex-col items-center">
                 <span>Desenvolvido por Leanttro Tecnology</span>
-                <a href="https://wa.me/5511913324827" target="_blank" class="font-bold hover:underline flex items-center gap-1 mt-1">
-                    <i data-lucide="message-circle" class="w-3 h-3"></i> (11) 91332-4827
-                </a>
             </div>
         </div>
     </div>
 </footer>
 
-<a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" 
-   class="fixed bottom-4 right-4 z-50 bg-green-500 hover:bg-green-600 text-white p-3 md:p-4 rounded-full shadow-2xl transition-all hover:scale-110 flex items-center justify-center animate-bounce">
-    <i data-lucide="message-circle" class="w-6 h-6 md:w-8 md:h-8"></i>
-</a>
-
-<div id="cart-modal" class="fixed inset-0 z-[60] hidden">
-    <div class="absolute inset-0 modal-overlay transition-opacity duration-300" onclick="toggleCart()"></div>
-    <div class="absolute right-0 top-0 h-full w-full md:w-[450px] bg-white shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-full" id="cart-panel">
-        
-        <div class="p-6 border-b flex justify-between items-center bg-gray-50">
-            <h2 class="font-bold text-lg flex items-center gap-2 text-gray-800"><i data-lucide="shopping-cart" class="w-5 h-5 text-theme"></i> Sua Sacola</h2>
-            <button onclick="toggleCart()" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
-        </div>
-        
-        <div class="flex-1 overflow-y-auto p-6 space-y-6" id="cart-items"></div>
-
-        <div class="p-6 border-t bg-gray-50 space-y-4 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
-            
-            <div class="flex justify-between items-center text-xl font-bold pt-2 border-t border-gray-200">
-                <span class="text-gray-600">Total:</span><span id="cart-total" class="text-theme">R$ 0,00</span>
-            </div>
-            
-            <button onclick="finalizarNoZap()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-green-200 hover:shadow-green-300 transition-all active:scale-95">
-                <i data-lucide="message-circle" class="w-5 h-5"></i> FECHAR PEDIDO NO WHATSAPP
-            </button>
-            <p class="text-[10px] text-center text-gray-400">Pagamento e frete combinados diretamente no WhatsApp.</p>
-        </div>
-    </div>
-</div>
-
 <script>
     lucide.createIcons();
-    const lojaPhone = "55{{ loja.whatsapp_comercial }}";
 
-    document.addEventListener("DOMContentLoaded", function() {
-        const params = new URLSearchParams(window.location.search);
-        const catId = params.get('categoria');
-        if (catId) {
-            const linkCategoria = document.querySelector('.category-scroll a[href*="categoria=' + catId + '"]');
-            if (linkCategoria) {
-                const tituloProdutos = document.getElementById('titulo-secao-produtos');
-                if (tituloProdutos) {
-                    tituloProdutos.innerText = linkCategoria.innerText.trim();
-                }
-            }
-        }
+    gsap.registerPlugin(ScrollTrigger);
+    
+    gsap.utils.toArray('.gsap-reveal').forEach(function(elem) {
+        gsap.to(elem, {
+            scrollTrigger: {
+                trigger: elem,
+                start: "top 85%",
+                toggleActions: "play none none none"
+            },
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: "power3.out"
+        });
     });
 
     let currentBannerIndex = 0;
@@ -479,18 +553,12 @@
 
     setInterval(() => {
         const slider = document.getElementById('banner-slider');
-        if(slider && slider.children.length > 1) {
-            moveBanner(1);
-        }
-    }, 5000);
+        if(slider && slider.children.length > 1) moveBanner(1);
+    }, 6000);
 
     function toggleMobileMenu() {
         const menu = document.getElementById('mobile-menu');
-        if (menu.classList.contains('hidden')) {
-            menu.classList.remove('hidden');
-        } else {
-            menu.classList.add('hidden');
-        }
+        menu.classList.toggle('hidden');
     }
 
     let isCarousel = true;
@@ -502,7 +570,7 @@
     function toggleLayout() {
         isCarousel = !isCarousel;
         if(isCarousel) {
-            if(container) container.className = "flex gap-6 overflow-x-auto snap-x scroll-smooth pb-4 hide-scroll";
+            if(container) container.className = "flex gap-6 overflow-x-auto snap-x scroll-smooth pb-8 hide-scroll px-2";
             if(btnPrev) btnPrev.style.display = "flex";
             if(btnNext) btnNext.style.display = "flex";
             if(iconLayout) {
@@ -510,7 +578,7 @@
                 lucide.createIcons();
             }
         } else {
-            if(container) container.className = "grid grid-cols-2 md:grid-cols-4 gap-6";
+            if(container) container.className = "grid grid-cols-2 md:grid-cols-4 gap-6 px-2";
             if(btnPrev) btnPrev.style.display = "none";
             if(btnNext) btnNext.style.display = "none";
             if(iconLayout) {
@@ -521,122 +589,70 @@
     }
 
     function scrollCarousel(direction) {
-        const scrollAmount = 300; 
+        const scrollAmount = 350; 
         if(container) container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
     }
 
-    let cart = []; 
-    try { cart = JSON.parse(localStorage.getItem('cart_v2') || '[]'); } catch(e) { cart = []; }
-
-    function saveCart() { localStorage.setItem('cart_v2', JSON.stringify(cart)); updateCartUI(); }
-
-    function toggleCart() {
-        const modal = document.getElementById('cart-modal');
-        const panel = document.getElementById('cart-panel');
-        if (modal.classList.contains('hidden')) {
-            modal.classList.remove('hidden');
-            setTimeout(() => panel.classList.remove('translate-x-full'), 10);
-        } else {
-            panel.classList.add('translate-x-full');
-            setTimeout(() => modal.classList.add('hidden'), 300);
-        }
-    }
-
-    function changeQty(idx, delta) {
-        if (cart[idx]) {
-            cart[idx].qtd += delta;
-            if (cart[idx].qtd <= 0) cart.splice(idx, 1);
-            saveCart();
-        }
-    }
-
-    function removeFromCart(idx) { cart.splice(idx, 1); saveCart(); }
-
-    function addToCartPage(product) {
-        let final = { ...product };
+    const linkPainel = `{{ loja.instagram_url or '' }}`;
+    const temLogos = `{{ loja.logos_clientes or '' }}`.trim() !== '';
+    
+    if (!temLogos && (linkPainel.includes(`/p/`) || linkPainel.includes(`/reel/`))) {
+        let urlLimpa = linkPainel.split(`?`)[0];
+        if (!urlLimpa.endsWith(`/`)) urlLimpa += `/`;
         
-        final.nome_exibicao = product.nome;
-        final.imagem = product.imagem; 
-        final.cart_id = `${product.id}-padrao`;
-
-        const idx = cart.findIndex(i => i.cart_id === final.cart_id);
-        if (idx > -1) cart[idx].qtd++; else { final.qtd = 1; cart.push(final); }
+        const iframe = document.createElement(`iframe`);
+        iframe.src = urlLimpa + `embed`;
+        iframe.width = 340; 
+        iframe.height = 540;
+        iframe.style.border = `none`;
+        iframe.style.overflow = `hidden`;
+        iframe.style.borderRadius = `16px`;
+        iframe.style.boxShadow = `0 20px 40px rgba(0,0,0,0.1)`;
+        iframe.scrolling = `no`;
         
-        saveCart();
-        toggleCart();
+        const espaco = document.getElementById(`espacoInsta`);
+        if (espaco) espaco.appendChild(iframe);
+    } else if (!temLogos) {
+        const secaoProva = document.getElementById('social-proof-section');
+        if(secaoProva) secaoProva.style.display = 'none';
     }
 
-    function updateCartUI() {
-        const container = document.getElementById('cart-items');
-        const totalEl = document.getElementById('cart-total');
-        const countBadge = document.getElementById('cart-count-badge');
-
-        const totalQtd = cart.reduce((acc, i) => acc + i.qtd, 0);
-        if(countBadge) {
-            countBadge.innerText = totalQtd;
-            countBadge.classList.toggle('hidden', totalQtd === 0);
-        }
-
-        if(container) {
-            container.innerHTML = '';
-            let total = 0;
+    const leadForm = document.getElementById('leadForm');
+    if(leadForm) {
+        leadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            const textWrapper = btn.querySelector('.btn-text-wrapper');
+            const originalText = textWrapper.innerHTML;
             
-            if (cart.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 opacity-50"><i data-lucide="shopping-bag" class="w-12 h-12 mx-auto mb-2"></i><p class="text-sm">Sua sacola está vazia.</p></div>`;
-            }
+            textWrapper.innerHTML = 'ENVIANDO...';
+            btn.disabled = true;
 
-            cart.forEach((item, i) => {
-                let itemPrice = item.consulte ? 0 : (item.preco || 0);
-                total += itemPrice * item.qtd;
-                
-                let priceDisplay = item.consulte ? "Sob Consulta" : `R$ ${(itemPrice * item.qtd).toFixed(2).replace('.',',')}`;
-
-                container.innerHTML += `
-                    <div class="flex gap-4 border-b border-gray-100 pb-4 last:border-0">
-                        <img src="${item.imagem}" class="w-16 h-16 object-cover rounded-md bg-gray-100 border border-gray-200">
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-xs text-gray-800 line-clamp-2 leading-snug mb-1">${item.nome_exibicao}</h4>
-                            <div class="flex justify-between items-center mt-2">
-                                <span class="text-theme font-bold text-sm">${priceDisplay}</span>
-                                <div class="flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-1 border border-gray-200">
-                                    <button onclick="changeQty(${i}, -1)" class="w-5 h-5 flex items-center justify-center text-gray-500 font-bold">-</button>
-                                    <span class="text-xs font-bold text-gray-800 w-4 text-center">${item.qtd}</span>
-                                    <button onclick="changeQty(${i}, 1)" class="w-5 h-5 flex items-center justify-center text-gray-500 font-bold">+</button>
-                                    <div class="w-px h-3 bg-gray-300 mx-1"></div>
-                                    <button onclick="removeFromCart(${i})" class="text-red-400 hover:text-red-600"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-            if(totalEl) totalEl.innerText = "R$ " + total.toFixed(2).replace('.', ',');
-            lucide.createIcons();
-        }
-    }
-
-    function finalizarNoZap() {
-        if (cart.length === 0) return alert("Adicione produtos primeiro!");
-        
-        let msg = `👋 Olá! Vim do site e quero fechar meu pedido:\n\n`;
-        let total = 0;
-        
-        cart.forEach(i => {
-            msg += `— ${i.qtd}x ${i.nome_exibicao}\n`;
-            if(i.consulte) {
-                 msg += `   (Preço sob Consulta)\n`;
-            } else if(i.preco) {
-                msg += `   R$ ${(i.preco * i.qtd).toFixed(2)}\n`;
-                total += i.preco * i.qtd;
-            } else {
-                msg += `   (Sob Consulta)\n`;
+            const formData = new FormData(this);
+            try {
+                const response = await fetch('/{{ loja.slug_url }}/captura-lead', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if(result.sucesso || response.ok) {
+                    this.style.display = 'none';
+                    const successMsg = document.getElementById('leadSuccessMsg');
+                    successMsg.classList.remove('hidden');
+                    successMsg.classList.add('flex');
+                } else {
+                    alert('Erro ao enviar. Tente novamente.');
+                    textWrapper.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            } catch(err) {
+                alert('Erro de conexão. O formulário foi submetido ou verifique sua internet.');
+                textWrapper.innerHTML = originalText;
+                btn.disabled = false;
             }
         });
-        
-        const url = `https://wa.me/${lojaPhone}?text=${encodeURIComponent(msg)}`;
-        window.open(url, '_blank');
     }
 
-    updateCartUI();
 </script>
 </body>
 </html>

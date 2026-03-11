@@ -351,6 +351,17 @@
                                 </div>
                                 <input type="text" name="titulo_blog" value="{{ loja.titulo_blog or 'Últimas do Blog' }}" class="w-full border rounded p-2 text-sm" placeholder="Título da seção">
                             </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" name="ocultar_formulario" class="form-checkbox text-pink-600 rounded" {% if loja.ocultar_formulario %}checked{% endif %}>
+                                        <span class="text-sm font-bold text-gray-700">Ocultar Formulário de Contato</span>
+                                    </label>
+                                    <i data-lucide="mail" class="text-gray-400 w-4 h-4"></i>
+                                </div>
+                                <input type="text" name="titulo_formulario" value="{{ loja.titulo_formulario or 'Fale com um Especialista' }}" class="w-full border rounded p-2 text-sm" placeholder="Título do formulário">
+                            </div>
 
                             <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-2">
                                 <div class="flex items-center justify-between">
@@ -360,7 +371,7 @@
                                     <i data-lucide="message-square" class="text-gray-400 w-4 h-4"></i>
                                 </div>
                                 <textarea name="chamada_rodape" rows="3" class="w-full border rounded p-2 text-sm" placeholder='Ex: VAMOS CRIAR ALGO JUNTOS?'>{{ loja.chamada_rodape or '' }}</textarea>
-                                <p class="text-[10px] text-gray-500">Pule a linha para adicionar várias frases com transição. Deixe em branco para o padrão: "VAMOS CRIAR ALGO JUNTO COM A [NOME]".</p>
+                                <p class="text-[10px] text-gray-500">Pule a linha para adicionar várias frases com transição. Deixe em branco para o padrão.</p>
                             </div>
 
                             <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-2">
@@ -371,7 +382,7 @@
                                     <i data-lucide="image" class="text-gray-400 w-4 h-4"></i>
                                 </div>
                                 <textarea name="logos_clientes" rows="4" class="w-full border rounded p-2 text-sm" placeholder="Cole os links das imagens aqui (um por linha)...">{{ loja.logos_clientes or '' }}</textarea>
-                                <p class="text-[10px] text-gray-500">Insira a URL direta da imagem (uma por linha). Elas aparecerão no carrossel do rodapé na página Tecnologia.</p>
+                                <p class="text-[10px] text-gray-500">Insira a URL direta da imagem. Aparecerão no carrossel. Se vazio, tentará puxar o link do Instagram configurado abaixo para embed.</p>
                             </div>
                         </div>
                     </div>
