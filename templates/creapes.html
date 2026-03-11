@@ -28,9 +28,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* =========================================
-   ESTILOS DO LOADER KINECTYPE
-   ========================================= */
 body.loading {
   overflow: hidden;
 }
@@ -64,7 +61,7 @@ body.loading {
   display: flex;
   gap: 0.4vw;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(0.9rem, 1.5vw, 1.2rem); /* Pequeno, estilo game */
+  font-size: clamp(0.9rem, 1.5vw, 1.2rem);
   font-weight: 700;
   letter-spacing: 0.3em;
   color: var(--text);
@@ -82,7 +79,6 @@ body.loading {
   transform-origin: center bottom;
   will-change: transform, opacity, color;
 }
-/* ========================================= */
 
 h1, h2, h3, .brand {
   font-family: 'Space Grotesk', sans-serif;
@@ -103,9 +99,9 @@ a:hover { color: var(--accent); }
 nav {
   position: fixed;
   top: 0; left: 0; width: 100%;
-  padding: 0.8rem 4rem; /* Deixando a barra fininha */
+  padding: 0.8rem 4rem;
   display: flex; justify-content: space-between; align-items: center;
-  background: #000000; /* Totalmente preta e preenchida */
+  background: #000000;
   z-index: 100;
 }
 
@@ -119,12 +115,12 @@ nav {
   position: absolute; 
   left: 50%; 
   transform: translateX(-50%);
-  color: #ffffff; /* Branco puro */
+  color: #ffffff;
 }
 
 .menu-btn {
   display: flex; align-items: center; gap: 0.8rem;
-  background: none; border: none; color: #ffffff; /* Branco puro */
+  background: none; border: none; color: #ffffff;
   font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500;
   cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em;
   transition: color 0.3s var(--ease);
@@ -136,7 +132,7 @@ nav {
 .menu-icon span { display: block; width: 24px; height: 1px; background-color: currentColor; transition: background-color 0.3s var(--ease); }
 
 .search-btn {
-  background: none; border: none; color: #ffffff; /* Branco puro */
+  background: none; border: none; color: #ffffff;
   cursor: pointer; transition: color 0.3s var(--ease);
 }
 .search-btn:hover { color: var(--accent); }
@@ -156,6 +152,8 @@ nav {
   opacity: 0;
   transition: opacity 1.2s var(--ease), transform 8s linear;
   transform: scale(1.05);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
   z-index: 1;
 }
 
@@ -283,23 +281,6 @@ nav {
   color: var(--accent);
 }
 
-.marquee-container {
-  padding: 2rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  overflow: hidden;
-  white-space: nowrap;
-  background: #0a0a0a;
-}
-.marquee {
-  display: inline-block;
-  animation: scroll 25s linear infinite;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.2rem;
-  color: rgba(245, 245, 247, 0.4);
-}
-.marquee span { margin: 0 3rem; }
-@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
 .evolve-wrapper { height: 250vh; position: relative; background: var(--bg); }
 .evolve-sticky {
   position: sticky; top: 0; height: 100vh; overflow: hidden;
@@ -403,9 +384,6 @@ nav {
   100% { opacity: 0; transform: scale(3); filter: blur(20px) brightness(5); }
 }
 
-/* =========================================
-   SEÇÃO CLIENTES
-   ========================================= */
 .clients-section { padding: 8rem 4rem; background: var(--bg); display: flex; gap: 4rem; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); overflow: hidden; position: relative; z-index: 5;}
 .clients-left { flex: 0 0 25%; }
 .clients-left h2 { font-size: clamp(3rem, 4vw, 4.5rem); line-height: 1.1; margin-bottom: 1rem; color: var(--text); }
@@ -522,12 +500,11 @@ nav {
   width: 100%; height: 100%;
   object-fit: contain;
   filter: grayscale(90%) contrast(1.2);
-  transition: filter 0.8s var(--ease), transform 0.8s var(--ease);
+  transition: filter 0.8s var(--ease);
 }
 
 .port-item:hover video, .port-item:hover .vimeo-port-bg {
   filter: grayscale(0%) contrast(1);
-  transform: scale(1.08);
 }
 
 .port-text {
@@ -732,7 +709,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     
     {% if bg_link and 'vimeo.com' in bg_link %}
     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1; pointer-events: none;">
-      <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1" style="width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: none; filter: brightness(0.6);" allow="autoplay; fullscreen"></iframe>
+      <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1" style="width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) translateZ(0); backface-visibility: hidden; border: none; filter: brightness(0.6);" allow="autoplay; fullscreen"></iframe>
     </div>
     {% elif bg_link %}
     <video src="{{ bg_link }}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: -1; filter: brightness(0.6); pointer-events: none;"></video>
@@ -770,11 +747,26 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   </div>
 </header>
 
-<div class="marquee-container">
-  <div class="marquee">
-    <span>NIKE</span> <span>APPLE</span> <span>PORSCHE</span> <span>RED BULL</span> <span>SONY</span> <span>SAMSUNG</span> <span>NIKE</span> <span>APPLE</span> <span>PORSCHE</span> <span>RED BULL</span> <span>SONY</span> <span>SAMSUNG</span>
+{% if loja.logos_clientes %}
+<section class="clients-section fade-in">
+  <div class="clients-left">
+    <h2>Nossos<br>clientes<span class="accent-dot">.</span></h2>
+    <a href="#contact" class="clients-link">Conheça todos os clientes &rarr;</a>
   </div>
-</div>
+  <div class="clients-right">
+    {% set client_logos = loja.logos_clientes.split('\n') %}
+    <div class="clients-track">
+      {% for i in range(4) %}
+        {% for logo in client_logos %}
+          {% if logo.strip() %}
+          <img src="{{ logo.strip() }}" alt="Cliente">
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 
 <div class="evolve-wrapper">
   <div class="evolve-sticky">
@@ -795,36 +787,6 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     </div>
   </div>
 </div>
-
-{% if loja.logos_clientes %}
-<section class="clients-section fade-in">
-  <div class="clients-left">
-    <h2>Nossos<br>clientes<span class="accent-dot">.</span></h2>
-    <a href="#contact" class="clients-link">Conheça todos os clientes &rarr;</a>
-  </div>
-  <div class="clients-right">
-    {% set client_logos = loja.logos_clientes.split('\n') %}
-    <div class="clients-track">
-      {% for i in range(4) %}
-        {% for logo in client_logos %}
-          {% if logo.strip() %}
-          <img src="{{ logo.strip() }}" alt="Cliente">
-          {% endif %}
-        {% endfor %}
-      {% endfor %}
-    </div>
-    <div class="clients-track reverse">
-      {% for i in range(4) %}
-        {% for logo in client_logos|reverse %}
-          {% if logo.strip() %}
-          <img src="{{ logo.strip() }}" alt="Cliente">
-          {% endif %}
-        {% endfor %}
-      {% endfor %}
-    </div>
-  </div>
-</section>
-{% endif %}
 
 <section id="work" class="portfolio-horizontal-wrapper">
   <div class="portfolio-sticky">
@@ -897,7 +859,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   <div class="split-screen fade-in">
     <div class="manifesto">
       <h2 class="section-title" style="margin-bottom: 2rem;">{{ loja.sobre_titulo or 'We Are Creapes' }}</h2>
-      <p>{{ loja.sobre_texto or "Não fazemos apenas vídeos. Esculpimos luz e movimento para criar experiências." }}</p>
+      <p>{{ loja.sobre_texto or 'Não fazemos apenas vídeos. Esculpimos luz e movimento para criar experiências.' }}</p>
     </div>
     <div class="team-grid">
       <div class="avatar">
@@ -957,13 +919,9 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 <script>
   gsap.registerPlugin(ScrollTrigger);
 
-  // ==============================================================
-  // ANIMAÇÃO KINECTYPE "LOADING" (APPLE STYLE)
-  // ==============================================================
   const loaderBrand = document.getElementById('loaderBrand');
-  const brandName = "LOADING";
+  const brandName = 'LOADING';
   
-  // Embrulha cada letra para aplicar uma máscara "overflow" invisível
   loaderBrand.innerHTML = brandName.split('').map(char => {
     return `<span class="loader-char-wrap"><span class="loader-char">${char}</span></span>`;
   }).join('');
@@ -977,56 +935,48 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     }
   });
 
-  // Setup inicial: esconde as letras em baixo com uma leve distorção angular
   tlLoader.set('.loader-char', { yPercent: 120, skewY: 10 })
   
-  // Fase 1: Reveal extremamente suave (Apple intro)
   .to('.loader-char', {
     yPercent: 0,
     skewY: 0,
     duration: 1,
     stagger: 0.05,
-    ease: "expo.out"
+    ease: 'expo.out'
   })
   
-  // Fase 2: Distorção Kinectype (A letra estica, acende a cor primária e volta)
   .to('.loader-char', {
     scaleY: 0.2,
     scaleX: 1.5,
     color: 'var(--accent)',
     duration: 0.3,
-    stagger: { amount: 0.2, from: "center", yoyo: true, repeat: 1 },
-    ease: "power2.inOut"
-  }, "+=0.2")
+    stagger: { amount: 0.2, from: 'center', yoyo: true, repeat: 1 },
+    ease: 'power2.inOut'
+  }, '+=0.2')
   
-  // Fase 3: Exit "Swoosh" hiper rápido e limpo para cima
   .to('.loader-char', {
     yPercent: -120,
     skewY: -10,
     duration: 0.6,
     stagger: 0.04,
-    ease: "power4.in"
-  }, "+=0.1")
+    ease: 'power4.in'
+  }, '+=0.1')
   
-  // Fase 4: Abertura das portas (Cortina)
   .to('.loader-panel.top', {
     yPercent: -100,
     duration: 1.2,
-    ease: "expo.inOut"
-  }, "-=0.4")
+    ease: 'expo.inOut'
+  }, '-=0.4')
   .to('.loader-panel.bottom', {
     yPercent: 100,
     duration: 1.2,
-    ease: "expo.inOut"
-  }, "-=1.2")
+    ease: 'expo.inOut'
+  }, '-=1.2')
   .to('#loader', {
     opacity: 0,
     duration: 0.3
-  }, "-=0.3");
+  }, '-=0.3');
 
-  // ==============================================================
-  // RESTANTE DO SEU CÓDIGO ORIGINAL INTACTO
-  // ==============================================================
   const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
   const observer = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
@@ -1092,7 +1042,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 
   function closeVideo() {
     videoModal.classList.remove('active');
-    vimeoPlayer.src = ""; 
+    vimeoPlayer.src = ''; 
     resetInterval();
   }
 
@@ -1115,14 +1065,12 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
          let progress = currentScroll / totalScroll;
 
          if(topBar && bottomBar) {
-             // Animação da barra termina bem rápido (aos 8% do scroll)
              let barProgress = Math.min(Math.max(progress / 0.08, 0), 1);
              topBar.style.transform = `translateY(${ -100 + (barProgress * 100) }%)`;
              bottomBar.style.transform = `translateY(${ 100 - (barProgress * 100) }%)`;
          }
 
          let activeIndex = 0;
-         // Inglês agora espera as barras descerem (só entra aos 15% do scroll)
          if (progress > 0.8) activeIndex = 3;
          else if (progress > 0.5) activeIndex = 2;
          else if (progress > 0.15) activeIndex = 1; 
@@ -1182,11 +1130,11 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 
     gsap.to(portfolioTrack, {
         x: () => -scrollDistance,
-        ease: "none",
+        ease: 'none',
         scrollTrigger: {
             trigger: portfolioSection,
-            start: "top top",
-            end: () => "+=" + scrollDistance, 
+            start: 'top top',
+            end: () => '+=' + scrollDistance, 
             pin: true,
             scrub: 1,
             anticipatePin: 1
