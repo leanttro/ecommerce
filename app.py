@@ -656,6 +656,8 @@ def admin_painel(loja_slug):
             "sobre_texto": request.form.get('sobre_texto'),
             "ocultar_sobre": True if request.form.get('ocultar_sobre') else False,
             "instagram_url": request.form.get('instagram_url'),
+            "titulo_formulario": request.form.get('titulo_formulario'),
+            "ocultar_formulario": True if request.form.get('ocultar_formulario') else False,
             "chamada_rodape": request.form.get('chamada_rodape'),
             "logos_clientes": request.form.get('logos_clientes')
         }
