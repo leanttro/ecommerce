@@ -384,24 +384,24 @@ nav {
   100% { opacity: 0; transform: scale(3); filter: blur(20px) brightness(5); }
 }
 
-.clients-section { padding: 3rem 4rem; background: var(--bg); display: flex; gap: 4rem; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); overflow: hidden; position: relative; z-index: 5;}
-.clients-left { flex: 0 0 25%; }
-.clients-left h2 { font-size: clamp(1.8rem, 2.5vw, 2.5rem); line-height: 1.1; margin-bottom: 0.5rem; color: var(--text); }
+.clients-section { padding: 1.5rem 4rem; background: var(--bg); display: flex; gap: 4rem; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); overflow: hidden; position: relative; z-index: 5;}
+.clients-left { flex: 0 0 22%; }
+.clients-left h2 { font-size: clamp(1.2rem, 1.8vw, 1.8rem); line-height: 1.1; margin-bottom: 0.3rem; color: var(--text); white-space: nowrap; }
 .clients-left .accent-dot { color: var(--accent); }
-.clients-link { font-family: 'Inter', sans-serif; font-size: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; }
+.clients-link { font-family: 'Inter', sans-serif; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.5rem; opacity: 0.7; }
 .clients-right { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 3rem; position: relative;}
 .clients-right::before, .clients-right::after { content: ''; position: absolute; top: 0; width: 100px; height: 100%; z-index: 2; pointer-events: none; }
 .clients-right::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
 .clients-right::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
-.clients-track { display: flex; align-items: center; gap: 5rem; width: max-content; animation: marquee-clients 45s linear infinite; }
+.clients-track { display: flex; align-items: center; gap: 6rem; width: max-content; animation: marquee-clients 80s linear infinite; }
 .clients-track.reverse { animation-direction: reverse; animation-duration: 25s;}
-.clients-track img { height: 85px; object-fit: contain; max-width: 220px; filter: grayscale(100%) brightness(0.5); transition: all 0.4s var(--ease); animation: floatLogo 4s ease-in-out infinite; }
+.clients-track img { height: 110px; object-fit: contain; max-width: 250px; filter: grayscale(100%) brightness(0.6); transition: all 0.4s var(--ease); animation: floatLogo 4s ease-in-out infinite; }
 .clients-track img:hover { filter: grayscale(0%) brightness(1); transform: scale(1.1) !important; animation-play-state: paused; }
 .clients-track img:nth-child(even) { animation-delay: -2s; }
 .clients-track img:nth-child(3n) { animation-delay: -1s; animation-duration: 5s; }
 @keyframes marquee-clients { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-@media (max-width: 900px) { .clients-section { flex-direction: column; padding: 3rem 2rem; } .clients-left { flex: none; width: 100%; text-align: center; } .clients-right::before, .clients-right::after { width: 50px; } }
+@media (max-width: 900px) { .clients-section { flex-direction: column; padding: 2rem 2rem; gap: 2rem; } .clients-left { flex: none; width: 100%; text-align: center; } .clients-right::before, .clients-right::after { width: 50px; } .clients-track img { height: 80px; } }
 
 .portfolio-horizontal-wrapper {
   height: 100vh;
@@ -751,7 +751,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 <section class="clients-section fade-in">
   <div class="clients-left">
     <h2>Nossos clientes<span class="accent-dot">.</span></h2>
-    <a href="#contact" class="clients-link">Conheça todos os clientes &rarr;</a>
+    <a href="#contact" class="clients-link">Conheça todos &rarr;</a>
   </div>
   <div class="clients-right">
     {% set client_logos = loja.logos_clientes.split('\n') %}
