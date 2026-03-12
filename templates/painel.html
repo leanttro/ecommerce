@@ -438,6 +438,7 @@
                             </div>
                         </label>
                         
+                        {% if loja.slug == 'tecnologia' or (loja.temas_exclusivos and 'tecnologia' in loja.temas_exclusivos) %}
                         <label class="border rounded-xl p-4 cursor-pointer flex flex-col gap-2 transition-colors theme-selector {% if loja.template_ativo == 'tecnologia' %}ring-2 ring-pink-500 border-pink-500 bg-pink-50{% else %}hover:bg-gray-50{% endif %}" onclick="selectTheme(this)">
                             <input type="radio" name="template_ativo" value="tecnologia" class="hidden" {% if loja.template_ativo == 'tecnologia' %}checked{% endif %}>
                             <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center border border-indigo-200"><i data-lucide="cpu" class="text-indigo-600"></i></div>
@@ -446,6 +447,7 @@
                                 <p class="text-[10px] text-gray-500 mt-1">Design Tech.</p>
                             </div>
                         </label>
+                        {% endif %}
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
