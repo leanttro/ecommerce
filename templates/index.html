@@ -74,6 +74,11 @@
     .hide-scroll::-webkit-scrollbar { display: none; }
     .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
+    .custom-scrollbar { scrollbar-width: thin; scrollbar-color: var(--primary) rgba(0,0,0,0.05); }
+    .custom-scrollbar::-webkit-scrollbar { height: 8px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+
     .gsap-reveal { opacity: 0; transform: translateY(30px); }
 </style>
 </head>
@@ -426,24 +431,35 @@
 {% endif %}
 
 <section class="gsap-reveal w-full py-16 border-t" id="social-proof-section" style="border-color: var(--primary);">
-    <div class="container mx-auto px-4">
+    <div class="container mx-auto px-4 relative">
         <h2 class="text-3xl font-bold mb-10 text-center custom-title-color" id="social-title">Nossos Clientes</h2>
-        <div class="flex gap-6 overflow-x-auto snap-x scroll-smooth pb-8 hide-scroll px-2" id="social-container">
-            {% if loja.logos_clientes %}
-                {% for link in loja.logos_clientes.split() %}
-                    {% if link.strip() %}
-                        {% if 'instagram.com' in link %}
-                            <div class="snap-start flex-none w-[320px] rounded-2xl overflow-hidden shadow-lg border" style="border-color: var(--primary); background-color: var(--color-bg);">
-                                <iframe src="{{ link.strip().split('?')[0].rstrip('/') | replace('/embed', '') }}/embed" width="320" height="540" frameborder="0" scrolling="no" allowtransparency="true" style="background: white;"></iframe>
-                            </div>
-                        {% else %}
-                            <div class="snap-start flex-none flex items-center justify-center p-6 rounded-2xl border" style="border-color: var(--primary); background-color: var(--color-bg); min-width: 200px;">
-                                <img src="{{ link.strip() }}" class="h-20 w-auto object-contain hover:scale-110 transition-transform">
-                            </div>
+        
+        <div class="relative group">
+            <button onclick="scrollSocial(-1)" class="absolute -left-2 md:-left-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full shadow-xl hover:scale-110 transition flex border" style="background-color: var(--color-bg); border-color: var(--primary); color: var(--color-title);">
+                <i data-lucide="chevron-left" class="w-6 h-6"></i>
+            </button>
+
+            <div class="flex gap-6 overflow-x-auto snap-x scroll-smooth pb-6 custom-scrollbar px-2" id="social-container">
+                {% if loja.logos_clientes %}
+                    {% for link in loja.logos_clientes.split() %}
+                        {% if link.strip() %}
+                            {% if 'instagram.com' in link %}
+                                <div class="snap-start flex-none w-[320px] rounded-2xl overflow-hidden shadow-lg border" style="border-color: var(--primary); background-color: var(--color-bg);">
+                                    <iframe src="{{ link.strip().split('?')[0].rstrip('/') | replace('/embed', '') }}/embed" width="320" height="540" frameborder="0" scrolling="no" allowtransparency="true" style="background: white;"></iframe>
+                                </div>
+                            {% else %}
+                                <div class="snap-start flex-none flex items-center justify-center p-6 rounded-2xl border" style="border-color: var(--primary); background-color: var(--color-bg); min-width: 200px;">
+                                    <img src="{{ link.strip() }}" class="h-20 w-auto object-contain hover:scale-110 transition-transform">
+                                </div>
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <button onclick="scrollSocial(1)" class="absolute -right-2 md:-right-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full shadow-xl hover:scale-110 transition flex border" style="background-color: var(--color-bg); border-color: var(--primary); color: var(--color-title);">
+                <i data-lucide="chevron-right" class="w-6 h-6"></i>
+            </button>
         </div>
     </div>
 </section>
@@ -549,6 +565,12 @@
     function scrollCarousel(direction) {
         const scrollAmount = 350; 
         if(container) container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    }
+
+    function scrollSocial(direction) {
+        const socialContainer = document.getElementById('social-container');
+        const scrollAmount = 350; 
+        if(socialContainer) socialContainer.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
     }
 
     const logosRaw = `{{ loja.logos_clientes or '' }}`;
