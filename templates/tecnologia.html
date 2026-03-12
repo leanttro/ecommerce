@@ -1593,7 +1593,7 @@
 
         cards.forEach(card => cardObserver.observe(card));
 
-        let autoScrollSpeed = window.innerWidth < 768 ? 4.5 : 0.8; // 3x mais rápido no mobile (original 1.5 * 3 = 4.5)
+        let autoScrollSpeed = window.innerWidth < 768 ? 4.5 : 0.8; 
         let autoScrollReq;
 
         const startAutoScroll = () => {
@@ -1801,6 +1801,37 @@
         }
     }
 
+    // Efeito SplitText reverso baseado no vídeo
+    document.querySelectorAll('#titulo-secao-produtos, .case-title-new').forEach(title => {
+        let text = title.textContent.trim();
+        title.innerHTML = '';
+        text.split(' ').forEach((word, i) => {
+            let wordSpan = document.createElement('span');
+            wordSpan.style.display = 'inline-block';
+            wordSpan.style.overflow = 'hidden';
+            wordSpan.style.verticalAlign = 'top';
+            
+            let innerSpan = document.createElement('span');
+            innerSpan.style.display = 'inline-block';
+            innerSpan.innerText = word + (i < text.split(' ').length - 1 ? '\u00A0' : '');
+            
+            wordSpan.appendChild(innerSpan);
+            title.appendChild(wordSpan);
+
+            gsap.from(innerSpan, {
+                scrollTrigger: {
+                    trigger: title,
+                    start: "top 90%"
+                },
+                y: "100%",
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.05,
+                ease: "power4.out",
+                delay: i * 0.05
+            });
+        });
+    });
 </script>
 </body>
 </html>
