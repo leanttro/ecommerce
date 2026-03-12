@@ -393,15 +393,12 @@ nav {
 .clients-right::before, .clients-right::after { content: ''; position: absolute; top: 0; width: 100px; height: 100%; z-index: 2; pointer-events: none; }
 .clients-right::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
 .clients-right::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
-.clients-track { display: flex; align-items: center; gap: 6rem; width: max-content; animation: marquee-clients 80s linear infinite; }
-.clients-track.reverse { animation-direction: reverse; animation-duration: 25s;}
-.clients-track img { height: 110px; object-fit: contain; max-width: 250px; filter: grayscale(100%) brightness(0.6); transition: all 0.4s var(--ease); animation: floatLogo 4s ease-in-out infinite; }
+.clients-track { display: flex; align-items: center; gap: 6rem; width: max-content; animation: marquee-clients 160s linear infinite; }
+.clients-track.reverse { animation-direction: reverse; animation-duration: 50s;}
+.clients-track img { height: 140px; object-fit: contain; max-width: 300px; filter: grayscale(100%) brightness(0.6); transition: all 0.4s var(--ease); }
 .clients-track img:hover { filter: grayscale(0%) brightness(1); transform: scale(1.1) !important; animation-play-state: paused; }
-.clients-track img:nth-child(even) { animation-delay: -2s; }
-.clients-track img:nth-child(3n) { animation-delay: -1s; animation-duration: 5s; }
 @keyframes marquee-clients { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-@keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-@media (max-width: 900px) { .clients-section { flex-direction: column; padding: 2rem 2rem; gap: 2rem; } .clients-left { flex: none; width: 100%; text-align: center; } .clients-right::before, .clients-right::after { width: 50px; } .clients-track img { height: 80px; } }
+@media (max-width: 900px) { .clients-section { flex-direction: column; padding: 2rem 2rem; gap: 2rem; } .clients-left { flex: none; width: 100%; text-align: center; } .clients-right::before, .clients-right::after { width: 50px; } .clients-track img { height: 100px; } }
 
 .portfolio-horizontal-wrapper {
   height: 100vh;
