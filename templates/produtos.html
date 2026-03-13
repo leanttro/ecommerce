@@ -45,10 +45,14 @@
             color: {{ loja.cor_titulo }};
         }
 
-        .gsap-reveal { opacity: 0; transform: translateY(30px); }
+        .gsap-reveal { opacity: 0; transform: translateY(40px); }
 
         .product-image-thumb.active {
             border: 2px solid var(--primary);
+            opacity: 1;
+        }
+        .product-image-thumb {
+            opacity: 0.7;
         }
 
         /* Ticker Style matching index */
@@ -93,6 +97,14 @@
             position: relative;
             top: -1px;
         }
+
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .custom-scrollbar { scrollbar-width: thin; scrollbar-color: var(--primary) rgba(0,0,0,0.05); }
+        .custom-scrollbar::-webkit-scrollbar { height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -117,9 +129,9 @@
     </div>
     {% endif %}
 
-    <header class="sticky top-0 z-40 py-4 shadow-md backdrop-blur-sm" style="background-color: var(--color-bg);">
+    <header class="sticky top-0 z-40 py-4 shadow-sm backdrop-blur-md bg-opacity-90 transition-colors" style="background-color: var(--color-bg); border-bottom: 1px solid rgba(0,0,0,0.05);">
         <div class="container mx-auto px-4 min-h-[70px] flex items-center justify-between">
-            <a href="/{{ loja.slug_url }}/" class="flex items-center gap-2">
+            <a href="/{{ loja.slug_url }}/" class="flex items-center gap-2 hover:opacity-70 transition">
                 <i data-lucide="chevron-left" class="w-6 h-6 custom-title-color"></i>
                 <span class="text-sm font-bold uppercase tracking-widest custom-title-color">Voltar</span>
             </a>
@@ -131,7 +143,7 @@
                 {% endif %}
             </a>
             <div class="flex items-center gap-4 relative">
-                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="px-6 py-3 rounded-full text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg items-center gap-2" style="background-color: var(--primary); color: var(--color-bg);">
+                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="px-6 py-3 rounded-full text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg items-center gap-2 hidden md:flex" style="background-color: var(--primary); color: var(--color-bg);">
                     <i data-lucide="message-circle" class="w-4 h-4"></i> Atendimento
                 </a>
             </div>
@@ -139,21 +151,21 @@
     </header>
 
     <main class="container mx-auto px-4 pt-12 pb-20 max-w-7xl flex-grow gsap-reveal">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
             <div class="md:sticky md:top-32 h-fit">
-                <div class="relative overflow-hidden bg-white border border-theme rounded-3xl aspect-[1/1] mb-6 shadow-xl" style="background-color: var(--color-bg);">
+                <div class="relative overflow-hidden bg-white rounded-[2rem] aspect-[1/1] mb-6 shadow-2xl transition-transform" style="background-color: var(--color-bg); border: 1px solid rgba(0,0,0,0.05);">
                     {% if p.urgencia %}
-                        <div class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-4 py-2 rounded-full z-10 shadow-lg">{{ p.urgencia }}</div>
+                        <div class="absolute top-6 left-6 bg-orange-500 text-white text-xs font-bold px-4 py-2 rounded-full z-10 shadow-lg tracking-wide uppercase">{{ p.urgencia }}</div>
                     {% endif %}
-                    <img src="{{ p.galeria[0] }}" alt="{{ p.nome }}" id="main-product-image" class="w-full h-full object-contain cursor-zoom-in transition-transform duration-300">
-                    <button class="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition z-10">
+                    <img src="{{ p.galeria[0] }}" alt="{{ p.nome }}" id="main-product-image" class="w-full h-full object-contain cursor-zoom-in transition-transform duration-500 hover:scale-[1.02]">
+                    <button class="absolute bottom-6 right-6 backdrop-blur-md bg-white bg-opacity-30 text-gray-800 p-4 rounded-full hover:bg-opacity-50 shadow-lg transition z-10">
                         <i data-lucide="maximize-2" class="w-5 h-5"></i>
                     </button>
                 </div>
                 {% if p.galeria|length > 1 %}
                     <div class="grid grid-cols-4 lg:grid-cols-5 gap-4">
                         {% for img_url in p.galeria %}
-                            <div class="aspect-[1/1] border border-theme rounded-2xl overflow-hidden cursor-pointer product-image-thumb shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg {% if loop.first %}active{% endif %}">
+                            <div class="aspect-[1/1] rounded-2xl overflow-hidden cursor-pointer product-image-thumb transition-all hover:-translate-y-1 hover:opacity-100 hover:shadow-xl {% if loop.first %}active{% endif %}" style="background-color: var(--color-bg); border: 1px solid rgba(0,0,0,0.05);">
                                 <img src="{{ img_url }}" alt="{{ p.nome }}" onclick="changeImage('{{ img_url }}', this)" class="w-full h-full object-cover">
                             </div>
                         {% endfor %}
@@ -165,32 +177,32 @@
                 <div>
                     <h1 class="text-4xl lg:text-5xl font-extrabold custom-title-color leading-tight tracking-tighter mb-4">{{ p.nome }}</h1>
                     {% if not p.consulte %}
-                        <div class="mt-6">
+                        <div class="mt-6 bg-white p-6 rounded-3xl shadow-sm inline-block" style="background-color: rgba(0,0,0,0.02);">
                             {% if p.a_partir_de %}
                                 <p class="text-xs uppercase font-bold mb-1 custom-title-color opacity-80 tracking-wide">A partir de</p>
                             {% endif %}
                             <p class="text-5xl font-extrabold text-theme tracking-tight" id="price">R$ {{ "%.2f"|format(p.preco) }}</p>
                             {% if p.estoque > 0 %}
-                                <p class="text-sm font-bold mt-2 custom-title-color opacity-60">Estoque disponível: {{ p.estoque }} un.</p>
+                                <p class="text-sm font-bold mt-3 custom-title-color opacity-60 flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-green-500"></i> Estoque disponível: {{ p.estoque }} un.</p>
                             {% else %}
-                                <p class="text-sm font-bold mt-2 text-red-500">Produto Esgotado</p>
+                                <p class="text-sm font-bold mt-3 text-red-500 flex items-center gap-2"><i data-lucide="x-circle" class="w-4 h-4"></i> Produto Esgotado</p>
                             {% endif %}
                         </div>
                     {% else %}
-                         <div class="mt-6">
+                         <div class="mt-6 bg-white p-6 rounded-3xl shadow-sm inline-block" style="background-color: rgba(0,0,0,0.02);">
                             <p class="text-5xl font-extrabold text-theme tracking-tight">Sob Consulta</p>
                         </div>
                     {% endif %}
                 </div>
 
                 {% if p.variantes %}
-                    <div id="variant-selectors" class="space-y-6 bg-white p-8 rounded-3xl border border-theme shadow-lg" style="background-color: var(--color-bg);">
-                        <h3 class="font-bold text-lg custom-title-color mb-4">Selecione as opções:</h3>
+                    <div id="variant-selectors" class="space-y-6 p-8 rounded-[2rem] shadow-xl transition-all" style="background-color: var(--color-bg); border: 1px solid rgba(0,0,0,0.05);">
+                        <h3 class="font-bold text-lg custom-title-color mb-4">Personalize seu pedido:</h3>
                         {% for variant_group in p.variantes %}
                             <div class="variant-group">
                                 <label class="block text-sm font-bold custom-title-color mb-2">{{ variant_group.grupo }}</label>
-                                <select name="{{ variant_group.grupo }}" class="w-full border border-theme rounded-xl p-4 text-sm bg-white focus:border-theme focus:ring-1 focus:ring-theme outline-none custom-title-color" style="background-color: var(--color-bg); font-family: var(--font-body);" onchange="updateVariantSelection()">
-                                    <option value="">Selecione...</option>
+                                <select name="{{ variant_group.grupo }}" class="w-full border-2 rounded-xl p-4 text-sm bg-transparent focus:border-theme focus:ring-0 outline-none custom-title-color transition-colors appearance-none cursor-pointer" style="border-color: rgba(0,0,0,0.1); font-family: var(--font-body);" onchange="updateVariantSelection()">
+                                    <option value="">Selecione uma opção...</option>
                                     {% for op in variant_group.opcoes %}
                                         <option value="{{ op.nome }}" data-price="{{ op.preco }}" data-tipo-preco="{{ op.tipo_preco }}">
                                             {{ op.nome }} {% if op.preco %} ({{ '+' if op.tipo_preco == 'adicional' else '=' }} R$ {{ "%.2f"|format(op.preco) }}){% endif %}
@@ -205,41 +217,38 @@
                     </div>
                 {% endif %}
 
-                <div class="bg-white p-8 rounded-3xl border border-theme shadow-lg" style="background-color: var(--color-bg);">
+                <div class="p-8 rounded-[2rem] shadow-2xl transition-all" style="background-color: var(--color-bg); border: 1px solid rgba(0,0,0,0.05);">
                     {% if p.estoque > 0 %}
                         <div class="flex items-center gap-6 mb-8">
-                            <label class="text-sm font-bold custom-title-color">Quantidade:</label>
-                            <div class="flex items-center gap-1 border border-theme rounded-full p-1" style="border-color: var(--primary);">
-                                <button onclick="changeQuantity(-1)" class="w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold transition hover:bg-theme hover:scale-105" style="border-color: var(--primary); color: var(--primary); border: 1px solid var(--primary);"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                            <label class="text-sm font-bold custom-title-color uppercase tracking-wider">Quantidade:</label>
+                            <div class="flex items-center gap-1 border-2 rounded-full p-1" style="border-color: rgba(0,0,0,0.1);">
+                                <button onclick="changeQuantity(-1)" class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold transition hover:bg-theme hover:text-white" style="color: var(--color-title);"><i data-lucide="minus" class="w-4 h-4"></i></button>
                                 <input type="number" id="quantity" value="1" min="1" max="{{ p.estoque }}" class="w-16 text-center text-xl font-bold bg-transparent outline-none custom-title-color" readonly>
-                                <button onclick="changeQuantity(1)" class="w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold transition hover:bg-theme hover:scale-105" style="border-color: var(--primary); color: var(--color-bg); background-color: var(--primary);"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                                <button onclick="changeQuantity(1)" class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold transition hover:bg-theme hover:text-white" style="color: var(--color-title);"><i data-lucide="plus" class="w-4 h-4"></i></button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-2">
-                             <button onclick="addToCart('{{ p.id }}', '{{ p.nome }}', '{{ p.galeria[0] }}')" class="w-full text-base font-bold py-5 rounded-2xl flex items-center justify-center gap-3 transition hover:scale-[1.03] shadow-md hover:shadow-lg backdrop-blur-sm" style="background-color: var(--color-bg); color: var(--primary); border: 2px solid var(--primary);">
-                                <i data-lucide="shopping-cart" class="w-5 h-5"></i> Adicionar à Vitrine
-                            </button>
-                            <button onclick="checkoutDirect('{{ p.id }}')" class="w-full text-base font-bold py-5 rounded-2xl flex items-center justify-center gap-3 transition hover:scale-[1.03] shadow-xl hover:shadow-2xl" style="background-color: var(--primary); color: var(--color-bg);">
-                                <i data-lucide="whatsapp" class="w-5 h-5"></i> Pedir Agora
+                        <div class="grid grid-cols-1 gap-6 pb-2">
+                            <button onclick="checkoutDirect('{{ p.id }}')" class="w-full text-lg font-bold py-6 rounded-2xl flex items-center justify-center gap-3 transition hover:scale-[1.02] shadow-xl hover:shadow-2xl" style="background-color: var(--primary); color: var(--color-bg);">
+                                <i data-lucide="whatsapp" class="w-6 h-6"></i> Pedir Agora no WhatsApp
                             </button>
                         </div>
                     {% elif p.estoque == 0 %}
-                         <button class="w-full text-base font-bold py-5 rounded-2xl flex items-center justify-center gap-3 opacity-60 cursor-not-allowed" style="background-color: var(--primary); color: var(--color-bg);" disabled>
-                            <i data-lucide="shopping-cart" class="w-5 h-5"></i> Sem Estoque
+                         <button class="w-full text-lg font-bold py-6 rounded-2xl flex items-center justify-center gap-3 opacity-50 cursor-not-allowed" style="background-color: var(--primary); color: var(--color-bg);" disabled>
+                            <i data-lucide="shopping-cart" class="w-6 h-6"></i> Indisponível no Momento
                         </button>
                     {% else %}
-                         <button onclick="checkoutDirect('{{ p.id }}')" class="w-full text-base font-bold py-5 rounded-2xl flex items-center justify-center gap-3 transition hover:scale-[1.03] shadow-xl hover:shadow-2xl" style="background-color: var(--primary); color: var(--color-bg);">
-                            <i data-lucide="whatsapp" class="w-5 h-5"></i> Consultar
+                         <button onclick="checkoutDirect('{{ p.id }}')" class="w-full text-lg font-bold py-6 rounded-2xl flex items-center justify-center gap-3 transition hover:scale-[1.02] shadow-xl hover:shadow-2xl" style="background-color: var(--primary); color: var(--color-bg);">
+                            <i data-lucide="whatsapp" class="w-6 h-6"></i> Fazer Orçamento
                         </button>
                     {% endif %}
                 </div>
 
                 {% if p.estoque > 0 and p.classe_frete and p.origem %}
-                <div class="bg-white p-8 rounded-3xl border border-theme shadow-lg" style="background-color: var(--color-bg);">
-                    <h3 class="font-bold text-lg custom-title-color mb-4"><i data-lucide="truck" class="w-5 h-5 text-theme shipping-icon mr-2"></i> Calcular Frete</h3>
+                <div class="p-8 rounded-[2rem] shadow-xl transition-all" style="background-color: var(--color-bg); border: 1px solid rgba(0,0,0,0.05);">
+                    <h3 class="font-bold text-lg custom-title-color mb-4 flex items-center gap-2"><i data-lucide="truck" class="w-5 h-5 text-theme shipping-icon"></i> Simular Entrega</h3>
                     <div class="flex gap-4">
-                        <input type="text" id="cep-destino" placeholder="00000-000" class="flex-grow border border-theme rounded-xl p-4 text-sm bg-white focus:border-theme focus:ring-1 focus:ring-theme outline-none custom-title-color" style="background-color: var(--color-bg);">
-                        <button onclick="calcularFrete()" class="px-6 py-4 rounded-xl text-sm font-bold shadow-md hover:opacity-90 transition" style="background-color: var(--primary); color: var(--color-bg);">
+                        <input type="text" id="cep-destino" placeholder="Digite seu CEP" class="flex-grow border-2 rounded-xl p-4 text-sm bg-transparent focus:border-theme focus:ring-0 outline-none custom-title-color" style="border-color: rgba(0,0,0,0.1);">
+                        <button onclick="calcularFrete()" class="px-8 py-4 rounded-xl text-sm font-bold shadow-md hover:opacity-90 transition" style="background-color: var(--primary); color: var(--color-bg);">
                             Calcular
                         </button>
                     </div>
@@ -248,9 +257,9 @@
                 {% endif %}
 
                 {% if p.descricao %}
-                    <div class="bg-white p-8 rounded-3xl border border-theme shadow-lg" style="background-color: var(--color-bg);">
-                        <h2 class="text-2xl font-bold custom-title-color leading-tight tracking-tight mb-6">Sobre o Produto</h2>
-                        <div class="prose prose-sm max-w-none prose-p:custom-title-color prose-p:opacity-80 prose-li:custom-title-color prose-strong:custom-title-color" style="color: var(--color-text);">
+                    <div class="p-8 rounded-[2rem] shadow-xl transition-all" style="background-color: var(--color-bg); border: 1px solid rgba(0,0,0,0.05);">
+                        <h2 class="text-2xl font-bold custom-title-color leading-tight tracking-tight mb-6">Detalhes do Produto</h2>
+                        <div class="prose prose-lg max-w-none prose-p:custom-title-color prose-p:opacity-80 prose-li:custom-title-color prose-strong:custom-title-color leading-relaxed font-light" style="color: var(--color-text);">
                             {{ p.descricao|safe }}
                         </div>
                     </div>
@@ -259,11 +268,36 @@
         </div>
     </main>
 
-    <section class="container mx-auto px-4 max-w-7xl pb-24 gsap-reveal" id="related-products">
-        <h2 class="text-3xl font-bold custom-title-color tracking-tight text-center mb-10">Quem comprou este também comprou</h2>
-        <div class="relative group">
-            <div id="related-products-list" class="flex gap-6 overflow-x-auto snap-x scroll-smooth pb-8 hide-scroll px-2">
-                 <div class="min-w-[200px] text-center p-8 opacity-60 custom-title-color">Carregando...</div>
+    <section class="gsap-reveal w-full py-16 mt-8" id="social-proof-section" style="background-color: rgba(0,0,0,0.02); border-top: 1px solid rgba(0,0,0,0.05);">
+        <div class="container mx-auto px-4 relative">
+            <h2 class="text-3xl font-bold mb-10 text-center custom-title-color" id="social-title">Nossos Clientes</h2>
+            
+            <div class="relative group">
+                <button onclick="scrollSocial(-1)" class="absolute -left-2 md:-left-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full shadow-xl hover:scale-110 transition flex border" style="background-color: var(--color-bg); border-color: var(--primary); color: var(--color-title);">
+                    <i data-lucide="chevron-left" class="w-6 h-6"></i>
+                </button>
+
+                <div class="flex gap-6 overflow-x-auto snap-x scroll-smooth pb-6 custom-scrollbar px-2" id="social-container">
+                    {% if loja.logos_clientes %}
+                        {% for link in loja.logos_clientes.split() %}
+                            {% if link.strip() %}
+                                {% if 'instagram.com' in link %}
+                                    <div class="snap-start flex-none w-[320px] rounded-2xl overflow-hidden shadow-lg border" style="border-color: var(--primary); background-color: var(--color-bg);">
+                                        <iframe src="{{ link.strip().split('?')[0].rstrip('/') | replace('/embed', '') }}/embed" width="320" height="540" frameborder="0" scrolling="no" allowtransparency="true" style="background: white;"></iframe>
+                                    </div>
+                                {% else %}
+                                    <div class="snap-start flex-none flex items-center justify-center p-6 rounded-2xl border" style="border-color: var(--primary); background-color: var(--color-bg); min-width: 200px;">
+                                        <img src="{{ link.strip() }}" class="h-20 w-auto object-contain hover:scale-110 transition-transform">
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <button onclick="scrollSocial(1)" class="absolute -right-2 md:-right-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full shadow-xl hover:scale-110 transition flex border" style="background-color: var(--color-bg); border-color: var(--primary); color: var(--color-title);">
+                    <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                </button>
             </div>
         </div>
     </section>
@@ -280,10 +314,16 @@
         </div>
     </footer>
 
-    <div id="image-modal" class="fixed inset-0 bg-black bg-opacity-90 z-[100] hidden items-center justify-center p-4">
-        <button onclick="closeModal()" class="absolute top-6 right-6 text-white p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-40"><i data-lucide="x" class="w-7 h-7"></i></button>
+    <div id="image-modal" class="fixed inset-0 bg-black bg-opacity-90 z-[100] hidden items-center justify-center p-4 backdrop-blur-sm">
+        <button onclick="closeModal()" class="absolute top-6 right-6 text-white p-3 bg-white bg-opacity-10 rounded-full hover:bg-opacity-30 transition"><i data-lucide="x" class="w-8 h-8"></i></button>
         <img src="" id="modal-image" class="max-w-full max-h-full object-contain rounded-xl shadow-2xl">
     </div>
+
+    {% if loja.mostrar_whatsapp_flutuante and loja.whatsapp_comercial %}
+    <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="fixed bottom-6 right-6 z-50 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center" style="background-color: #25D366;">
+        <i data-lucide="message-circle" class="w-8 h-8"></i>
+    </a>
+    {% endif %}
 
     <script>
         lucide.createIcons();
@@ -299,8 +339,8 @@
                 },
                 y: 0,
                 opacity: 1,
-                duration: 0.6,
-                ease: "power2.out"
+                duration: 0.8,
+                ease: "power3.out"
             });
         });
 
@@ -312,8 +352,12 @@
 
         function changeImage(url, thumbElement) {
             if(!mainImage) return;
-            mainImage.src = url;
-            // Atualiza active thumb
+            mainImage.style.opacity = 0;
+            setTimeout(() => {
+                mainImage.src = url;
+                mainImage.style.opacity = 1;
+            }, 150);
+            
             document.querySelectorAll('.product-image-thumb').forEach(el => el.classList.remove('active'));
             if(thumbElement) thumbElement.classList.add('active');
         }
@@ -352,15 +396,13 @@
                     const tipoPrecoOp = selectedOption.getAttribute('data-tipo-preco');
 
                     if (tipoPrecoOp === 'final') {
-                        // Se houver uma variante com preço final, substitui o preço total (considerando apenas a última selecionada deste tipo)
                         totalPrice = priceOp; 
                     } else if (tipoPrecoOp === 'adicional') {
-                        // Preço adicional soma ao preço base
                         totalPrice += priceOp;
                     }
 
                     selectedVariantsData.push({
-                        grupo: variant_group.grupo,
+                        grupo: select.name,
                         opcao: selectedOption.value,
                         preco: priceOp,
                         tipo_preco: tipoPrecoOp
@@ -384,16 +426,14 @@
             quantityInput.value = currentValue;
         }
 
-        // Simulação de Frete e Cart
         function calcularFrete() {
             if(!resultadoFrete) return;
             resultadoFrete.innerHTML = 'Carregando...';
             resultadoFrete.classList.remove('hidden');
             setTimeout(() => {
-                // Mock result
                 resultadoFrete.innerHTML = `
-                    <div class="p-4 border border-green-500 rounded-xl bg-green-50 text-green-800 flex justify-between items-center">
-                        <span class="font-bold">Correios (PAC)</span>
+                    <div class="p-4 border border-green-500 rounded-xl bg-green-50 text-green-800 flex justify-between items-center shadow-sm">
+                        <span class="font-bold">Transportadora Padrão</span>
                         <span class="font-extrabold text-base">R$ 24,90</span>
                         <span class="opacity-70">7-10 dias</span>
                     </div>
@@ -402,71 +442,70 @@
             }, 1000);
         }
 
-        function addToCart(id, nome, imagem) {
-            alert(`"${nome}" adicionado à sua vitrine! (Simulação)`);
-        }
-
         function checkoutDirect(id) {
-            alert(`Redirecionando para o WhatsApp com pedido do produto "${id}". (Simulação)`);
+            const phone = "{{ loja.whatsapp_comercial }}";
+            if(!phone) {
+                alert("WhatsApp de atendimento não está configurado no painel.");
+                return;
+            }
+
+            let msg = `Olá! Vim pelo catálogo e tenho interesse no produto:\n*{{ p.nome }}*\n`;
+            
+            const isConsultBool = document.getElementById('is-consult').value === '1';
+            
+            // Pega as opções selecionadas
+            const variantsInput = document.getElementById('variant-selection-data');
+            if(variantsInput && variantsInput.value) {
+                try {
+                    const variants = JSON.parse(variantsInput.value);
+                    if(variants.length > 0) {
+                        msg += `\n*Minhas Opções:*`;
+                        variants.forEach(v => {
+                            msg += `\n- ${v.grupo}: ${v.opcao}`;
+                        });
+                        msg += `\n`;
+                    }
+                } catch(e){}
+            }
+
+            // Pega a quantidade
+            const qtyInput = document.getElementById('quantity');
+            if(qtyInput) {
+                msg += `\n*Quantidade:* ${qtyInput.value}\n`;
+            }
+
+            // Pega o valor
+            if(!isConsultBool) {
+                const priceEl = document.getElementById('price');
+                if(priceEl) {
+                    msg += `\n*Valor Unitário / Final:* ${priceEl.innerText}\n`;
+                }
+            } else {
+                msg += `\n(Gostaria de um orçamento personalizado)\n`;
+            }
+
+            msg += `\nPodem me ajudar a finalizar esse pedido?`;
+
+            const phoneClean = phone.replace(/\D/g, '');
+            const finalUrl = `https://wa.me/55${phoneClean}?text=${encodeURIComponent(msg)}`;
+            window.open(finalUrl, '_blank');
         }
 
-        // Related Products matching index standard
-        const productId = '{{ p.id }}';
-        const categoriaId = '{{ p.categoria_id }}';
-        
-        const relatedList = document.getElementById('related-products-list');
-        if (relatedList && DIRECTUS_URL) {
-            const fields = 'id,nome,slug,preco,a_partir_de,consulte,imagem_destaque.id,variantes,status_urgencia,sort';
-            const filter = `filter[categoria_id][_eq]=${categoriaId}&filter[id][_neq]=${productId}&filter[status][_eq]=published&limit=8&sort=sort&fields=${fields}`;
-            const url_related = `${DIRECTUS_URL}/items/produtos?${filter}`;
-            
-            fetch(url_related, { headers: { 'Content-Type': 'application/json' } })
-            .then(res => res.json())
-            .then(data => {
-                const prods = data.data || [];
-                relatedList.innerHTML = '';
-                if(prods.length === 0) {
-                     const relatedSection = document.getElementById('related-products');
-                     if(relatedSection) relatedSection.style.display = 'none';
-                }
-                prods.forEach(p => {
-                    const img_url = p.imagem_destaque ? `${DIRECTUS_URL}/assets/${p.imagem_destaque.id}?quality=80&format=webp&width=300` : 'https://placehold.co/300x300?text=Sem+Imagem';
-                    
-                    const p_obj = {
-                        id: p.id, nome: p.nome, preco: p.preco || 0,
-                        a_partir_de: p.a_partir_de, consulte: p.consulte,
-                        variantes: p.variantes || []
-                    };
-                    
-                    relatedList.innerHTML += `
-                        <div class="min-w-[200px] w-[200px] md:min-w-[280px] md:w-[280px] flex-none border rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 relative snap-start group/card flex flex-col" style="background-color: var(--color-bg); border-color: var(--primary);">
-                            ${p.status_urgencia ? `<div class="absolute top-3 right-3 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10 shadow-sm">${p.status_urgencia}</div>` : ''}
-                            
-                            <div class="relative overflow-hidden aspect-[4/5] border-b" style="border-color: var(--primary);">
-                                <a href="/${ '{{ loja.slug_url }}' }/produto/${p.slug}" class="block w-full h-full">
-                                    <img src="${img_url}" loading="lazy" class="w-full h-full object-contain transition-transform duration-700 group-hover/card:scale-110">
-                                </a>
-                            </div>
+        function scrollSocial(direction) {
+            const socialContainer = document.getElementById('social-container');
+            const scrollAmount = 350; 
+            if(socialContainer) socialContainer.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        }
 
-                            <div class="p-6 flex flex-col flex-1 text-center h-[180px]"> 
-                                <a href="/${ '{{ loja.slug_url }}' }/produto/${p.slug}">
-                                    <h3 class="font-bold custom-title-color text-base line-clamp-2 leading-tight hover:opacity-70 transition mb-2">${p.nome}</h3>
-                                </a>
-                                
-                                <div class="mt-auto">
-                                    ${p.consulte ? `
-                                        <p class="font-bold text-xl text-theme">Sob Consulta</p>
-                                    ` : `
-                                        ${p.a_partir_de ? `<p class="text-xs uppercase font-bold text-center mt-2 mb-0 tracking-wide custom-title-color opacity-80">A partir de</p>` : ''}
-                                        <p class="font-extrabold text-2xl text-theme">R$ ${parseFloat(p.preco || 0).toFixed(2)}</p>
-                                    `}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                lucide.createIcons();
-            });
+        const logosRaw = `{{ loja.logos_clientes or '' }}`;
+        if(logosRaw.trim() === '') {
+            const socialSection = document.getElementById('social-proof-section');
+            if(socialSection) socialSection.style.display = 'none';
+        } else {
+            const socialTitle = document.getElementById('social-title');
+            if(logosRaw.includes('instagram.com') && socialTitle) {
+                socialTitle.innerText = 'Siga nosso Instagram';
+            }
         }
     </script>
 </body>
