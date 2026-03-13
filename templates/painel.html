@@ -604,6 +604,20 @@
                             <label class="block text-sm font-bold mb-2">Link do Instagram (Para rodapé/portfólio)</label>
                             <input type="text" name="instagram_url" value="{{ loja.instagram_url or '' }}" placeholder="https://instagram.com/suaempresa" class="w-full border rounded p-2">
                         </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-2">Endereço Físico (Mapa)</label>
+                            <input type="text" name="endereco_fisico" value="{{ loja.endereco_fisico or '' }}" placeholder="Ex: Av Paulista, 1000 - São Paulo, SP" class="w-full border rounded p-2">
+                        </div>
+                        <div class="col-span-1 md:col-span-2 flex flex-col md:flex-row gap-6 mt-2">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="mostrar_mapa" class="form-checkbox text-pink-600 rounded" {% if loja.mostrar_mapa %}checked{% endif %}>
+                                <span class="text-sm font-bold text-gray-700">Exibir Mapa da Loja</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="mostrar_whatsapp_flutuante" class="form-checkbox text-pink-600 rounded" {% if loja.mostrar_whatsapp_flutuante %}checked{% endif %}>
+                                <span class="text-sm font-bold text-gray-700">Ativar Botão do WhatsApp Flutuante</span>
+                            </label>
+                        </div>
                     </div>
 
                     <div class="pt-4 border-t border-gray-200">

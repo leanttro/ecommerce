@@ -212,7 +212,7 @@ def identificar_loja():
         
         # Tratamento de Layout e Configs Visuais Fallback se vazio
         if not g.loja.get('layout_order'):
-            g.loja['layout_order'] = "banner,busca,categorias,produtos,banners_menores,novidades,blog,sobre,footer"
+            g.loja['layout_order'] = "banner,busca,categorias,produtos,banners_menores,novidades,blog,sobre,mapa,footer"
         
         # Configs Visuais Padrão
         if not g.loja.get('font_tamanho_base'): g.loja['font_tamanho_base'] = 16
@@ -323,7 +323,7 @@ def cadastro():
             "font_tamanho_base": 16,
             "font_titulo": "Poppins",
             "font_corpo": "Inter",
-            "layout_order": "banner,busca,categorias,produtos,banners_menores,novidades,footer",
+            "layout_order": "banner,busca,categorias,produtos,banners_menores,novidades,mapa,footer",
             
             "linkbannerprincipal1": "#",
             "linkbannerprincipal2": "#"
@@ -661,7 +661,10 @@ def admin_painel(loja_slug):
             "titulo_formulario": request.form.get('titulo_formulario'),
             "ocultar_formulario": True if request.form.get('ocultar_formulario') else False,
             "chamada_rodape": request.form.get('chamada_rodape'),
-            "logos_clientes": request.form.get('logos_clientes')
+            "logos_clientes": request.form.get('logos_clientes'),
+            "endereco_fisico": request.form.get('endereco_fisico'),
+            "mostrar_mapa": True if request.form.get('mostrar_mapa') else False,
+            "mostrar_whatsapp_flutuante": True if request.form.get('mostrar_whatsapp_flutuante') else False
         }
         
         nova_senha = request.form.get('nova_senha')
@@ -726,6 +729,8 @@ def admin_painel(loja_slug):
             g.loja['layout_order'] += ",banners_menores"
         if 'sobre' not in g.loja['layout_order']:
             g.loja['layout_order'] += ",sobre"
+        if 'mapa' not in g.loja['layout_order']:
+            g.loja['layout_order'] += ",mapa"
 
     loja_visual = {
         **g.loja,
