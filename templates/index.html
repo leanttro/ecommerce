@@ -122,7 +122,7 @@
             <ul class="flex gap-8 text-sm font-bold uppercase tracking-widest opacity-90" style="color: var(--color-title);">
                 <li><a href="/{{ loja.slug_url }}/" class="hover:opacity-70 transition">Início</a></li>
                 <li class="relative group">
-                    <a href="#categorias" class="hover:opacity-70 transition flex items-center gap-1 cursor-pointer">Produtos <i data-lucide="chevron-down" class="w-4 h-4"></i></a>
+                    <a href="#categorias" class="hover:opacity-70 transition flex items-center gap-1 cursor-pointer">{{ loja.titulo_produtos or 'Produtos' }} <i data-lucide="chevron-down" class="w-4 h-4"></i></a>
                     <div class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-48 shadow-xl border rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 flex flex-col py-2" style="background-color: var(--color-bg); border-color: var(--primary);">
                         <a href="/{{ loja.slug_url }}/" class="px-4 py-2 hover:opacity-70 transition text-xs text-left normal-case tracking-normal custom-title-color">Todos</a>
                         {% for cat in categorias %}
@@ -148,7 +148,7 @@
         <ul class="flex flex-col p-4 space-y-4 font-bold uppercase tracking-widest text-sm custom-title-color text-center">
             <li><a href="/{{ loja.slug_url }}/" class="block hover:text-theme py-2" onclick="toggleMobileMenu()">Início</a></li>
             <li>
-                <div class="flex justify-center items-center gap-1 cursor-pointer hover:text-theme py-2" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">Produtos <i data-lucide="chevron-down" class="w-4 h-4"></i></div>
+                <div class="flex justify-center items-center gap-1 cursor-pointer hover:text-theme py-2" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">{{ loja.titulo_produtos or 'Produtos' }} <i data-lucide="chevron-down" class="w-4 h-4"></i></div>
                 <div id="mobile-cat-menu" class="hidden flex flex-col py-2 rounded-lg mt-2 shadow-inner" style="background-color: rgba(0,0,0,0.05);">
                     <a href="/{{ loja.slug_url }}/" class="block hover:text-theme py-2 text-xs normal-case tracking-normal" onclick="toggleMobileMenu()">Todos</a>
                     {% for cat in categorias %}
