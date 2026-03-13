@@ -234,17 +234,27 @@
 
     {% if secao == 'categorias' and not loja.ocultar_categorias %}
         <section class="w-full py-8 gsap-reveal" id="categorias">
-            <div class="container mx-auto px-4">
+            <div class="container mx-auto px-4 max-w-5xl">
                 <h2 class="text-3xl font-bold mb-8 text-center custom-title-color">{{ loja.titulo_categorias or 'Categorias' }}</h2>
-                <div class="flex gap-4 overflow-x-auto pb-4 pt-2 justify-start md:justify-center hide-scroll px-2">
-                    <a href="/{{ loja.slug_url }}/" class="whitespace-nowrap px-8 py-3 rounded-full border hover:opacity-80 transition custom-title-color font-bold shadow-sm" style="background-color: var(--color-bg); border-color: var(--primary);">
-                        Todos
-                    </a>
-                    {% for cat in categorias %}
-                    <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="whitespace-nowrap px-8 py-3 rounded-full border hover:opacity-80 transition custom-title-color font-bold shadow-sm" style="background-color: var(--color-bg); border-color: var(--primary);">
-                        {{ cat.nome }}
-                    </a>
-                    {% endfor %}
+                <div class="relative flex items-center group">
+                    <button onclick="scrollCategorias(-1)" class="absolute left-0 z-20 p-2 md:p-3 rounded-full shadow-lg hover:scale-110 transition border flex items-center justify-center -ml-2 md:-ml-6 bg-opacity-90 backdrop-blur-sm" style="background-color: var(--color-bg); border-color: var(--primary); color: var(--color-title);">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    
+                    <div id="categorias-container" class="flex gap-4 overflow-x-auto pb-6 pt-4 hide-scroll px-8 md:px-12 w-full scroll-smooth snap-x items-center">
+                        <a href="/{{ loja.slug_url }}/" class="snap-start whitespace-nowrap px-8 py-3 rounded-xl border hover:-translate-y-1 hover:shadow-lg transition-all duration-300 custom-title-color font-bold shadow-sm backdrop-blur-sm" style="background-color: var(--color-bg); border-color: var(--primary);">
+                            Todos
+                        </a>
+                        {% for cat in categorias %}
+                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="snap-start whitespace-nowrap px-8 py-3 rounded-xl border hover:-translate-y-1 hover:shadow-lg transition-all duration-300 custom-title-color font-bold shadow-sm backdrop-blur-sm" style="background-color: var(--color-bg); border-color: var(--primary);">
+                            {{ cat.nome }}
+                        </a>
+                        {% endfor %}
+                    </div>
+
+                    <button onclick="scrollCategorias(1)" class="absolute right-0 z-20 p-2 md:p-3 rounded-full shadow-lg hover:scale-110 transition border flex items-center justify-center -mr-2 md:-mr-6 bg-opacity-90 backdrop-blur-sm" style="background-color: var(--color-bg); border-color: var(--primary); color: var(--color-title);">
+                        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
                 </div>
             </div>
         </section>
@@ -403,7 +413,7 @@
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold mb-8 text-center custom-title-color">Como Chegar</h2>
             <div class="rounded-2xl overflow-hidden shadow-lg border" style="border-color: var(--primary);">
-                <iframe src="https://maps.google.com/maps?q={{ loja.endereco_fisico }}&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                <iframe src="http://googleusercontent.com/maps.google.com/maps?q={{ loja.endereco_fisico | urlencode }}&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
         </div>
     </section>
@@ -592,6 +602,12 @@
         const socialContainer = document.getElementById('social-container');
         const scrollAmount = 350; 
         if(socialContainer) socialContainer.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    }
+    
+    function scrollCategorias(direction) {
+        const catContainer = document.getElementById('categorias-container');
+        const scrollAmount = 250; 
+        if(catContainer) catContainer.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
     }
 
     const logosRaw = `{{ loja.logos_clientes or '' }}`;
