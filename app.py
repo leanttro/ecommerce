@@ -440,6 +440,7 @@ def index(loja_slug):
                     "urgencia": p.get('status_urgencia'), "classe_frete": p.get('classe_frete'),
                     "estoque": estoque_val, "consulte": p.get('consulte', False),
                     "a_partir_de": p.get('a_partir_de', False),
+                    "layout_case": p.get('layout_case', False),
                     "link_projeto": p.get('link_projeto'),
                     "whatsapp_projeto": p.get('whatsapp_projeto')
                 }
@@ -551,6 +552,7 @@ def produto(loja_slug, slug):
         except: p['estoque'] = 0
 
         p['a_partir_de'] = p.get('a_partir_de', False)
+        p['layout_case'] = p.get('layout_case', False)
 
         loja_visual = {
             **g.loja,
@@ -564,7 +566,7 @@ def produto(loja_slug, slug):
         
         if template_ativo in ['direto', 'direto_index']:
             template_produto = 'direto_produto.html'
-        elif template_ativo == 'institucional':
+        elif template_ativo == 'institucional' or p.get('layout_case'):
             template_produto = 'case.html'
         elif template_ativo == 'tecnologia':
             template_produto = 'case_tecnologia.html'
@@ -842,6 +844,9 @@ def admin_salvar_produto(loja_slug):
     a_partir_de_form = request.form.get('a_partir_de')
     a_partir_de = True if a_partir_de_form == 'on' else False
 
+    layout_case_form = request.form.get('layout_case')
+    layout_case = True if layout_case_form == 'on' else False
+
     variantes_raw = request.form.get('variantes')
     try:
         variantes = json.loads(variantes_raw) if variantes_raw else []
@@ -856,6 +861,7 @@ def admin_salvar_produto(loja_slug):
         "estoque": estoque,
         "consulte": consulte,
         "a_partir_de": a_partir_de,
+        "layout_case": layout_case,
         "variantes": variantes,
         "descricao": request.form.get('descricao'),
         "link_projeto": request.form.get('link_projeto'),

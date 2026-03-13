@@ -720,6 +720,11 @@
                         <label for="prodConsulte" class="text-sm font-bold text-gray-700 cursor-pointer select-none">Este é um produto sob consulta / Case de Portfólio (Ocultar preço)</label>
                     </div>
 
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mt-4 flex items-center gap-3">
+                        <input type="checkbox" name="layout_case" id="prodLayoutCase" class="w-5 h-5 text-pink-600 rounded border-gray-300 focus:ring-pink-500">
+                        <label for="prodLayoutCase" class="text-sm font-bold text-gray-700 cursor-pointer select-none">Usar layout de Case na página deste item</label>
+                    </div>
+
                     <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mt-4">
                         <div class="flex items-center gap-3 mb-4">
                             <input type="checkbox" name="a_partir_de" id="prodAPartirDe" class="w-5 h-5 text-pink-600 rounded border-gray-300 focus:ring-pink-500">
@@ -993,6 +998,7 @@
             document.getElementById('prodSort').value = '';
             document.getElementById('prodDescricao').value = '';
             document.getElementById('prodConsulte').checked = false;
+            document.getElementById('prodLayoutCase').checked = false;
             document.getElementById('prodAPartirDe').checked = false;
             document.getElementById('prodLinkProjeto').value = '';
             document.getElementById('prodWhatsappProjeto').value = '';
@@ -1024,6 +1030,7 @@
             document.getElementById('prodSort').value = prod.sort !== null && prod.sort !== undefined ? prod.sort : '';
             document.getElementById('prodDescricao').value = prod.descricao || '';
             document.getElementById('prodConsulte').checked = prod.consulte;
+            document.getElementById('prodLayoutCase').checked = prod.layout_case || false;
             document.getElementById('prodAPartirDe').checked = prod.a_partir_de || false;
             document.getElementById('prodLinkProjeto').value = prod.link_projeto || '';
             document.getElementById('prodWhatsappProjeto').value = prod.whatsapp_projeto || '';
