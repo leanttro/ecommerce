@@ -477,7 +477,11 @@
 
 <footer class="py-16 mt-auto border-t" id="footer" style="background-color: var(--color-bg); border-color: var(--primary);">
     <div class="container mx-auto px-6 text-center max-w-4xl">
-        <h4 class="font-bold text-3xl mb-8 tracking-tight" style="color: var(--color-title);">{{ loja.nome }}</h4>
+        <h4 class="font-bold text-3xl mb-6 tracking-tight" style="color: var(--color-title);">{{ loja.nome }}</h4>
+        
+        {% if loja.chamada_rodape %}
+        <div class="mb-8 whitespace-pre-line leading-relaxed" style="color: var(--color-text);">{{ loja.chamada_rodape }}</div>
+        {% endif %}
         
         <div class="flex flex-col md:flex-row justify-center items-center gap-8 mb-12">
             <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="flex items-center gap-2 text-lg hover:opacity-70 transition" style="color: var(--color-text);">
