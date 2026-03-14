@@ -32,12 +32,19 @@
     h1, h2, h3, .font-display { 
         font-family: 'Archivo Black', sans-serif; 
         text-transform: uppercase;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+        -webkit-hyphens: none !important;
+        hyphens: none !important;
+        white-space: normal !important;
+        letter-spacing: -0.02em;
+    }
+
+    #titulo-secao-produtos, .case-title {
         word-break: break-word !important;
         overflow-wrap: break-word !important;
         -webkit-hyphens: auto !important;
         hyphens: auto !important;
-        white-space: normal !important;
-        letter-spacing: -0.02em;
     }
 
     header {
@@ -313,13 +320,13 @@
                     
                     {% if loja.banner1_titulo %}
                     <h2 class="text-4xl md:text-6xl lg:text-7xl font-display uppercase tracking-tighter mb-4 drop-shadow-xl animate-banner-text" style="color: #ffffff;">
-                        {{ loja.banner1_titulo }}
+                        {{ loja.banner1_titulo | replace('  ', '<br>') | safe }}
                     </h2>
                     {% endif %}
                     
                     {% if loja.banner1_subtitulo %}
                     <p class="text-base md:text-xl font-light mb-8 max-w-2xl drop-shadow-lg animate-banner-text text-white/90" style="animation-delay: 0.1s;">
-                        {{ loja.banner1_subtitulo }}
+                        {{ loja.banner1_subtitulo | replace('  ', '<br>') | safe }}
                     </p>
                     {% endif %}
                     
@@ -347,13 +354,13 @@
                     
                     {% if loja.banner2_titulo %}
                     <h2 class="text-4xl md:text-6xl lg:text-7xl font-display uppercase tracking-tighter mb-4 drop-shadow-xl animate-banner-text" style="color: #ffffff;">
-                        {{ loja.banner2_titulo }}
+                        {{ loja.banner2_titulo | replace('  ', '<br>') | safe }}
                     </h2>
                     {% endif %}
                     
                     {% if loja.banner2_subtitulo %}
                     <p class="text-base md:text-xl font-light mb-8 max-w-2xl drop-shadow-lg animate-banner-text text-white/90" style="animation-delay: 0.1s;">
-                        {{ loja.banner2_subtitulo }}
+                        {{ loja.banner2_subtitulo | replace('  ', '<br>') | safe }}
                     </p>
                     {% endif %}
                     
@@ -517,7 +524,7 @@
     <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color);">
         <div class="horizontal-container">
             <div class="intro-slide flex-shrink-0 w-[90vw] sm:w-[60vw] md:w-[45vw] lg:w-[40vw] flex flex-col justify-start md:justify-center pr-6 md:pr-12 relative pt-4 md:pt-0 fade-up">
-                <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[2rem] sm:text-4xl md:text-5xl lg:text-6xl leading-tight font-display tracking-tight break-words hyphens-auto w-full">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
+                <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[2rem] sm:text-4xl md:text-5xl lg:text-6xl leading-tight font-display tracking-tight">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
                 <div class="mt-6 md:mt-8 flex items-center gap-4 opacity-50">
                     <span class="text-[10px] uppercase tracking-[0.2em] font-semibold">Deslize</span>
                     <i data-lucide="arrow-right" class="w-6 h-6 text-[var(--text-color)] animate-arrow"></i>
