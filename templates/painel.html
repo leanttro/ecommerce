@@ -547,7 +547,12 @@
                             <img src="{{ loja.banner1_url }}" class="w-full h-32 object-cover rounded mb-2 border">
                             {% endif %}
                             <input type="file" name="bannerprincipal1" accept="image/*" class="text-sm mb-2 w-full">
-                            <input type="text" name="link1" value="{{ loja.linkbannerprincipal1 }}" placeholder="Link do Banner 1 (Ex: /categoria/promocao)" class="w-full border rounded p-2 text-sm">
+                            <input type="text" name="link1" value="{{ loja.linkbannerprincipal1 }}" placeholder="Link do Banner 1 (Ex: /categoria/promocao)" class="w-full border rounded p-2 text-sm mb-4">
+                            
+                            <label class="block text-xs font-bold mb-1 text-gray-600">Textos sobrepostos (Apenas Tema Institucional)</label>
+                            <input type="text" name="banner1_titulo" value="{{ loja.banner1_titulo or '' }}" placeholder="Título Principal" class="w-full border rounded p-2 text-sm mb-2">
+                            <input type="text" name="banner1_subtitulo" value="{{ loja.banner1_subtitulo or '' }}" placeholder="Subtítulo" class="w-full border rounded p-2 text-sm mb-2">
+                            <input type="text" name="banner1_botao" value="{{ loja.banner1_botao or '' }}" placeholder="Texto do Botão" class="w-full border rounded p-2 text-sm">
                         </div>
                         <div class="bg-gray-50 p-4 rounded border border-gray-200">
                             <label class="block text-sm font-bold mb-2">Banner Principal 2</label>
@@ -555,7 +560,12 @@
                             <img src="{{ loja.banner2_url }}" class="w-full h-32 object-cover rounded mb-2 border">
                             {% endif %}
                             <input type="file" name="bannerprincipal2" accept="image/*" class="text-sm mb-2 w-full">
-                            <input type="text" name="link2" value="{{ loja.linkbannerprincipal2 }}" placeholder="Link do Banner 2" class="w-full border rounded p-2 text-sm">
+                            <input type="text" name="link2" value="{{ loja.linkbannerprincipal2 }}" placeholder="Link do Banner 2" class="w-full border rounded p-2 text-sm mb-4">
+
+                            <label class="block text-xs font-bold mb-1 text-gray-600">Textos sobrepostos (Apenas Tema Institucional)</label>
+                            <input type="text" name="banner2_titulo" value="{{ loja.banner2_titulo or '' }}" placeholder="Título Principal" class="w-full border rounded p-2 text-sm mb-2">
+                            <input type="text" name="banner2_subtitulo" value="{{ loja.banner2_subtitulo or '' }}" placeholder="Subtítulo" class="w-full border rounded p-2 text-sm mb-2">
+                            <input type="text" name="banner2_botao" value="{{ loja.banner2_botao or '' }}" placeholder="Texto do Botão" class="w-full border rounded p-2 text-sm">
                         </div>
                     </div>
 

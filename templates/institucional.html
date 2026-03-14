@@ -196,6 +196,15 @@
     .animate-arrow {
         animation: arrow-move 2s ease-in-out infinite;
     }
+
+    @keyframes bannerFadeUp {
+        0% { opacity: 0; transform: translateY(30px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-banner-text { 
+        animation: bannerFadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+        opacity: 0;
+    }
 </style>
 </head>
 <body>
@@ -271,16 +280,92 @@
 {% for secao in layout %}
 
     {% if secao == 'banner' and not loja.ocultar_banner %}
-    <section class="h-[60vh] md:h-[85vh] w-full relative overflow-hidden" id="hero">
-        <div class="hero-overlay absolute inset-0 bg-black/10 z-10 pointer-events-none"></div>
-        {% if loja.banner1 %}
-        <a href="{{ loja.linkbannerprincipal1 or '#' }}" class="block w-full h-full">
-            <img src="{{ loja.banner1 }}" class="hero-img w-full h-full object-cover object-center transform scale-105">
-        </a>
-        {% else %}
-        <div class="w-full h-full flex items-center justify-center bg-gray-50">
-            <h1 class="text-2xl font-light opacity-30">Seu Banner Aqui</h1>
+    <section class="h-[60vh] md:h-[85vh] w-full relative overflow-hidden group" id="hero">
+        <div id="banner-slider" class="flex transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] w-full h-full">
+            
+            {% if loja.banner1 %}
+            <div class="w-full h-full flex-none relative">
+                {% if loja.banner1_titulo or loja.banner1_subtitulo or loja.banner1_botao %}
+                <div class="absolute inset-0 bg-black/40 z-10 pointer-events-none"></div>
+                {% endif %}
+                
+                <img src="{{ loja.banner1 }}" class="hero-img w-full h-full object-cover object-center transform scale-105">
+                
+                {% if loja.banner1_titulo or loja.banner1_subtitulo or loja.banner1_botao %}
+                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
+                    
+                    {% if loja.banner1_titulo %}
+                    <h2 class="text-4xl md:text-6xl lg:text-7xl font-display uppercase tracking-tighter mb-4 drop-shadow-xl animate-banner-text" style="color: #ffffff;">
+                        {{ loja.banner1_titulo }}
+                    </h2>
+                    {% endif %}
+                    
+                    {% if loja.banner1_subtitulo %}
+                    <p class="text-base md:text-xl font-light mb-8 max-w-2xl drop-shadow-lg animate-banner-text text-white/90" style="animation-delay: 0.1s;">
+                        {{ loja.banner1_subtitulo }}
+                    </p>
+                    {% endif %}
+                    
+                    {% if loja.banner1_botao %}
+                    <a href="{{ loja.linkbannerprincipal1 or '#' }}" class="animate-banner-text px-8 py-4 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] transition-all hover:scale-105 pointer-events-auto shadow-2xl border" style="background-color: var(--primary); color: var(--bg-color); border-color: var(--primary); animation-delay: 0.2s;">
+                        {{ loja.banner1_botao }}
+                    </a>
+                    {% endif %}
+
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if loja.banner2 %}
+            <div class="w-full h-full flex-none relative">
+                {% if loja.banner2_titulo or loja.banner2_subtitulo or loja.banner2_botao %}
+                <div class="absolute inset-0 bg-black/40 z-10 pointer-events-none"></div>
+                {% endif %}
+                
+                <img src="{{ loja.banner2 }}" class="hero-img w-full h-full object-cover object-center transform scale-105">
+                
+                {% if loja.banner2_titulo or loja.banner2_subtitulo or loja.banner2_botao %}
+                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
+                    
+                    {% if loja.banner2_titulo %}
+                    <h2 class="text-4xl md:text-6xl lg:text-7xl font-display uppercase tracking-tighter mb-4 drop-shadow-xl animate-banner-text" style="color: #ffffff;">
+                        {{ loja.banner2_titulo }}
+                    </h2>
+                    {% endif %}
+                    
+                    {% if loja.banner2_subtitulo %}
+                    <p class="text-base md:text-xl font-light mb-8 max-w-2xl drop-shadow-lg animate-banner-text text-white/90" style="animation-delay: 0.1s;">
+                        {{ loja.banner2_subtitulo }}
+                    </p>
+                    {% endif %}
+                    
+                    {% if loja.banner2_botao %}
+                    <a href="{{ loja.linkbannerprincipal2 or '#' }}" class="animate-banner-text px-8 py-4 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] transition-all hover:scale-105 pointer-events-auto shadow-2xl border border-white" style="background-color: transparent; color: #ffffff; animation-delay: 0.2s;">
+                        {{ loja.banner2_botao }}
+                    </a>
+                    {% endif %}
+
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if not loja.banner1 and not loja.banner2 %}
+            <div class="w-full h-full flex items-center justify-center bg-gray-50">
+                <h1 class="text-2xl font-light opacity-30">Seu Banner Aqui</h1>
+            </div>
+            {% endif %}
+
         </div>
+
+        {% if loja.banner1 and loja.banner2 %}
+        <button onclick="moveBannerInstitucional(-1)" class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-30 p-3 md:p-4 rounded-full shadow-xl hover:bg-white/20 transition opacity-0 group-hover:opacity-100 flex items-center justify-center backdrop-blur-sm border border-white/20 text-white">
+            <i data-lucide="chevron-left" class="w-6 h-6"></i>
+        </button>
+        <button onclick="moveBannerInstitucional(1)" class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-30 p-3 md:p-4 rounded-full shadow-xl hover:bg-white/20 transition opacity-0 group-hover:opacity-100 flex items-center justify-center backdrop-blur-sm border border-white/20 text-white">
+            <i data-lucide="chevron-right" class="w-6 h-6"></i>
+        </button>
         {% endif %}
     </section>
     {% endif %}
@@ -330,7 +415,7 @@
                                 {% else %}
                                 <span class="inline-block h-[0.65em] w-0 group-hover:w-[1.8em] overflow-hidden transition-all duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] rounded-lg mx-0 md:group-hover:mx-3 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle bg-[rgba(0,0,0,0.05)]"></span>
                                 {% endif %}
-                                <span>{% if has_space %}&nbsp;{% endif %}{{ p2 }}</span>
+                                <span>{% if has_space %} {% endif %}{{ p2 }}</span>
                             </h3>
                         </a>
                     {% endif %}
@@ -486,11 +571,11 @@
         </div>
         
         <div class="relative group">
-            <button onclick="scrollSocial(-1)" class="absolute -left-2 md:-left-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full shadow-xl hover:scale-110 transition flex border" style="background-color: var(--bg-color); border-color: rgba(0,0,0,0.1); color: var(--text-color);">
+            <button onclick="scrollSocial(-1)" class="absolute left-0 md:-left-6 top-1/2 -translate-y-1/2 z-20 p-3 md:p-4 rounded-full shadow-xl hover:scale-110 transition flex border backdrop-blur-sm" style="background-color: rgba(255,255,255,0.8); border-color: rgba(0,0,0,0.1); color: var(--text-color);">
                 <i data-lucide="arrow-left" class="w-5 h-5"></i>
             </button>
 
-            <div class="flex gap-8 overflow-x-auto snap-x scroll-smooth pb-6 custom-scrollbar px-2" id="social-container">
+            <div class="flex gap-8 overflow-x-auto snap-x scroll-smooth pb-8 custom-scrollbar px-6 md:px-2" id="social-container">
                 {% if loja.logos_clientes %}
                     {% for link in loja.logos_clientes.split() %}
                         {% if link.strip() %}
@@ -508,7 +593,7 @@
                 {% endif %}
             </div>
 
-            <button onclick="scrollSocial(1)" class="absolute -right-2 md:-right-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full shadow-xl hover:scale-110 transition flex border" style="background-color: var(--bg-color); border-color: rgba(0,0,0,0.1); color: var(--text-color);">
+            <button onclick="scrollSocial(1)" class="absolute right-0 md:-right-6 top-1/2 -translate-y-1/2 z-20 p-3 md:p-4 rounded-full shadow-xl hover:scale-110 transition flex border backdrop-blur-sm" style="background-color: rgba(255,255,255,0.8); border-color: rgba(0,0,0,0.1); color: var(--text-color);">
                 <i data-lucide="arrow-right" class="w-5 h-5"></i>
             </button>
         </div>
@@ -736,6 +821,25 @@
             }
         );
     });
+
+    let currentBannerIndex = 0;
+    function moveBannerInstitucional(direction) {
+        const slider = document.getElementById('banner-slider');
+        if (!slider) return;
+        const slides = slider.children.length;
+        if (slides <= 1) return;
+        
+        currentBannerIndex += direction;
+        if (currentBannerIndex >= slides) currentBannerIndex = 0;
+        if (currentBannerIndex < 0) currentBannerIndex = slides - 1;
+        
+        slider.style.transform = `translateX(-${currentBannerIndex * 100}%)`;
+    }
+
+    setInterval(() => {
+        const slider = document.getElementById('banner-slider');
+        if(slider && slider.children.length > 1) moveBannerInstitucional(1);
+    }, 6000);
 </script>
 </body>
 </html>
