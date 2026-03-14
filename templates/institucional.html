@@ -32,9 +32,10 @@
     h1, h2, h3, .font-display { 
         font-family: 'Archivo Black', sans-serif; 
         text-transform: uppercase;
-        word-break: normal !important;
-        overflow-wrap: normal !important;
-        hyphens: none !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        -webkit-hyphens: auto !important;
+        hyphens: auto !important;
         white-space: normal !important;
         letter-spacing: -0.02em;
     }
@@ -202,12 +203,28 @@
         100% { opacity: 1; transform: translateY(0); }
     }
     .animate-banner-text { 
-        animation: bannerFadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
         opacity: 0;
+        transform: translateY(30px);
+    }
+    .start-hero-anim .animate-banner-text {
+        animation: bannerFadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 </style>
 </head>
 <body>
+
+<div id="chic-preloader" class="fixed inset-0 z-[9999] flex items-center justify-center transition-transform duration-1000" style="background-color: var(--bg-color);">
+    <div class="preloader-content text-center transform scale-90 opacity-0 flex flex-col items-center justify-center">
+        {% if loja.logo %}
+            <img src="{{ loja.logo }}" class="h-20 md:h-28 w-auto object-contain mx-auto" style="filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.05));">
+        {% else %}
+            <span class="text-4xl md:text-6xl font-bold tracking-tighter text-[var(--text-color)] font-display">{{ loja.nome }}</span>
+        {% endif %}
+        <div class="mt-8 w-48 h-[2px] overflow-hidden bg-black/10 rounded-full">
+            <div class="h-full bg-[var(--primary)] preloader-progress origin-left scale-x-0"></div>
+        </div>
+    </div>
+</div>
 
 <header class="fixed top-0 w-full z-[1000] py-3 md:py-4">
     <div class="container mx-auto px-4 md:px-8">
@@ -292,7 +309,7 @@
                 <img src="{{ loja.banner1 }}" class="hero-img w-full h-full object-cover object-center transform scale-105">
                 
                 {% if loja.banner1_titulo or loja.banner1_subtitulo or loja.banner1_botao %}
-                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
+                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center md:justify-center pt-[25vh] md:pt-0 text-center px-6 pointer-events-none">
                     
                     {% if loja.banner1_titulo %}
                     <h2 class="text-4xl md:text-6xl lg:text-7xl font-display uppercase tracking-tighter mb-4 drop-shadow-xl animate-banner-text" style="color: #ffffff;">
@@ -326,7 +343,7 @@
                 <img src="{{ loja.banner2 }}" class="hero-img w-full h-full object-cover object-center transform scale-105">
                 
                 {% if loja.banner2_titulo or loja.banner2_subtitulo or loja.banner2_botao %}
-                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
+                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center md:justify-center pt-[25vh] md:pt-0 text-center px-6 pointer-events-none">
                     
                     {% if loja.banner2_titulo %}
                     <h2 class="text-4xl md:text-6xl lg:text-7xl font-display uppercase tracking-tighter mb-4 drop-shadow-xl animate-banner-text" style="color: #ffffff;">
@@ -500,7 +517,7 @@
     <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color);">
         <div class="horizontal-container">
             <div class="intro-slide flex-shrink-0 w-[90vw] sm:w-[60vw] md:w-[45vw] lg:w-[40vw] flex flex-col justify-start md:justify-center pr-6 md:pr-12 relative pt-4 md:pt-0 fade-up">
-                <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[2rem] sm:text-4xl md:text-5xl lg:text-6xl leading-tight font-display tracking-tight">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
+                <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[2rem] sm:text-4xl md:text-5xl lg:text-6xl leading-tight font-display tracking-tight break-words hyphens-auto w-full">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
                 <div class="mt-6 md:mt-8 flex items-center gap-4 opacity-50">
                     <span class="text-[10px] uppercase tracking-[0.2em] font-semibold">Deslize</span>
                     <i data-lucide="arrow-right" class="w-6 h-6 text-[var(--text-color)] animate-arrow"></i>
@@ -727,6 +744,50 @@
                 btn.disabled = false;
             }
         });
+    }
+
+    // Chic Preloader Animation
+    const preloader = document.getElementById('chic-preloader');
+    const preloaderContent = document.querySelector('.preloader-content');
+    const preloaderProgress = document.querySelector('.preloader-progress');
+    
+    if (preloader && preloaderContent) {
+        document.body.style.overflow = 'hidden';
+        window.scrollTo(0,0);
+        
+        const tlPreloader = gsap.timeline({
+            onComplete: () => {
+                preloader.style.display = 'none';
+                document.body.style.overflow = ''; 
+                document.getElementById('hero')?.classList.add('start-hero-anim');
+                ScrollTrigger.refresh();
+            }
+        });
+
+        tlPreloader.to(preloaderContent, {
+            opacity: 1,
+            scale: 1,
+            duration: 1.2,
+            ease: "power3.out"
+        })
+        .to(preloaderProgress, {
+            scaleX: 1,
+            duration: 1.5,
+            ease: "power2.inOut"
+        }, "-=0.5")
+        .to(preloaderContent, {
+            opacity: 0,
+            y: -30,
+            duration: 0.6,
+            ease: "power2.in"
+        })
+        .to(preloader, {
+            yPercent: -100,
+            duration: 1.2,
+            ease: "power4.inOut"
+        }, "-=0.1");
+    } else {
+        document.getElementById('hero')?.classList.add('start-hero-anim');
     }
 
     // GSAP ANIMATIONS FOR CHIC MOVEMENT
