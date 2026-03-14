@@ -8,21 +8,19 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Rye&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@1,800&display=swap" rel="stylesheet">
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Rye&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&display=swap');
     
     :root { 
         --primary: #E52521; 
         --bg-color: #111111;
         --text-color: #F8F9FA;
-        --parchment: #e3d3b3;
-        --dark-wood: #3e2723;
     }
     
     html, body { 
-        font-family: 'Rye', serif; 
+        font-family: 'Inter', sans-serif; 
         background-color: var(--bg-color);
         color: var(--text-color);
         overflow-x: hidden !important;
@@ -33,16 +31,12 @@
     }
 
     h1, h2, h3, .font-display { 
-        font-family: 'Rye', serif; 
+        font-family: 'Archivo Black', sans-serif; 
         text-transform: uppercase;
         word-break: normal !important;
         overflow-wrap: normal !important;
         hyphens: none !important;
         white-space: normal !important;
-    }
-
-    .font-bounty {
-        font-family: 'Rye', serif !important;
     }
 
     header {
@@ -159,7 +153,7 @@
         #loader-overlay .scene {
             transform: translateY(-100px) !important;
         }
-        #hero-magic-wrapper .relative.z-10 {
+        #hero .relative.z-10 {
             margin-top: 160px !important;
         }
     }
@@ -172,32 +166,17 @@
         align-self: stretch !important;
         margin-right: 4vw;
         position: relative;
-        border-radius: 4px;
+        border-radius: 24px;
         overflow: hidden;
         transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s;
         display: flex;
         flex-direction: column;
-        padding: 24px 16px 16px 16px;
-        background-color: var(--parchment);
+        padding: 16px;
+        background-color: var(--card-bg, var(--primary));
         cursor: pointer;
         transform: scale(0.85) translateY(30px) rotate(-3deg); 
         opacity: 0.3;
-        border: 6px solid var(--dark-wood);
-        box-shadow: inset 0 0 40px rgba(139, 69, 19, 0.4), 0 10px 20px rgba(0,0,0,0.5);
-    }
-
-    .case-card::before {
-        content: 'WANTED';
-        font-family: 'Rye', serif;
-        font-size: clamp(1.8rem, 5vw, 2.5rem);
-        text-align: center;
-        color: var(--dark-wood);
-        width: 100%;
-        display: block;
-        letter-spacing: 2px;
-        margin-bottom: 15px;
-        line-height: 1;
-        white-space: nowrap;
+        border: 2px solid rgba(255,255,255,0.05);
     }
 
     @media (max-width: 768px) {
@@ -217,19 +196,25 @@
     }
 
     .case-card:hover {
-        transform: scale(1.02) translateY(-8px) rotate(1deg) !important;
-        box-shadow: inset 0 0 40px rgba(139, 69, 19, 0.4), 0 20px 40px rgba(0,0,0,0.8);
+        transform: scale(1.02) translateY(-8px) !important;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         z-index: 10;
     }
+
+    .case-card:nth-child(1) { --card-bg: color-mix(in srgb, var(--primary) 90%, #000); }
+    .case-card:nth-child(2) { --card-bg: color-mix(in srgb, var(--primary) 70%, #1a1a1a); }
+    .case-card:nth-child(3) { --card-bg: color-mix(in srgb, var(--primary) 50%, #222); }
+    .case-card:nth-child(4) { --card-bg: color-mix(in srgb, var(--primary) 30%, #333); }
+    .case-card:nth-child(n+5) { --card-bg: color-mix(in srgb, var(--primary) 15%, #111); }
 
     .case-image-wrapper {
         width: 100%;
         flex: none;
         aspect-ratio: 1 / 1;
-        border-radius: 2px;
+        border-radius: 12px;
         overflow: hidden;
         position: relative;
-        border: 4px solid var(--dark-wood);
+        border: 2px solid #fff;
         background: #000;
     }
 
@@ -238,7 +223,7 @@
         height: 100%;
         object-fit: cover;
         transition: transform 1s ease, filter 0.5s ease, opacity 0.4s ease;
-        filter: sepia(0.6) contrast(1.2) brightness(0.9);
+        filter: brightness(0.95);
         position: absolute;
         top: 0;
         left: 0;
@@ -256,7 +241,7 @@
 
     .case-card:hover .case-image-wrapper img {
         transform: scale(1.08);
-        filter: sepia(0.2) contrast(1.1) brightness(1);
+        filter: brightness(1.1);
     }
 
     .case-card:hover .case-image-wrapper .img-hover {
@@ -269,47 +254,42 @@
 
     .case-info-new {
         flex-grow: 1;
-        padding-top: 15px;
-        padding-bottom: 5px;
+        padding-top: 18px;
+        padding-bottom: 8px;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
-        align-items: center;
-        text-align: center;
     }
 
     .case-title-new {
-        font-family: 'Rye', serif;
-        font-size: clamp(1.5rem, 3.5vw, 2.8rem);
-        line-height: 1;
+        font-family: 'Archivo Black', sans-serif;
+        font-size: clamp(1.8rem, 4vw, 3.2rem);
+        line-height: 0.85;
         text-transform: uppercase;
-        color: var(--dark-wood); 
-        margin-bottom: 5px;
+        color: #fff; 
+        margin-bottom: 0;
         word-break: break-word;
-        letter-spacing: 2px;
+        letter-spacing: -0.02em;
     }
 
     .case-subtitle-new {
-        font-family: 'Rye', serif;
-        font-size: clamp(1rem, 2.5vw, 1.5rem);
-        color: #8b0000;
+        font-family: 'Archivo Black', sans-serif;
+        font-size: clamp(0.9rem, 2vw, 1.3rem);
+        color: #fff;
         line-height: 1;
         text-transform: uppercase;
         display: flex;
         align-items: center;
         gap: 6px;
-        margin-top: auto;
-        letter-spacing: 1px;
-    }
-
-    .case-subtitle-new::before {
-        content: '฿';
-        font-family: 'Rye', serif;
-        font-weight: bold;
+        margin-top: 10px;
     }
 
     .icon-arrow-card {
-        display: none;
+        background: #fff;
+        color: #000;
+        border-radius: 50%;
+        padding: 4px;
+        display: inline-flex;
     }
 
     ::-webkit-scrollbar { width: 5px; }
@@ -339,7 +319,7 @@
         align-items: center;
         overflow: hidden;
         z-index: 999999;
-        font-family: 'Rye', serif;
+        font-family: 'Kanit', sans-serif;
         perspective: 1200px;
     }
 
@@ -377,6 +357,7 @@
         display: flex;
         font-size: clamp(3rem, 8vw, 8rem);
         font-weight: 800;
+        font-style: italic;
         text-transform: uppercase;
         letter-spacing: -0.04em;
         transform-style: preserve-3d;
@@ -491,7 +472,7 @@
         color: #fff;
         opacity: 0;
         transition: opacity 1s;
-        font-family: 'Rye', serif;
+        font-family: 'Inter', sans-serif;
         text-transform: uppercase;
         font-size: 14px;
         font-weight: bold;
@@ -647,14 +628,17 @@
     }
 
     .sm-3d-box {
-        background: var(--parchment);
-        border: 6px solid var(--dark-wood);
-        border-radius: 4px;
+        background: rgba(10, 10, 10, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
         padding: 3rem 2.5rem;
         transform-style: preserve-3d;
         box-shadow: 
             0 30px 60px rgba(0,0,0,0.8),
-            inset 0 0 40px rgba(139, 69, 19, 0.3);
+            inset 0 0 0 1px rgba(255,255,255,0.05),
+            0 0 40px color-mix(in srgb, var(--primary) 20%, transparent);
         transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
 
@@ -665,28 +649,29 @@
     }
 
     .sm-title {
-        font-family: 'Rye', serif;
+        font-family: 'Archivo Black', sans-serif;
         font-size: clamp(2rem, 5vw, 3.5rem);
         line-height: 1;
         text-transform: uppercase;
-        color: #8b0000;
-        text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        color: #fff;
+        text-shadow: 3px 3px 0px color-mix(in srgb, var(--primary) 60%, #000), 
+                     6px 6px 0px color-mix(in srgb, var(--primary) 30%, #000);
         margin-bottom: 1rem;
-        letter-spacing: 2px;
+        letter-spacing: -0.03em;
     }
 
     .sm-subtitle {
-        font-family: 'Rye', serif;
+        font-family: 'Inter', sans-serif;
         font-weight: 700;
         font-size: 0.9rem;
-        color: var(--parchment);
+        color: var(--primary);
         text-transform: uppercase;
         letter-spacing: 2px;
-        background: #8b0000;
+        background: color-mix(in srgb, var(--primary) 10%, transparent);
         padding: 0.5rem 1rem;
-        border-radius: 2px;
+        border-radius: 50px;
         display: inline-block;
-        border: 2px solid var(--dark-wood);
+        border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
     }
 
     .sm-input-group {
@@ -696,52 +681,55 @@
 
     .sm-input {
         width: 100%;
-        background: rgba(62, 39, 35, 0.05);
-        border: 2px solid rgba(62, 39, 35, 0.3);
-        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
         padding: 1.2rem;
-        color: var(--dark-wood);
-        font-family: 'Rye', serif;
-        font-weight: 600;
+        color: #fff;
+        font-family: 'Inter', sans-serif;
         font-size: 1rem;
         transition: all 0.3s ease;
+        box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
     }
 
     .sm-input:focus {
         outline: none;
-        border-color: #8b0000;
-        background: rgba(62, 39, 35, 0.1);
+        border-color: var(--primary);
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), 0 0 15px color-mix(in srgb, var(--primary) 40%, transparent);
     }
 
     .sm-input::placeholder {
-        color: rgba(62, 39, 35, 0.5);
+        color: rgba(255, 255, 255, 0.3);
         text-transform: uppercase;
         font-size: 0.85rem;
         letter-spacing: 1px;
-        font-weight: 700;
+        font-weight: 600;
     }
 
     .sm-submit-btn {
         transform: translateZ(50px);
         width: 100%;
-        background: #8b0000;
-        color: var(--parchment);
-        font-family: 'Rye', serif;
+        background: var(--primary);
+        color: #fff;
+        font-family: 'Archivo Black', sans-serif;
         font-size: 1.2rem;
         text-transform: uppercase;
         padding: 1.2rem;
-        border-radius: 2px;
-        border: 3px solid var(--dark-wood);
+        border-radius: 12px;
+        border: none;
         cursor: pointer;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        box-shadow: 0 10px 30px color-mix(in srgb, var(--primary) 40%, transparent),
+                    inset 0 2px 0 rgba(255,255,255,0.3);
         transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .sm-submit-btn:hover {
         transform: translateZ(50px) scale(1.02);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        box-shadow: 0 15px 40px color-mix(in srgb, var(--primary) 50%, transparent),
+                    inset 0 2px 0 rgba(255,255,255,0.4);
     }
 
     .sm-submit-btn:active {
@@ -755,26 +743,37 @@
         left: -100%;
         width: 50%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
         transform: skewX(-25deg);
         animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+        0% { left: -100%; }
+        20% { left: 200%; }
+        100% { left: 200%; }
     }
 
     .sm-ia-badge {
         position: absolute;
         top: -15px;
         right: -15px;
-        background: var(--dark-wood);
-        color: var(--parchment);
-        font-family: 'Rye', serif;
+        background: #fff;
+        color: #000;
+        font-family: 'Archivo Black', sans-serif;
         font-size: 0.8rem;
         padding: 10px 15px;
-        border-radius: 2px;
+        border-radius: 50px;
         transform: translateZ(80px) rotate(10deg);
         box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        border: 2px solid #8b0000;
+        border: 2px solid var(--primary);
         z-index: 20;
         animation: floatBadge 3s ease-in-out infinite;
+    }
+
+    @keyframes floatBadge {
+        0%, 100% { transform: translateZ(80px) rotate(10deg) translateY(0); }
+        50% { transform: translateZ(80px) rotate(12deg) translateY(-10px); }
     }
 
     .sm-coin {
@@ -787,13 +786,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: rgba(0,0,0,0.7);
-        font-family: 'Rye', serif;
-        font-weight: 900;
-        font-size: 1.8rem;
+        color: rgba(0,0,0,0.5);
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 1.5rem;
         transform-style: preserve-3d;
         z-index: 5;
-        border: 2px solid #b8860b;
     }
 
     .sm-coin::after {
@@ -831,35 +828,29 @@
 <header class="fixed top-0 w-full z-[1000] py-2 md:py-3">
     <div class="container mx-auto px-4 md:px-8">
         <div class="flex flex-row justify-between items-center w-full">
-            <a href="/{{ loja.slug_url }}/" class="block">
-                {% if loja.logo %}
-                    <img src="{{ loja.logo }}" class="h-10 md:h-14 w-auto object-contain">
-                {% else %}
-                    <span class="text-2xl md:text-3xl font-bold tracking-tighter text-[var(--text-color)]">{{ loja.nome }}</span>
-                {% endif %}
+            <a href="#" class="block">
+                <span class="text-2xl md:text-3xl font-bold tracking-tighter text-[var(--text-color)]">Mugiwara Crew</span>
             </a>
             
             <nav class="hidden md:flex items-center gap-12 text-xs font-bold uppercase tracking-widest opacity-90">
-                {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
+                <a href="#sobre" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>
                 
-                {% if not loja.ocultar_produtos %}
                 <div class="relative group py-2">
                     <a href="#portfolio" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 cursor-pointer">
                         Bounties <i data-lucide="chevron-down" class="w-3 h-3"></i>
                     </a>
                     <div class="absolute left-0 top-full mt-2 w-56 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[999] flex flex-col shadow-2xl overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(255,255,255,0.1);">
-                        <a href="/{{ loja.slug_url }}/#portfolio" class="px-5 py-3 transition hover:opacity-70 font-bold" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">Toda a Frota</a>
-                        {% for cat in categorias %}
-                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-5 py-3 transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">{{ cat.nome }}</a>
-                        {% endfor %}
+                        <a href="#portfolio" class="px-5 py-3 transition hover:opacity-70 font-bold" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">Toda a Frota</a>
+                        <a href="#portfolio" class="px-5 py-3 transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">East Blue</a>
+                        <a href="#portfolio" class="px-5 py-3 transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">Grand Line</a>
+                        <a href="#portfolio" class="px-5 py-3 transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">Novo Mundo</a>
                     </div>
                 </div>
-                {% endif %}
                 
                 <a href="#contato" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
             </nav>
 
-            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="flex items-center">
+            <a href="#" class="flex items-center">
                 <div class="md:hidden p-3 rounded-full border border-white/10 hover:bg-white/5 transition">
                     <i data-lucide="message-circle" class="w-5 h-5 text-[var(--text-color)]"></i>
                 </div>
@@ -871,247 +862,166 @@
 
         <nav class="md:hidden flex flex-col items-center gap-4 mt-6 text-[11px] font-bold uppercase tracking-widest opacity-90 border-t border-white/5 pt-6 w-full">
             <div class="flex flex-wrap justify-center gap-6 w-full">
-                {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-80 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
+                <a href="#sobre" class="opacity-80 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>
                 
-                {% if not loja.ocultar_produtos %}
                 <div class="relative group flex flex-col items-center">
                     <button class="opacity-80 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 uppercase tracking-widest" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">
                         Bounties <i data-lucide="chevron-down" class="w-3 h-3"></i>
                     </button>
                 </div>
-                {% endif %}
                 
                 <a href="#contato" class="opacity-80 hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
             </div>
             
-            {% if not loja.ocultar_produtos %}
             <div id="mobile-cat-menu" class="hidden flex-col items-center rounded mt-2 w-[80vw] text-center shadow-lg overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(255,255,255,0.1);">
-                <a href="/{{ loja.slug_url }}/#portfolio" class="px-4 py-3 w-full transition hover:opacity-70 font-bold" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">Toda a Frota</a>
-                {% for cat in categorias %}
-                <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-4 py-3 w-full transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">{{ cat.nome }}</a>
-                {% endfor %}
+                <a href="#portfolio" class="px-4 py-3 w-full transition hover:opacity-70 font-bold" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">Toda a Frota</a>
+                <a href="#portfolio" class="px-4 py-3 w-full transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">East Blue</a>
+                <a href="#portfolio" class="px-4 py-3 w-full transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">Grand Line</a>
+                <a href="#portfolio" class="px-4 py-3 w-full transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">Novo Mundo</a>
             </div>
-            {% endif %}
         </nav>
     </div>
 </header>
 
-{% for secao in layout %}
-
-    {% if secao == 'banner' and not loja.ocultar_banner %}
-    <section id="hero-magic-wrapper" class="relative w-full bg-[#050505]" style="height: 500vh;">
-        <div id="hero-pin" class="h-screen w-full sticky top-0 overflow-hidden flex items-center justify-center" style="perspective: 1200px;">
-            <canvas id="data-canvas" class="absolute inset-0 w-full h-full z-0 opacity-30"></canvas>
-
-            <div class="absolute top-24 left-1/2 transform -translate-x-1/2 z-50 text-center flex flex-col items-center">
-                <span class="text-xs md:text-sm tracking-[0.3em] text-white/50 uppercase font-bold mb-2">Recompensa Atual</span>
-                <div class="text-4xl md:text-7xl font-bounty text-[var(--primary)] drop-shadow-[0_0_15px_rgba(var(--primary),0.5)] transition-colors duration-500 flex items-center gap-2">
-                    <span>฿</span> <span id="bounty-counter">3.000.000.000</span>
-                </div>
-            </div>
-
-            <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center opacity-70 animate-bounce">
-                <span class="text-xs tracking-widest text-white mb-2 uppercase">Role para Descobrir</span>
-                <i data-lucide="chevrons-down" class="w-6 h-6 text-white"></i>
-            </div>
-
-            <div id="hero-banner-wrapper" class="absolute inset-0 w-full h-full z-20 opacity-0">
-                <div class="w-full h-full relative" id="magic-slides-container">
-                    
-                    <div class="magic-slide absolute inset-0 flex items-center justify-center z-50" data-color="#E52521" data-bounty="3000000000">
-                        <div class="absolute text-[25vw] font-display text-white/5 whitespace-nowrap select-none tracking-tighter" style="transform: translateZ(-200px);">LUFFY</div>
-                        <img src="https://images.unsplash.com/photo-1612487528505-d2338264c821?auto=format&fit=crop&w=500" alt="Luffy" class="char-img h-[60vh] object-contain drop-shadow-[0_20px_50px_rgba(229,37,33,0.5)]" style="mix-blend-mode: screen;">
-                        <h2 class="absolute bottom-32 text-4xl md:text-6xl font-bounty text-white drop-shadow-2xl">MONKEY D. LUFFY</h2>
-                    </div>
-
-                    <div class="magic-slide absolute inset-0 flex items-center justify-center opacity-0 scale-90 z-40" data-color="#10B981" data-bounty="1111000000">
-                        <div class="absolute text-[25vw] font-display text-white/5 whitespace-nowrap select-none tracking-tighter" style="transform: translateZ(-200px);">ZORO</div>
-                        <img src="https://images.unsplash.com/photo-1542382257-80ddcbcd88e9?auto=format&fit=crop&w=500" alt="Zoro" class="char-img h-[60vh] object-contain drop-shadow-[0_20px_50px_rgba(16,185,129,0.5)]" style="mix-blend-mode: screen;">
-                        <h2 class="absolute bottom-32 text-4xl md:text-6xl font-bounty text-white drop-shadow-2xl">RORONOA ZORO</h2>
-                    </div>
-
-                    <div class="magic-slide absolute inset-0 flex items-center justify-center opacity-0 scale-90 z-30" data-color="#F97316" data-bounty="366000000">
-                        <div class="absolute text-[25vw] font-display text-white/5 whitespace-nowrap select-none tracking-tighter" style="transform: translateZ(-200px);">NAMI</div>
-                        <img src="https://images.unsplash.com/photo-1595878715977-2e8f8df18ea8?auto=format&fit=crop&w=500" alt="Nami" class="char-img h-[60vh] object-contain drop-shadow-[0_20px_50px_rgba(249,115,22,0.5)]" style="mix-blend-mode: screen;">
-                        <h2 class="absolute bottom-32 text-4xl md:text-6xl font-bounty text-white drop-shadow-2xl">GATA LADRA NAMI</h2>
-                    </div>
-
-                    <div class="magic-slide absolute inset-0 flex items-center justify-center opacity-0 scale-90 z-20" data-color="#EAB308" data-bounty="500000000">
-                        <div class="absolute text-[25vw] font-display text-white/5 whitespace-nowrap select-none tracking-tighter" style="transform: translateZ(-200px);">USOPP</div>
-                        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=500" alt="Usopp" class="char-img h-[60vh] object-contain drop-shadow-[0_20px_50px_rgba(234,179,8,0.5)]" style="mix-blend-mode: screen;">
-                        <h2 class="absolute bottom-32 text-4xl md:text-6xl font-bounty text-white drop-shadow-2xl">GOD USOPP</h2>
-                    </div>
-
-                    <div class="magic-slide absolute inset-0 flex items-center justify-center opacity-0 scale-90 z-10" data-color="#3B82F6" data-bounty="1032000000">
-                        <div class="absolute text-[25vw] font-display text-white/5 whitespace-nowrap select-none tracking-tighter" style="transform: translateZ(-200px);">SANJI</div>
-                        <img src="https://images.unsplash.com/photo-1500964757637-c85e8a162699?auto=format&fit=crop&w=500" alt="Sanji" class="char-img h-[60vh] object-contain drop-shadow-[0_20px_50px_rgba(59,130,246,0.5)]" style="mix-blend-mode: screen;">
-                        <h2 class="absolute bottom-32 text-4xl md:text-6xl font-bounty text-white drop-shadow-2xl">PERNA NEGRA SANJI</h2>
-                    </div>
-                </div>
-            </div>
-
-            <div id="bubbles-container" class="absolute inset-0 z-30 pointer-events-none overflow-hidden"></div>
-        </div>
-    </section>
-    {% endif %}
-
-    {% if secao == 'categorias' and not loja.ocultar_categorias %}
-    <section class="py-16 md:py-24 border-b border-[rgba(255,255,255,0.1)] w-full relative" id="locomotive-section" style="background-color: var(--bg-color);">
-        <div class="container mx-auto px-4 md:px-8 relative">
-
-            <div class="flex flex-col w-full relative border-t border-[rgba(255,255,255,0.1)]" id="locomotive-categories">
-                {% set cat_selecionada = request.args.get('categoria') %}
-                
-                {% for cat in categorias %}
-                    {% if not cat_selecionada or cat.id|string == cat_selecionada|string %}
-                        {% set cat_img = namespace(url='') %}
-                        {% for p in produtos %}
-                            {% if (p.categoria_id == cat.id or p.categoria == cat.nome or p.categoria == cat.id) and cat_img.url == '' %}
-                                {% set cat_img.url = p.imagem %}
-                            {% endif %}
-                        {% endfor %}
-                        
-                        {% set words = cat.nome.split(' ') %}
-                        {% if words|length > 1 %}
-                            {% set mid = (words|length / 2) | int %}
-                            {% set p1 = words[:mid] | join(' ') %}
-                            {% set p2 = words[mid:] | join(' ') %}
-                            {% set has_space = true %}
-                        {% else %}
-                            {% set mid = (cat.nome|length / 2) | int %}
-                            {% set p1 = cat.nome[:mid] %}
-                            {% set p2 = cat.nome[mid:] %}
-                            {% set has_space = false %}
-                        {% endif %}
-
-                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="group flex items-center justify-center py-8 md:py-10 border-b border-[rgba(255,255,255,0.1)] transition-colors duration-300 relative w-full overflow-hidden px-4">
-                            <h3 class="flex flex-wrap items-center justify-center text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display text-center m-0 p-0" style="color: var(--text-color);">
-                                <span>{{ p1 }}</span>
-                                {% if cat_img.url != '' %}
-                                <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle">
-                                    <img src="{{ cat_img.url }}" class="absolute top-0 left-0 w-full h-full object-cover">
-                                </span>
-                                {% else %}
-                                <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle bg-[rgba(255,255,255,0.1)]"></span>
-                                {% endif %}
-                                <span>{% if has_space %}&nbsp;{% endif %}{{ p2 }}</span>
-                            </h3>
-                        </a>
-                    {% endif %}
-                {% endfor %}
-                
-                {% if cat_selecionada %}
-                <div class="mt-12 flex justify-center w-full">
-                    <a href="/{{ loja.slug_url }}/#locomotive-section" class="px-8 py-4 rounded-full border text-[var(--text-color)] font-bold tracking-widest uppercase text-xs hover:bg-[var(--text-color)] hover:text-[var(--bg-color)] transition-all" style="border-color: var(--text-color);">
-                        Ver Toda a Frota
-                    </a>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-    </section>
-    {% endif %}
-
-    {% if secao == 'sobre' and not loja.ocultar_sobre %}
-    <section class="w-full relative bg-[#050505] overflow-hidden" id="sobre">
-        <div class="h-screen w-full relative" id="sobre-container">
-            <div class="absolute inset-0 w-full h-full transform scale-125 origin-center" id="sobre-bg-img">
-                <img src="{{ loja.sobre_imagem_url or 'https://images.unsplash.com/photo-1500964757637-c85e8a162699?auto=format&fit=crop&q=80&w=1000' }}" class="w-full h-full object-cover filter brightness-50 sepia-[.3]">
-            </div>
-            <div class="absolute inset-0 bg-black/60"></div>
-            <div class="absolute inset-0 flex items-center justify-center p-8 z-10">
-                <div class="max-w-5xl text-center opacity-0 translate-y-20" id="sobre-content">
-                    <h2 class="text-3xl md:text-5xl font-display text-white mb-8 uppercase tracking-tighter">{{ loja.sobre_titulo or 'Nossa Frota' }}</h2>
-                    <p class="text-lg md:text-xl text-gray-300 leading-relaxed font-light" id="sobre-desc-text">
-                        {{ loja.sobre_texto or 'Navegamos os mares mais perigosos em busca do lendário tesouro deixado pelo antigo Rei dos Piratas. Não somos apenas uma tripulação, somos a nova era.' }}
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-    {% endif %}
-
-    {% if secao == 'banners_menores' and not loja.ocultar_banners_menores %}
-    <section class="py-16 w-full" style="background-color: var(--bg-color);">
-        <div class="container mx-auto px-8 max-w-full">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-full">
-                {% if loja.bannermenor1 %}
-                <a href="{{ loja.linkbannermenor1 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl w-full">
-                    <img src="{{ loja.bannermenor1 }}" class="w-full h-auto object-cover">
-                </a>
-                {% endif %}
-                {% if loja.bannermenor2 %}
-                <a href="{{ loja.linkbannermenor2 or '#' }}" class="block overflow-hidden rounded-2xl hover:opacity-90 transition shadow-xl w-full">
-                    <img src="{{ loja.bannermenor2 }}" class="w-full h-auto object-cover">
-                </a>
-                {% endif %}
-            </div>
-        </div>
-    </section>
-    {% endif %}
-
-    {% if secao == 'produtos' and not loja.ocultar_produtos %}
-    <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color); overflow: hidden;">
+<section class="h-[70vh] md:h-screen w-full relative overflow-hidden bg-[#050505]" id="hero" style="perspective: 1200px;">
+    <canvas id="data-canvas" class="absolute inset-0 w-full h-full z-10 opacity-30"></canvas>
+    <div id="hero-banner-wrapper" class="absolute inset-0 w-full h-full z-20 opacity-0 flex items-center justify-center bg-[#050505]" style="transform: translateZ(-300px) scale(0.8);">
         
-        <div class="container mx-auto px-6 md:px-10 mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[3rem] sm:text-5xl md:text-7xl font-display uppercase tracking-tighter leading-none m-0 font-bounty">
-                {{ loja.titulo_produtos or 'WANTED POSTERS' }}
-            </h2>
+        <div class="absolute inset-0 flex flex-col justify-center gap-2 opacity-[0.12] pointer-events-none overflow-hidden z-0" style="font-family: 'Archivo Black', sans-serif;">
+            <div class="whitespace-nowrap text-[15vw] leading-none tracking-tighter text-white" style="animation: scrollMarquee 25s linear infinite;">PIRATAS GRAND LINE PIRATAS GRAND LINE</div>
+            <div class="whitespace-nowrap text-[15vw] leading-none tracking-tighter text-transparent" style="animation: scrollMarquee 35s linear infinite reverse; -webkit-text-stroke: 2px var(--primary);">BERRIES TESOURO BERRIES TESOURO</div>
+            <div class="whitespace-nowrap text-[15vw] leading-none tracking-tighter text-white" style="animation: scrollMarquee 20s linear infinite;">WANTED DEAD OR ALIVE WANTED DEAD OR ALIVE</div>
         </div>
 
-        <div class="horizontal-container" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
-            {% for p in produtos %}
-            <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
-                <div class="case-image-wrapper">
-                    {% if p.imagem1 %}
-                    <img src="{{ p.imagem1 }}" alt="{{ p.nome }}" class="img-hover">
-                    {% elif p.imagem_secundaria %}
-                    <img src="{{ p.imagem_secundaria }}" alt="{{ p.nome }}" class="img-hover">
-                    {% elif p.imagem2 %}
-                    <img src="{{ p.imagem2 }}" alt="{{ p.nome }}" class="img-hover">
-                    {% endif %}
-                    <img src="{{ p.imagem }}" alt="{{ p.nome }}" class="img-main">
-                </div>
-                <div class="case-info-new">
-                    <h3 class="case-title-new">{{ p.nome }}</h3>
-                    <div class="case-subtitle-new">
-                        {% if p.preco %}
-                            {{ p.preco }}
-                        {% else %}
-                            RECOMPENSA OCULTA
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% else %}
-            <div class="flex-shrink-0 w-[70vw] h-[500px] mr-[5vw] flex items-center justify-center border rounded-2xl" style="border-color: var(--text-color);">
-                <p class="text-xl font-bold uppercase tracking-widest" style="color: var(--text-color); opacity: 0.5;">Nenhum cartaz encontrado.</p>
-            </div>
-            {% endfor %}
+        <div class="relative z-10 flex flex-col items-center text-center px-4 w-full mt-10">
+            <h1 class="font-display text-white text-[clamp(3rem,8vw,8rem)] leading-[0.85] tracking-tighter uppercase mb-6 drop-shadow-2xl hero-title" style="text-shadow: 0 20px 40px rgba(0,0,0,0.8);">
+                O ONE PIECE<br>
+                <span style="color: var(--primary);">É REAL.</span>
+            </h1>
+            <p class="text-gray-300 text-[clamp(1rem,2vw,1.5rem)] font-light max-w-3xl mx-auto uppercase tracking-widest hero-subtitle">
+                A jornada definitiva para conquistar a Grand Line e o maior tesouro do mundo.
+            </p>
+            <a href="#contato" class="mt-10 bg-[var(--primary)] text-white px-8 py-4 rounded-full text-sm font-bold uppercase tracking-widest hover:scale-105 transition shadow-[0_10px_30px_rgba(229,37,33,0.3)] hero-title border border-white/20">
+                Entrar para o Bando
+            </a>
         </div>
-    </section>
-    {% endif %}
 
-{% endfor %}
+        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505] pointer-events-none z-20"></div>
 
-{% if loja.logos_clientes %}
-<section class="client-marquee-wrapper">
-    <div class="client-marquee-track">
-        {% for logo in loja.logos_clientes.split() %}
-            {% if logo.strip() %}
-            <img src="{{ logo.strip() }}" alt="Cliente" onerror="this.style.display='none'">
-            {% endif %}
-        {% endfor %}
-    </div>
-    <div class="client-marquee-track">
-        {% for logo in loja.logos_clientes.split() %}
-            {% if logo.strip() %}
-            <img src="{{ logo.strip() }}" alt="Cliente" onerror="this.style.display='none'">
-            {% endif %}
-        {% endfor %}
+        <div id="bubbles-container" class="absolute inset-0 z-30 pointer-events-none overflow-hidden"></div>
     </div>
 </section>
-{% endif %}
+
+<section class="py-16 md:py-24 border-b border-[rgba(255,255,255,0.1)] w-full relative" id="locomotive-section" style="background-color: var(--bg-color);">
+    <div class="container mx-auto px-4 md:px-8 relative">
+
+        <div class="flex flex-col w-full relative border-t border-[rgba(255,255,255,0.1)]" id="locomotive-categories">
+            
+            <a href="#portfolio" class="group flex items-center justify-center py-8 md:py-10 border-b border-[rgba(255,255,255,0.1)] transition-colors duration-300 relative w-full overflow-hidden px-4">
+                <h3 class="flex flex-wrap items-center justify-center text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display text-center m-0 p-0" style="color: var(--text-color);">
+                    <span>EAST</span>
+                    <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle bg-[rgba(255,255,255,0.1)]"></span>
+                    <span>&nbsp;BLUE</span>
+                </h3>
+            </a>
+
+            <a href="#portfolio" class="group flex items-center justify-center py-8 md:py-10 border-b border-[rgba(255,255,255,0.1)] transition-colors duration-300 relative w-full overflow-hidden px-4">
+                <h3 class="flex flex-wrap items-center justify-center text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display text-center m-0 p-0" style="color: var(--text-color);">
+                    <span>GRAND</span>
+                    <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle bg-[rgba(255,255,255,0.1)]"></span>
+                    <span>&nbsp;LINE</span>
+                </h3>
+            </a>
+
+            <a href="#portfolio" class="group flex items-center justify-center py-8 md:py-10 border-b border-[rgba(255,255,255,0.1)] transition-colors duration-300 relative w-full overflow-hidden px-4">
+                <h3 class="flex flex-wrap items-center justify-center text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display text-center m-0 p-0" style="color: var(--text-color);">
+                    <span>NOVO</span>
+                    <span class="inline-block h-[0.7em] w-0 group-hover:w-[1.6em] overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] rounded-xl mx-0 md:group-hover:mx-4 group-hover:mx-2 relative transform translate-y-[-0.05em] align-middle bg-[rgba(255,255,255,0.1)]"></span>
+                    <span>&nbsp;MUNDO</span>
+                </h3>
+            </a>
+            
+        </div>
+    </div>
+</section>
+
+<section class="w-full relative bg-[#050505] overflow-hidden" id="sobre">
+    <div class="h-screen w-full relative" id="sobre-container">
+        <div class="absolute inset-0 w-full h-full transform scale-125 origin-center" id="sobre-bg-img">
+            <img src="https://images.unsplash.com/photo-1500964757637-c85e8a162699?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover filter brightness-50 sepia-[.3]">
+        </div>
+        <div class="absolute inset-0 bg-black/60"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-8 z-10">
+            <div class="max-w-5xl text-center opacity-0 translate-y-20" id="sobre-content">
+                <h2 class="text-3xl md:text-5xl font-display text-white mb-8 uppercase tracking-tighter">Nossa Frota</h2>
+                <p class="text-lg md:text-xl text-gray-300 leading-relaxed font-light" id="sobre-desc-text">
+                    Navegamos os mares mais perigosos em busca do lendário tesouro deixado pelo antigo Rei dos Piratas. Não somos apenas uma tripulação, somos a nova era.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color); overflow: hidden;">
+    
+    <div class="container mx-auto px-6 md:px-10 mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[3rem] sm:text-5xl md:text-7xl font-display uppercase tracking-tighter leading-none m-0">
+            Cartazes de Procurado
+        </h2>
+    </div>
+
+    <div class="horizontal-container" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
+        
+        <div class="case-card">
+            <div class="case-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1612487528505-d2338264c821?auto=format&fit=crop&w=500" alt="Luffy" class="img-main">
+            </div>
+            <div class="case-info-new">
+                <h3 class="case-title-new">Monkey D. Luffy</h3>
+                <div class="case-subtitle-new">
+                    VER RECOMPENSA <i data-lucide="arrow-right" class="w-5 h-5 icon-arrow-card"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="case-card">
+            <div class="case-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1542382257-80ddcbcd88e9?auto=format&fit=crop&w=500" alt="Zoro" class="img-main">
+            </div>
+            <div class="case-info-new">
+                <h3 class="case-title-new">Roronoa Zoro</h3>
+                <div class="case-subtitle-new">
+                    VER RECOMPENSA <i data-lucide="arrow-right" class="w-5 h-5 icon-arrow-card"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="case-card">
+            <div class="case-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1595878715977-2e8f8df18ea8?auto=format&fit=crop&w=500" alt="Nami" class="img-main">
+            </div>
+            <div class="case-info-new">
+                <h3 class="case-title-new">Gata Ladra Nami</h3>
+                <div class="case-subtitle-new">
+                    VER RECOMPENSA <i data-lucide="arrow-right" class="w-5 h-5 icon-arrow-card"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="case-card">
+            <div class="case-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=500" alt="Usopp" class="img-main">
+            </div>
+            <div class="case-info-new">
+                <h3 class="case-title-new">God Usopp</h3>
+                <div class="case-subtitle-new">
+                    VER RECOMPENSA <i data-lucide="arrow-right" class="w-5 h-5 icon-arrow-card"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
 
 <section class="show-milhao-section" id="dicas-de-ouro">
     <div class="sm-glow-bg"></div>
@@ -1163,41 +1073,29 @@
 <footer class="py-20 text-center relative w-full overflow-hidden" id="contato" style="background-color: var(--text-color); color: var(--bg-color);">
     <div class="container mx-auto px-6 md:px-8 max-w-full">
         <h2 id="footer-main-heading" class="text-3xl md:text-7xl mb-12 tracking-tighter uppercase w-full min-h-[1.5em] flex items-center justify-center" style="perspective: 1000px; transform-style: preserve-3d;">
-            {% if loja.chamada_rodape %}
-                {% set chamadas = loja.chamada_rodape.split('\n') %}
-                {{ chamadas[0] }}
-            {% else %}
-                VAMOS ENCONTRAR O TESOURO COM A <span style="color: var(--primary); margin-left: 10px;">{{ loja.nome }}</span>?
-            {% endif %}
+            VAMOS ENCONTRAR O TESOURO COM A <span style="color: var(--primary); margin-left: 10px;">MUGIWARA CREW</span>?
         </h2>
         
         <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 mb-16 w-full">
-            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="inline-block text-xl md:text-2xl border-b-2 pb-2 transition text-center" style="border-color: var(--primary);">
+            <a href="#" class="inline-block text-xl md:text-2xl border-b-2 pb-2 transition text-center" style="border-color: var(--primary);">
                 Chamar no Den Den Mushi
             </a>
-            
-            {% if loja.instagram_url %}
-            <a href="{{ loja.instagram_url }}" target="_blank" class="inline-flex items-center gap-2 text-xl hover:opacity-70 transition">
+            <a href="#" class="inline-flex items-center gap-2 text-xl hover:opacity-70 transition">
                 <i data-lucide="instagram" class="w-6 h-6"></i> Instagram
             </a>
-            {% endif %}
         </div>
 
         <div class="w-full flex justify-center items-center py-24 mt-16 relative overflow-hidden border-t border-black/10" style="background-color: transparent;">
             <div class="logo-rotate-container relative w-[300px] h-[300px] flex items-center justify-center mx-auto" style="perspective: 1000px;">
                 
-                {% if loja.logo %}
-                <img src="{{ loja.logo }}" class="w-20 h-20 md:w-24 md:h-24 object-contain filter brightness-0 absolute z-20 hover:scale-110 transition-transform duration-500">
-                {% else %}
                 <div class="w-20 h-20 md:w-24 md:h-24 bg-black text-white rounded-full flex items-center justify-center absolute z-20 hover:scale-110 transition-transform duration-500">
                     <i data-lucide="anchor" class="w-10 h-10"></i>
                 </div>
-                {% endif %}
                 
                 <div class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="transform: rotateX(65deg) rotateY(-20deg); transform-style: preserve-3d;">
                     <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtom 12s linear infinite;">
                         <path id="txtPath1" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
-                        <text font-family="'Rye', serif" font-size="12" fill="#000000" letter-spacing="4">
+                        <text font-family="'Archivo Black', sans-serif" font-size="12" fill="#000000" letter-spacing="4">
                             <textPath href="#txtPath1" startOffset="0%">
                                 MUGIWARA · GRAND LINE · MUGIWARA · 
                             </textPath>
@@ -1208,7 +1106,7 @@
                 <div class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="transform: rotateX(65deg) rotateY(40deg); transform-style: preserve-3d;">
                     <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtomReverse 16s linear infinite;">
                         <path id="txtPath2" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
-                        <text font-family="'Rye', serif" font-size="12" fill="#000000" letter-spacing="4">
+                        <text font-family="'Archivo Black', sans-serif" font-size="12" fill="#000000" letter-spacing="4">
                             <textPath href="#txtPath2" startOffset="0%">
                                 MUGIWARA · GRAND LINE · MUGIWARA · 
                             </textPath>
@@ -1219,7 +1117,7 @@
                 <div class="absolute inset-0 w-full h-full z-10 pointer-events-none" style="transform: rotateX(75deg) rotateY(-60deg); transform-style: preserve-3d;">
                     <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtom 20s linear infinite;">
                         <path id="txtPath3" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
-                        <text font-family="'Rye', serif" font-size="12" fill="#000000" letter-spacing="4" opacity="0.6">
+                        <text font-family="'Archivo Black', sans-serif" font-size="12" fill="#000000" letter-spacing="4" opacity="0.6">
                             <textPath href="#txtPath3" startOffset="0%">
                                 TESOURO · AVENTURA · PIRATAS · 
                             </textPath>
@@ -1230,10 +1128,10 @@
             </div>
         </div>
 
-        <p class="mt-8 text-[10px] uppercase tracking-widest opacity-30">© 2026 {{ loja.nome }}. Todos os direitos reservados.</p>
+        <p class="mt-8 text-[10px] uppercase tracking-widest opacity-30">© 2026 Mugiwara Crew. Rei dos Piratas.</p>
         
         <div class="mt-8 pt-8 border-t border-black/10">
-            <a href="/{{ loja.slug_url }}/admin" class="text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 opacity-20 hover:opacity-100 transition">
+            <a href="#" class="text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 opacity-20 hover:opacity-100 transition">
                 <i data-lucide="lock" class="w-3 h-3"></i> Painel do Capitão
             </a>
         </div>
@@ -1327,57 +1225,6 @@
 
     }, 1400); 
 
-    function initMagicHeroScroll() {
-        const slides = gsap.utils.toArray('.magic-slide');
-        if(slides.length === 0) return;
-
-        const bountyCounter = document.getElementById('bounty-counter');
-        const formatBounty = (num) => Math.round(num).toLocaleString('pt-BR').replace(/,/g, '.');
-
-        let magicTl = gsap.timeline({
-            scrollTrigger: {
-                trigger: "#hero-magic-wrapper",
-                start: "top top",
-                end: "bottom bottom",
-                scrub: 1,
-            }
-        });
-
-        slides.forEach((slide, i) => {
-            gsap.to(slide.querySelector('div'), {
-                xPercent: -20,
-                ease: "none",
-                scrollTrigger: {
-                    trigger: "#hero-magic-wrapper",
-                    start: "top top",
-                    end: "bottom bottom",
-                    scrub: 1
-                }
-            });
-
-            if (i === 0) return; 
-
-            const prevSlide = slides[i - 1];
-            const color = slide.dataset.color;
-            const nextBounty = parseInt(slide.dataset.bounty);
-            const prevBounty = parseInt(prevSlide.dataset.bounty);
-
-            let bountyObj = { val: prevBounty };
-
-            magicTl.to(prevSlide, { opacity: 0, scale: 1.1, duration: 1, ease: "power2.inOut" }, `step${i}`)
-                   .to(slide, { opacity: 1, scale: 1, duration: 1, ease: "power2.inOut" }, `step${i}`)
-                   .to(document.documentElement, { '--primary': color, duration: 1 }, `step${i}`)
-                   .to(bountyObj, {
-                       val: nextBounty,
-                       duration: 1,
-                       ease: "power1.inOut",
-                       onUpdate: function() {
-                           bountyCounter.innerText = formatBounty(bountyObj.val);
-                       }
-                   }, `step${i}`);
-        });
-    }
-
     function handleEntryScroll(e) {
         if (!introFinished) return;
         if (e && e.cancelable) e.preventDefault(); 
@@ -1416,10 +1263,7 @@
                             z: 0,
                             scale: 1,
                             duration: 2.5,
-                            ease: "power4.out",
-                            onComplete: () => {
-                                initMagicHeroScroll();
-                            }
+                            ease: "power4.out"
                         });
                         
                         gsap.to('.hero-title', {
@@ -1436,90 +1280,91 @@
     }
 
     document.addEventListener("DOMContentLoaded", function() {
-        const footerTextRaw = `{{ loja.chamada_rodape or '' }}`;
-        const footerPhrases = footerTextRaw.split('\n').map(p => p.trim()).filter(p => p.length > 0);
+        const footerPhrases = [
+            "VAMOS ENCONTRAR O TESOURO COM A MUGIWARA CREW?",
+            "PREPARE-SE PARA A MAIOR AVENTURA DA SUA VIDA",
+            "O ONE PIECE ESPERA POR VOCÊ"
+        ];
         
-        if (footerPhrases.length > 1) {
-            let currentPhraseIndex = 0;
-            const footerHeading = document.getElementById('footer-main-heading');
-            let isAnimatingPhrase = false;
-            let phraseTimer;
+        let currentPhraseIndex = 0;
+        const footerHeading = document.getElementById('footer-main-heading');
+        let isAnimatingPhrase = false;
+        let phraseTimer;
 
-            const nextFooterPhrase = () => {
-                if (isAnimatingPhrase) return;
-                isAnimatingPhrase = true;
-                clearTimeout(phraseTimer);
+        const nextFooterPhrase = () => {
+            if (isAnimatingPhrase) return;
+            isAnimatingPhrase = true;
+            clearTimeout(phraseTimer);
 
-                gsap.to(footerHeading, {
-                    opacity: 0,
-                    y: -40,
-                    scale: 0.9,
-                    rotationX: 45,
-                    filter: "blur(15px)",
-                    duration: 0.6,
-                    ease: "back.in(1.5)",
-                    onComplete: () => {
-                        currentPhraseIndex = (currentPhraseIndex + 1) % footerPhrases.length;
-                        footerHeading.innerHTML = footerPhrases[currentPhraseIndex];
-                        gsap.fromTo(footerHeading, 
-                            { opacity: 0, y: 40, scale: 1.1, rotationX: -45, filter: "blur(15px)" },
-                            { opacity: 1, y: 0, scale: 1, rotationX: 0, filter: "blur(0px)", duration: 1.2, ease: "elastic.out(1.2, 0.5)", onComplete: () => {
-                                isAnimatingPhrase = false;
-                                startPhraseTimer();
-                            }}
-                        );
-                    }
-                });
-            };
+            gsap.to(footerHeading, {
+                opacity: 0,
+                y: -40,
+                scale: 0.9,
+                rotationX: 45,
+                filter: "blur(15px)",
+                duration: 0.6,
+                ease: "back.in(1.5)",
+                onComplete: () => {
+                    currentPhraseIndex = (currentPhraseIndex + 1) % footerPhrases.length;
+                    footerHeading.innerHTML = footerPhrases[currentPhraseIndex];
+                    gsap.fromTo(footerHeading, 
+                        { opacity: 0, y: 40, scale: 1.1, rotationX: -45, filter: "blur(15px)" },
+                        { opacity: 1, y: 0, scale: 1, rotationX: 0, filter: "blur(0px)", duration: 1.2, ease: "elastic.out(1.2, 0.5)", onComplete: () => {
+                            isAnimatingPhrase = false;
+                            startPhraseTimer();
+                        }}
+                    );
+                }
+            });
+        };
 
-            const startPhraseTimer = () => {
-                clearTimeout(phraseTimer);
-                phraseTimer = setTimeout(() => {
+        const startPhraseTimer = () => {
+            clearTimeout(phraseTimer);
+            phraseTimer = setTimeout(() => {
+                nextFooterPhrase();
+            }, 4000);
+        };
+
+        let footerVisible = false;
+        const footerObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    footerVisible = true;
+                    startPhraseTimer();
+                } else {
+                    footerVisible = false;
+                    clearTimeout(phraseTimer);
+                }
+            });
+        }, { threshold: 0.2 });
+        
+        footerObserver.observe(document.getElementById('contato'));
+
+        window.addEventListener('wheel', (e) => {
+            if (footerVisible && e.deltaY > 0 && !isAnimatingPhrase) {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
+                    e.preventDefault(); 
                     nextFooterPhrase();
-                }, 4000);
-            };
+                }
+            }
+        }, { passive: false });
 
-            let footerVisible = false;
-            const footerObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        footerVisible = true;
-                        startPhraseTimer();
-                    } else {
-                        footerVisible = false;
-                        clearTimeout(phraseTimer);
-                    }
-                });
-            }, { threshold: 0.2 });
-            
-            footerObserver.observe(document.getElementById('contato'));
+        let lastTouchY = 0;
+        window.addEventListener('touchstart', (e) => {
+            lastTouchY = e.touches[0].clientY;
+        }, {passive: true});
 
-            window.addEventListener('wheel', (e) => {
-                if (footerVisible && e.deltaY > 0 && !isAnimatingPhrase) {
+        window.addEventListener('touchmove', (e) => {
+            if (footerVisible && !isAnimatingPhrase) {
+                let currentY = e.touches[0].clientY;
+                if (lastTouchY > currentY) { 
                     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
-                        e.preventDefault(); 
                         nextFooterPhrase();
                     }
                 }
-            }, { passive: false });
-
-            let lastTouchY = 0;
-            window.addEventListener('touchstart', (e) => {
-                lastTouchY = e.touches[0].clientY;
-            }, {passive: true});
-
-            window.addEventListener('touchmove', (e) => {
-                if (footerVisible && !isAnimatingPhrase) {
-                    let currentY = e.touches[0].clientY;
-                    if (lastTouchY > currentY) { 
-                        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
-                            nextFooterPhrase();
-                        }
-                    }
-                    lastTouchY = currentY;
-                }
-            }, {passive: true});
-        }
+                lastTouchY = currentY;
+            }
+        }, {passive: true});
         
         const smFormContainer = document.getElementById('sm-form-container');
         if(smFormContainer) {
@@ -1599,7 +1444,7 @@
 
         const leadForm = document.getElementById('leadForm');
         if(leadForm) {
-            leadForm.addEventListener('submit', async function(e) {
+            leadForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 const btn = this.querySelector('button');
                 const textWrapper = btn.querySelector('.btn-text-wrapper');
@@ -1607,28 +1452,12 @@
                 textWrapper.innerHTML = 'NAVEGANDO...';
                 btn.disabled = true;
 
-                const formData = new FormData(this);
-                try {
-                    const response = await fetch('/{{ loja.slug_url }}/captura-lead', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const result = await response.json();
-                    if(result.sucesso) {
-                        this.style.display = 'none';
-                        const successMsg = document.getElementById('leadSuccessMsg');
-                        successMsg.classList.remove('hidden');
-                        successMsg.classList.add('flex');
-                    } else {
-                        alert(result.erro || 'Erro no Log Pose. Tente novamente.');
-                        textWrapper.innerHTML = 'PEGAR MEU TESOURO AGORA';
-                        btn.disabled = false;
-                    }
-                } catch(err) {
-                    alert('Sinal do Den Den Mushi fraco. Verifique sua conexão.');
-                    textWrapper.innerHTML = 'PEGAR MEU TESOURO AGORA';
-                    btn.disabled = false;
-                }
+                setTimeout(() => {
+                    this.style.display = 'none';
+                    const successMsg = document.getElementById('leadSuccessMsg');
+                    successMsg.classList.remove('hidden');
+                    successMsg.classList.add('flex');
+                }, 1500);
             });
         }
     });
@@ -1775,7 +1604,7 @@
         draw();
     }
 
-    const heroSec = document.getElementById('hero-magic-wrapper');
+    const heroSec = document.getElementById('hero');
     const bubblesContainer = document.getElementById('bubbles-container');
     
     if (heroSec && bubblesContainer) {
