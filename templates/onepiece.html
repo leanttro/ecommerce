@@ -196,7 +196,7 @@
         padding: 24px 16px 16px 16px;
         background-color: var(--parchment);
         cursor: pointer;
-        transform: perspective(1000px) rotateY(90deg) scale(0.85) translateY(40px); 
+        transform: perspective(1000px) rotateY(90deg) scale(0.85) translateY(40px);
         opacity: 0;
         border: 6px solid var(--dark-wood);
         box-shadow: inset 0 0 40px rgba(139, 69, 19, 0.4), 0 10px 20px rgba(0,0,0,0.5);
@@ -219,8 +219,7 @@
 
     /* Estado virado (verso) */
     .case-card.flipped {
-        transform: perspective(1000px) rotateY(0deg) scale(1) translateY(0);
-        opacity: 1;
+        transform: perspective(1000px) rotateY(90deg) scale(1) translateY(0);
     }
     .case-card.flipped .case-image-wrapper,
     .case-card.flipped .case-info-new {
@@ -254,19 +253,12 @@
         pointer-events: none;
     }
 
-    @media (max-width: 768px) {
-        .case-card {
-            width: 85vw !important;
-            margin-right: 6vw;
-        }
-        .case-image-wrapper {
-            flex: none;
-            aspect-ratio: 1 / 1;
-        }
+    /* Estado não virado (frente) */
+    .case-card:not(.flipped) {
+        transform: perspective(1000px) rotateY(0deg) scale(1) translateY(0);
     }
 
     .case-card.in-view {
-        transform: perspective(1000px) rotateY(0deg) scale(1) translateY(0);
         opacity: 1;
     }
 
@@ -1182,7 +1174,7 @@
 
     <div class="horizontal-container" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
         {% for p in produtos %}
-        <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
+        <div class="case-card {% if loop.index0 == 0 %}{% else %}flipped{% endif %}" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
             <div class="case-image-wrapper">
                 {% if p.imagem1 %}
                 <img src="{{ p.imagem1 }}" alt="{{ p.nome }}" class="img-hover">
@@ -1807,56 +1799,51 @@
             });
         }
 
-        // Lógica para virar os cards conforme o scroll horizontal
-        const container = document.querySelector(".horizontal-container");
+        // Hover para desvirar os cards (exceto o primeiro que já está desvirado)
         const cards = document.querySelectorAll('.case-card');
+        cards.forEach((card, index) => {
+            card.addEventListener('mouseenter', () => {
+                if (index !== 0) { // se não for o primeiro, remove flipped
+                    card.classList.remove('flipped');
+                }
+            });
+            card.addEventListener('mouseleave', () => {
+                if (index !== 0) { // se não for o primeiro, volta flipped
+                    card.classList.add('flipped');
+                }
+            });
+        });
+
+        // Observer para animação de entrada (in-view)
+        const container = document.querySelector(".horizontal-container");
         if (container && cards.length > 0) {
-            const flipObserver = new IntersectionObserver((entries) => {
+            const cardObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        // Se mais de 50% do card está visível, mostra a frente (remove flipped)
-                        if (entry.intersectionRatio > 0.5) {
-                            entry.target.classList.remove('flipped');
-                        } else {
-                            entry.target.classList.add('flipped');
-                        }
+                        entry.target.classList.add('in-view');
                     } else {
-                        entry.target.classList.add('flipped');
+                        entry.target.classList.remove('in-view');
                     }
                 });
             }, {
                 root: container,
-                threshold: [0, 0.5, 1]
+                threshold: 0.4
             });
 
-            cards.forEach(card => flipObserver.observe(card));
+            cards.forEach(card => cardObserver.observe(card));
         }
     });
 
     lucide.createIcons();
     gsap.registerPlugin(ScrollTrigger);
 
+    // Código existente para scroll automático e interação
     const container = document.querySelector(".horizontal-container");
     const cards = document.querySelectorAll('.case-card');
     let isInteracting = false;
     
     if (container && cards.length > 0) {
         
-        const cardObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('in-view');
-                } else {
-                    entry.target.classList.remove('in-view'); 
-                }
-            });
-        }, {
-            root: container,
-            threshold: 0.4 
-        });
-
-        cards.forEach(card => cardObserver.observe(card));
-
         let autoScrollSpeed = window.innerWidth < 768 ? 4.5 : 0.8; 
         let autoScrollReq;
 
