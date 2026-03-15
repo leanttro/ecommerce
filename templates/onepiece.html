@@ -163,6 +163,17 @@
         #hero-magic-wrapper .relative.z-10 {
             margin-top: 160px !important;
         }
+        
+        .ep-card {
+            width: 85% !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+        }
+        
+        #texto-ep-1 { top: 10% !important; }
+        #texto-ep-2 { bottom: 10% !important; top: auto !important; }
+        #texto-ep-3 { top: 10% !important; right: auto !important; }
+        #texto-ep-4 { bottom: 10% !important; left: 50% !important; }
     }
 
     .case-card {
@@ -1054,28 +1065,31 @@
 
 {% endfor %}
 
-<section id='nav-3d-episodios' style='position:relative;width:100%;height:400vh;background:#050505;'>
-    <div style='position:sticky;top:0;width:100%;height:100vh;overflow:hidden;'>
-        <canvas id='lusion-canvas' style='width:100%;height:100%;display:block;position:absolute;top:0;left:0;z-index:1;'></canvas>
+<section id='nav-3d-episodios' style='position:relative;width:100%;height:100vh;background:#050505;overflow:hidden;'>
+    <canvas id='lusion-canvas' style='width:100%;height:100%;display:block;position:absolute;top:0;left:0;z-index:1;'></canvas>
+    
+    <div id='ep-resumos' style='position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2;'>
         
-        <div id='ep-resumos' style='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:800px;text-align:center;color:#fff;font-family:"Rye", serif;pointer-events:none;z-index:2;'>
-            <div class='ep-texto' id='texto-ep-1' style='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;opacity:0;transition:opacity 0.6s ease;text-shadow:2px 2px 15px rgba(0,0,0,0.8);'>
-                <h3 style='color: var(--primary); font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 15px; text-transform: uppercase;'>Episódio 1</h3>
-                <p style='font-size: clamp(1.2rem, 2.5vw, 2rem); font-family: sans-serif; font-weight: 300; letter-spacing: 1px;'>O amanhecer de uma grande aventura. Luffy parte em sua jornada para se tornar o Rei dos Piratas.</p>
-            </div>
-            <div class='ep-texto' id='texto-ep-2' style='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;opacity:0;transition:opacity 0.6s ease;text-shadow:2px 2px 15px rgba(0,0,0,0.8);'>
-                <h3 style='color: #10B981; font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 15px; text-transform: uppercase;'>Episódio 2</h3>
-                <p style='font-size: clamp(1.2rem, 2.5vw, 2rem); font-family: sans-serif; font-weight: 300; letter-spacing: 1px;'>O Caçador de Piratas. Zoro se junta à tripulação rumo à Grand Line.</p>
-            </div>
-            <div class='ep-texto' id='texto-ep-3' style='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;opacity:0;transition:opacity 0.6s ease;text-shadow:2px 2px 15px rgba(0,0,0,0.8);'>
-                <h3 style='color: #F97316; font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 15px; text-transform: uppercase;'>Episódio 3</h3>
-                <p style='font-size: clamp(1.2rem, 2.5vw, 2rem); font-family: sans-serif; font-weight: 300; letter-spacing: 1px;'>Morgan Mão-de-Machado. A primeira grande batalha contra a Marinha.</p>
-            </div>
-            <div class='ep-texto' id='texto-ep-4' style='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;opacity:0;transition:opacity 0.6s ease;text-shadow:2px 2px 15px rgba(0,0,0,0.8);'>
-                <h3 style='color: #EAB308; font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 15px; text-transform: uppercase;'>Episódio 4</h3>
-                <p style='font-size: clamp(1.2rem, 2.5vw, 2rem); font-family: sans-serif; font-weight: 300; letter-spacing: 1px;'>O Pássaro Gigante. Aventura nos céus e revelações do passado.</p>
-            </div>
+        <div class='ep-card' id='texto-ep-1' style='position:absolute; top:15%; left:8%; width:100%; max-width:400px; opacity:0; transition:opacity 0.4s ease; background:var(--parchment); border:6px solid var(--dark-wood); padding:25px; box-shadow:inset 0 0 30px rgba(139,69,19,0.3), 0 15px 30px rgba(0,0,0,0.8); border-radius:4px;'>
+            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'>WANTED<br><span style='font-size:1.4rem; color:#8b0000;'>Episódio 1</span></h3>
+            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>O amanhecer de uma grande aventura. Luffy parte em sua jornada para se tornar o Rei dos Piratas.</p>
         </div>
+        
+        <div class='ep-card' id='texto-ep-2' style='position:absolute; bottom:15%; right:8%; width:100%; max-width:400px; opacity:0; transition:opacity 0.4s ease; background:var(--parchment); border:6px solid var(--dark-wood); padding:25px; box-shadow:inset 0 0 30px rgba(139,69,19,0.3), 0 15px 30px rgba(0,0,0,0.8); border-radius:4px;'>
+            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'>WANTED<br><span style='font-size:1.4rem; color:#10B981;'>Episódio 2</span></h3>
+            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>O Caçador de Piratas. Zoro se junta à tripulação rumo à Grand Line.</p>
+        </div>
+        
+        <div class='ep-card' id='texto-ep-3' style='position:absolute; top:15%; right:8%; width:100%; max-width:400px; opacity:0; transition:opacity 0.4s ease; background:var(--parchment); border:6px solid var(--dark-wood); padding:25px; box-shadow:inset 0 0 30px rgba(139,69,19,0.3), 0 15px 30px rgba(0,0,0,0.8); border-radius:4px;'>
+            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'>WANTED<br><span style='font-size:1.4rem; color:#F97316;'>Episódio 3</span></h3>
+            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>Morgan Mão-de-Machado. A primeira grande batalha contra a Marinha.</p>
+        </div>
+        
+        <div class='ep-card' id='texto-ep-4' style='position:absolute; bottom:15%; left:8%; width:100%; max-width:400px; opacity:0; transition:opacity 0.4s ease; background:var(--parchment); border:6px solid var(--dark-wood); padding:25px; box-shadow:inset 0 0 30px rgba(139,69,19,0.3), 0 15px 30px rgba(0,0,0,0.8); border-radius:4px;'>
+            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'>WANTED<br><span style='font-size:1.4rem; color:#EAB308;'>Episódio 4</span></h3>
+            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>O Pássaro Gigante. Aventura nos céus e revelações do passado.</p>
+        </div>
+        
     </div>
 </section>
 
@@ -1511,6 +1525,7 @@
                 document.body.style.overflow = '';
                 initMagicHeroScroll();
                 initScrollAnimations();
+                initNav3D();
                 
                 const heroWrapper = document.getElementById('hero-banner-wrapper');
                 const dataCanvas = document.getElementById('data-canvas');
@@ -1895,103 +1910,97 @@
         }, {passive: true});
     }
 
-</script>
-
-<script>
-    const navScene = new THREE.Scene();
-    navScene.fog = new THREE.FogExp2(0x050505, 0.012);
-
-    const navCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    navCamera.position.set(0, 8, 25);
-
-    const navRenderer = new THREE.WebGLRenderer({ canvas: document.getElementById('lusion-canvas'), alpha: true, antialias: true });
-    navRenderer.setSize(window.innerWidth, window.innerHeight);
-    navRenderer.setPixelRatio(window.devicePixelRatio);
-
-    const seaGeometry = new THREE.PlaneGeometry(300, 300, 80, 80);
-    seaGeometry.rotateX(-Math.PI / 2);
-    
-    const seaMaterial = new THREE.MeshBasicMaterial({ 
-        color: 0x0088ff, 
-        wireframe: true, 
-        transparent: true, 
-        opacity: 0.25 
-    });
-    const seaMesh = new THREE.Mesh(seaGeometry, seaMaterial);
-    seaMesh.position.y = -2;
-    navScene.add(seaMesh);
-
-    const shipTexture = new THREE.TextureLoader().load('https://res.cloudinary.com/dzcaxmbjn/image/upload/v1773534638/image-removebg-preview_29_-Picsart-AiImageEnhancer_q9o14t.png');
-    const shipMaterial = new THREE.SpriteMaterial({ map: shipTexture, color: 0xffffff });
-    const shipSprite = new THREE.Sprite(shipMaterial);
-    
-    shipSprite.scale.set(20, 20, 1);
-    shipSprite.position.set(0, 8, 0);
-    navScene.add(shipSprite);
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
-    navScene.add(ambientLight);
-
-    let navClock = new THREE.Clock();
-
-    function animateNav() {
-        requestAnimationFrame(animateNav);
+    function initNav3D() {
+        const navCanvas = document.getElementById('lusion-canvas');
+        if(!navCanvas) return;
         
-        const elapsedTime = navClock.getElapsedTime();
-        
-        const positions = seaMesh.geometry.attributes.position;
-        for(let i=0; i<positions.count; i++) {
-            const vx = positions.getX(i);
-            const vz = positions.getZ(i);
-            positions.setY(i, Math.sin(vx * 0.15 + elapsedTime * 1.5) * 2 + Math.cos(vz * 0.15 + elapsedTime * 1.5) * 2);
-        }
-        positions.needsUpdate = true;
+        const navScene = new THREE.Scene();
+        navScene.fog = new THREE.FogExp2(0x050505, 0.012);
 
-        shipSprite.position.y = 8 + Math.sin(elapsedTime * 2.5) * 0.8;
-        shipSprite.material.rotation = Math.sin(elapsedTime * 1.5) * 0.05;
+        const navCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        navCamera.position.set(0, 8, 25);
 
-        navRenderer.render(navScene, navCamera);
-    }
-    
-    animateNav();
-
-    window.addEventListener('scroll', () => {
-        const section = document.getElementById('nav-3d-episodios');
-        if(!section) return;
-        
-        const rect = section.getBoundingClientRect();
-        const sectionTop = rect.top;
-        const sectionHeight = rect.height - window.innerHeight;
-        
-        let scrollPercent = 0;
-        
-        if (sectionTop <= 0 && sectionTop >= -sectionHeight) {
-            scrollPercent = Math.abs(sectionTop) / sectionHeight;
-        } else if (sectionTop > 0) {
-            scrollPercent = 0;
-        } else {
-            scrollPercent = 1;
-        }
-
-        navCamera.position.z = 25 - scrollPercent * 250;
-        shipSprite.position.z = 0 - scrollPercent * 250;
-
-        const ep1 = document.getElementById('texto-ep-1');
-        const ep2 = document.getElementById('texto-ep-2');
-        const ep3 = document.getElementById('texto-ep-3');
-        const ep4 = document.getElementById('texto-ep-4');
-
-        if(ep1) ep1.style.opacity = (scrollPercent > 0.02 && scrollPercent < 0.20) ? 1 : 0;
-        if(ep2) ep2.style.opacity = (scrollPercent > 0.25 && scrollPercent < 0.45) ? 1 : 0;
-        if(ep3) ep3.style.opacity = (scrollPercent > 0.50 && scrollPercent < 0.70) ? 1 : 0;
-        if(ep4) ep4.style.opacity = (scrollPercent > 0.75 && scrollPercent < 0.95) ? 1 : 0;
-    });
-
-    window.addEventListener('resize', () => {
-        navCamera.aspect = window.innerWidth / window.innerHeight;
-        navCamera.updateProjectionMatrix();
+        const navRenderer = new THREE.WebGLRenderer({ canvas: navCanvas, alpha: true, antialias: true });
         navRenderer.setSize(window.innerWidth, window.innerHeight);
-    });
+        navRenderer.setPixelRatio(window.devicePixelRatio);
+
+        const seaGeometry = new THREE.PlaneGeometry(300, 300, 80, 80);
+        seaGeometry.rotateX(-Math.PI / 2);
+        
+        const seaMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x0088ff, 
+            wireframe: true, 
+            transparent: true, 
+            opacity: 0.25 
+        });
+        const seaMesh = new THREE.Mesh(seaGeometry, seaMaterial);
+        seaMesh.position.y = -2;
+        navScene.add(seaMesh);
+
+        const shipTexture = new THREE.TextureLoader().load('https://res.cloudinary.com/dzcaxmbjn/image/upload/v1773534638/image-removebg-preview_29_-Picsart-AiImageEnhancer_q9o14t.png');
+        const shipMaterial = new THREE.SpriteMaterial({ map: shipTexture, color: 0xffffff, transparent: true, alphaTest: 0.05 });
+        const shipSprite = new THREE.Sprite(shipMaterial);
+        
+        shipSprite.scale.set(20, 20, 1);
+        shipSprite.position.set(0, 8, 0);
+        navScene.add(shipSprite);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+        navScene.add(ambientLight);
+
+        let navClock = new THREE.Clock();
+
+        function animateNav() {
+            requestAnimationFrame(animateNav);
+            
+            const elapsedTime = navClock.getElapsedTime();
+            
+            const positions = seaMesh.geometry.attributes.position;
+            for(let i=0; i<positions.count; i++) {
+                const vx = positions.getX(i);
+                const vz = positions.getZ(i);
+                positions.setY(i, Math.sin(vx * 0.15 + elapsedTime * 1.5) * 2 + Math.cos(vz * 0.15 + elapsedTime * 1.5) * 2);
+            }
+            positions.needsUpdate = true;
+
+            shipSprite.position.y = 8 + Math.sin(elapsedTime * 2.5) * 0.8;
+            shipSprite.material.rotation = Math.sin(elapsedTime * 1.5) * 0.05;
+
+            navRenderer.render(navScene, navCamera);
+        }
+        
+        animateNav();
+
+        ScrollTrigger.create({
+            trigger: "#nav-3d-episodios",
+            start: "top top",
+            end: "+=300%",
+            pin: true,
+            scrub: 1,
+            onUpdate: (self) => {
+                const progress = self.progress;
+
+                navCamera.position.z = 25 - progress * 250;
+                shipSprite.position.z = 0 - progress * 250;
+
+                const ep1 = document.getElementById('texto-ep-1');
+                const ep2 = document.getElementById('texto-ep-2');
+                const ep3 = document.getElementById('texto-ep-3');
+                const ep4 = document.getElementById('texto-ep-4');
+
+                if(ep1) ep1.style.opacity = (progress > 0.02 && progress < 0.22) ? 1 : 0;
+                if(ep2) ep2.style.opacity = (progress > 0.25 && progress < 0.45) ? 1 : 0;
+                if(ep3) ep3.style.opacity = (progress > 0.50 && progress < 0.70) ? 1 : 0;
+                if(ep4) ep4.style.opacity = (progress > 0.75 && progress < 0.95) ? 1 : 0;
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            navCamera.aspect = window.innerWidth / window.innerHeight;
+            navCamera.updateProjectionMatrix();
+            navRenderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    }
 </script>
 
 </body>
