@@ -1176,14 +1176,14 @@
             portfolioCards.forEach(card => {
                 card.style.transition = 'none';
                 card.classList.add('flipped');
-                gsap.set(card, { transformPerspective: 1000, transformStyle: "preserve-3d" });
+                gsap.set(card, { transformPerspective: 1500, transformStyle: "preserve-3d" });
             });
 
             let cardTl = gsap.timeline({
                 scrollTrigger: {
                     trigger: "#portfolio",
-                    start: "top 85%",
-                    end: "top 15%",
+                    start: "top 75%",
+                    end: "top 10%",
                     scrub: 1.5
                 }
             });
@@ -1191,15 +1191,17 @@
             portfolioCards.forEach((card, i) => {
                 cardTl.fromTo(card,
                     {
-                        y: 300 + Math.random() * 200,
-                        z: 300 + Math.random() * 200,
-                        rotationY: 180 + Math.random() * 40 - 20,
-                        rotationX: Math.random() * 40 - 20,
-                        rotationZ: Math.random() * 20 - 10,
+                        x: window.innerWidth,
+                        y: -window.innerHeight / 2,
+                        z: 800,
+                        rotationY: -1080,
+                        rotationX: 180,
+                        rotationZ: 45,
                         opacity: 0,
-                        scale: 0.7
+                        scale: 0.2
                     },
                     {
+                        x: 0,
                         y: 0,
                         z: 0,
                         rotationY: 0,
@@ -1207,20 +1209,22 @@
                         rotationZ: 0,
                         opacity: 1,
                         scale: 1,
-                        ease: "power2.out",
+                        ease: "back.out(1.5)",
                         onUpdate: function() {
-                            let rotY = gsap.getProperty(card, "rotationY");
-                            if (Math.abs(rotY) < 90) {
-                                card.classList.remove('flipped');
-                            } else {
+                            let rotY = Math.abs(gsap.getProperty(card, "rotationY") % 360);
+                            let rotX = Math.abs(gsap.getProperty(card, "rotationX") % 360);
+                            if ((rotY > 90 && rotY < 270) || (rotX > 90 && rotX < 270)) {
                                 card.classList.add('flipped');
+                            } else {
+                                card.classList.remove('flipped');
                             }
                         },
                         onComplete: function() {
-                            card.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s';
+                            card.style.transition = 'transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.8s, box-shadow 0.4s';
+                            card.classList.remove('flipped');
                         }
                     },
-                    0
+                    i * 0.1
                 );
             });
         }
