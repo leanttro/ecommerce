@@ -578,13 +578,27 @@ def produto(loja_slug, slug):
 def personagem_wanted(loja_slug, slug):
     if not g.loja: return "Loja não encontrada", 404
     headers = get_headers()
+    # Busca o personagem específico
     url = f"{DIRECTUS_URL}/items/produtos?filter[slug][_eq]={slug}&filter[loja_id][_eq]={g.loja_id}&fields=*.*"
     r = requests.get(url, headers=headers)
+    
     if r.status_code == 200 and r.json()['data']:
         p = r.json()['data'][0]
-        p['imagem_destaque'] = get_img_url(p.get('imagem_destaque'))
-        loja_visual = {**g.loja, "logo": get_img_url(g.loja.get('logo')), "slug_url": loja_slug}
+        
+        # TRATAMENTO DE SEGURANÇA PARA NÃO DAR ERRO 500
+        try: p['preco'] = float(p.get('preco', 0))
+        except: p['preco'] = 0.0
+        
+        p['imagem_destaque'] = get_img_url(p.get('imagem_destaque') or p.get('imagem1'))
+        p['descricao'] = p.get('descricao', 'Sem descrição disponível.')
+
+        loja_visual = {
+            **g.loja, 
+            "logo": get_img_url(g.loja.get('logo')), 
+            "slug_url": loja_slug
+        }
         return render_template('personagensone.html', p=p, loja=loja_visual)
+    
     return "Pirata não encontrado", 404
     
     return "Produto não encontrado nesta loja", 404
