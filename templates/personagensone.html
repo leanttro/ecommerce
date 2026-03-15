@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ p.nome }} | WANTED</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Rye&display=swap" rel="stylesheet">
+<style>
+    :root { 
+        --primary: #E52521; 
+        --bg: #050505; 
+        --parchment: #e3d3b3; 
+        --parchment-dark: #c2b280;
+        --dark-wood: #2c1a14; 
+    }
+    body { 
+        background-color: var(--bg); 
+        color: #fff; 
+        font-family: 'Rye', serif; 
+        overflow-x: hidden; 
+    }
+    
+    .poster-detail-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 100px 20px 60px 20px;
+        position: relative;
+        z-index: 10;
+    }
+
+    #embers-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+        background: radial-gradient(circle at center, rgba(62,39,35,0.4) 0%, rgba(5,5,5,1) 80%);
+    }
+
+    .wanted-poster-wrapper {
+        perspective: 1500px;
+        z-index: 20;
+    }
+
+    .wanted-poster {
+        background-color: var(--parchment);
+        background-image: repeating-linear-gradient(45deg, rgba(139,69,19,0.05) 0px, rgba(139,69,19,0.05) 2px, transparent 2px, transparent 4px);
+        border: 12px solid var(--dark-wood);
+        padding: 40px;
+        color: var(--dark-wood);
+        max-width: 500px;
+        width: 100%;
+        box-shadow: inset 0 0 80px rgba(139, 69, 19, 0.6), 0 40px 80px rgba(0,0,0,0.9), inset 0 0 20px #8b0000;
+        transform-style: preserve-3d;
+        will-change: transform;
+        position: relative;
+    }
+
+    .wanted-poster::after {
+        content: "";
+        position: absolute;
+        top: -12px; left: -12px; right: -12px; bottom: -12px;
+        border: 2px solid rgba(255,255,255,0.1);
+        pointer-events: none;
+    }
+
+    .poster-img-container {
+        width: 100%;
+        aspect-ratio: 1/1;
+        border: 6px solid var(--dark-wood);
+        margin: 20px 0;
+        position: relative;
+        overflow: hidden;
+        background: #000;
+        box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+    }
+
+    .poster-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: sepia(0.8) contrast(1.3) brightness(0.85);
+        transition: transform 0.5s ease, filter 0.5s ease;
+    }
+
+    .wanted-poster:hover .poster-img {
+        transform: scale(1.08);
+        filter: sepia(0.3) contrast(1.1) brightness(1.1);
+    }
+
+    .info-container {
+        max-width: 550px;
+        width: 100%;
+        padding: 20px;
+        z-index: 20;
+        position: relative;
+    }
+
+    .description-box {
+        background: rgba(20, 10, 10, 0.85);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(229, 37, 33, 0.3);
+        border-left: 6px solid var(--primary);
+        padding: 35px;
+        font-family: sans-serif;
+        color: #e2e8f0;
+        line-height: 1.9;
+        font-size: 1.15rem;
+        box-shadow: 20px 20px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(229,37,33,0.1);
+        position: relative;
+        border-radius: 4px;
+    }
+
+    .description-box::before {
+        content: '"';
+        position: absolute;
+        top: -20px;
+        right: 20px;
+        font-family: 'Rye', serif;
+        font-size: 6rem;
+        color: rgba(229, 37, 33, 0.15);
+        line-height: 1;
+    }
+
+    .recruit-btn {
+        background: linear-gradient(45deg, #8b0000, #E52521);
+        box-shadow: 0 0 20px rgba(229, 37, 33, 0.4), inset 0 0 10px rgba(0,0,0,0.5);
+        border: 2px solid #ff4d4d;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .recruit-btn::after {
+        content: '';
+        position: absolute;
+        top: -50%; left: -50%; width: 200%; height: 200%;
+        background: rgba(255,255,255,0.1);
+        transform: rotate(45deg) translateY(-100%);
+        transition: transform 0.6s ease;
+    }
+
+    .recruit-btn:hover::after {
+        transform: rotate(45deg) translateY(100%);
+    }
+
+    .bounty-value {
+        font-family: 'Rye', serif;
+        color: #8b0000;
+        text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+    }
+</style>
+</head>
+<body>
+
+<canvas id="embers-canvas"></canvas>
+
+<nav class="fixed top-0 w-full z-[100] p-6 flex justify-between items-center bg-black/70 backdrop-blur-lg border-b border-white/10">
+    <a href="/{{ loja.slug_url }}/" class="text-white/70 hover:text-[#E52521] transition-colors flex items-center gap-2 group">
+        <i data-lucide="arrow-left" class="w-8 h-8 group-hover:-translate-x-2 transition-transform"></i>
+        <span class="uppercase tracking-widest text-sm font-bold hidden md:block">Voltar à Frota</span>
+    </a>
+    <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/f_auto,q_auto,w_300/v1773599770/Yellow_4000_x_1180_px_1_xfwlsg.png" class="h-10 drop-shadow-[0_0_10px_rgba(229,37,33,0.5)]">
+    <div class="w-10"></div>
+</nav>
+
+<section class="poster-detail-section flex flex-col lg:flex-row gap-12 lg:gap-20">
+    
+    <div class="wanted-poster-wrapper" id="poster-wrapper">
+        <div class="wanted-poster" id="poster-anim">
+            <h1 class="text-6xl md:text-7xl text-center tracking-tighter" style="transform: translateZ(30px);">WANTED</h1>
+            
+            <div class="poster-img-container" style="transform: translateZ(20px);">
+                <img src="{{ p.imagem_destaque }}" class="poster-img">
+            </div>
+            
+            <p class="text-2xl md:text-3xl text-center uppercase tracking-widest mt-4" style="transform: translateZ(25px);">Dead or Alive</p>
+            <h2 class="text-5xl md:text-6xl text-center my-4 uppercase leading-none" style="transform: translateZ(40px);">{{ p.nome }}</h2>
+            
+            <div class="text-center mt-2" style="transform: translateZ(50px);">
+                <span class="text-3xl">฿</span> 
+                <span class="text-4xl md:text-5xl bounty-value tracking-wider" id="bounty-counter" data-target="{{ p.preco if p.preco else 0 }}">0</span>
+            </div>
+            
+            <p class="text-[12px] text-center mt-8 opacity-50 uppercase tracking-widest font-sans font-bold">Marinha do Governo Mundial</p>
+        </div>
+    </div>
+
+    <div class="info-container opacity-0" id="info-anim">
+        <div class="flex items-center gap-4 mb-8">
+            <i data-lucide="skull" class="w-10 h-10 text-[var(--primary)]"></i>
+            <h3 class="text-4xl md:text-5xl text-white uppercase tracking-widest text-shadow-[0_0_15px_rgba(229,37,33,0.8)]">Dossiê Confidencial</h3>
+        </div>
+        
+        <div class="description-box">
+            {{ p.descricao | safe }}
+        </div>
+        
+        <div class="mt-12 flex flex-col sm:flex-row gap-6 items-center">
+            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}?text=Estou interessado na recompensa do pirata {{ p.nome }}!" class="recruit-btn text-white px-12 py-5 rounded-sm text-2xl uppercase font-bold tracking-widest transition-transform hover:scale-105 w-full text-center font-sans">
+                REIVINDICAR
+            </a>
+        </div>
+    </div>
+
+</section>
+
+<script>
+    lucide.createIcons();
+
+    // ANIMAÇÃO DE ENTRADA GSAP
+    const tl = gsap.timeline();
+
+    tl.fromTo("#poster-wrapper", 
+        { y: -300, rotationZ: -15, opacity: 0, scale: 1.5 },
+        { y: 0, rotationZ: -2, opacity: 1, scale: 1, duration: 1.5, ease: "bounce.out" }
+    )
+    .to("#info-anim", { opacity: 1, x: 0, duration: 1, ease: "power3.out" }, "-=0.5");
+
+    // EFEITO HOVER 3D MAGNÉTICO NO CARTAZ
+    const posterWrapper = document.getElementById('poster-wrapper');
+    const poster = document.getElementById('poster-anim');
+
+    posterWrapper.addEventListener('mousemove', (e) => {
+        const rect = posterWrapper.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = ((y - centerY) / centerY) * -10;
+        const rotateY = ((x - centerX) / centerX) * 10;
+
+        gsap.to(poster, {
+            rotationX: rotateX,
+            rotationY: rotateY,
+            rotationZ: 0,
+            duration: 0.5,
+            ease: "power2.out",
+            transformPerspective: 1000
+        });
+    });
+
+    posterWrapper.addEventListener('mouseleave', () => {
+        gsap.to(poster, {
+            rotationX: 0,
+            rotationY: 0,
+            rotationZ: -2, 
+            duration: 1.5,
+            ease: "elastic.out(1, 0.3)"
+        });
+    });
+
+    // ANIMAÇÃO DO CONTADOR DE RECOMPENSA (BOUNTY)
+    const counterEl = document.getElementById('bounty-counter');
+    const targetBounty = parseFloat(counterEl.getAttribute('data-target'));
+
+    if (targetBounty > 0) {
+        let bountyObj = { val: 0 };
+        gsap.to(bountyObj, {
+            val: targetBounty,
+            duration: 2.5,
+            ease: "power3.out",
+            delay: 0.5,
+            onUpdate: function() {
+                // Formata com pontos
+                let formatted = Math.floor(bountyObj.val).toLocaleString('pt-BR').replace(/,/g, '.');
+                counterEl.innerText = formatted;
+            },
+            onComplete: function() {
+                counterEl.innerText = Math.floor(targetBounty).toLocaleString('pt-BR').replace(/,/g, '.');
+            }
+        });
+    } else {
+        counterEl.innerText = "???";
+    }
+
+    // SISTEMA DE PARTÍCULAS (FAGULHAS / EMBERS) NO FUNDO
+    const canvas = document.getElementById('embers-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * width;
+            this.y = height + Math.random() * 100;
+            this.size = Math.random() * 3 + 1;
+            this.speedY = Math.random() * 3 + 1;
+            this.speedX = (Math.random() - 0.5) * 2;
+            this.life = Math.random() * 0.5 + 0.5;
+            this.decay = Math.random() * 0.005 + 0.002;
+            // Cores quentes de fogo
+            const colors = ['#ff4d4d', '#ff8c00', '#ffa500'];
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+        }
+        update() {
+            this.y -= this.speedY;
+            this.x += this.speedX + Math.sin(this.y * 0.05) * 0.5; // Efeito vento
+            this.life -= this.decay;
+            if (this.life <= 0 || this.y < -10) {
+                this.y = height + 10;
+                this.x = Math.random() * width;
+                this.life = Math.random() * 0.5 + 0.5;
+            }
+        }
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.globalAlpha = this.life;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = this.color;
+            ctx.fill();
+        }
+    }
+
+    for (let i = 0; i < 70; i++) {
+        particles.push(new Particle());
+    }
+
+    function animateEmbers() {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = 0;
+        requestAnimationFrame(animateEmbers);
+    }
+    animateEmbers();
+
+</script>
+</body>
+</html>
