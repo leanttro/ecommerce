@@ -1558,7 +1558,6 @@
             });
         }
 
-        // Animação do título da seção de produtos
         const titulo = document.getElementById('titulo-secao-produtos');
         if (titulo) {
             gsap.from(titulo, {
@@ -1573,6 +1572,60 @@
                 scale: 0.8,
                 duration: 1.2,
                 ease: "power3.out"
+            });
+        }
+
+        const portfolioCards = gsap.utils.toArray('#portfolio .case-card');
+        if(portfolioCards.length > 0) {
+            portfolioCards.forEach(card => {
+                card.style.transition = 'none';
+                card.classList.add('flipped');
+                gsap.set(card, { transformPerspective: 1000, transformStyle: "preserve-3d" });
+            });
+
+            let cardTl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: "#portfolio",
+                    start: "top 85%",
+                    end: "top 15%",
+                    scrub: 1.5
+                }
+            });
+
+            portfolioCards.forEach((card, i) => {
+                cardTl.fromTo(card,
+                    {
+                        y: 300 + Math.random() * 200,
+                        z: 300 + Math.random() * 200,
+                        rotationY: 180 + Math.random() * 40 - 20,
+                        rotationX: Math.random() * 40 - 20,
+                        rotationZ: Math.random() * 20 - 10,
+                        opacity: 0,
+                        scale: 0.7
+                    },
+                    {
+                        y: 0,
+                        z: 0,
+                        rotationY: 0,
+                        rotationX: 0,
+                        rotationZ: 0,
+                        opacity: 1,
+                        scale: 1,
+                        ease: "power2.out",
+                        onUpdate: function() {
+                            let rotY = gsap.getProperty(card, "rotationY");
+                            if (Math.abs(rotY) < 90) {
+                                card.classList.remove('flipped');
+                            } else {
+                                card.classList.add('flipped');
+                            }
+                        },
+                        onComplete: function() {
+                            card.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s';
+                        }
+                    },
+                    0
+                );
             });
         }
         
@@ -1806,31 +1859,6 @@
                 }
             });
         }
-
-        // Lógica para virar os cards conforme o scroll horizontal
-        const container = document.querySelector(".horizontal-container");
-        const cards = document.querySelectorAll('.case-card');
-        if (container && cards.length > 0) {
-            const flipObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        // Se mais de 50% do card está visível, mostra a frente (remove flipped)
-                        if (entry.intersectionRatio > 0.5) {
-                            entry.target.classList.remove('flipped');
-                        } else {
-                            entry.target.classList.add('flipped');
-                        }
-                    } else {
-                        entry.target.classList.add('flipped');
-                    }
-                });
-            }, {
-                root: container,
-                threshold: [0, 0.5, 1]
-            });
-
-            cards.forEach(card => flipObserver.observe(card));
-        }
     });
 
     lucide.createIcons();
@@ -1842,21 +1870,6 @@
     
     if (container && cards.length > 0) {
         
-        const cardObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('in-view');
-                } else {
-                    entry.target.classList.remove('in-view'); 
-                }
-            });
-        }, {
-            root: container,
-            threshold: 0.4 
-        });
-
-        cards.forEach(card => cardObserver.observe(card));
-
         let autoScrollSpeed = window.innerWidth < 768 ? 4.5 : 0.8; 
         let autoScrollReq;
 
