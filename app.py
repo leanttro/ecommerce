@@ -572,6 +572,40 @@ def produto(loja_slug, slug):
             template_produto = 'case_tecnologia.html'
 
         return render_template(template_produto, p=p, loja=loja_visual, directus_url=DIRECTUS_URL)
+
+# ROTA GALERIA DE PERSONAGENS (WANTED)
+@app.route('/<loja_slug>/personagens')
+def personagens_page(loja_slug):
+    if not g.loja: 
+        return "Loja não encontrada", 404
+
+    headers = get_headers()
+    produtos = []
+    
+    try:
+        # Busca os produtos/personagens da loja
+        url_prod = f"{DIRECTUS_URL}/items/produtos?filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published&fields=*.*"
+        r_prod = requests.get(url_prod, headers=headers)
+        
+        if r_prod.status_code == 200:
+            raw_prods = r_prod.json()['data']
+            for p in raw_prods:
+                produtos.append({
+                    "nome": p['nome'],
+                    "slug": p['slug'],
+                    "preco": p.get('preco'),
+                    "imagem": get_img_url(p.get('imagem_destaque') or p.get('imagem1'))
+                })
+    except Exception as e:
+        print(f"Erro ao carregar personagens: {e}")
+
+    loja_visual = {
+        **g.loja,
+        "logo": get_img_url(g.loja.get('logo')),
+        "slug_url": loja_slug
+    }
+
+    return render_template('personagensone.html', loja=loja_visual, produtos=produtos)
     
     return "Produto não encontrado nesta loja", 404
 
