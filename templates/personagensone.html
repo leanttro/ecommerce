@@ -3,199 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cartazes de Procurado | {{ loja.nome }}</title>
+<title>{{ p.nome }} | WANTED</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <link href="https://fonts.googleapis.com/css2?family=Rye&display=swap" rel="stylesheet">
-
 <style>
-    :root { 
-        --primary: #E52521; 
-        --bg: #050505;
-        --parchment: #e3d3b3;
-        --dark-wood: #3e2723;
-    }
-    body { 
-        background-color: var(--bg); 
-        color: #fff; 
-        font-family: 'Rye', serif;
-        overflow-x: hidden;
-    }
-    .wanted-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 3rem;
-        padding: 2rem;
-    }
-    /* Estética do Cartaz */
-    .poster-card {
-        background-color: var(--parchment);
-        border: 8px solid var(--dark-wood);
-        padding: 25px;
-        color: var(--dark-wood);
-        position: relative;
-        box-shadow: inset 0 0 50px rgba(139, 69, 19, 0.3), 0 20px 40px rgba(0,0,0,0.8);
-        cursor: pointer;
-        transform-style: preserve-3d;
-        opacity: 0;
-    }
-    .poster-header {
-        font-size: 3.5rem;
-        text-align: center;
-        line-height: 1;
-        letter-spacing: 4px;
-        margin-bottom: 15px;
-    }
-    .image-container {
-        width: 100%;
-        aspect-ratio: 1/1;
-        border: 5px solid var(--dark-wood);
-        background: #000;
-        overflow: hidden;
-        position: relative;
-    }
-    .poster-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        filter: sepia(0.8) contrast(1.2) brightness(0.9);
-        transition: transform 0.6s ease, filter 0.6s ease;
-    }
-    .poster-card:hover .poster-img {
-        transform: scale(1.1);
-        filter: sepia(0.2) contrast(1.1) brightness(1);
-    }
-    .dead-alive {
-        font-size: 1.2rem;
-        text-align: center;
-        margin-top: 15px;
-        letter-spacing: 2px;
-    }
-    .poster-name {
-        font-size: 2.2rem;
-        text-align: center;
-        line-height: 1;
-        margin: 10px 0;
-        min-height: 2.2rem;
-    }
-    .poster-bounty {
-        font-size: 1.8rem;
-        text-align: center;
+    :root { --primary: #E52521; --bg: #050505; --parchment: #e3d3b3; --dark-wood: #3e2723; }
+    body { background-color: var(--bg); color: #fff; font-family: 'Rye', serif; overflow-x: hidden; }
+    
+    .poster-detail-section {
+        min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        padding: 60px 20px;
+        background: radial-gradient(circle, rgba(62,39,35,0.3) 0%, rgba(5,5,5,1) 100%);
     }
-    .poster-bounty::before { content: '฿'; }
 
-    /* Detalhes de Papel Velho */
-    .poster-card::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-        opacity: 0.2;
-        pointer-events: none;
+    .wanted-poster {
+        background-color: var(--parchment);
+        border: 10px solid var(--dark-wood);
+        padding: 40px;
+        color: var(--dark-wood);
+        max-width: 550px;
+        width: 100%;
+        box-shadow: inset 0 0 60px rgba(139, 69, 19, 0.4), 0 30px 60px rgba(0,0,0,0.9);
+        position: relative;
+        transform: rotate(-1deg);
+    }
+
+    .poster-img {
+        width: 100%;
+        aspect-ratio: 1/1;
+        border: 6px solid var(--dark-wood);
+        object-fit: cover;
+        filter: sepia(0.7) contrast(1.1);
+        margin: 20px 0;
+    }
+
+    .info-container {
+        max-width: 450px;
+        width: 100%;
+    }
+
+    .description-box {
+        background: rgba(227, 211, 179, 0.05);
+        border-left: 4px solid var(--primary);
+        padding: 25px;
+        font-family: sans-serif;
+        color: #ddd;
+        line-height: 1.8;
+        font-size: 1.1rem;
+        border-radius: 0 8px 8px 0;
     }
 </style>
 </head>
 <body>
 
-<nav class="p-8 flex justify-between items-center bg-black/50 backdrop-blur-md sticky top-0 z-50 border-b border-white/5">
-    <a href="/{{ loja.slug_url }}/" class="hover:scale-105 transition">
-        <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/f_auto,q_auto,w_300/v1773599770/Yellow_4000_x_1180_px_1_xfwlsg.png" class="h-10 md:h-14 w-auto">
-    </a>
-    <h1 class="text-xl md:text-3xl text-[var(--primary)]">Galeria de Procurados</h1>
+<nav class="fixed top-0 w-full z-50 p-6 flex justify-between items-center bg-black/80 backdrop-blur-md">
+    <a href="/{{ loja.slug_url }}/" class="text-white hover:text-red-500 transition"><i data-lucide="arrow-left"></i></a>
+    <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/f_auto,q_auto,w_300/v1773599770/Yellow_4000_x_1180_px_1_xfwlsg.png" class="h-8">
+    <div class="w-6"></div>
 </nav>
 
-<main class="container mx-auto py-12">
-    <div class="wanted-grid" id="posters-container">
-        {% for p in produtos %}
-        <div class="poster-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
-            <div class="poster-header">WANTED</div>
-            <div class="image-container">
-                <img src="{{ p.imagem }}" class="poster-img" alt="{{ p.nome }}">
-            </div>
-            <div class="dead-alive">DEAD OR ALIVE</div>
-            <h3 class="poster-name">{{ p.nome }}</h3>
-            <div class="poster-bounty">{{ p.preco if p.preco else '???.???.???' }}</div>
-            <div class="text-[10px] text-center mt-4 opacity-50 uppercase">Explore a história deste pirata</div>
-        </div>
-        {% endfor %}
+<section class="poster-detail-section flex flex-col lg:flex-row gap-16">
+    <div class="wanted-poster" id="poster-anim">
+        <h1 class="text-6xl text-center tracking-tighter">WANTED</h1>
+        <img src="{{ p.imagem_destaque }}" class="poster-img">
+        <p class="text-2xl text-center uppercase tracking-widest">Dead or Alive</p>
+        <h2 class="text-5xl text-center my-4 uppercase">{{ p.nome }}</h2>
+        <p class="text-4xl text-center text-[#8b0000]">฿ {{ "%.0f"|format(p.preco) if p.preco else '???' }}.000.000</p>
+        <p class="text-[10px] text-center mt-6 opacity-40">desenvolvido por www.leanttro.com</p>
     </div>
-</main>
 
-<footer class="py-20 text-center relative w-full overflow-hidden border-t-[4px]" style="background-color: #050505; border-color: var(--dark-wood);">
-    <div class="container mx-auto px-6">
-        <h2 class="text-3xl md:text-7xl mb-12 tracking-tighter uppercase font-display text-white" style="text-shadow: 0 5px 20px rgba(229,37,33,0.5);">
-            Junte-se à <span style="color: var(--primary);">{{ loja.nome }}</span>
-        </h2>
-        
-        <div class="flex flex-col md:flex-row items-center justify-center gap-8 mb-16">
-            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="text-xl md:text-2xl border-b-2 pb-2 transition hover:scale-105" style="border-color: var(--primary);">
-                WhatsApp da Tripulação
-            </a>
-            <a href="{{ loja.instagram_url }}" target="_blank" class="flex items-center gap-2 text-xl hover:opacity-70 transition">
-                <i data-lucide="instagram"></i> Instagram
+    <div class="info-container opacity-0" id="info-anim">
+        <h3 class="text-4xl text-[var(--primary)] mb-6 uppercase">Ficha Criminal</h3>
+        <div class="description-box">
+            {{ p.descricao | safe }}
+        </div>
+        <div class="mt-10">
+            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}?text=Eu vi a recompensa do {{ p.nome }}!" class="inline-block bg-[#E52521] text-white px-10 py-4 rounded-full text-xl uppercase font-bold tracking-widest hover:scale-110 transition shadow-2xl">
+                RECRUTAR PIRATA
             </a>
         </div>
-
-        <div class="relative w-[280px] h-[280px] flex items-center justify-center mx-auto mt-10">
-            <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/f_auto,q_auto,w_400/v1773599770/Yellow_4000_x_1180_px_1_xfwlsg.png" class="w-40 h-auto z-20" style="filter: drop-shadow(0 0 15px var(--primary));">
-            <div class="absolute inset-0 animate-[spin_10s_linear_infinite] opacity-30">
-                <svg viewBox="0 0 200 200" class="w-full h-full">
-                    <circle cx="100" cy="100" r="80" fill="none" stroke="var(--primary)" stroke-width="1" stroke-dasharray="5,5" />
-                </svg>
-            </div>
-        </div>
-        <p class="mt-12 text-[10px] uppercase tracking-widest opacity-30">© 2026 {{ loja.nome }}. www.leanttro.com</p>
     </div>
-</footer>
+</section>
 
 <script>
-    gsap.registerPlugin(ScrollTrigger);
     lucide.createIcons();
-
-    // Animação de Entrada dos Cartazes
-    gsap.to(".poster-card", {
-        opacity: 1,
-        y: 0,
-        rotationZ: () => (Math.random() - 0.5) * 5,
-        stagger: 0.2,
-        duration: 1.2,
-        ease: "back.out(1.7)",
-        start: "top 90%"
-    });
-
-    // Efeito Tilt 3D no Hover
-    const cards = document.querySelectorAll('.poster-card');
-    cards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const xc = rect.width / 2;
-            const yc = rect.height / 2;
-            const dx = x - xc;
-            const dy = y - yc;
-            gsap.to(card, {
-                rotationY: dx / 10,
-                rotationX: -dy / 10,
-                scale: 1.05,
-                duration: 0.3
-            });
-        });
-        card.addEventListener('mouseleave', () => {
-            gsap.to(card, {
-                rotationY: 0,
-                rotationX: 0,
-                scale: 1,
-                duration: 0.5
-            });
-        });
-    });
+    gsap.to("#poster-anim", { rotation: 1, duration: 2.5, repeat: -1, yoyo: true, ease: "sine.inOut" });
+    gsap.to("#info-anim", { opacity: 1, x: 20, duration: 1, delay: 0.3, ease: "power2.out" });
 </script>
 </body>
 </html>

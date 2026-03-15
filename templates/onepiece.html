@@ -1020,7 +1020,7 @@
 
     <div class="horizontal-container" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
         {% for p in produtos %}
-        <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/personagens'">
+        <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/personagem/{{ p.slug }}'">
             <div class="case-image-wrapper">
                 {% if p.imagem1 %}
                 <img src="{{ p.imagem1 }}" alt="{{ p.nome }}" class="img-hover">
