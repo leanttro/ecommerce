@@ -10,6 +10,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Rye&display=swap" rel="stylesheet">
+<!-- Recursos do oneee.html (Cropper.js) -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Rye&display=swap');
@@ -645,6 +648,39 @@
         100% { transform: rotate(-360deg); }
     }
 
+    /* Estilos adicionais do oneee.html */
+    .parchment-bg {
+        background-color: #e3d3b3;
+        border: 6px solid #3e2723;
+        color: #3e2723;
+    }
+    .form-3d {
+        transform: perspective(1000px) rotateY(10deg) rotateX(5deg);
+        box-shadow: -15px 20px 35px rgba(0,0,0,0.9), inset 0 0 40px rgba(139, 69, 19, 0.4);
+        transition: transform 0.4s ease-out, box-shadow 0.4s ease-out;
+        transform-style: preserve-3d;
+    }
+    .form-3d:hover {
+        transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 40px rgba(139, 69, 19, 0.4);
+    }
+    .input-field {
+        background: rgba(62, 39, 35, 0.05);
+        border: 2px solid rgba(62, 39, 35, 0.3);
+        color: #3e2723;
+    }
+    .input-field:focus {
+        outline: none;
+        border-color: #8b0000;
+        background: rgba(62, 39, 35, 0.1);
+    }
+    .input-field::placeholder {
+        color: rgba(62, 39, 35, 0.5);
+    }
+    .cropper-container {
+        width: 100%;
+        max-height: 400px;
+    }
 </style>
 </head>
 <body style="overflow: hidden;">
@@ -958,6 +994,53 @@
     </div>
 </section>
 {% endif %}
+
+<!-- ========== INÍCIO DA SEÇÃO DO ONEEE.HTML ========== -->
+<div class="flex items-center justify-center min-h-screen p-4" style="background-color: #050505;">
+    <div class="max-w-5xl w-full flex flex-col md:flex-row justify-center items-center md:items-start gap-8">
+        
+        <div class="parchment-bg p-8 rounded flex flex-col items-center form-3d max-w-md w-full">
+            <h2 class="text-4xl text-[#8b0000] mb-2 uppercase text-center" style="transform: translateZ(30px);">Sua Recompensa</h2>
+            <p class="text-sm uppercase tracking-widest font-bold mb-8 text-center" style="transform: translateZ(20px);">Crie seu cartaz oficial</p>
+            
+            <div class="w-full flex flex-col gap-4" style="transform: translateZ(40px);">
+                <label class="w-full cursor-pointer bg-[#3e2723] text-[#e3d3b3] p-4 text-center rounded border-2 border-[#3e2723] hover:bg-transparent hover:text-[#3e2723] transition">
+                    <span class="text-lg uppercase">1. Tirar Foto / Galeria</span>
+                    <input type="file" id="imageInput" accept="image/*" capture="environment" class="hidden">
+                </label>
+
+                <div id="cropWrapper" class="hidden flex-col gap-2">
+                    <div class="w-full overflow-hidden border-2 border-[#3e2723] bg-black">
+                        <img id="imageToCrop" class="max-w-full block">
+                    </div>
+                    <button id="confirmCropBtn" class="w-full bg-green-700 text-white p-3 rounded text-lg uppercase font-bold hover:bg-green-600 transition">
+                        Confirmar Enquadramento
+                    </button>
+                </div>
+                
+                <input type="text" id="pirateName" placeholder="2. Seu Nome de Pirata" class="input-field p-4 w-full rounded text-center text-lg uppercase" maxlength="15">
+                
+                <button id="generateBtn" class="w-full bg-[#8b0000] text-[#e3d3b3] p-4 rounded text-xl uppercase border-2 border-[#3e2723] hover:scale-105 transition shadow-lg opacity-50 cursor-not-allowed" disabled>
+                    3. Gerar Cartaz
+                </button>
+            </div>
+        </div>
+
+        <div class="flex flex-col items-center justify-center gap-6 hidden max-w-md w-full" id="previewSection">
+            <canvas id="posterCanvas" width="800" height="1000" class="w-full border-4 border-[#3e2723] shadow-2xl rounded bg-[#e3d3b3]"></canvas>
+            
+            <div class="w-full flex flex-col gap-2 bg-[#111] p-6 rounded border border-white/10 shadow-xl">
+                <p class="text-center text-sm tracking-widest uppercase text-white/70 mb-2">Para baixar em alta qualidade</p>
+                <input type="email" id="userEmail" placeholder="Digite seu melhor e-mail" class="p-3 w-full bg-white/5 border border-white/20 rounded text-white text-center focus:outline-none focus:border-[#E52521]">
+                <button id="downloadBtn" class="w-full bg-[#E52521] text-white p-4 rounded text-lg uppercase font-bold hover:bg-red-700 transition">
+                    Liberar Download
+                </button>
+                <p id="errorMsg" class="text-red-500 text-xs text-center hidden mt-1">E-mail obrigatório para baixar</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ========== FIM DA SEÇÃO DO ONEEE.HTML ========== -->
 
 <script>
     const loaderOverlay = document.getElementById('loader-overlay');
@@ -1698,6 +1781,153 @@
             navRenderer.setSize(window.innerWidth, window.innerHeight);
         });
     }
+</script>
+
+<!-- Script do oneee.html (adaptado para não conflitar) -->
+<script>
+    (function() {
+        const imageInput = document.getElementById('imageInput');
+        const imageToCrop = document.getElementById('imageToCrop');
+        const cropWrapper = document.getElementById('cropWrapper');
+        const confirmCropBtn = document.getElementById('confirmCropBtn');
+        const pirateName = document.getElementById('pirateName');
+        const generateBtn = document.getElementById('generateBtn');
+        const previewSection = document.getElementById('previewSection');
+        const posterCanvas = document.getElementById('posterCanvas');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const userEmail = document.getElementById('userEmail');
+        const errorMsg = document.getElementById('errorMsg');
+        const ctx = posterCanvas.getContext('2d');
+
+        let cropper;
+        let croppedCanvas = null;
+        let finalBounty = 0;
+
+        function checkInputs() {
+            if (croppedCanvas && pirateName.value.trim().length > 0) {
+                generateBtn.disabled = false;
+                generateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                generateBtn.disabled = true;
+                generateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    imageToCrop.src = event.target.result;
+                    cropWrapper.classList.remove('hidden');
+                    cropWrapper.classList.add('flex');
+                    
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    
+                    cropper = new Cropper(imageToCrop, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        dragMode: 'move',
+                        autoCropArea: 1,
+                        restore: false,
+                        guides: true,
+                        center: true,
+                        highlight: false,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        toggleDragModeOnDblclick: false,
+                    });
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        confirmCropBtn.addEventListener('click', () => {
+            if (cropper) {
+                croppedCanvas = cropper.getCroppedCanvas({
+                    width: 600,
+                    height: 600
+                });
+                cropWrapper.classList.remove('flex');
+                cropWrapper.classList.add('hidden');
+                checkInputs();
+            }
+        });
+
+        pirateName.addEventListener('input', checkInputs);
+
+        generateBtn.addEventListener('click', () => {
+            previewSection.classList.remove('hidden');
+            finalBounty = Math.floor(Math.random() * 900) + 100;
+            drawPoster();
+        });
+
+        function drawPoster() {
+            ctx.fillStyle = '#e3d3b3';
+            ctx.fillRect(0, 0, posterCanvas.width, posterCanvas.height);
+
+            ctx.strokeStyle = '#3e2723';
+            ctx.lineWidth = 20;
+            ctx.strokeRect(30, 30, posterCanvas.width - 60, posterCanvas.height - 60);
+            ctx.lineWidth = 5;
+            ctx.strokeRect(60, 60, posterCanvas.width - 120, posterCanvas.height - 120);
+
+            ctx.fillStyle = '#3e2723';
+            ctx.font = '105px Rye';
+            ctx.textAlign = 'center';
+            ctx.fillText('WANTED', posterCanvas.width / 2, 175);
+
+            const imgSize = 480;
+            const imgX = (posterCanvas.width - imgSize) / 2;
+            const imgY = 210;
+
+            ctx.fillStyle = '#000';
+            ctx.fillRect(imgX, imgY, imgSize, imgSize);
+
+            if (croppedCanvas) {
+                ctx.drawImage(croppedCanvas, imgX, imgY, imgSize, imgSize);
+                
+                ctx.fillStyle = 'rgba(62, 39, 35, 0.2)';
+                ctx.fillRect(imgX, imgY, imgSize, imgSize);
+            }
+
+            ctx.lineWidth = 10;
+            ctx.strokeStyle = '#3e2723';
+            ctx.strokeRect(imgX, imgY, imgSize, imgSize);
+
+            ctx.fillStyle = '#000000';
+            ctx.font = '45px Rye';
+            ctx.fillText('DEAD OR ALIVE', posterCanvas.width / 2, 750);
+
+            ctx.font = '75px Rye';
+            const nameText = pirateName.value.toUpperCase();
+            ctx.fillText(nameText, posterCanvas.width / 2, 830);
+
+            ctx.font = '65px Rye';
+            ctx.fillText(`฿ ${finalBounty}.000.000`, posterCanvas.width / 2, 910);
+
+            ctx.font = '16px Rye';
+            ctx.fillText('desenvolvido por www.leanttro.com', posterCanvas.width / 2, 955);
+        }
+
+        downloadBtn.addEventListener('click', () => {
+            if (!userEmail.value.includes('@')) {
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+            errorMsg.classList.add('hidden');
+            
+            const link = document.createElement('a');
+            link.download = `wanted-${pirateName.value.toLowerCase()}.png`;
+            link.href = posterCanvas.toDataURL('image/png');
+            link.click();
+            
+            downloadBtn.innerHTML = 'BAIXADO COM SUCESSO!';
+            downloadBtn.classList.replace('bg-[#E52521]', 'bg-green-600');
+        });
+    })();
 </script>
 
 </body>
