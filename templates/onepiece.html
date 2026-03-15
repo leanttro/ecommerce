@@ -2247,6 +2247,13 @@
             
             downloadBtn.innerHTML = 'BAIXADO COM SUCESSO!';
             downloadBtn.classList.replace('bg-[#E52521]', 'bg-green-600');
+            const shareBtn = document.createElement('a');
+            const message = encodeURIComponent(`Fui recrutado para a tripulação! Veja meu cartaz WANTED e crie o seu também: ${window.location.href}`);
+            shareBtn.href = `https://wa.me/?text=${message}`;
+            shareBtn.target = '_blank';
+            shareBtn.className = "w-full bg-[#25D366] text-white p-4 rounded text-lg uppercase font-bold hover:bg-green-700 transition mt-2 flex items-center justify-center";
+            shareBtn.innerHTML = "COMPARTILHAR NO WHATSAPP";
+            downloadBtn.parentNode.appendChild(shareBtn);
             downloadBtn.disabled = false;
         });
     })();
