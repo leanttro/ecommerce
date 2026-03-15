@@ -423,9 +423,21 @@
         transform-style: preserve-3d;
     }
 
+    #intro-spinning-logo {
+        animation: spinY 4s linear infinite;
+        transform-style: preserve-3d;
+        display: block;
+        margin: 0 auto 20px auto;
+    }
+
+    @keyframes spinY {
+        0% { transform: perspective(1000px) rotateY(0deg); }
+        100% { transform: perspective(1000px) rotateY(360deg); }
+    }
+
     #loader-overlay .logo-container {
         display: flex;
-        font-size: clamp(3rem, 8vw, 8rem);
+        font-size: clamp(1.5rem, 4vw, 4rem);
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: -0.04em;
@@ -533,24 +545,6 @@
     @keyframes explode {
         0% { transform: translate(0, 0) scale(1); opacity: 1; }
         100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
-    }
-
-    #scroll-prompt {
-        position: absolute;
-        bottom: 120px;
-        color: #fff;
-        opacity: 0;
-        transition: opacity 1s;
-        font-family: 'Rye', serif;
-        text-transform: uppercase;
-        font-size: 14px;
-        font-weight: bold;
-        letter-spacing: 3px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        pointer-events: none;
     }
 
     .glass-trail {
@@ -747,24 +741,27 @@
 <div id="loader-overlay">
     <div id="overlay-masks"></div>
     
-    <div class="scene" id="intro-scene">
+    <div class="scene flex flex-col items-center justify-center w-full" id="intro-scene">
+        {% if loja.logo %}
+            <img src="{{ loja.logo }}" id="intro-spinning-logo" class="h-20 md:h-32 w-auto object-contain">
+        {% else %}
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/23/One_Piece_Logo.svg" id="intro-spinning-logo" class="h-20 md:h-32 w-auto object-contain">
+        {% endif %}
+        
         <div class="logo-container" id="intro-logoContainer">
-            <span class="letter white anim-bounce" style="--delay: 0.1s">O</span>
-            <span class="letter white anim-bounce" style="--delay: 0.2s">N</span>
-            <span class="letter white anim-bounce" style="--delay: 0.3s">E</span>
-            <span class="letter white anim-bounce" style="--delay: 0.4s">&nbsp;</span>
+            <span class="letter white anim-bounce" style="--delay: 0.1s">E</span>
+            <span class="letter white anim-bounce" style="--delay: 0.2s">X</span>
+            <span class="letter white anim-bounce" style="--delay: 0.3s">P</span>
+            <span class="letter white anim-bounce" style="--delay: 0.4s">E</span>
+            <span class="letter white anim-bounce" style="--delay: 0.5s">R</span>
             
-            <span class="letter red-op anim-smash" style="--delay: 1.0s">P</span>
-            <span class="letter red-op anim-smash" style="--delay: 1.1s">I</span>
-            <span class="letter red-op anim-smash" style="--delay: 1.2s">E</span>
+            <span class="letter red-op anim-smash" style="--delay: 1.0s">I</span>
+            <span class="letter red-op anim-smash" style="--delay: 1.1s">E</span>
+            <span class="letter red-op anim-smash" style="--delay: 1.2s">N</span>
             <span class="letter red-op anim-smash" style="--delay: 1.3s">C</span>
             <span class="letter red-op anim-smash" style="--delay: 1.4s">E</span>
         </div>
         <div class="particles" id="intro-particles"></div>
-    </div>
-    <div id="scroll-prompt">
-        <span>Role para entrar</span>
-        <i data-lucide="chevron-down" class="w-6 h-6 animate-bounce"></i>
     </div>
 </div>
 
@@ -1149,7 +1146,6 @@
     const introLogoContainer = document.getElementById('intro-logoContainer');
     const introParticles = document.getElementById('intro-particles');
     const redLetters = document.querySelectorAll('#loader-overlay .red-op');
-    const scrollPrompt = document.getElementById('scroll-prompt');
     const overlayMasks = document.getElementById('overlay-masks');
     let introFinished = false;
 
@@ -1221,12 +1217,9 @@
         }, 400);
 
         setTimeout(() => {
-            scrollPrompt.style.opacity = '1';
             introFinished = true;
-            
-            window.addEventListener('wheel', handleEntryScroll, { passive: false });
-            window.addEventListener('touchstart', handleEntryScroll, { passive: false });
-        }, 1000);
+            handleEntryScroll();
+        }, 1500); 
 
     }, 1400); 
 
@@ -1425,11 +1418,17 @@
         if (e && e.cancelable) e.preventDefault(); 
         introFinished = false; 
         
-        gsap.to(scrollPrompt, { opacity: 0, duration: 0.2 });
-
         gsap.to(introLogoContainer, {
             y: "-50vh",
             scale: 0.9,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power4.in"
+        });
+
+        gsap.to('#intro-spinning-logo', {
+            y: "-50vh",
+            scale: 0.5,
             opacity: 0,
             duration: 0.8,
             ease: "power4.in"
