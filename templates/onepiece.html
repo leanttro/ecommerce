@@ -196,7 +196,7 @@
         padding: 24px 16px 16px 16px;
         background-color: var(--parchment);
         cursor: pointer;
-        transform: perspective(1000px) rotateY(15deg) scale(0.85) translateY(40px); 
+        transform: perspective(1000px) rotateY(90deg) scale(0.85) translateY(40px); 
         opacity: 0;
         border: 6px solid var(--dark-wood);
         box-shadow: inset 0 0 40px rgba(139, 69, 19, 0.4), 0 10px 20px rgba(0,0,0,0.5);
@@ -215,6 +215,43 @@
         margin-bottom: 15px;
         line-height: 1;
         white-space: nowrap;
+    }
+
+    /* Estado virado (verso) */
+    .case-card.flipped {
+        transform: perspective(1000px) rotateY(0deg) scale(1) translateY(0);
+        opacity: 1;
+    }
+    .case-card.flipped .case-image-wrapper,
+    .case-card.flipped .case-info-new {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+    }
+    .case-card.flipped::before {
+        content: 'WANTED';
+        font-size: clamp(3rem, 8vw, 5rem);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: var(--dark-wood);
+        background: none;
+        text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        margin: 0;
+        line-height: 1;
+        letter-spacing: 4px;
+        z-index: 10;
+    }
+    .case-card.flipped::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(45deg, rgba(139,69,19,0.1) 0px, rgba(139,69,19,0.1) 10px, transparent 10px, transparent 20px);
+        pointer-events: none;
     }
 
     @media (max-width: 768px) {
@@ -1520,6 +1557,24 @@
                 ease: "elastic.out(1, 0.3)"
             });
         }
+
+        // Animação do título da seção de produtos
+        const titulo = document.getElementById('titulo-secao-produtos');
+        if (titulo) {
+            gsap.from(titulo, {
+                scrollTrigger: {
+                    trigger: "#portfolio",
+                    start: "top 80%",
+                    toggleActions: "play none none reverse"
+                },
+                y: 100,
+                opacity: 0,
+                rotationX: -30,
+                scale: 0.8,
+                duration: 1.2,
+                ease: "power3.out"
+            });
+        }
         
         ScrollTrigger.refresh();
     }
@@ -1750,6 +1805,31 @@
                     btn.disabled = false;
                 }
             });
+        }
+
+        // Lógica para virar os cards conforme o scroll horizontal
+        const container = document.querySelector(".horizontal-container");
+        const cards = document.querySelectorAll('.case-card');
+        if (container && cards.length > 0) {
+            const flipObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Se mais de 50% do card está visível, mostra a frente (remove flipped)
+                        if (entry.intersectionRatio > 0.5) {
+                            entry.target.classList.remove('flipped');
+                        } else {
+                            entry.target.classList.add('flipped');
+                        }
+                    } else {
+                        entry.target.classList.add('flipped');
+                    }
+                });
+            }, {
+                root: container,
+                threshold: [0, 0.5, 1]
+            });
+
+            cards.forEach(card => flipObserver.observe(card));
         }
     });
 
