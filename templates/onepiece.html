@@ -641,6 +641,7 @@
         100% { transform: rotate(-360deg); }
     }
 
+    /* Estilos adicionais do oneee.html */
     .parchment-bg {
         background-color: #e3d3b3;
         border: 6px solid #3e2723;
@@ -1075,7 +1076,7 @@
             <div class="w-full flex flex-col gap-4" style="transform: translateZ(40px);">
                 <label class="w-full cursor-pointer bg-[#3e2723] text-[#e3d3b3] p-4 text-center rounded border-2 border-[#3e2723] hover:bg-transparent hover:text-[#3e2723] transition">
                     <span class="text-lg uppercase">1. Tirar Foto / Galeria</span>
-                    <input type="file" id="imageInput" accept="image/*" capture="environment" class="hidden">
+                    <input type="file" id="imageInput" accept="image/*" class="hidden">
                 </label>
 
                 <div id="cropWrapper" class="hidden flex-col gap-2">
@@ -2043,12 +2044,30 @@
             ctx.fillText('desenvolvido por www.leanttro.com', posterCanvas.width / 2, 955);
         }
 
-        downloadBtn.addEventListener('click', () => {
+        downloadBtn.addEventListener('click', async () => {
             if (!userEmail.value.includes('@')) {
                 errorMsg.classList.remove('hidden');
                 return;
             }
             errorMsg.classList.add('hidden');
+            
+            const originalText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = 'PROCESSANDO...';
+            downloadBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('nome', pirateName.value || 'Cartaz Pirata');
+            formData.append('email', userEmail.value);
+            formData.append('whatsapp', 'Não informado');
+
+            try {
+                await fetch('/{{ loja.slug_url }}/captura-lead', {
+                    method: 'POST',
+                    body: formData
+                });
+            } catch(err) {
+                console.error(err);
+            }
             
             const link = document.createElement('a');
             link.download = `wanted-${pirateName.value.toLowerCase()}.png`;
@@ -2057,6 +2076,7 @@
             
             downloadBtn.innerHTML = 'BAIXADO COM SUCESSO!';
             downloadBtn.classList.replace('bg-[#E52521]', 'bg-green-600');
+            downloadBtn.disabled = false;
         });
     })();
 </script>
