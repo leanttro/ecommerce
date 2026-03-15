@@ -1807,47 +1807,14 @@
 
     const container = document.querySelector(".horizontal-container");
     const cards = document.querySelectorAll('.case-card');
-    let isInteracting = false;
     
     if (container && cards.length > 0) {
-        
-        let autoScrollSpeed = window.innerWidth < 768 ? 4.5 : 0.8; 
-        let autoScrollReq;
-
-        const startAutoScroll = () => {
-            if (!isInteracting) {
-                if (Math.ceil(container.scrollLeft + container.clientWidth) < container.scrollWidth - 2) {
-                    container.scrollLeft += autoScrollSpeed;
-                }
-            }
-            autoScrollReq = requestAnimationFrame(startAutoScroll);
-        };
-        
-        autoScrollReq = requestAnimationFrame(startAutoScroll);
-
-        container.addEventListener('mouseenter', () => { if(window.matchMedia('(pointer: fine)').matches) isInteracting = true; });
-        container.addEventListener('mouseleave', () => { if(window.matchMedia('(pointer: fine)').matches) isInteracting = false; });
-        
-        container.addEventListener('touchstart', () => { isInteracting = true; }, {passive: true});
-        container.addEventListener('touchend', () => { setTimeout(() => { isInteracting = false; }, 1500); }, {passive: true});
-        container.addEventListener('touchcancel', () => { setTimeout(() => { isInteracting = false; }, 1500); }, {passive: true});
-
-        let interactionTimeout;
-        container.addEventListener('scroll', () => {
-            isInteracting = true;
-            clearTimeout(interactionTimeout);
-            interactionTimeout = setTimeout(() => {
-                isInteracting = false;
-            }, 1000);
-        }, { passive: true });
-
         container.addEventListener('wheel', (e) => {
             if(document.body.style.overflow === 'hidden') return;
             if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
             
-            isInteracting = true; 
             clearTimeout(container.scrollTimeout);
-            container.scrollTimeout = setTimeout(() => isInteracting = false, 1500);
+            container.scrollTimeout = setTimeout(() => {}, 1500);
 
             const atLeft = container.scrollLeft <= 0;
             const atRight = Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth;
