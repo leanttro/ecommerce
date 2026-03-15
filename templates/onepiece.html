@@ -170,10 +170,14 @@
             transform: translateX(-50%) !important;
         }
         
-        #texto-ep-1 { top: 10% !important; }
-        #texto-ep-2 { bottom: 10% !important; top: auto !important; }
-        #texto-ep-3 { top: 10% !important; right: auto !important; }
-        #texto-ep-4 { bottom: 10% !important; left: 50% !important; }
+        #texto-ep-1 { top: 10% !important; left: 50% !important; }
+        #texto-ep-2 { bottom: 10% !important; left: 50% !important; top: auto !important; right: auto !important; }
+        #texto-ep-3 { top: 10% !important; left: 50% !important; right: auto !important; }
+        #texto-ep-4 { bottom: 10% !important; left: 50% !important; top: auto !important; right: auto !important; }
+        #texto-ep-5 { top: 10% !important; left: 50% !important; }
+        #texto-ep-6 { bottom: 10% !important; left: 50% !important; top: auto !important; right: auto !important; }
+        #texto-ep-7 { top: 10% !important; left: 50% !important; right: auto !important; }
+        #texto-ep-8 { bottom: 10% !important; left: 50% !important; top: auto !important; right: auto !important; }
     }
 
     .case-card {
@@ -377,7 +381,7 @@
     }
 
     @keyframes maskSweep {
-        0% { -webkit-mask-position: center, 200% 0; mask-position: center, 200% 0; }
+        0% { -webkit-mask-position: center, 200% 0; mask-position: center, -100% 0; }
         100% { -webkit-mask-position: center, -100% 0; mask-position: center, -100% 0; }
     }
 
@@ -1071,23 +1075,43 @@
     <div id='ep-resumos' style='position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2;'>
         
         <div class='ep-card' id='texto-ep-1' style='position:absolute; top:15%; left:8%; width:100%; max-width:400px; opacity:0; transition:opacity 0.4s ease; background:var(--parchment); border:6px solid var(--dark-wood); padding:25px; box-shadow:inset 0 0 30px rgba(139,69,19,0.3), 0 15px 30px rgba(0,0,0,0.8); border-radius:4px;'>
-            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'>WANTED<br><span style='font-size:1.4rem; color:#8b0000;'>Episódio 1</span></h3>
-            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>O amanhecer de uma grande aventura. Luffy parte em sua jornada para se tornar o Rei dos Piratas.</p>
+            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'><span style='font-size:1.8rem; color:#8b0000;'>Episódio 1</span></h3>
+            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>Conclui o arco de Loguetown com a "execução" de Luffy, aparições de Bartolomeo (fã de Luffy) e Dragon salvando o grupo. Smoker persegue os Chapéus de Palha, enquanto Tashigi questiona sua lealdade; Sabo surge misteriosamente no final.</p>
         </div>
         
         <div class='ep-card' id='texto-ep-2' style='position:absolute; bottom:15%; right:8%; width:100%; max-width:400px; opacity:0; transition:opacity 0.4s ease; background:var(--parchment); border:6px solid var(--dark-wood); padding:25px; box-shadow:inset 0 0 30px rgba(139,69,19,0.3), 0 15px 30px rgba(0,0,0,0.8); border-radius:4px;'>
-            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'>WANTED<br><span style='font-size:1.4rem; color:#10B981;'>Episódio 2</span></h3>
-            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>O Caçador de Piratas. Zoro se junta à tripulação rumo à Grand Line.</p>
+            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'><span style='font-size:1.8rem; color:#10B981;'>Episódio 2</span></h3>
+            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>Os Chapéus de Palha chegam à Reverse Mountain, enfrentam uma baleia gigante e sobem a Grand Line via correnteza. Introduz Laboon e Crocus, com tensão entre Zoro e Sanji; o grupo entra no perigoso mar imprevisível.</p>
         </div>
         
         <div class='ep-card' id='texto-ep-3' style='position:absolute; top:15%; right:8%; width:100%; max-width:400px; opacity:0; transition:opacity 0.4s ease; background:var(--parchment); border:6px solid var(--dark-wood); padding:25px; box-shadow:inset 0 0 30px rgba(139,69,19,0.3), 0 15px 30px rgba(0,0,0,0.8); border-radius:4px;'>
-            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'>WANTED<br><span style='font-size:1.4rem; color:#F97316;'>Episódio 3</span></h3>
-            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>Morgan Mão-de-Machado. A primeira grande batalha contra a Marinha.</p>
+            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'><span style='font-size:1.8rem; color:#F97316;'>Episódio 3</span></h3>
+            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>A tripulação desembarca em Whisky Peak, onde caçadores de recompensas disfarçados os atacam. Zoro derrota todos sozinho à noite; revelam-se Baroque Works, introduzindo Mr. 5 e Miss Valentine.</p>
         </div>
         
         <div class='ep-card' id='texto-ep-4' style='position:absolute; bottom:15%; left:8%; width:100%; max-width:400px; opacity:0; transition:opacity 0.4s ease; background:var(--parchment); border:6px solid var(--dark-wood); padding:25px; box-shadow:inset 0 0 30px rgba(139,69,19,0.3), 0 15px 30px rgba(0,0,0,0.8); border-radius:4px;'>
-            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'>WANTED<br><span style='font-size:1.4rem; color:#EAB308;'>Episódio 4</span></h3>
-            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>O Pássaro Gigante. Aventura nos céus e revelações do passado.</p>
+            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'><span style='font-size:1.8rem; color:#EAB308;'>Episódio 4</span></h3>
+            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>Presos na pré-histórica Little Garden, encontram gigantes Dorry e Brogy em duelo eterno. Enfrentam Mr. 3 e sua cera; alianças improváveis e batalhas épicas destacam amizade e honra.</p>
+        </div>
+        
+        <div class='ep-card' id='texto-ep-5' style='position:absolute; top:15%; left:8%; width:100%; max-width:400px; opacity:0; transition:opacity 0.4s ease; background:var(--parchment); border:6px solid var(--dark-wood); padding:25px; box-shadow:inset 0 0 30px rgba(139,69,19,0.3), 0 15px 30px rgba(0,0,0,0.8); border-radius:4px;'>
+            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'><span style='font-size:1.8rem; color:#3B82F6;'>Episódio 5</span></h3>
+            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>Profundiza conspiração da Baroque Works com Vivi infiltrada. Luffy e cia. escapam armadilhas de cera e explosivos; Zoro e Sanji brilham em combates, avançando para a próxima ilha.</p>
+        </div>
+
+        <div class='ep-card' id='texto-ep-6' style='position:absolute; bottom:15%; right:8%; width:100%; max-width:400px; opacity:0; transition:opacity 0.4s ease; background:var(--parchment); border:6px solid var(--dark-wood); padding:25px; box-shadow:inset 0 0 30px rgba(139,69,19,0.3), 0 15px 30px rgba(0,0,0,0.8); border-radius:4px;'>
+            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'><span style='font-size:1.8rem; color:#9333EA;'>Episódio 6</span></h3>
+            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>Chegada à ilha de neve Drum, com Nami doente. Encontram Chopper, o rena médico discriminado, e enfrentam capangas de Wapol; Kureha e Hiriluk são introduzidos.</p>
+        </div>
+
+        <div class='ep-card' id='texto-ep-7' style='position:absolute; top:15%; right:8%; width:100%; max-width:400px; opacity:0; transition:opacity 0.4s ease; background:var(--parchment); border:6px solid var(--dark-wood); padding:25px; box-shadow:inset 0 0 30px rgba(139,69,19,0.3), 0 15px 30px rgba(0,0,0,0.8); border-radius:4px;'>
+            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'><span style='font-size:1.8rem; color:#EC4899;'>Episódio 7</span></h3>
+            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>Wapol retorna com Fruta Munch-Munch, devorando aliados para criar monstros. Chopper usa Rumble Balls para formas poderosas; Luffy luta enquanto o grupo protege civis.</p>
+        </div>
+
+        <div class='ep-card' id='texto-ep-8' style='position:absolute; bottom:15%; left:8%; width:100%; max-width:400px; opacity:0; transition:opacity 0.4s ease; background:var(--parchment); border:6px solid var(--dark-wood); padding:25px; box-shadow:inset 0 0 30px rgba(139,69,19,0.3), 0 15px 30px rgba(0,0,0,0.8); border-radius:4px;'>
+            <h3 style='font-family:"Rye", serif; color:var(--dark-wood); font-size:2.2rem; text-align:center; border-bottom:2px solid rgba(139,69,19,0.3); padding-bottom:10px; margin-bottom:15px; line-height:1.2; text-transform:uppercase;'><span style='font-size:1.8rem; color:#14B8A6;'>Episódio 8</span></h3>
+            <p style='font-family:sans-serif; color:#222; font-size:1.1rem; text-align:center; font-weight:600; line-height:1.5;'>Clímax com batalha coletiva contra Wapol. Luffy convida Chopper para a tripulação após vitória; Kureha dispara poção de Hiriluk, criando "cerejeiras" de neve. O Going Merry zarpa com novo membro.</p>
         </div>
         
     </div>
@@ -1937,18 +1961,65 @@
         seaMesh.position.y = -2;
         navScene.add(seaMesh);
 
-        const shipTexture = new THREE.TextureLoader().load('https://res.cloudinary.com/dzcaxmbjn/image/upload/v1773534638/image-removebg-preview_29_-Picsart-AiImageEnhancer_q9o14t.png');
-        const shipMaterial = new THREE.SpriteMaterial({ map: shipTexture, color: 0xffffff, transparent: true, alphaTest: 0.05 });
-        const shipSprite = new THREE.Sprite(shipMaterial);
+        const shipGroup = new THREE.Group();
         
-        shipSprite.scale.set(20, 20, 1);
-        shipSprite.position.set(0, 8, 0);
-        navScene.add(shipSprite);
+        const hullGeo = new THREE.BoxGeometry(4, 2, 8);
+        const hullMat = new THREE.MeshStandardMaterial({ color: 0x8b4513, roughness: 0.8 });
+        const hull = new THREE.Mesh(hullGeo, hullMat);
+        hull.position.y = 1;
+        shipGroup.add(hull);
+        
+        const deckGeo = new THREE.BoxGeometry(4.2, 0.2, 8.2);
+        const deckMat = new THREE.MeshStandardMaterial({ color: 0xd2b48c, roughness: 0.9 });
+        const deck = new THREE.Mesh(deckGeo, deckMat);
+        deck.position.y = 2.1;
+        shipGroup.add(deck);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+        const mastGeo = new THREE.CylinderGeometry(0.2, 0.2, 7);
+        const mastMat = new THREE.MeshStandardMaterial({ color: 0x5c3a21 });
+        const mast = new THREE.Mesh(mastGeo, mastMat);
+        mast.position.y = 5.5;
+        mast.position.z = -1;
+        shipGroup.add(mast);
+
+        const sailGeo = new THREE.PlaneGeometry(5, 5, 10, 10);
+        const sailMat = new THREE.MeshStandardMaterial({ color: 0xeeeeee, side: THREE.DoubleSide });
+        const sail = new THREE.Mesh(sailGeo, sailMat);
+        sail.position.y = 5;
+        sail.position.z = -0.8;
+        const posAttribute = sailGeo.attributes.position;
+        for (let i = 0; i < posAttribute.count; i++) {
+            const z = posAttribute.getZ(i);
+            const x = posAttribute.getX(i);
+            posAttribute.setZ(i, z + Math.sin(x * Math.PI * 0.2) * 1);
+        }
+        sailGeo.computeVertexNormals();
+        shipGroup.add(sail);
+
+        shipGroup.position.set(0, 8, 0);
+        navScene.add(shipGroup);
+
+        const shipLight = new THREE.PointLight(0xffaa55, 1.5, 30);
+        shipLight.position.set(0, 5, 5);
+        shipGroup.add(shipLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+        dirLight.position.set(10, 20, 10);
+        navScene.add(dirLight);
+
+        const ambientLight = new THREE.AmbientLight(0x404040, 1);
         navScene.add(ambientLight);
 
         let navClock = new THREE.Clock();
+        let navMouseX = 0;
+        let navMouseY = 0;
+
+        const nav3dSec = document.getElementById('nav-3d-episodios');
+        nav3dSec.addEventListener('mousemove', (e) => {
+            const rect = nav3dSec.getBoundingClientRect();
+            navMouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            navMouseY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        });
 
         function animateNav() {
             requestAnimationFrame(animateNav);
@@ -1963,8 +2034,11 @@
             }
             positions.needsUpdate = true;
 
-            shipSprite.position.y = 8 + Math.sin(elapsedTime * 2.5) * 0.8;
-            shipSprite.material.rotation = Math.sin(elapsedTime * 1.5) * 0.05;
+            shipGroup.position.y = 8 + Math.sin(elapsedTime * 2.5) * 0.8;
+            shipGroup.position.x += (navMouseX * 10 - shipGroup.position.x) * 0.05;
+            shipGroup.rotation.z = -navMouseX * 0.2;
+            shipGroup.rotation.y = -navMouseX * 0.3;
+            shipGroup.rotation.x = Math.sin(elapsedTime * 1.5) * 0.05 + navMouseY * 0.1;
 
             navRenderer.render(navScene, navCamera);
         }
@@ -1974,24 +2048,32 @@
         ScrollTrigger.create({
             trigger: "#nav-3d-episodios",
             start: "top top",
-            end: "+=300%",
+            end: "+=700%",
             pin: true,
             scrub: 1,
             onUpdate: (self) => {
                 const progress = self.progress;
 
-                navCamera.position.z = 25 - progress * 250;
-                shipSprite.position.z = 0 - progress * 250;
+                navCamera.position.z = 25 - progress * 500;
+                shipGroup.position.z = 0 - progress * 500;
 
                 const ep1 = document.getElementById('texto-ep-1');
                 const ep2 = document.getElementById('texto-ep-2');
                 const ep3 = document.getElementById('texto-ep-3');
                 const ep4 = document.getElementById('texto-ep-4');
+                const ep5 = document.getElementById('texto-ep-5');
+                const ep6 = document.getElementById('texto-ep-6');
+                const ep7 = document.getElementById('texto-ep-7');
+                const ep8 = document.getElementById('texto-ep-8');
 
-                if(ep1) ep1.style.opacity = (progress > 0.02 && progress < 0.22) ? 1 : 0;
-                if(ep2) ep2.style.opacity = (progress > 0.25 && progress < 0.45) ? 1 : 0;
-                if(ep3) ep3.style.opacity = (progress > 0.50 && progress < 0.70) ? 1 : 0;
-                if(ep4) ep4.style.opacity = (progress > 0.75 && progress < 0.95) ? 1 : 0;
+                if(ep1) ep1.style.opacity = (progress > 0.01 && progress < 0.11) ? 1 : 0;
+                if(ep2) ep2.style.opacity = (progress > 0.13 && progress < 0.23) ? 1 : 0;
+                if(ep3) ep3.style.opacity = (progress > 0.25 && progress < 0.35) ? 1 : 0;
+                if(ep4) ep4.style.opacity = (progress > 0.37 && progress < 0.47) ? 1 : 0;
+                if(ep5) ep5.style.opacity = (progress > 0.49 && progress < 0.59) ? 1 : 0;
+                if(ep6) ep6.style.opacity = (progress > 0.61 && progress < 0.71) ? 1 : 0;
+                if(ep7) ep7.style.opacity = (progress > 0.73 && progress < 0.83) ? 1 : 0;
+                if(ep8) ep8.style.opacity = (progress > 0.85 && progress < 0.95) ? 1 : 0;
             }
         });
 
