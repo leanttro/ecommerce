@@ -46,6 +46,13 @@
         font-family: 'Rye', serif !important;
     }
 
+    header {
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
     .horizontal-section {
         width: 100%;
         max-width: 100vw;
@@ -60,14 +67,13 @@
         width: 100%;
         padding-left: 10vw;
         padding-right: 10vw;
-        padding-bottom: 40px;
+        padding-bottom: 24px;
         scroll-behavior: auto;
         -webkit-overflow-scrolling: touch;
         align-items: stretch;
         min-height: 80vh;
         scrollbar-width: auto;
         scrollbar-color: var(--primary) rgba(255,255,255,0.05);
-        perspective: 2000px;
     }
 
     .horizontal-container::-webkit-scrollbar {
@@ -93,6 +99,7 @@
         .case-card {
             width: 26vw !important; 
             max-width: 38vh !important; 
+            height: auto !important;
         }
         .case-title-new {
             font-size: clamp(1.4rem, 3.2vw, 2.5rem) !important;
@@ -171,15 +178,6 @@
         #texto-ep-6 { bottom: 10% !important; left: 50% !important; top: auto !important; right: auto !important; }
         #texto-ep-7 { top: 10% !important; left: 50% !important; right: auto !important; }
         #texto-ep-8 { bottom: 10% !important; left: 50% !important; top: auto !important; right: auto !important; }
-        
-        .case-card {
-            width: 85vw !important;
-            margin-right: 6vw;
-        }
-        .case-image-wrapper {
-            flex: none;
-            aspect-ratio: 1 / 1;
-        }
     }
 
     .case-card {
@@ -190,28 +188,22 @@
         align-self: stretch !important;
         margin-right: 4vw;
         position: relative;
-        cursor: pointer;
-        transform-style: preserve-3d;
-        will-change: transform;
-    }
-
-    .card-front {
-        background-color: var(--parchment);
+        border-radius: 4px;
+        overflow: hidden;
+        transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.8s, box-shadow 0.4s;
         display: flex;
         flex-direction: column;
         padding: 24px 16px 16px 16px;
-        height: 100%;
-        backface-visibility: hidden;
-        -webkit-backface-visibility: hidden;
-        border-radius: 4px;
+        background-color: var(--parchment);
+        cursor: pointer;
+        transform: perspective(1000px) rotateY(90deg) scale(0.85) translateY(40px); 
+        opacity: 0;
         border: 6px solid var(--dark-wood);
         box-shadow: inset 0 0 40px rgba(139, 69, 19, 0.4), 0 10px 20px rgba(0,0,0,0.5);
-        position: relative;
-        z-index: 2;
-        transform: rotateY(0deg);
+        transform-origin: center center;
     }
 
-    .card-front::before {
+    .case-card::before {
         content: 'WANTED';
         font-family: 'Rye', serif;
         font-size: clamp(1.8rem, 5vw, 2.5rem);
@@ -225,30 +217,63 @@
         white-space: nowrap;
     }
 
-    .card-back {
+    /* Estado virado (verso) */
+    .case-card.flipped {
+        transform: perspective(1000px) rotateY(0deg) scale(1) translateY(0);
+        opacity: 1;
+    }
+    .case-card.flipped .case-image-wrapper,
+    .case-card.flipped .case-info-new {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+    }
+    .case-card.flipped::before {
+        content: 'WANTED';
+        font-size: clamp(3rem, 8vw, 5rem);
         position: absolute;
-        inset: 0;
-        background-color: var(--parchment);
-        background-image: repeating-linear-gradient(45deg, rgba(139,69,19,0.1) 0px, rgba(139,69,19,0.1) 10px, transparent 10px, transparent 20px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        backface-visibility: hidden;
-        -webkit-backface-visibility: hidden;
-        border-radius: 4px;
-        border: 6px solid var(--dark-wood);
-        box-shadow: inset 0 0 40px rgba(139, 69, 19, 0.4), 0 10px 20px rgba(0,0,0,0.5);
-        transform: rotateY(180deg);
-        z-index: 1;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: var(--dark-wood);
+        background: none;
+        text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        margin: 0;
+        line-height: 1;
+        letter-spacing: 4px;
+        z-index: 10;
+    }
+    .case-card.flipped::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(45deg, rgba(139,69,19,0.1) 0px, rgba(139,69,19,0.1) 10px, transparent 10px, transparent 20px);
+        pointer-events: none;
     }
 
-    .card-back::after {
-        content: 'WANTED';
-        font-family: 'Rye', serif;
-        font-size: clamp(3rem, 8vw, 5rem);
-        color: var(--dark-wood);
-        text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
-        letter-spacing: 4px;
+    @media (max-width: 768px) {
+        .case-card {
+            width: 85vw !important;
+            margin-right: 6vw;
+        }
+        .case-image-wrapper {
+            flex: none;
+            aspect-ratio: 1 / 1;
+        }
+    }
+
+    .case-card.in-view {
+        transform: perspective(1000px) rotateY(0deg) scale(1) translateY(0);
+        opacity: 1;
+    }
+
+    .case-card:hover {
+        transform: perspective(1000px) rotateY(0deg) scale(1.05) translateY(-10px) !important;
+        box-shadow: inset 0 0 50px rgba(139, 69, 19, 0.6), 0 25px 50px rgba(0,0,0,0.9), 0 0 20px rgba(255, 255, 255, 0.15);
+        z-index: 10;
     }
 
     .case-image-wrapper {
@@ -857,6 +882,74 @@
     </div>
 </div>
 
+<header class="fixed top-0 w-full z-[1000] py-2 md:py-3">
+    <div class="container mx-auto px-4 md:px-8">
+        <div class="flex flex-row justify-between items-center w-full">
+            <a href="/{{ loja.slug_url }}/" class="block">
+                {% if loja.logo %}
+                    <img src="{{ loja.logo }}" class="h-10 md:h-14 w-auto object-contain">
+                {% else %}
+                    <span class="text-2xl md:text-3xl font-bold tracking-tighter text-[var(--text-color)]">{{ loja.nome }}</span>
+                {% endif %}
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-12 text-xs font-bold uppercase tracking-widest opacity-90">
+                {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
+                
+                {% if not loja.ocultar_produtos %}
+                <div class="relative group py-2">
+                    <a href="#portfolio" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 cursor-pointer">
+                        Bounties <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                    </a>
+                    <div class="absolute left-0 top-full mt-2 w-56 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[999] flex flex-col shadow-2xl overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(255,255,255,0.1);">
+                        <a href="/{{ loja.slug_url }}/#portfolio" class="px-5 py-3 transition hover:opacity-70 font-bold" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">Toda a Frota</a>
+                        {% for cat in categorias %}
+                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-5 py-3 transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">{{ cat.nome }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <a href="#contato" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
+            </nav>
+
+            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="flex items-center">
+                <div class="md:hidden p-3 rounded-full border border-white/10 hover:bg-white/5 transition">
+                    <i data-lucide="message-circle" class="w-5 h-5 text-[var(--text-color)]"></i>
+                </div>
+                <span class="hidden md:block bg-[var(--text-color)] text-[var(--bg-color)] px-6 py-3 rounded-full text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg">
+                    Junte-se à Bordo
+                </span>
+            </a>
+        </div>
+
+        <nav class="md:hidden flex flex-col items-center gap-4 mt-6 text-[11px] font-bold uppercase tracking-widest opacity-90 border-t border-white/5 pt-6 w-full">
+            <div class="flex flex-wrap justify-center gap-6 w-full">
+                {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-80 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
+                
+                {% if not loja.ocultar_produtos %}
+                <div class="relative group flex flex-col items-center">
+                    <button class="opacity-80 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 uppercase tracking-widest" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">
+                        Bounties <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                    </button>
+                </div>
+                {% endif %}
+                
+                <a href="#contato" class="opacity-80 hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
+            </div>
+            
+            {% if not loja.ocultar_produtos %}
+            <div id="mobile-cat-menu" class="hidden flex-col items-center rounded mt-2 w-[80vw] text-center shadow-lg overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(255,255,255,0.1);">
+                <a href="/{{ loja.slug_url }}/#portfolio" class="px-4 py-3 w-full transition hover:opacity-70 font-bold" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">Toda a Frota</a>
+                {% for cat in categorias %}
+                <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-4 py-3 w-full transition hover:opacity-70" style="color: var(--text-color); border-bottom: 1px solid rgba(255,255,255,0.05);">{{ cat.nome }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+
 {% for secao in layout %}
 
     {% if secao == 'banner' and not loja.ocultar_banner %}
@@ -1090,29 +1183,26 @@
     <div class="horizontal-container" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
         {% for p in produtos %}
         <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
-            <div class="card-front">
-                <div class="case-image-wrapper">
-                    {% if p.imagem1 %}
-                    <img src="{{ p.imagem1 }}" alt="{{ p.nome }}" class="img-hover">
-                    {% elif p.imagem_secundaria %}
-                    <img src="{{ p.imagem_secundaria }}" alt="{{ p.nome }}" class="img-hover">
-                    {% elif p.imagem2 %}
-                    <img src="{{ p.imagem2 }}" alt="{{ p.nome }}" class="img-hover">
+            <div class="case-image-wrapper">
+                {% if p.imagem1 %}
+                <img src="{{ p.imagem1 }}" alt="{{ p.nome }}" class="img-hover">
+                {% elif p.imagem_secundaria %}
+                <img src="{{ p.imagem_secundaria }}" alt="{{ p.nome }}" class="img-hover">
+                {% elif p.imagem2 %}
+                <img src="{{ p.imagem2 }}" alt="{{ p.nome }}" class="img-hover">
+                {% endif %}
+                <img src="{{ p.imagem }}" alt="{{ p.nome }}" class="img-main">
+            </div>
+            <div class="case-info-new">
+                <h3 class="case-title-new">{{ p.nome }}</h3>
+                <div class="case-subtitle-new">
+                    {% if p.preco %}
+                        {{ p.preco }}
+                    {% else %}
+                        RECOMPENSA OCULTA
                     {% endif %}
-                    <img src="{{ p.imagem }}" alt="{{ p.nome }}" class="img-main">
-                </div>
-                <div class="case-info-new">
-                    <h3 class="case-title-new">{{ p.nome }}</h3>
-                    <div class="case-subtitle-new">
-                        {% if p.preco %}
-                            {{ p.preco }}
-                        {% else %}
-                            RECOMPENSA OCULTA
-                        {% endif %}
-                    </div>
                 </div>
             </div>
-            <div class="card-back"></div>
         </div>
         {% else %}
         <div class="flex-shrink-0 w-[70vw] h-[500px] mr-[5vw] flex items-center justify-center border rounded-2xl" style="border-color: var(--text-color);">
@@ -1468,6 +1558,7 @@
             });
         }
 
+        // Animação do título da seção de produtos
         const titulo = document.getElementById('titulo-secao-produtos');
         if (titulo) {
             gsap.from(titulo, {
@@ -1482,60 +1573,6 @@
                 scale: 0.8,
                 duration: 1.2,
                 ease: "power3.out"
-            });
-        }
-        
-        const portfolioCards = gsap.utils.toArray('#portfolio .case-card');
-        if (portfolioCards.length > 0) {
-            gsap.set(portfolioCards, {
-                rotationY: 180,
-                z: () => gsap.utils.random(400, 1000),
-                y: () => gsap.utils.random(-300, 300),
-                x: () => gsap.utils.random(-200, 200),
-                rotationX: () => gsap.utils.random(-40, 40),
-                rotationZ: () => gsap.utils.random(-20, 20),
-                opacity: 0
-            });
-
-            gsap.to(portfolioCards, {
-                scrollTrigger: {
-                    trigger: "#portfolio",
-                    start: "top 85%",
-                    end: "center 40%",
-                    scrub: 1.2
-                },
-                rotationY: 0,
-                z: 0,
-                y: 0,
-                x: 0,
-                rotationX: 0,
-                rotationZ: 0,
-                opacity: 1,
-                stagger: 0.05,
-                ease: "power2.out"
-            });
-
-            portfolioCards.forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    gsap.to(card, {
-                        y: -15,
-                        rotationY: -5,
-                        rotationX: 5,
-                        scale: 1.05,
-                        duration: 0.4,
-                        ease: "power2.out"
-                    });
-                });
-                card.addEventListener('mouseleave', () => {
-                    gsap.to(card, {
-                        y: 0,
-                        rotationY: 0,
-                        rotationX: 0,
-                        scale: 1,
-                        duration: 0.6,
-                        ease: "power2.out"
-                    });
-                });
             });
         }
         
@@ -1769,15 +1806,57 @@
                 }
             });
         }
+
+        // Lógica para virar os cards conforme o scroll horizontal
+        const container = document.querySelector(".horizontal-container");
+        const cards = document.querySelectorAll('.case-card');
+        if (container && cards.length > 0) {
+            const flipObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Se mais de 50% do card está visível, mostra a frente (remove flipped)
+                        if (entry.intersectionRatio > 0.5) {
+                            entry.target.classList.remove('flipped');
+                        } else {
+                            entry.target.classList.add('flipped');
+                        }
+                    } else {
+                        entry.target.classList.add('flipped');
+                    }
+                });
+            }, {
+                root: container,
+                threshold: [0, 0.5, 1]
+            });
+
+            cards.forEach(card => flipObserver.observe(card));
+        }
     });
 
     lucide.createIcons();
     gsap.registerPlugin(ScrollTrigger);
 
     const container = document.querySelector(".horizontal-container");
+    const cards = document.querySelectorAll('.case-card');
     let isInteracting = false;
     
-    if (container) {
+    if (container && cards.length > 0) {
+        
+        const cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                } else {
+                    entry.target.classList.remove('in-view'); 
+                }
+            });
+        }, {
+            root: container,
+            threshold: 0.4 
+        });
+
+        cards.forEach(card => cardObserver.observe(card));
+
         let autoScrollSpeed = window.innerWidth < 768 ? 4.5 : 0.8; 
         let autoScrollReq;
 
