@@ -8,6 +8,7 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Rye&display=swap" rel="stylesheet">
 
 <style>
@@ -1051,51 +1052,33 @@
     </section>
     {% endif %}
 
-    {% if secao == 'produtos' and not loja.ocultar_produtos %}
-    <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color); overflow: hidden;">
-        
-        <div class="container mx-auto px-6 md:px-10 mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[3rem] sm:text-5xl md:text-7xl font-display uppercase tracking-tighter leading-none m-0 font-bounty">
-                {{ loja.titulo_produtos or 'WANTED POSTERS' }}
-            </h2>
-        </div>
-
-        <div class="horizontal-container" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
-            {% for p in produtos %}
-            <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
-                <div class="case-image-wrapper">
-                    {% if p.imagem1 %}
-                    <img src="{{ p.imagem1 }}" alt="{{ p.nome }}" class="img-hover">
-                    {% elif p.imagem_secundaria %}
-                    <img src="{{ p.imagem_secundaria }}" alt="{{ p.nome }}" class="img-hover">
-                    {% elif p.imagem2 %}
-                    <img src="{{ p.imagem2 }}" alt="{{ p.nome }}" class="img-hover">
-                    {% endif %}
-                    <img src="{{ p.imagem }}" alt="{{ p.nome }}" class="img-main">
-                </div>
-                <div class="case-info-new">
-                    <h3 class="case-title-new">{{ p.nome }}</h3>
-                    <div class="case-subtitle-new">
-                        {% if p.preco %}
-                            {{ p.preco }}
-                        {% else %}
-                            RECOMPENSA OCULTA
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% else %}
-            <div class="flex-shrink-0 w-[70vw] h-[500px] mr-[5vw] flex items-center justify-center border rounded-2xl" style="border-color: var(--text-color);">
-                <p class="text-xl font-bold uppercase tracking-widest" style="color: var(--text-color); opacity: 0.5;">Nenhum cartaz encontrado.</p>
-            </div>
-            {% endfor %}
-        </div>
-    </section>
-    {% endif %}
-
 {% endfor %}
 
-{% if loja.logos_clientes %}
+<section id='nav-3d-episodios' style='position:relative;width:100%;height:400vh;background:#050505;'>
+    <div style='position:sticky;top:0;width:100%;height:100vh;overflow:hidden;'>
+        <canvas id='lusion-canvas' style='width:100%;height:100%;display:block;position:absolute;top:0;left:0;z-index:1;'></canvas>
+        
+        <div id='ep-resumos' style='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:800px;text-align:center;color:#fff;font-family:"Rye", serif;pointer-events:none;z-index:2;'>
+            <div class='ep-texto' id='texto-ep-1' style='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;opacity:0;transition:opacity 0.6s ease;text-shadow:2px 2px 15px rgba(0,0,0,0.8);'>
+                <h3 style='color: var(--primary); font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 15px; text-transform: uppercase;'>Episódio 1</h3>
+                <p style='font-size: clamp(1.2rem, 2.5vw, 2rem); font-family: sans-serif; font-weight: 300; letter-spacing: 1px;'>O amanhecer de uma grande aventura. Luffy parte em sua jornada para se tornar o Rei dos Piratas.</p>
+            </div>
+            <div class='ep-texto' id='texto-ep-2' style='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;opacity:0;transition:opacity 0.6s ease;text-shadow:2px 2px 15px rgba(0,0,0,0.8);'>
+                <h3 style='color: #10B981; font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 15px; text-transform: uppercase;'>Episódio 2</h3>
+                <p style='font-size: clamp(1.2rem, 2.5vw, 2rem); font-family: sans-serif; font-weight: 300; letter-spacing: 1px;'>O Caçador de Piratas. Zoro se junta à tripulação rumo à Grand Line.</p>
+            </div>
+            <div class='ep-texto' id='texto-ep-3' style='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;opacity:0;transition:opacity 0.6s ease;text-shadow:2px 2px 15px rgba(0,0,0,0.8);'>
+                <h3 style='color: #F97316; font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 15px; text-transform: uppercase;'>Episódio 3</h3>
+                <p style='font-size: clamp(1.2rem, 2.5vw, 2rem); font-family: sans-serif; font-weight: 300; letter-spacing: 1px;'>Morgan Mão-de-Machado. A primeira grande batalha contra a Marinha.</p>
+            </div>
+            <div class='ep-texto' id='texto-ep-4' style='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;opacity:0;transition:opacity 0.6s ease;text-shadow:2px 2px 15px rgba(0,0,0,0.8);'>
+                <h3 style='color: #EAB308; font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 15px; text-transform: uppercase;'>Episódio 4</h3>
+                <p style='font-size: clamp(1.2rem, 2.5vw, 2rem); font-family: sans-serif; font-weight: 300; letter-spacing: 1px;'>O Pássaro Gigante. Aventura nos céus e revelações do passado.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="client-marquee-wrapper">
     <div class="client-marquee-track">
         {% for logo in loja.logos_clientes.split() %}
@@ -1109,6 +1092,47 @@
             {% if logo.strip() %}
             <img src="{{ logo.strip() }}" alt="Cliente" onerror="this.style.display='none'">
             {% endif %}
+        {% endfor %}
+    </div>
+</section>
+
+{% if not loja.ocultar_produtos %}
+<section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color); overflow: hidden;">
+    
+    <div class="container mx-auto px-6 md:px-10 mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[3rem] sm:text-5xl md:text-7xl font-display uppercase tracking-tighter leading-none m-0 font-bounty">
+            {{ loja.titulo_produtos or 'WANTED POSTERS' }}
+        </h2>
+    </div>
+
+    <div class="horizontal-container" style="min-height: auto; align-items: stretch; padding-bottom: 40px; padding-top: 10px;">
+        {% for p in produtos %}
+        <div class="case-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
+            <div class="case-image-wrapper">
+                {% if p.imagem1 %}
+                <img src="{{ p.imagem1 }}" alt="{{ p.nome }}" class="img-hover">
+                {% elif p.imagem_secundaria %}
+                <img src="{{ p.imagem_secundaria }}" alt="{{ p.nome }}" class="img-hover">
+                {% elif p.imagem2 %}
+                <img src="{{ p.imagem2 }}" alt="{{ p.nome }}" class="img-hover">
+                {% endif %}
+                <img src="{{ p.imagem }}" alt="{{ p.nome }}" class="img-main">
+            </div>
+            <div class="case-info-new">
+                <h3 class="case-title-new">{{ p.nome }}</h3>
+                <div class="case-subtitle-new">
+                    {% if p.preco %}
+                        {{ p.preco }}
+                    {% else %}
+                        RECOMPENSA OCULTA
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="flex-shrink-0 w-[70vw] h-[500px] mr-[5vw] flex items-center justify-center border rounded-2xl" style="border-color: var(--text-color);">
+            <p class="text-xl font-bold uppercase tracking-widest" style="color: var(--text-color); opacity: 0.5;">Nenhum cartaz encontrado.</p>
+        </div>
         {% endfor %}
     </div>
 </section>
@@ -1872,5 +1896,103 @@
     }
 
 </script>
+
+<script>
+    const navScene = new THREE.Scene();
+    navScene.fog = new THREE.FogExp2(0x050505, 0.012);
+
+    const navCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    navCamera.position.set(0, 8, 25);
+
+    const navRenderer = new THREE.WebGLRenderer({ canvas: document.getElementById('lusion-canvas'), alpha: true, antialias: true });
+    navRenderer.setSize(window.innerWidth, window.innerHeight);
+    navRenderer.setPixelRatio(window.devicePixelRatio);
+
+    const seaGeometry = new THREE.PlaneGeometry(300, 300, 80, 80);
+    seaGeometry.rotateX(-Math.PI / 2);
+    
+    const seaMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0x0088ff, 
+        wireframe: true, 
+        transparent: true, 
+        opacity: 0.25 
+    });
+    const seaMesh = new THREE.Mesh(seaGeometry, seaMaterial);
+    seaMesh.position.y = -2;
+    navScene.add(seaMesh);
+
+    const shipTexture = new THREE.TextureLoader().load('https://res.cloudinary.com/dzcaxmbjn/image/upload/v1773534638/image-removebg-preview_29_-Picsart-AiImageEnhancer_q9o14t.png');
+    const shipMaterial = new THREE.SpriteMaterial({ map: shipTexture, color: 0xffffff });
+    const shipSprite = new THREE.Sprite(shipMaterial);
+    
+    shipSprite.scale.set(20, 20, 1);
+    shipSprite.position.set(0, 8, 0);
+    navScene.add(shipSprite);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+    navScene.add(ambientLight);
+
+    let navClock = new THREE.Clock();
+
+    function animateNav() {
+        requestAnimationFrame(animateNav);
+        
+        const elapsedTime = navClock.getElapsedTime();
+        
+        const positions = seaMesh.geometry.attributes.position;
+        for(let i=0; i<positions.count; i++) {
+            const vx = positions.getX(i);
+            const vz = positions.getZ(i);
+            positions.setY(i, Math.sin(vx * 0.15 + elapsedTime * 1.5) * 2 + Math.cos(vz * 0.15 + elapsedTime * 1.5) * 2);
+        }
+        positions.needsUpdate = true;
+
+        shipSprite.position.y = 8 + Math.sin(elapsedTime * 2.5) * 0.8;
+        shipSprite.material.rotation = Math.sin(elapsedTime * 1.5) * 0.05;
+
+        navRenderer.render(navScene, navCamera);
+    }
+    
+    animateNav();
+
+    window.addEventListener('scroll', () => {
+        const section = document.getElementById('nav-3d-episodios');
+        if(!section) return;
+        
+        const rect = section.getBoundingClientRect();
+        const sectionTop = rect.top;
+        const sectionHeight = rect.height - window.innerHeight;
+        
+        let scrollPercent = 0;
+        
+        if (sectionTop <= 0 && sectionTop >= -sectionHeight) {
+            scrollPercent = Math.abs(sectionTop) / sectionHeight;
+        } else if (sectionTop > 0) {
+            scrollPercent = 0;
+        } else {
+            scrollPercent = 1;
+        }
+
+        navCamera.position.z = 25 - scrollPercent * 250;
+        shipSprite.position.z = 0 - scrollPercent * 250;
+
+        const ep1 = document.getElementById('texto-ep-1');
+        const ep2 = document.getElementById('texto-ep-2');
+        const ep3 = document.getElementById('texto-ep-3');
+        const ep4 = document.getElementById('texto-ep-4');
+
+        if(ep1) ep1.style.opacity = (scrollPercent > 0.02 && scrollPercent < 0.20) ? 1 : 0;
+        if(ep2) ep2.style.opacity = (scrollPercent > 0.25 && scrollPercent < 0.45) ? 1 : 0;
+        if(ep3) ep3.style.opacity = (scrollPercent > 0.50 && scrollPercent < 0.70) ? 1 : 0;
+        if(ep4) ep4.style.opacity = (scrollPercent > 0.75 && scrollPercent < 0.95) ? 1 : 0;
+    });
+
+    window.addEventListener('resize', () => {
+        navCamera.aspect = window.innerWidth / window.innerHeight;
+        navCamera.updateProjectionMatrix();
+        navRenderer.setSize(window.innerWidth, window.innerHeight);
+    });
+</script>
+
 </body>
 </html>
