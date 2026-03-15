@@ -681,6 +681,69 @@
         max-height: 400px;
     }
 </style>
+<!-- Estilos do ONEEEE.html -->
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #050505;
+    }
+    .onee-font { font-family: 'Rye', serif; }
+    .onee-glass {
+        background: rgba(5, 5, 5, 0.8);
+        backdrop-filter: blur(10px);
+        border: 2px solid #0055ff;
+        box-shadow: 0 0 30px rgba(0, 85, 255, 0.3);
+        border-radius: 8px;
+    }
+    .onee-btn {
+        display: inline-block;
+        padding: 15px 35px;
+        background: #e52521;
+        color: #fff;
+        text-decoration: none;
+        font-family: sans-serif;
+        font-weight: 900;
+        font-size: 1.2rem;
+        border-radius: 4px;
+        box-shadow: 0 0 20px rgba(229, 37, 33, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .onee-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 30px rgba(229, 37, 33, 0.8);
+    }
+    .insta-card {
+        background: rgba(10, 10, 10, 0.8);
+        border: 2px solid #e1306c;
+        border-radius: 12px;
+        padding: 40px;
+        display: inline-block;
+        box-shadow: 0 0 30px rgba(225, 48, 108, 0.2);
+        text-decoration: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+        backdrop-filter: blur(5px);
+    }
+    .insta-card:hover {
+        transform: scale(1.05);
+        border-color: #fd1d1d;
+        box-shadow: 0 0 40px rgba(253, 29, 29, 0.4);
+    }
+    .insta-text {
+        background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-family: sans-serif;
+        font-weight: 900;
+    }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #050505; }
+    ::-webkit-scrollbar-thumb { background: #0055ff; border-radius: 10px; }
+</style>
 </head>
 <body style="overflow: hidden;">
 
@@ -1052,6 +1115,40 @@
         </div>
     </div>
 </div>
+
+<!-- ========== INÍCIO DA SEÇÃO DO ONEEEE.html ========== -->
+<section id="nav-3d-episodios-novo" style="position:relative;width:100%;height:350vh;background:#050505;" class="onee-font">
+    <div style="position:sticky;top:0;width:100%;height:100vh;overflow:hidden;">
+        <canvas id="lusion-canvas-novo" style="width:100%;height:100%;display:block;position:absolute;top:0;left:0;z-index:1;"></canvas>
+        
+        <div id="content-container" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+            
+            <div id="step-1-trailer" style="position:absolute;opacity:1;transition:opacity 0.3s, transform 0.3s;pointer-events:auto;text-align:center;width:90%;max-width:800px;transform:translateY(0);">
+                <h2 style="color:#fff;font-size:clamp(1.5rem, 3vw, 2.5rem);margin-bottom:20px;text-transform:uppercase;letter-spacing:2px;text-shadow:0 0 10px #0055ff;">O Inicio da Lenda</h2>
+                <div class="onee-glass" style="padding:10px;aspect-ratio:16/9;width:100%;">
+                    <video src="https://res.cloudinary.com/dzcaxmbjn/video/upload/v1773583841/one-piece_sa6xec.mp4" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;border-radius:4px;"></video>
+                </div>
+            </div>
+
+            <div id="step-2-button" style="position:absolute;opacity:0;transition:opacity 0.3s, transform 0.3s;pointer-events:none;text-align:center;width:90%;max-width:800px;transform:translateY(50px);">
+                <h3 style="color:#fff;font-size:clamp(1.5rem, 4vw, 3rem);margin-bottom:40px;text-shadow:0 0 20px #0055ff;line-height:1.2;">A grande era dos piratas começou!</h3>
+                <a href="https://www.youtube.com/watch?v=KLtSxOirH4g" target="_blank" class="onee-btn">Ver completo no YouTube</a>
+            </div>
+
+            <div id="step-3-insta" style="position:absolute;opacity:0;transition:opacity 0.3s, transform 0.3s;pointer-events:none;text-align:center;width:90%;max-width:800px;transform:translateY(50px);">
+                <p style="color:#fff;font-size:clamp(1.2rem, 2vw, 1.8rem);margin-bottom:20px;font-family:sans-serif;font-weight:bold;">Se curtiu, embarque nessa tripulação!</p>
+                <a href="https://www.instagram.com/leanttro.dev" target="_blank" class="insta-card">
+                    <div style="font-size: 3.5rem; margin-bottom: 15px;">🏴‍☠️</div>
+                    <div class="insta-text" style="font-size: 2.5rem; margin-bottom: 5px; letter-spacing: 1px;">@leanttro.dev</div>
+                    <div style="color: #ccc; font-family: sans-serif; font-size: 1.1rem;">Siga no Instagram</div>
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</section>
+<!-- ========== FIM DA SEÇÃO DO ONEEEE.html ========== -->
+
 <script>
     const loaderOverlay = document.getElementById('loader-overlay');
     const introScene = document.getElementById('intro-scene');
@@ -1972,6 +2069,145 @@
             downloadBtn.classList.replace('bg-[#E52521]', 'bg-green-600');
         });
     })();
+</script>
+
+<!-- Script da nova seção ONEEEE.html (adaptado para o ID alterado) -->
+<script>
+    const novaSecao = document.getElementById('nav-3d-episodios-novo');
+    const novoCanvas = document.getElementById('lusion-canvas-novo');
+    
+    const sceneNovo = new THREE.Scene();
+    sceneNovo.fog = new THREE.FogExp2(0x050505, 0.012);
+
+    const cameraNovo = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    cameraNovo.position.z = 40;
+
+    const rendererNovo = new THREE.WebGLRenderer({ canvas: novoCanvas, alpha: true, antialias: true });
+    rendererNovo.setSize(window.innerWidth, window.innerHeight);
+    rendererNovo.setPixelRatio(window.devicePixelRatio);
+
+    const cubesGroupNovo = new THREE.Group();
+    const geometryNovo = new THREE.BoxGeometry(1, 1, 1);
+    
+    for (let i = 0; i < 500; i++) {
+        const isBlue = Math.random() > 0.4;
+        const mat = new THREE.MeshStandardMaterial({
+            color: isBlue ? (Math.random() > 0.5 ? 0x0055ff : 0x00aaff) : 0x111111,
+            roughness: 0.1,
+            metalness: 0.8,
+            transparent: true,
+            opacity: 0.9
+        });
+        
+        const mesh = new THREE.Mesh(geometryNovo, mat);
+        mesh.position.set(
+            (Math.random() - 0.5) * 120,
+            (Math.random() - 0.5) * 120,
+            (Math.random() - 0.5) * 150 
+        );
+        mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+        const scale = Math.random() * 2.5 + 0.5;
+        mesh.scale.set(scale, scale, scale);
+        
+        cubesGroupNovo.add(mesh);
+    }
+    sceneNovo.add(cubesGroupNovo);
+
+    const ambientLightNovo = new THREE.AmbientLight(0xffffff, 0.6);
+    sceneNovo.add(ambientLightNovo);
+    
+    const dirLightNovo = new THREE.DirectionalLight(0xffffff, 1);
+    dirLightNovo.position.set(20, 20, 10);
+    sceneNovo.add(dirLightNovo);
+
+    const blueLightNovo = new THREE.PointLight(0x00aaff, 4, 150);
+    blueLightNovo.position.set(0, 0, 20);
+    sceneNovo.add(blueLightNovo);
+
+    let scrollPercentNovo = 0;
+    let clockNovo = new THREE.Clock();
+
+    window.addEventListener('scroll', () => {
+        const rect = novaSecao.getBoundingClientRect();
+        const sectionTop = rect.top;
+        const sectionHeight = rect.height - window.innerHeight;
+        
+        if (sectionTop <= 0 && sectionTop >= -sectionHeight) {
+            scrollPercentNovo = Math.abs(sectionTop) / sectionHeight;
+        } else if (sectionTop > 0) {
+            scrollPercentNovo = 0;
+        } else {
+            scrollPercentNovo = 1;
+        }
+
+        cameraNovo.position.z = 40 - (scrollPercentNovo * 100); 
+        cubesGroupNovo.rotation.y = scrollPercentNovo * Math.PI;
+        cubesGroupNovo.rotation.z = scrollPercentNovo * 0.5;
+
+        const step1 = document.getElementById('step-1-trailer');
+        const step2 = document.getElementById('step-2-button');
+        const step3 = document.getElementById('step-3-insta');
+
+        if (scrollPercentNovo < 0.33) {
+            step1.style.opacity = 1 - (scrollPercentNovo * 3);
+            step1.style.transform = `translateY(${scrollPercentNovo * 150}px) scale(${1 + scrollPercentNovo})`;
+            step1.style.pointerEvents = scrollPercentNovo < 0.1 ? 'auto' : 'none';
+            
+            step2.style.opacity = 0;
+            step2.style.pointerEvents = 'none';
+            step3.style.opacity = 0;
+            step3.style.pointerEvents = 'none';
+        } else if (scrollPercentNovo >= 0.33 && scrollPercentNovo < 0.66) {
+            step1.style.opacity = 0;
+            step1.style.pointerEvents = 'none';
+            
+            let p = (scrollPercentNovo - 0.33) * 3;
+            if (p > 1) p = 1;
+            let fadeOut = scrollPercentNovo > 0.55 ? 1 - ((scrollPercentNovo - 0.55) * 9) : 1;
+            let finalOpacity = Math.min(p, Math.max(0, fadeOut));
+            
+            step2.style.opacity = finalOpacity;
+            step2.style.transform = `translateY(${50 - (p * 50)}px)`;
+            step2.style.pointerEvents = finalOpacity > 0.5 ? 'auto' : 'none';
+            
+            step3.style.opacity = 0;
+            step3.style.pointerEvents = 'none';
+        } else {
+            step1.style.opacity = 0;
+            step1.style.pointerEvents = 'none';
+            step2.style.opacity = 0;
+            step2.style.pointerEvents = 'none';
+            
+            let p = (scrollPercentNovo - 0.66) * 3;
+            if (p > 1) p = 1;
+            
+            step3.style.opacity = p;
+            step3.style.transform = `translateY(${50 - (p * 50)}px)`;
+            step3.style.pointerEvents = p > 0.5 ? 'auto' : 'none';
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        cameraNovo.aspect = window.innerWidth / window.innerHeight;
+        cameraNovo.updateProjectionMatrix();
+        rendererNovo.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    function animateNovo() {
+        requestAnimationFrame(animateNovo);
+        const time = clockNovo.getElapsedTime();
+        
+        cubesGroupNovo.children.forEach((cube, i) => {
+            cube.rotation.x += 0.001 * (i % 3 + 1);
+            cube.rotation.y += 0.002 * (i % 2 + 1);
+            cube.position.y += Math.sin(time + i) * 0.02;
+        });
+        
+        blueLightNovo.intensity = 2 + Math.sin(time * 3) * 1.5;
+        rendererNovo.render(sceneNovo, cameraNovo);
+    }
+    
+    animateNovo();
 </script>
 
 </body>
