@@ -995,8 +995,27 @@
 </section>
 {% endif %}
 
+<!-- ========== SEÇÃO DO CARTAZ QUE DESENROLA ========== -->
+<section class="relative w-full py-24" style="background-color: #050505;" id="scroll-unveil-section">
+    <div class="container mx-auto px-4 md:px-8 max-w-4xl">
+        <div class="flex flex-col items-center justify-center gap-10">
+            <!-- Container do pergaminho enrolado (clip reveal) -->
+            <div class="relative w-full overflow-hidden rounded-lg shadow-2xl parchment-reveal" style="clip-path: inset(0 0 100% 0);">
+                <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1773585876/wanted-mariana_p0jbmh.png" alt="Wanted Poster" class="w-full h-auto block">
+            </div>
+            <!-- CTA -->
+            <div class="text-center reveal-text opacity-0 translate-y-10">
+                <h2 class="text-4xl md:text-6xl font-bounty text-[#E52521] mb-4 uppercase tracking-wider">BAIXE SEU CARTAZ WANTED GRÁTIS!</h2>
+                <p class="text-white/70 text-lg max-w-2xl">Crie o seu próprio cartaz de procurado com sua foto e nome. Clique abaixo e embarque nessa aventura!</p>
+                <a href="#form-section" class="inline-block mt-8 bg-[#E52521] text-white px-10 py-4 rounded-full text-xl uppercase font-bold tracking-wider hover:bg-red-700 transition shadow-lg">CRIAR AGORA</a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ========== FIM DA SEÇÃO DO CARTAZ ========== -->
+
 <!-- ========== INÍCIO DA SEÇÃO DO ONEEE.HTML ========== -->
-<div class="flex items-center justify-center min-h-screen p-4" style="background-color: #050505;">
+<div class="flex items-center justify-center min-h-screen p-4" style="background-color: #050505;" id="form-section">
     <div class="max-w-5xl w-full flex flex-col md:flex-row justify-center items-center md:items-start gap-8">
         
         <div class="parchment-bg p-8 rounded flex flex-col items-center form-3d max-w-md w-full">
@@ -1345,6 +1364,7 @@
                 initMagicHeroScroll();
                 initScrollAnimations();
                 initNav3D();
+                initScrollUnveil(); // <-- nova função para o cartaz que desenrola
                 
                 const heroWrapper = document.getElementById('hero-banner-wrapper');
                 const dataCanvas = document.getElementById('data-canvas');
@@ -1372,6 +1392,41 @@
                     }, 100);
                 }
             }
+        });
+    }
+
+    // Nova função para animação do cartaz que desenrola
+    function initScrollUnveil() {
+        const unveilSection = document.getElementById('scroll-unveil-section');
+        if (!unveilSection) return;
+
+        const parchment = unveilSection.querySelector('.parchment-reveal');
+        const text = unveilSection.querySelector('.reveal-text');
+
+        // Animação do clip-path (desenrolar)
+        gsap.to(parchment, {
+            scrollTrigger: {
+                trigger: unveilSection,
+                start: "top center",
+                end: "center center",
+                scrub: 1.5,
+                toggleActions: "play none none reverse"
+            },
+            clipPath: "inset(0 0 0 0)",
+            ease: "none"
+        });
+
+        // Texto aparece suavemente após o início do desenrolar
+        gsap.to(text, {
+            scrollTrigger: {
+                trigger: unveilSection,
+                start: "top center",
+                end: "center center",
+                scrub: 1.5
+            },
+            opacity: 1,
+            y: 0,
+            ease: "power2.out"
         });
     }
 
