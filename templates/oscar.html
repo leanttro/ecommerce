@@ -1989,10 +1989,13 @@
             ctx.fillText('AWARDS', w/2, h/2 + 200);
             ctx.fillText('2026', w/2, h/2 + 400);
         } else {
-            ctx.font = 'bold 110px "Cinzel"';
-            ctx.fillText('THE 98TH', w/2, h / 2 - 160);
-            ctx.fillText('ACADEMY AWARDS', w/2, h / 2);
-            ctx.fillText('2026', w/2, h / 2 + 160);
+            ctx.font = 'bold 70px "Cinzel"';
+            ctx.fillText('THE 98TH', w/2, h / 2 - 180);
+            ctx.font = 'bold 140px "Cinzel"';
+            ctx.fillText('ACADEMY', w/2, h / 2 - 40);
+            ctx.fillText('AWARDS', w/2, h / 2 + 100);
+            ctx.font = 'bold 70px "Cinzel"';
+            ctx.fillText('2026', w/2, h / 2 + 220);
         }
 
         const imgData = ctx.getImageData(0, 0, w, h).data;
