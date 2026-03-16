@@ -1682,7 +1682,7 @@
                       stroke-width="1.2"/>
                 
                 <g id="movie-icon" transform="translate(42, 58) scale(0.6)" fill="black" opacity="0.8">
-                    <path d="M 4 8 L 8 8 L 10 5 L 14 5 L 16 8 L 20 8 C 21.1 8 22 8.9 22 10 L 22 18 C 22 19.1 21.1 20 20 20 L 4 20 C 2.9 20 2 19.1 2 18 L 2 10 C 2 8.9 2.9 8 4 8 Z M 12 18 C 14.209139 18 16 16.209139 16 14 C 16 11.790861 14.209139 10 12 10 C 9.790861 10 8 11.790861 8 14 C 8 16.209139 9.790861 18 12 18 Z M 12 16.5 C 10.619288 16.5 9.5 15.380712 9.5 14 C 9.5 12.619288 10.619288 11.5 12 11.5 C 13.380712 11.5 14.5 12.619288 14.5 14 C 14.5 15.380712 13.380712 16.5 12 16.5 Z" />
+                    <path d="M22,2v2h-2v-2h-2v2h-2v-2h-2v2h-2v-2h-2v2h-2v-2h-2v20h20v-20h-2zM20,20h-16v-12h16v12zM18,10l-12,4v-2l12,-4z" />
                 </g>
 
                 <text id="star-name-display" 
@@ -1733,7 +1733,6 @@
 
         try { fetch('/{{ loja.slug_url }}/captura-lead', { method: 'POST', body: formData }); } catch(e) {}
 
-        // Reset visual e animação de gravação
         gsap.set(display, { opacity: 0, scale: 0.5 });
         
         const tl = gsap.timeline();
@@ -1748,7 +1747,6 @@
               ease: "back.out(1.7)" 
           }, "-=0.5");
 
-        // Efeito Paparazzi
         for (let i = 0; i < 6; i++) {
             gsap.to('#walk-of-fame', { 
                 backgroundColor: '#ffffff', 
