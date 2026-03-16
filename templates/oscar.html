@@ -2016,27 +2016,7 @@
             gsap.to(dummy, {
                 value: 1,
                 duration: 3.5,
-                ease: "power4.out",
-                onUpdate: () => {
-                    const progress = dummy.value;
-                    for (let i = 0; i < posAttribute.count; i++) {
-                        const px = posAttribute.getX(i);
-                        const py = posAttribute.getY(i);
-                        const pz = posAttribute.getZ(i);
-                        
-                        const bx = baseAttribute.getX(i);
-                        const by = baseAttribute.getY(i);
-                        const bz = baseAttribute.getZ(i);
-                        
-                        posAttribute.setXYZ(
-                            i,
-                            px + (bx - px) * (progress * 0.15),
-                            py + (by - py) * (progress * 0.15),
-                            pz + (bz - pz) * (progress * 0.15)
-                        );
-                    }
-                    posAttribute.needsUpdate = true;
-                }
+                ease: "power4.out"
             });
         };
     }
@@ -2048,6 +2028,13 @@
     window.addEventListener('mousemove', (event) => {
         pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
         pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    window.addEventListener('touchmove', (event) => {
+        if (event.touches.length > 0) {
+            pointer.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
+            pointer.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
+        }
     });
 
     window.addEventListener('resize', () => {
@@ -2107,9 +2094,9 @@
                     }
                 }
 
-                px += (bx - px) * 0.15;
-                py += (by - py) * 0.15;
-                pz += (bz - pz) * 0.15;
+                px += (bx - px) * (0.15 * dummy.value);
+                py += (by - py) * (0.15 * dummy.value);
+                pz += (bz - pz) * (0.15 * dummy.value);
 
                 py += Math.sin(time * 2.0 + offset) * 0.15;
                 px += Math.cos(time * 2.0 + offset) * 0.1;
