@@ -1506,7 +1506,7 @@
                         {% if p.categoria_id == cat.id %}
                         <div class="nominee-card relative cursor-pointer group rounded-lg overflow-hidden border border-white/10 hover:border-[#D4AF37] transition-all" onclick="selecionarVoto('{{ cat.id }}', '{{ cat.nome }}', '{{ p.id }}', '{{ p.nome }}', this)">
                             <div class="aspect-[2/3] w-full relative bg-[#111]">
-                                <img src="{{ p.imagem_destaque or p.imagem }}" class="w-full h-full object-cover filter brightness-75 group-hover:brightness-100 transition-all">
+                                <img src="{% if p.link_projeto and 'http' in p.link_projeto %}{{ p.link_projeto }}{% else %}{{ p.imagem_destaque or p.imagem }}{% endif %}" class="w-full h-full object-cover filter brightness-75 group-hover:brightness-100 transition-all">
                                 <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                     <span class="text-[#D4AF37] font-bold uppercase tracking-widest text-sm border border-[#D4AF37] px-4 py-2 rounded-full bg-black/80">Votar</span>
                                 </div>
