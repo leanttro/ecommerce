@@ -1991,9 +1991,10 @@
         const colorLightGold = new THREE.Color('#FFF8DC');
 
         const scaleMultiplier = 0.58;
+        const step = isMobile ? 6 : 3;
 
-        for (let y = 0; y < h; y += 3) {
-            for (let x = 0; x < w; x += 3) {
+        for (let y = 0; y < h; y += step) {
+            for (let x = 0; x < w; x += step) {
                 const index = (x + y * w) * 4;
                 const r = imgData[index];
 
@@ -2080,6 +2081,7 @@
     function animate() {
         requestAnimationFrame(animate);
         const time = clock.getElapsedTime();
+        const isMobile = window.innerWidth < 768;
 
         if (bgParticleSystem) {
             const bgPos = bgParticleSystem.geometry.attributes.position;
@@ -2096,9 +2098,12 @@
             const basePositions = particleSystem.geometry.attributes.basePosition;
             const offsets = particleSystem.geometry.attributes.randomOffset;
             
-            raycaster.setFromCamera(pointer, camera);
-            const mouse3D = new THREE.Vector3();
-            raycaster.ray.intersectPlane(plane, mouse3D);
+            let mouse3D = null;
+            if (!isMobile) {
+                raycaster.setFromCamera(pointer, camera);
+                mouse3D = new THREE.Vector3();
+                raycaster.ray.intersectPlane(plane, mouse3D);
+            }
 
             for (let i = 0; i < positions.count; i++) {
                 const bx = basePositions.getX(i);
@@ -2110,7 +2115,7 @@
                 let py = positions.getY(i);
                 let pz = positions.getZ(i);
 
-                if (dummy.value > 0.8) {
+                if (!isMobile && dummy.value > 0.8 && mouse3D) {
                     const dx = mouse3D.x - px;
                     const dy = mouse3D.y - py;
                     const distance = Math.sqrt(dx * dx + dy * dy);
