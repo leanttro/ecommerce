@@ -1868,19 +1868,18 @@
 <script>
     async function gravarEstrelaCinema() {
         const nomeIn = document.getElementById('star-name-input').value.trim();
-        const emailIn = document.getElementById('star-email-input').value.trim();
         const display = document.getElementById('star-name-display');
         const star = document.getElementById('hall-star-main');
         const wrapper = document.getElementById('star-wrapper');
 
-        if(!nomeIn || !emailIn) {
-            alert('Preencha nome e e-mail para brilhar em Hollywood!');
+        if(!nomeIn) {
+            alert('Preencha seu nome para brilhar em Hollywood!');
             return;
         }
 
         const formData = new FormData();
         formData.append('nome', nomeIn);
-        formData.append('email', emailIn);
+        formData.append('email', 'contato@voto.com');
         formData.append('whatsapp', '00000000000');
         formData.append('profissao', 'Hollywood Star Walk');
 
