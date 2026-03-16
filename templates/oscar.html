@@ -179,6 +179,12 @@
         padding-bottom: 15vh;
     }
 
+    @media (min-width: 768px) {
+        #hero-section {
+            padding-bottom: 6vh;
+        }
+    }
+
     .hero-spotlight {
         position: absolute;
         inset: 0;
@@ -1990,12 +1996,12 @@
             ctx.fillText('2026', w/2, h/2 + 400);
         } else {
             ctx.font = 'bold 70px "Cinzel"';
-            ctx.fillText('THE 98TH', w/2, h / 2 - 180);
+            ctx.fillText('THE 98TH', w/2, h / 2 - 140);
             ctx.font = 'bold 140px "Cinzel"';
-            ctx.fillText('ACADEMY', w/2, h / 2 - 40);
-            ctx.fillText('AWARDS', w/2, h / 2 + 100);
+            ctx.fillText('ACADEMY', w/2, h / 2 - 30);
+            ctx.fillText('AWARDS', w/2, h / 2 + 80);
             ctx.font = 'bold 70px "Cinzel"';
-            ctx.fillText('2026', w/2, h / 2 + 220);
+            ctx.fillText('2026', w/2, h / 2 + 180);
         }
 
         const imgData = ctx.getImageData(0, 0, w, h).data;
