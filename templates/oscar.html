@@ -253,30 +253,49 @@
 <div id="flash-overlay"></div>
 
 <div id="loader-overlay">
-    <div class="flex flex-col items-center">
-        <div id="clapperboard" class="clapperboard-container">
-            <div id="clapper-top" class="clapper-top clapper-stripes">
-                <div class="clapper-hinge"></div>
-            </div>
-            <div class="clapper-bottom clapper-stripes"></div>
-            <div class="clapper-content">
-                <div class="clapper-grid">
-                    <div class="clapper-box">
-                        <div class="clapper-label">PROD</div>
-                        <div class="clapper-value text-[#D4AF37]">OSCARS</div>
-                    </div>
-                    <div class="clapper-box">
-                        <div class="clapper-label">TAKE</div>
-                        <div class="clapper-value">1</div>
-                    </div>
-                    <div class="clapper-box col-span-2">
-                        <div class="clapper-label">DIR</div>
-                        <div class="clapper-value">ACADEMY</div>
+    <div class="flex flex-col items-center relative w-full h-full justify-center">
+        <div id="clapper-wrapper" class="flex flex-col items-center transition-opacity duration-500">
+            <div id="clapperboard" class="clapperboard-container">
+                <div id="clapper-top" class="clapper-top clapper-stripes">
+                    <div class="clapper-hinge"></div>
+                </div>
+                <div class="clapper-bottom clapper-stripes"></div>
+                <div class="clapper-content">
+                    <div class="clapper-grid">
+                        <div class="clapper-box">
+                            <div class="clapper-label">PROD</div>
+                            <div class="clapper-value text-[#D4AF37]">OSCARS</div>
+                        </div>
+                        <div class="clapper-box">
+                            <div class="clapper-label">TAKE</div>
+                            <div class="clapper-value">1</div>
+                        </div>
+                        <div class="clapper-box col-span-2">
+                            <div class="clapper-label">DIR</div>
+                            <div class="clapper-value">ACADEMY</div>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="blink-text font-cinzel font-bold mt-8">CLIQUE PARA INICIAR</div>
         </div>
-        <div class="blink-text font-cinzel font-bold">CLIQUE PARA INICIAR</div>
+        
+        <div id="magic-intro" class="absolute inset-0 flex flex-col items-center justify-center opacity-0 pointer-events-none">
+            <img id="magic-oscar" src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1773636857/image-removebg-preview_31_b27yui.png" class="h-64 md:h-96 object-contain opacity-0 scale-50" style="filter: drop-shadow(0 0 20px rgba(212,175,55,0.8));">
+            <div id="magic-text-oscar" class="text-[#D4AF37] font-cinzel font-black text-5xl md:text-7xl mt-4 opacity-0 tracking-[0.2em]">OSCAR</div>
+            <div id="magic-text-exp" class="flex text-white font-montserrat font-bold text-2xl md:text-4xl mt-2 tracking-[0.5em] overflow-hidden">
+                <span class="exp-letter inline-block -translate-y-[100px] opacity-0">E</span>
+                <span class="exp-letter inline-block -translate-y-[100px] opacity-0">X</span>
+                <span class="exp-letter inline-block -translate-y-[100px] opacity-0">P</span>
+                <span class="exp-letter inline-block -translate-y-[100px] opacity-0">E</span>
+                <span class="exp-letter inline-block -translate-y-[100px] opacity-0">R</span>
+                <span class="exp-letter inline-block -translate-y-[100px] opacity-0">I</span>
+                <span class="exp-letter inline-block -translate-y-[100px] opacity-0">E</span>
+                <span class="exp-letter inline-block -translate-y-[100px] opacity-0">N</span>
+                <span class="exp-letter inline-block -translate-y-[100px] opacity-0">C</span>
+                <span class="exp-letter inline-block -translate-y-[100px] opacity-0">E</span>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -297,7 +316,7 @@
         <div id="canvas-container"></div>
 
         <div class="hero-content">
-           <h2 class="text-[#D4AF37] uppercase font-semibold hero-element hero-subtitle opacity-0 translate-y-10 text-2xl md:text-4xl mb-4">
+           <h2 class="text-[#D4AF37] uppercase font-semibold hero-element hero-subtitle opacity-0 translate-y-10 text-xl md:text-3xl mt-10 mb-4">
                 A Noite de Gala do Cinema
             </h2>
             
@@ -1841,16 +1860,51 @@
     });
 
     clapperboard.addEventListener('click', () => {
-        gsap.timeline()
-            .to(clapperTop, { rotation: -50, duration: 0.1, ease: "power2.in" })
-            .to(clapperTop, { rotation: 0, duration: 0.15, ease: "power4.in" })
-            .to(flashOverlay, { opacity: 1, duration: 0.05 })
-            .to(loaderOverlay, { opacity: 0, duration: 0 }, "+=0.1")
-            .to(flashOverlay, { opacity: 0, duration: 0.8, ease: "power2.out", onStart: () => {
-                loaderOverlay.style.display = 'none';
-                document.body.style.overflow = '';
-                initHeroAnimations();
-            }});
+        const tl = gsap.timeline();
+        
+        tl.to(clapperTop, { rotation: -50, duration: 0.1, ease: "power2.in" })
+          .to(clapperTop, { rotation: 0, duration: 0.15, ease: "power4.in" })
+          .to(flashOverlay, { opacity: 1, duration: 0.05 })
+          .set('#clapper-wrapper', { display: 'none' })
+          .set('#magic-intro', { opacity: 1 })
+          .to(flashOverlay, { opacity: 0, duration: 0.5 })
+          .to('#magic-oscar', {
+              opacity: 1,
+              scale: 1,
+              rotationY: 360,
+              duration: 1.5,
+              ease: "back.out(1.5)"
+          }, "-=0.2")
+          .to('#magic-text-oscar', {
+              opacity: 1,
+              y: -10,
+              duration: 0.8,
+              ease: "power3.out"
+          }, "-=0.5")
+          .to('.exp-letter', {
+              y: 0,
+              opacity: 1,
+              duration: 0.6,
+              stagger: 0.1,
+              ease: "bounce.out"
+          })
+          .to('#magic-intro', {
+              opacity: 0,
+              scale: 1.2,
+              filter: "blur(10px)",
+              duration: 1,
+              delay: 0.5,
+              ease: "power2.inOut"
+          })
+          .to(loaderOverlay, { 
+              opacity: 0, 
+              duration: 0.5, 
+              onComplete: () => {
+                  loaderOverlay.style.display = 'none';
+                  document.body.style.overflow = '';
+                  initHeroAnimations();
+              }
+          }, "-=0.5");
     }, { once: true });
 
     function initHeroAnimations() {
