@@ -1662,89 +1662,108 @@
         <p class="text-white/60 font-montserrat uppercase tracking-widest text-sm">Grave seu nome na história de Hollywood</p>
     </div>
 
-    <div class="relative w-80 h-80 md:w-[550px] md:h-[550px] flex items-center justify-center" id="star-stage" style="perspective: 1200px;">
-        <div class="transform transition-all duration-1000 scale-100" style="transform: rotateX(45deg);" id="star-wrapper">
-            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-[0_0_60px_rgba(212,175,55,0.5)]">
+    <div class="relative w-full max-w-[600px] aspect-square flex items-center justify-center" id="star-stage" style="perspective: 1200px;">
+        <div class="w-full h-full transform transition-all duration-1000" style="transform: rotateX(35deg);" id="star-wrapper">
+            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-[0_0_80px_rgba(212,175,55,0.4)]">
                 <defs>
-                    <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" style="stop-color:#996515;stop-opacity:1" />
                         <stop offset="50%" style="stop-color:#D4AF37;stop-opacity:1" />
                         <stop offset="100%" style="stop-color:#996515;stop-opacity:1" />
                     </linearGradient>
                 </defs>
-                <path id="hall-star-premium" 
-                      d="M50,3 L63.6,35.7 L97,38.2 L71.5,60.8 L79,93 L50,75 L21,93 L28.5,60.8 L3,38.2 L36.4,35.7 Z" 
-                      fill="#DD706C"  stroke="url(#gold-gradient)" 
-                      stroke-width="1.5"/>
                 
+                <path d="M50,5 L64.6,37.7 L98,40.2 L72.5,62.8 L80,95 L50,77 L20,95 L27.5,62.8 L2,40.2 L35.4,37.7 Z" fill="black" opacity="0.5" transform="translate(1, 1)" />
+                
+                <path id="hall-star-main" 
+                      d="M50,5 L64.6,37.7 L98,40.2 L72.5,62.8 L80,95 L50,77 L20,95 L27.5,62.8 L2,40.2 L35.4,37.7 Z" 
+                      fill="#DD706C" 
+                      stroke="url(#gold-grad)" 
+                      stroke-width="1.2"/>
+                
+                <g id="movie-icon" transform="translate(42, 58) scale(0.6)" fill="url(#gold-grad)" opacity="0.8">
+                    <path d="M22,2v2h-2v-2h-2v2h-2v-2h-2v2h-2v-2h-2v2h-2v-2h-2v20h20v-20h-2zM20,20h-16v-12h16v12zM18,10l-12,4v-2l12,-4z" />
+                </g>
+
                 <text id="star-name-display" 
                       x="50" 
-                      y="55" 
+                      y="48" 
                       font-family="'Montserrat', sans-serif" 
-                      font-size="6" 
-                      fill="url(#gold-gradient)"  text-anchor="middle" 
+                      font-size="8" 
+                      fill="url(#gold-grad)" 
+                      text-anchor="middle" 
                       font-weight="900" 
-                      text-transform="uppercase" 
                       opacity="0" 
-                      transform="scale(0.5)" 
-                      style="letter-spacing: -0.05em;">
+                      style="letter-spacing: -0.02em; text-transform: uppercase;">
                 </text>
             </svg>
         </div>
     </div>
 
-    <div class="mt-16 w-full max-w-md px-6 z-50" id="star-form-container">
+    <div class="mt-8 w-full max-w-md px-6 z-50" id="star-form-container">
         <div class="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-lg shadow-2xl text-center">
-            <h4 class="text-white font-montserrat uppercase tracking-widest text-xs mb-6">Digite seu nome para gravar na estrela</h4>
-            <input type="text" id="star-name-input" placeholder="SEU NOME PARA A ESTRELA" class="w-full bg-black/50 border border-white/20 rounded p-4 text-white text-center focus:border-[#D4AF37] focus:outline-none font-montserrat font-bold text-lg mb-4 uppercase tracking-wider">
+            <h4 class="text-white font-montserrat uppercase tracking-widest text-[10px] mb-6 opacity-70">Digite seu nome e imortalize-se</h4>
+            <input type="text" id="star-name-input" placeholder="SEU NOME" maxlength="15" class="w-full bg-black/50 border border-white/20 rounded p-4 text-white text-center focus:border-[#D4AF37] focus:outline-none font-montserrat font-bold text-lg mb-4 uppercase">
             <input type="email" id="star-email-input" placeholder="SEU MELHOR E-MAIL" class="w-full bg-black/50 border border-white/20 rounded p-3 text-white text-center focus:border-[#D4AF37] focus:outline-none font-montserrat text-sm mb-6">
-            <button onclick="gravarNaEstrelaPremium()" class="w-full bg-gradient-to-r from-[#996515] to-[#D4AF37] text-black font-black uppercase tracking-widest py-4 rounded-sm hover:scale-105 transition-transform shadow-[0_0_30px_rgba(212,175,55,0.3)]">
-                Imortalizar Nome
+            <button onclick="gravarEstrelaCinema()" class="w-full bg-gradient-to-r from-[#996515] to-[#D4AF37] text-black font-black uppercase tracking-widest py-4 rounded-sm hover:scale-105 transition-transform shadow-[0_0_30px_rgba(212,175,55,0.3)]">
+                Gravar Nome na Estrela
             </button>
         </div>
     </div>
 </section>
 
 <script>
-    async function gravarNaEstrelaPremium() {
-        const nomeInput = document.getElementById('star-name-input').value;
-        const emailInput = document.getElementById('star-email-input').value;
+    async function gravarEstrelaCinema() {
+        const nomeIn = document.getElementById('star-name-input').value.trim();
+        const emailIn = document.getElementById('star-email-input').value.trim();
         const display = document.getElementById('star-name-display');
-        const star = document.getElementById('hall-star-premium');
+        const star = document.getElementById('hall-star-main');
         const wrapper = document.getElementById('star-wrapper');
 
-        if(!nomeInput || !emailInput) {
-            alert('Preencha os campos para sua estrela brilhar!');
+        if(!nomeIn || !emailIn) {
+            alert('Preencha nome e e-mail para brilhar em Hollywood!');
             return;
         }
 
-        // Captura Lead (Backend)
         const formData = new FormData();
-        formData.append('nome', nomeInput);
-        formData.append('email', emailInput);
+        formData.append('nome', nomeIn);
+        formData.append('email', emailIn);
         formData.append('whatsapp', '00000000000');
         formData.append('profissao', 'Hollywood Star Walk');
 
         try { fetch('/{{ loja.slug_url }}/captura-lead', { method: 'POST', body: formData }); } catch(e) {}
 
-        // Animação Criativa com Paparazzi (Flashes) e Brilho Dourado
-        gsap.to(star, { fill: '#D4AF37', duration: 1.5 }); // Preenche com Dourado no final
-        gsap.to(wrapper, { rotationX: 0, scale: 1.15, duration: 2, ease: "expo.out" });
+        // Reset visual e animação de gravação
+        gsap.set(display, { opacity: 0, scale: 0.5 });
         
-        // Ativação do Nome Gravado Dourado
-        display.textContent = nomeInput;
-        gsap.to(display, { opacity: 1, scale: 1, duration: 1.5, delay: 0.5, textTransform: 'uppercase' });
+        const tl = gsap.timeline();
+        
+        tl.to(wrapper, { rotationX: 0, scale: 1.1, duration: 1.5, ease: "expo.out" })
+          .to(star, { fill: '#D4AF37', duration: 1, ease: "power2.inOut" }, "-=1")
+          .to(display, { 
+              opacity: 1, 
+              scale: 1, 
+              duration: 1, 
+              onStart: () => { display.textContent = nomeIn.toUpperCase(); },
+              ease: "back.out(1.7)" 
+          }, "-=0.5");
 
-        // Efeito de Paparazzi (Flashes)
-        for (let i = 0; i < 5; i++) {
-            gsap.to('#walk-of-fame', { backgroundColor: '#ffffff', duration: 0.05, yoyo: true, repeat: 1, delay: i * 0.15 + 0.5 });
+        // Efeito Paparazzi
+        for (let i = 0; i < 6; i++) {
+            gsap.to('#walk-of-fame', { 
+                backgroundColor: '#ffffff', 
+                duration: 0.04, 
+                yoyo: true, 
+                repeat: 1, 
+                delay: i * 0.12 + 0.6,
+                ease: "none"
+            });
         }
         
-        // Mensagem de Sucesso Premium
         document.getElementById('star-form-container').innerHTML = `
-            <div class="text-center animate-pulse">
-                <h3 class="text-[#D4AF37] font-cinzel text-2xl font-bold">VOCÊ AGORA É UMA ESTRELA!</h3>
-                <p class="text-white/50 text-sm mt-2">Tire um print e compartilhe sua conquista.</p>
+            <div class="text-center py-4">
+                <h3 class="text-[#D4AF37] font-cinzel text-2xl font-bold tracking-tighter">PARABÉNS, ESTRELA!</h3>
+                <p class="text-white/50 text-xs mt-2 uppercase tracking-widest">Tire um print da sua estrela oficial.</p>
             </div>
         `;
     }
