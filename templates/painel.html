@@ -152,7 +152,9 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ prod.estoque }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <button onclick='editarProduto({{ prod | tojson }})' class="text-blue-500 hover:text-blue-700 mr-3"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                    <button onclick='clonarProduto({{ prod | tojson }})' class="text-green-500 hover:text-green-700 mr-3" title="Clonar para outra categoria"><i data-lucide="copy" class="w-4 h-4"></i></button>
+                                    <button onclick='editarProduto({{ prod | tojson }})'
+                                     class="text-blue-500 hover:text-blue-700 mr-3"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
                                     <a href="/{{ loja.slug_url }}/admin/produto/excluir/{{ prod.id }}" class="text-red-500 hover:text-red-700" onclick="return confirm('Excluir este produto?')"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
                                 </td>
                             </tr>
@@ -1080,6 +1082,12 @@
 
             document.getElementById('prodModalTitle').innerText = 'Editar Produto';
             toggleModal('produtoModal');
+        }
+        function clonarProduto(prod) {
+            editarProduto(prod); 
+            document.getElementById('prodId').value = ''; 
+            document.getElementById('prodModalTitle').innerText = 'Clonar Indicado (Novo)';
+            document.getElementById('prodCategoria').focus();
         }
         
         function novoPost() {
