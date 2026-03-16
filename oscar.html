@@ -1,0 +1,2021 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<title>The Oscars | Academy Awards</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+    :root { 
+        --gold-primary: #D4AF37;
+        --gold-light: #F3E5AB;
+        --gold-dark: #996515;
+        --bg-black: #0a0a0a;
+        --text-color: #f8f8f8;
+    }
+    
+    html, body { 
+        font-family: 'Montserrat', sans-serif; 
+        background-color: var(--bg-black);
+        color: var(--text-color);
+        overflow-x: clip !important;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1, h2, h3, .font-cinzel { 
+        font-family: 'Cinzel', serif; 
+        text-transform: uppercase;
+    }
+
+    #loader-overlay {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #000; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+    }
+
+    .clapperboard-container {
+        position: relative;
+        width: 300px;
+        height: 220px;
+        background-color: #111;
+        border: 4px solid #fff;
+        border-radius: 4px;
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .clapperboard-container:hover {
+        transform: scale(1.05);
+    }
+
+    .clapper-stripes {
+        background: repeating-linear-gradient(60deg, #fff, #fff 20px, #111 20px, #111 40px);
+    }
+
+    .clapper-top {
+        position: absolute;
+        top: -30px;
+        left: -4px;
+        width: calc(100% + 8px);
+        height: 30px;
+        border: 4px solid #fff;
+        border-bottom: none;
+        border-radius: 4px 4px 0 0;
+        transform-origin: bottom left;
+        transform: rotate(-25deg);
+        z-index: 2;
+    }
+
+    .clapper-hinge {
+        position: absolute;
+        left: 10px;
+        bottom: -5px;
+        width: 10px;
+        height: 10px;
+        background: #D4AF37;
+        border-radius: 50%;
+        z-index: 3;
+    }
+
+    .clapper-bottom {
+        width: 100%;
+        height: 30px;
+        border-bottom: 4px solid #fff;
+        position: relative;
+    }
+
+    .clapper-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .clapper-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        border: 2px solid #fff;
+        height: 100%;
+        padding: 10px;
+    }
+
+    .clapper-box {
+        border: 1px solid rgba(255,255,255,0.3);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .clapper-label {
+        font-size: 0.6rem;
+        color: rgba(255,255,255,0.6);
+        text-transform: uppercase;
+        padding: 2px 4px;
+        border-bottom: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .clapper-value {
+        font-family: 'Cinzel', serif;
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-align: center;
+        margin: auto;
+    }
+
+    .blink-text {
+        animation: blink 1.5s infinite;
+        text-align: center;
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: var(--gold-primary);
+        letter-spacing: 2px;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+
+    #flash-overlay {
+        position: fixed;
+        inset: 0;
+        background: #fff;
+        z-index: 999998;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    header {
+        background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+        border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+    }
+
+    #hero-section {
+        height: 100vh;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 14vh;
+        padding-bottom: 15vh;
+    }
+
+    .hero-spotlight {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle 600px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(212, 175, 55, 0.15), transparent 80%);
+        pointer-events: none;
+        z-index: 1;
+        transition: background 0.1s ease;
+    }
+
+    #canvas-container {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        pointer-events: none; 
+    }
+
+    .hero-content {
+        text-align: center;
+        z-index: 10;
+        position: relative;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        height: 100%;
+        width: 100%;
+    }
+
+    .hero-subtitle {
+        max-width: 80%;
+        line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+        .hero-subtitle {
+            font-size: 1.1rem;
+            max-width: 250px;
+            letter-spacing: 0.3em;
+        }
+    }
+
+    .gold-button {
+        display: inline-block;
+        padding: 1rem 3rem;
+        background: linear-gradient(45deg, var(--gold-dark), var(--gold-primary));
+        color: #000;
+        font-family: 'Cinzel', serif;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        border: 1px solid var(--gold-light);
+        transition: all 0.3s ease;
+        pointer-events: auto;
+    }
+
+    .gold-button:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+        background: linear-gradient(45deg, var(--gold-primary), var(--gold-light));
+    }
+</style>
+</head>
+<body style="overflow: hidden;">
+
+<div id="flash-overlay"></div>
+
+<div id="loader-overlay">
+    <div class="flex flex-col items-center">
+        <div id="clapperboard" class="clapperboard-container">
+            <div id="clapper-top" class="clapper-top clapper-stripes">
+                <div class="clapper-hinge"></div>
+            </div>
+            <div class="clapper-bottom clapper-stripes"></div>
+            <div class="clapper-content">
+                <div class="clapper-grid">
+                    <div class="clapper-box">
+                        <div class="clapper-label">PROD</div>
+                        <div class="clapper-value text-[#D4AF37]">OSCARS</div>
+                    </div>
+                    <div class="clapper-box">
+                        <div class="clapper-label">TAKE</div>
+                        <div class="clapper-value">1</div>
+                    </div>
+                    <div class="clapper-box col-span-2">
+                        <div class="clapper-label">DIR</div>
+                        <div class="clapper-value">ACADEMY</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="blink-text font-cinzel font-bold">CLIQUE PARA INICIAR</div>
+    </div>
+</div>
+
+<header class="fixed top-0 w-full z-50 py-4 md:py-6 opacity-0" id="main-header">
+    <div class="container mx-auto px-6 md:px-12 flex justify-between items-center">
+        <div class="text-2xl font-cinzel font-bold text-[#D4AF37] tracking-widest pointer-events-auto">
+            ACADEMY
+        </div>
+        <nav class="hidden md:flex gap-8 text-sm uppercase tracking-widest font-semibold text-white/80 pointer-events-auto">
+            <a href="#" class="hover:text-[#D4AF37] transition-colors">Winners</a>
+            <a href="#" class="hover:text-[#D4AF37] transition-colors">Ceremony</a>
+            <a href="#" class="hover:text-[#D4AF37] transition-colors">History</a>
+        </nav>
+        <button class="md:hidden text-[#D4AF37] pointer-events-auto">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+    </div>
+</header>
+
+<main>
+    <section id="hero-section">
+        <div class="hero-spotlight" id="hero-spotlight"></div>
+        
+        <div class="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
+            <img src="https://images.unsplash.com/photo-1574267432553-4b462808152a?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover grayscale mix-blend-overlay">
+        </div>
+
+        <div id="canvas-container"></div>
+
+        <div class="hero-content">
+            <h2 class="text-[#D4AF37] uppercase font-semibold hero-element hero-subtitle opacity-0 translate-y-10">
+                A Noite de Gala do Cinema
+            </h2>
+            
+            <a href="#nominees" class="gold-button hero-element opacity-0 translate-y-10">
+                Explore os Indicados
+            </a>
+        </div>
+    </section>
+<section id="scattered-movies" class="relative w-full h-screen bg-black overflow-hidden flex items-center justify-center border-t border-[#D4AF37]/20">
+    
+    <div class="absolute inset-0 z-0 opacity-10 pointer-events-none" style="background-image: repeating-linear-gradient(to right, transparent, transparent 100px, #fff 100px, #fff 105px, transparent 105px, transparent 120px, #fff 120px, #fff 125px); background-size: 200px 100%; animation: filmScroll 10s linear infinite;"></div>
+    <div class="absolute inset-0 z-0 opacity-20 pointer-events-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')]"></div>
+
+    <div id="movie-spotlight" class="absolute w-[600px] h-[600px] rounded-full pointer-events-none z-0 opacity-30 mix-blend-screen transition-opacity duration-300" style="background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%); transform: translate(-50%, -50%); top: -1000px; left: -1000px;"></div>
+
+    <div class="absolute inset-0 z-10" id="floating-cards-container"></div>
+    
+    <div class="relative z-20 flex flex-col items-center text-center pointer-events-none">
+        <h2 class="text-4xl md:text-6xl text-[#D4AF37] font-cinzel tracking-[0.2em] uppercase font-black drop-shadow-2xl hero-title-scatter opacity-0 translate-y-10" style="text-shadow: 0 10px 40px rgba(0,0,0,1);">
+            A Elite do Cinema
+        </h2>
+        <p class="text-white/90 mt-4 tracking-widest uppercase text-sm md:text-base opacity-0 translate-y-10 hero-subtitle-scatter font-semibold bg-black/50 px-4 py-1 rounded-full border border-white/10">
+            Indicados a Melhor Filme
+        </p>
+    </div>
+
+    <div id="movie-modal" class="fixed inset-0 w-full h-full z-[99999] hidden items-center justify-center bg-black/95 backdrop-blur-xl opacity-0 pointer-events-none transition-opacity duration-300 overflow-y-auto">
+        <div class="relative w-[90%] max-w-4xl bg-gradient-to-br from-[#111] to-[#050505] border border-[#D4AF37]/30 rounded-xl p-8 md:p-12 flex flex-col md:flex-row gap-10 transform scale-95 transition-transform duration-300 shadow-[0_20px_100px_rgba(212,175,55,0.2)] my-auto mx-auto" id="modal-content-box">
+            <button id="close-modal" class="absolute top-4 right-5 text-white/40 hover:text-[#D4AF37] transition-colors text-3xl font-black cursor-pointer z-50">&#10005;</button>
+            
+            <div class="w-full md:w-1/3 hidden md:flex flex-shrink-0 relative rounded-lg overflow-hidden border border-[#D4AF37]/20 shadow-[0_0_30px_rgba(0,0,0,0.8)] aspect-[2/3]">
+                <img id="modal-image" src="" class="w-full h-full object-cover filter contrast-125">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+            </div>
+
+            <div class="w-full md:w-2/3 flex flex-col justify-center text-left relative z-10">
+                <div id="modal-clapperboard" class="w-32 h-24 mb-6 bg-[#0a0a0a] border-2 border-white/80 relative flex flex-col rounded-sm shadow-2xl">
+                    <div id="modal-clapper-top" class="absolute -top-[14px] -left-[2px] w-[calc(100%+4px)] h-[14px] border-2 border-white/80 bg-[#0a0a0a] rounded-t-sm" style="background: repeating-linear-gradient(60deg, #fff, #fff 10px, #0a0a0a 10px, #0a0a0a 20px); transform-origin: bottom left; transform: rotate(-35deg); z-index: 10;"></div>
+                    <div class="w-full h-[14px] border-b-2 border-white/80" style="background: repeating-linear-gradient(60deg, #fff, #fff 10px, #0a0a0a 10px, #0a0a0a 20px);"></div>
+                    <div class="w-full flex-grow flex flex-col items-center justify-center p-1">
+                        <span class="text-[0.55rem] text-white/50 uppercase tracking-[0.3em] mb-1">Cena</span>
+                        <span class="text-xl font-cinzel text-[#D4AF37] font-black uppercase tracking-wider">Oscar</span>
+                    </div>
+                </div>
+                
+                <h3 id="modal-title" class="text-3xl md:text-5xl font-cinzel text-[#D4AF37] mb-6 uppercase tracking-widest leading-none drop-shadow-lg">Título</h3>
+                <p id="modal-desc" class="text-white/80 font-montserrat text-base md:text-lg leading-relaxed font-light">Descrição do filme aparecerá aqui.</p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes filmScroll {
+            0% { background-position: 0 0; }
+            100% { background-position: -200px 0; }
+        }
+    </style>
+</section>
+
+<script>
+    document.fonts.ready.then(() => {
+        const container = document.getElementById('floating-cards-container');
+        const spotlight = document.getElementById('movie-spotlight');
+        const section = document.getElementById('scattered-movies');
+        
+        const moviesData = [
+            { src: 'https://upload.wikimedia.org/wikipedia/pt/d/de/Pecadores.webp', title: 'Pecadores', desc: 'Dois irmãos gêmeos retornam à sua cidade natal tentando deixar suas vidas para trás e começar de novo, mas descobrem que um mal ainda maior os espera nas sombras daquele lugar.' },
+            { src: 'https://br.web.img2.acsta.net/c_310_420/img/65/e0/65e0631edaef426629007c3d04ffc0aa.jpg', title: 'Valor Sentimental', desc: 'A complexa dinâmica familiar e os segredos reprimidos do passado vêm à tona de maneira devastadora, forçando os personagens a confrontar sua própria herança.' },
+            { src: 'https://upload.wikimedia.org/wikipedia/pt/6/60/O_Agente_Secreto_%28Cartaz_brasileiro%29.jpg', title: 'O Agente Secreto', desc: 'Um thriller de espionagem denso onde nada é o que parece. Um espião mergulha no submundo perigoso de conspirações globais no coração da Europa.' },
+            { src: 'https://upload.wikimedia.org/wikipedia/pt/c/c1/F1.webp', title: 'F1', desc: 'A adrenalina das pistas retorna em alta velocidade quando um ex-piloto veterano volta à Fórmula 1 para servir de mentor a um jovem e promissor prodígio.' },
+            { src: 'https://cinemaeafins.com.br/wp-content/uploads/2025/10/poster-de-frankenstein.webp', title: 'Frankenstein', desc: 'A reinterpretação visualmente deslumbrante e sombria do clássico conto de Mary Shelley sobre vida, morte, ambição científica e abandono absoluto.' },
+            { src: 'https://preview.redd.it/official-poster-for-train-dreams-v0-ouz7b25zznef1.jpeg?auto=webp&s=083a7a58b0237cd2037a9421318e0fb1cb259637', title: 'Train Dreams', desc: 'Uma jornada profundamente emocional e melancólica pelo velho oeste americano, acompanhando a vida de um homem simples e suas perdas trágicas ao longo do tempo.' },
+            { src: 'https://br.web.img3.acsta.net/c_310_420/img/cb/cc/cbcc71a56e3f3743269027af475cba66.jpg', title: 'Bugonia', desc: 'Dois teóricos da conspiração paranoicos tomam atitudes extremas ao acreditar firmemente que a líder de uma grande corporação é, na verdade, uma ameaça alienígena.' },
+            { src: 'https://upload.wikimedia.org/wikipedia/pt/6/60/O_Agente_Secreto_%28Cartaz_brasileiro%29.jpg', title: 'O Agente Secreto', desc: 'Um thriller de espionagem denso onde nada é o que parece. Um espião mergulha no submundo perigoso de conspirações globais no coração da Europa.' },
+            { src: 'https://upload.wikimedia.org/wikipedia/pt/c/c1/F1.webp', title: 'F1', desc: 'A adrenalina das pistas retorna em alta velocidade quando um ex-piloto veterano volta à Fórmula 1 para servir de mentor a um jovem e promissor prodígio.' },
+            { src: 'https://cinemaeafins.com.br/wp-content/uploads/2025/10/poster-de-frankenstein.webp', title: 'Frankenstein', desc: 'A reinterpretação visualmente deslumbrante e sombria do clássico conto de Mary Shelley sobre vida, morte, ambição científica e abandono absoluto.' }
+        ];
+
+        const positions = [
+            { top: '15%', left: '10%', width: '14vw', depth: 0.8 },
+            { top: '12%', left: '30%', width: '12vw', depth: 1.5 },
+            { top: '15%', left: '70%', width: '10vw', depth: 0.5 },
+            { top: '20%', left: '88%', width: '15vw', depth: 1.2 },
+            { top: '50%', left: '8%', width: '13vw', depth: 0.9 },
+            { top: '50%', left: '90%', width: '11vw', depth: 1.8 },
+            { top: '85%', left: '12%', width: '16vw', depth: 0.7 },
+            { top: '80%', left: '35%', width: '9vw', depth: 1.4 },
+            { top: '85%', left: '65%', width: '12vw', depth: 0.6 },
+            { top: '75%', left: '85%', width: '10vw', depth: 1.3 }
+        ];
+
+        const cards = [];
+
+        moviesData.forEach((movie, index) => {
+            const pos = positions[index];
+            const card = document.createElement('div');
+            card.className = 'absolute rounded-lg overflow-hidden shadow-2xl border border-[#D4AF37]/30 scattered-card cursor-pointer pointer-events-auto';
+            card.style.top = pos.top;
+            card.style.left = pos.left;
+            card.style.width = pos.width;
+            card.style.transform = `translate(-50%, -50%) scale(0) rotate(${Math.random() * 60 - 30}deg)`;
+            card.style.opacity = '0';
+            card.dataset.depth = pos.depth;
+            card.dataset.baseX = 0;
+            card.dataset.baseY = 0;
+            card.dataset.index = index;
+
+            const img = document.createElement('img');
+            img.src = movie.src;
+            img.className = 'w-full h-full object-cover filter brightness-75 hover:brightness-110 hover:scale-105 transition-all duration-500';
+            
+            card.appendChild(img);
+            container.appendChild(card);
+            cards.push(card);
+
+            card.addEventListener('click', () => {
+                const data = moviesData[index];
+                document.getElementById('modal-title').textContent = data.title;
+                document.getElementById('modal-desc').textContent = data.desc;
+                document.getElementById('modal-image').src = data.src;
+                
+                const modal = document.getElementById('movie-modal');
+                const contentBox = document.getElementById('modal-content-box');
+                const clapperTop = document.getElementById('modal-clapper-top');
+
+                modal.classList.remove('hidden');
+                modal.classList.remove('pointer-events-none');
+                modal.classList.add('flex');
+                
+                void modal.offsetWidth;
+
+                modal.classList.remove('opacity-0');
+                contentBox.classList.remove('scale-95');
+
+                gsap.fromTo(clapperTop, 
+                    { rotation: -45 }, 
+                    { rotation: 0, duration: 0.25, ease: "power4.in", delay: 0.3 }
+                );
+            });
+        });
+
+        document.getElementById('close-modal').addEventListener('click', () => {
+            const modal = document.getElementById('movie-modal');
+            const contentBox = document.getElementById('modal-content-box');
+            
+            modal.classList.add('opacity-0');
+            contentBox.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                modal.classList.add('pointer-events-none');
+            }, 300);
+        });
+
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: '#scattered-movies',
+                start: 'top 50%',
+                toggleActions: 'play none none none'
+            }
+        });
+
+        tl.to('.hero-title-scatter, .hero-subtitle-scatter', {
+            opacity: 1,
+            y: 0,
+            duration: 1.5,
+            stagger: 0.2,
+            ease: 'power4.out'
+        })
+        .to(cards, {
+            opacity: 1,
+            scale: 1,
+            rotation: () => Math.random() * 14 - 7,
+            duration: 2,
+            stagger: 0.1,
+            ease: 'elastic.out(1, 0.75)'
+        }, '-=1');
+
+        cards.forEach(card => {
+            gsap.to(card, {
+                y: `+=${Math.random() * 40 + 20}`,
+                rotationZ: `+=${Math.random() * 6 - 3}`,
+                duration: Math.random() * 3 + 3,
+                yoyo: true,
+                repeat: -1,
+                ease: 'sine.inOut',
+                delay: Math.random() * 2
+            });
+        });
+
+        section.addEventListener('mousemove', (e) => {
+            const rect = section.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            const xAxis = (rect.width / 2 - mouseX);
+            const yAxis = (rect.height / 2 - mouseY);
+
+            spotlight.style.left = `${mouseX}px`;
+            spotlight.style.top = `${mouseY}px`;
+
+            cards.forEach(card => {
+                const depth = parseFloat(card.dataset.depth);
+                const moveX = xAxis * 0.08 * depth;
+                const moveY = yAxis * 0.08 * depth;
+                
+                card.dataset.baseX = moveX;
+                card.dataset.baseY = moveY;
+
+                gsap.to(card, {
+                    x: moveX,
+                    duration: 1.5,
+                    ease: 'power2.out',
+                    overwrite: 'auto'
+                });
+            });
+        });
+
+        section.addEventListener('mouseleave', () => {
+            spotlight.style.left = `-1000px`;
+            spotlight.style.top = `-1000px`;
+
+            cards.forEach(card => {
+                card.dataset.baseX = 0;
+                card.dataset.baseY = 0;
+                gsap.to(card, {
+                    x: 0,
+                    duration: 2,
+                    ease: 'elastic.out(1, 0.5)',
+                    overwrite: 'auto'
+                });
+            });
+        });
+    });
+</script>
+
+<section id="oscar-winners-3d" class="relative w-full bg-[#050505] font-cinzel" style="height: 1400vh;">
+    <div class="sticky top-0 w-full h-screen overflow-hidden border-t border-[#D4AF37]/20">
+        <canvas id="winners-canvas" class="absolute top-0 left-0 w-full h-full z-0"></canvas>
+        
+        <div class="absolute inset-0 z-[1] bg-[radial-gradient(circle_at_center,transparent_0%,rgba(5,5,5,0.8)_100%)] pointer-events-none"></div>
+
+        <div id="winners-content-container" class="absolute top-0 left-0 w-full h-full z-10 flex items-center justify-center pointer-events-none px-4">
+            
+            <div class="winner-step absolute opacity-1 transition-all duration-300 text-center w-full max-w-6xl flex flex-col items-center">
+                <h2 class="text-[#D4AF37] text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+                    O Grande Campeão
+                </h2>
+                <div class="bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 p-6 md:p-10 rounded-sm shadow-[0_0_40px_rgba(212,175,55,0.15)] flex flex-col md:flex-row gap-8 items-center w-full mt-6 pointer-events-auto">
+                    <img src="https://upload.wikimedia.org/wikipedia/pt/d/de/Pecadores.webp" class="w-48 md:w-64 aspect-[2/3] object-cover rounded-sm border border-white/20 shadow-2xl">
+                    <div class="text-left flex flex-col gap-4 w-full">
+                        <div>
+                            <span class="text-white/50 text-xs md:text-sm uppercase tracking-[0.3em] font-montserrat">Melhor Filme</span>
+                            <h3 class="text-3xl md:text-5xl text-white font-bold uppercase tracking-widest mt-1">Pecadores <span class="text-[#D4AF37] text-xl md:text-3xl">(Sinners)</span></h3>
+                        </div>
+                        <div class="mt-6">
+                            <a href="#votar" class="inline-block bg-[#D4AF37] text-black font-bold uppercase tracking-widest px-6 py-4 rounded-sm hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] text-xs md:text-sm">
+                                Ver todos os indicados e VOTE AQUI
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="winner-step absolute opacity-0 transition-all duration-300 text-center w-full max-w-6xl flex flex-col items-center">
+                <h2 class="text-[#D4AF37] text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+                    Melhor Direção
+                </h2>
+                <div class="bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 p-6 md:p-10 rounded-sm shadow-[0_0_40px_rgba(212,175,55,0.15)] flex flex-col md:flex-row gap-8 items-center w-full mt-6 pointer-events-auto">
+                    <img src="https://ca-times.brightspotcdn.com/dims4/default/818c020/2147483647/strip/true/crop/2873x1910+0+0/resize/1200x798!/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2F2e%2Ff3%2F3b1e83a640f18cad55b093bcd999%2Fap26073160945552.jpg" class="w-48 md:w-64 aspect-[2/3] object-cover rounded-sm border border-white/20 shadow-2xl">
+                    <div class="text-left flex flex-col gap-4 w-full">
+                        <div>
+                            <span class="text-white/50 text-xs md:text-sm uppercase tracking-[0.3em] font-montserrat">Melhor Direção</span>
+                            <h3 class="text-3xl md:text-5xl text-white font-bold uppercase tracking-widest mt-1">Ryan Coogler</h3>
+                            <p class="text-[#D4AF37] text-lg md:text-2xl mt-2">Pecadores</p>
+                        </div>
+                        <div class="mt-6">
+                            <a href="#votar" class="inline-block bg-[#D4AF37] text-black font-bold uppercase tracking-widest px-6 py-4 rounded-sm hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] text-xs md:text-sm">
+                                Ver todos os indicados e VOTE AQUI
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="winner-step absolute opacity-0 transition-all duration-300 text-center w-full max-w-6xl flex flex-col items-center">
+                <h2 class="text-[#D4AF37] text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+                    Atuação Brilhante
+                </h2>
+                <div class="bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 p-6 md:p-10 rounded-sm shadow-[0_0_40px_rgba(212,175,55,0.15)] flex flex-col md:flex-row gap-8 items-center w-full mt-6 pointer-events-auto">
+                    <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1773620515/image-Picsart-AiImageEnhancer_-_2026-03-15T212144.502_ssyvtc.png" class="w-48 md:w-64 aspect-[2/3] object-cover rounded-sm border border-white/20 shadow-2xl">
+                    <div class="text-left flex flex-col gap-4 w-full">
+                        <div>
+                            <span class="text-white/50 text-xs md:text-sm uppercase tracking-[0.3em] font-montserrat">Melhor Ator</span>
+                            <h3 class="text-3xl md:text-5xl text-white font-bold uppercase tracking-widest mt-1">Michael B. Jordan</h3>
+                            <p class="text-[#D4AF37] text-lg md:text-2xl mt-2">Pecadores</p>
+                        </div>
+                        <div class="mt-6">
+                            <a href="#votar" class="inline-block bg-[#D4AF37] text-black font-bold uppercase tracking-widest px-6 py-4 rounded-sm hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] text-xs md:text-sm">
+                                Ver todos os indicados e VOTE AQUI
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="winner-step absolute opacity-0 transition-all duration-300 text-center w-full max-w-6xl flex flex-col items-center">
+                <h2 class="text-[#D4AF37] text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+                    Atuação Brilhante
+                </h2>
+                <div class="bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 p-6 md:p-10 rounded-sm shadow-[0_0_40px_rgba(212,175,55,0.15)] flex flex-col md:flex-row gap-8 items-center w-full mt-6 pointer-events-auto">
+                    <img src="https://assets.vogue.com/photos/69b72254864e3f3d4c680e24/master/w_1600%2Cc_limit/2266684298" class="w-48 md:w-64 aspect-[2/3] object-cover rounded-sm border border-white/20 shadow-2xl">
+                    <div class="text-left flex flex-col gap-4 w-full">
+                        <div>
+                            <span class="text-white/50 text-xs md:text-sm uppercase tracking-[0.3em] font-montserrat">Melhor Atriz</span>
+                            <h3 class="text-3xl md:text-5xl text-white font-bold uppercase tracking-widest mt-1">Rose Byrne</h3>
+                            <p class="text-[#D4AF37] text-lg md:text-2xl mt-2">Se Eu Tivesse Pernas, Eu Te Chutaria</p>
+                        </div>
+                        <div class="mt-6">
+                            <a href="#votar" class="inline-block bg-[#D4AF37] text-black font-bold uppercase tracking-widest px-6 py-4 rounded-sm hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] text-xs md:text-sm">
+                                Ver todos os indicados e VOTE AQUI
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="winner-step absolute opacity-0 transition-all duration-300 text-center w-full max-w-6xl flex flex-col items-center">
+                <h2 class="text-[#D4AF37] text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+                    Destaque Coadjuvante
+                </h2>
+                <div class="bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 p-6 md:p-10 rounded-sm shadow-[0_0_40px_rgba(212,175,55,0.15)] flex flex-col md:flex-row gap-8 items-center w-full mt-6 pointer-events-auto">
+                    <img src="https://hips.hearstapps.com/hmg-prod/images/6a122506-6be6-48d3-a17c-3be46a9b62da.jpeg?crop=0.666719795983xw:1xh;center,top&resize=640:*" class="w-48 md:w-64 aspect-[2/3] object-cover rounded-sm border border-white/20 shadow-2xl">
+                    <div class="text-left flex flex-col gap-4 w-full">
+                        <div>
+                            <span class="text-white/50 text-xs md:text-sm uppercase tracking-[0.3em] font-montserrat">Melhor Ator Coadjuvante</span>
+                            <h3 class="text-3xl md:text-5xl text-white font-bold uppercase tracking-widest mt-1">Benicio del Toro</h3>
+                            <p class="text-[#D4AF37] text-lg md:text-2xl mt-2">Uma Batalha Após a Outra</p>
+                        </div>
+                        <div class="mt-6">
+                            <a href="#votar" class="inline-block bg-[#D4AF37] text-black font-bold uppercase tracking-widest px-6 py-4 rounded-sm hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] text-xs md:text-sm">
+                                Ver todos os indicados e VOTE AQUI
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="winner-step absolute opacity-0 transition-all duration-300 text-center w-full max-w-6xl flex flex-col items-center">
+                <h2 class="text-[#D4AF37] text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+                    Destaque Coadjuvante
+                </h2>
+                <div class="bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 p-6 md:p-10 rounded-sm shadow-[0_0_40px_rgba(212,175,55,0.15)] flex flex-col md:flex-row gap-8 items-center w-full mt-6 pointer-events-auto">
+                    <img src="https://ca-times.brightspotcdn.com/dims4/default/22811f4/2147483647/strip/true/crop/2648x3971+0+0/resize/1200x1800!/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2Fdb%2Fea%2F019056764f8c89087eb3ebdf26c2%2F1546046-et-2026-oscars-show-02289.jpg" class="w-48 md:w-64 aspect-[2/3] object-cover rounded-sm border border-white/20 shadow-2xl" style="object-position: top;">
+                    <div class="text-left flex flex-col gap-4 w-full">
+                        <div>
+                            <span class="text-white/50 text-xs md:text-sm uppercase tracking-[0.3em] font-montserrat">Melhor Atriz Coadjuvante</span>
+                            <h3 class="text-3xl md:text-5xl text-white font-bold uppercase tracking-widest mt-1">Amy Madigan</h3>
+                            <p class="text-[#D4AF37] text-lg md:text-2xl mt-2">A Hora do Mal</p>
+                        </div>
+                        <div class="mt-6">
+                            <a href="#votar" class="inline-block bg-[#D4AF37] text-black font-bold uppercase tracking-widest px-6 py-4 rounded-sm hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] text-xs md:text-sm">
+                                Ver todos os indicados e VOTE AQUI
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="winner-step absolute opacity-0 transition-all duration-300 text-center w-full max-w-6xl flex flex-col items-center">
+                <h2 class="text-[#D4AF37] text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+                    Cinema Sem Fronteiras
+                </h2>
+                <div class="bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 p-6 md:p-10 rounded-sm shadow-[0_0_40px_rgba(212,175,55,0.15)] flex flex-col md:flex-row gap-8 items-center w-full mt-6 pointer-events-auto">
+                    <img src="https://br.web.img3.acsta.net/r_1280_720/img/21/ff/21fff6cefbc8a6359297f3c7eb1bf212.jpg" class="w-48 md:w-64 aspect-[2/3] object-cover rounded-sm border border-white/20 shadow-2xl">
+                    <div class="text-left flex flex-col gap-4 w-full">
+                        <div>
+                            <span class="text-white/50 text-xs md:text-sm uppercase tracking-[0.3em] font-montserrat">Melhor Filme Internacional</span>
+                            <h3 class="text-3xl md:text-5xl text-white font-bold uppercase tracking-widest mt-1">Foi Só um Acidente</h3>
+                            <p class="text-[#D4AF37] text-lg md:text-2xl mt-2">França</p>
+                        </div>
+                        <div class="mt-6">
+                            <a href="#votar" class="inline-block bg-[#D4AF37] text-black font-bold uppercase tracking-widest px-6 py-4 rounded-sm hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] text-xs md:text-sm">
+                                Ver todos os indicados e VOTE AQUI
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="winner-step absolute opacity-0 transition-all duration-300 text-center w-full max-w-6xl flex flex-col items-center">
+                <h2 class="text-[#D4AF37] text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+                    Magia Animada
+                </h2>
+                <div class="bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 p-6 md:p-10 rounded-sm shadow-[0_0_40px_rgba(212,175,55,0.15)] flex flex-col md:flex-row gap-8 items-center w-full mt-6 pointer-events-auto">
+                    <img src="https://ingresso-a.akamaihd.net/prd/img/movie/zootopia-2/3d1848cc-3a3f-4a9d-bfea-62568e4d40f9.webp" class="w-48 md:w-64 aspect-[2/3] object-cover rounded-sm border border-white/20 shadow-2xl">
+                    <div class="text-left flex flex-col gap-4 w-full">
+                        <div>
+                            <span class="text-white/50 text-xs md:text-sm uppercase tracking-[0.3em] font-montserrat">Melhor Animação</span>
+                            <h3 class="text-3xl md:text-5xl text-white font-bold uppercase tracking-widest mt-1">Zootopia 2</h3>
+                            <p class="text-[#D4AF37] text-lg md:text-2xl mt-2">Disney Animation Studios</p>
+                        </div>
+                        <div class="mt-6">
+                            <a href="#votar" class="inline-block bg-[#D4AF37] text-black font-bold uppercase tracking-widest px-6 py-4 rounded-sm hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] text-xs md:text-sm">
+                                Ver todos os indicados e VOTE AQUI
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="winner-step absolute opacity-0 transition-all duration-300 text-center w-full max-w-6xl flex flex-col items-center">
+                <h2 class="text-[#D4AF37] text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+                    A Força da Realidade
+                </h2>
+                <div class="bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 p-6 md:p-10 rounded-sm shadow-[0_0_40px_rgba(212,175,55,0.15)] flex flex-col md:flex-row gap-8 items-center w-full mt-6 pointer-events-auto">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/f/fc/The_Alabama_Solution_poster.jpg" class="w-48 md:w-64 aspect-[2/3] object-cover rounded-sm border border-white/20 shadow-2xl">
+                    <div class="text-left flex flex-col gap-4 w-full">
+                        <div>
+                            <span class="text-white/50 text-xs md:text-sm uppercase tracking-[0.3em] font-montserrat">Melhor Documentário</span>
+                            <h3 class="text-3xl md:text-5xl text-white font-bold uppercase tracking-widest mt-1">The Alabama Solution</h3>
+                        </div>
+                        <div class="mt-6">
+                            <a href="#votar" class="inline-block bg-[#D4AF37] text-black font-bold uppercase tracking-widest px-6 py-4 rounded-sm hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] text-xs md:text-sm">
+                                Ver todos os indicados e VOTE AQUI
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="winner-step absolute opacity-0 transition-all duration-300 text-center w-full max-w-6xl flex flex-col items-center">
+                <h2 class="text-[#D4AF37] text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+                    Mentes Criativas
+                </h2>
+                <div class="bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 p-6 md:p-10 rounded-sm shadow-[0_0_40px_rgba(212,175,55,0.15)] flex flex-col md:flex-row gap-8 items-center w-full mt-6 pointer-events-auto">
+                    <img src="https://upload.wikimedia.org/wikipedia/pt/d/de/Pecadores.webp" class="w-48 md:w-64 aspect-[2/3] object-cover rounded-sm border border-white/20 shadow-2xl">
+                    <div class="text-left flex flex-col gap-4 w-full">
+                        <div>
+                            <span class="text-white/50 text-xs md:text-sm uppercase tracking-[0.3em] font-montserrat">Melhor Roteiro Original</span>
+                            <h3 class="text-3xl md:text-5xl text-white font-bold uppercase tracking-widest mt-1">Pecadores</h3>
+                            <p class="text-[#D4AF37] text-lg md:text-2xl mt-2">Ryan Coogler</p>
+                        </div>
+                        <div class="mt-6">
+                            <a href="#votar" class="inline-block bg-[#D4AF37] text-black font-bold uppercase tracking-widest px-6 py-4 rounded-sm hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] text-xs md:text-sm">
+                                Ver todos os indicados e VOTE AQUI
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="winner-step absolute opacity-0 transition-all duration-300 text-center w-full max-w-6xl flex flex-col items-center">
+                <h2 class="text-[#D4AF37] text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+                    Páginas para a Tela
+                </h2>
+                <div class="bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 p-6 md:p-10 rounded-sm shadow-[0_0_40px_rgba(212,175,55,0.15)] flex flex-col md:flex-row gap-8 items-center w-full mt-6 pointer-events-auto">
+                    <img src="https://ingresso-a.akamaihd.net/prd/img/movie/hamnet-a-vida-antes-de-hamlet/c7e5c8cf-2ec5-48d7-afac-95da7c12e5f8.webp" class="w-48 md:w-64 aspect-[2/3] object-cover rounded-sm border border-white/20 shadow-2xl">
+                    <div class="text-left flex flex-col gap-4 w-full">
+                        <div>
+                            <span class="text-white/50 text-xs md:text-sm uppercase tracking-[0.3em] font-montserrat">Melhor Roteiro Adaptado</span>
+                            <h3 class="text-3xl md:text-5xl text-white font-bold uppercase tracking-widest mt-1">Hamnet</h3>
+                        </div>
+                        <div class="mt-6">
+                            <a href="#votar" class="inline-block bg-[#D4AF37] text-black font-bold uppercase tracking-widest px-6 py-4 rounded-sm hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] text-xs md:text-sm">
+                                Ver todos os indicados e VOTE AQUI
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="winner-step absolute opacity-0 transition-all duration-300 text-center w-full max-w-6xl flex flex-col items-center">
+                <h2 class="text-[#D4AF37] text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+                    O Olhar Cinematográfico
+                </h2>
+                <div class="bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 p-6 md:p-10 rounded-sm shadow-[0_0_40px_rgba(212,175,55,0.15)] flex flex-col md:flex-row gap-8 items-center w-full mt-6 pointer-events-auto">
+                    <img src="https://upload.wikimedia.org/wikipedia/pt/d/de/Pecadores.webp" class="w-48 md:w-64 aspect-[2/3] object-cover rounded-sm border border-white/20 shadow-2xl">
+                    <div class="text-left flex flex-col gap-4 w-full">
+                        <div>
+                            <span class="text-white/50 text-xs md:text-sm uppercase tracking-[0.3em] font-montserrat">Melhor Fotografia</span>
+                            <h3 class="text-3xl md:text-5xl text-white font-bold uppercase tracking-widest mt-1">Pecadores</h3>
+                            <p class="text-[#D4AF37] text-lg md:text-2xl mt-2">Autumn Durald Arkapaw</p>
+                        </div>
+                        <div class="mt-6">
+                            <a href="#votar" class="inline-block bg-[#D4AF37] text-black font-bold uppercase tracking-widest px-6 py-4 rounded-sm hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] text-xs md:text-sm">
+                                Ver todos os indicados e VOTE AQUI
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="winner-step absolute opacity-0 transition-all duration-300 text-center w-full max-w-6xl flex flex-col items-center">
+                <h2 class="text-[#D4AF37] text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+                    A Alma do Filme
+                </h2>
+                <div class="bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 p-6 md:p-10 rounded-sm shadow-[0_0_40px_rgba(212,175,55,0.15)] flex flex-col md:flex-row gap-8 items-center w-full mt-6 pointer-events-auto">
+                    <img src="https://upload.wikimedia.org/wikipedia/pt/d/de/Pecadores.webp" class="w-48 md:w-64 aspect-[2/3] object-cover rounded-sm border border-white/20 shadow-2xl">
+                    <div class="text-left flex flex-col gap-4 w-full">
+                        <div>
+                            <span class="text-white/50 text-xs md:text-sm uppercase tracking-[0.3em] font-montserrat">Melhor Trilha Sonora</span>
+                            <h3 class="text-3xl md:text-5xl text-white font-bold uppercase tracking-widest mt-1">Pecadores</h3>
+                            <p class="text-[#D4AF37] text-lg md:text-2xl mt-2">Ludwig Göransson</p>
+                        </div>
+                        <div class="mt-6">
+                            <a href="#votar" class="inline-block bg-[#D4AF37] text-black font-bold uppercase tracking-widest px-6 py-4 rounded-sm hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] text-xs md:text-sm">
+                                Ver todos os indicados e VOTE AQUI
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="winner-step absolute opacity-0 transition-all duration-300 text-center w-full max-w-6xl flex flex-col items-center">
+                <h2 class="text-[#D4AF37] text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-[0.2em] mb-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+                    Espetáculo Visual
+                </h2>
+                <div class="bg-black/60 backdrop-blur-md border border-[#D4AF37]/40 p-6 md:p-10 rounded-sm shadow-[0_0_40px_rgba(212,175,55,0.15)] flex flex-col md:flex-row gap-8 items-center w-full mt-6 pointer-events-auto">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/9/95/Avatar_Fire_and_Ash_poster.jpeg" class="w-48 md:w-64 aspect-[2/3] object-cover rounded-sm border border-white/20 shadow-2xl">
+                    <div class="text-left flex flex-col gap-4 w-full">
+                        <div>
+                            <span class="text-white/50 text-xs md:text-sm uppercase tracking-[0.3em] font-montserrat">Melhores Efeitos Visuais</span>
+                            <h3 class="text-3xl md:text-5xl text-white font-bold uppercase tracking-widest mt-1">Avatar: Fire and Ash</h3>
+                        </div>
+                        <div class="mt-6">
+                            <a href="#votar" class="inline-block bg-[#D4AF37] text-black font-bold uppercase tracking-widest px-6 py-4 rounded-sm hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(212,175,55,0.4)] text-xs md:text-sm">
+                                Ver todos os indicados e VOTE AQUI
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script>
+(function initWinners3D() {
+    const section = document.getElementById('oscar-winners-3d');
+    const canvas = document.getElementById('winners-canvas');
+    if (!section || !canvas) return;
+    
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x050505, 0.008);
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 40;
+
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const shapesGroup = new THREE.Group();
+    const geometry = new THREE.OctahedronGeometry(1, 0); 
+    
+    for (let i = 0; i < 400; i++) {
+        const mat = new THREE.MeshStandardMaterial({
+            color: 0xD4AF37,
+            roughness: 0.2,
+            metalness: 0.9,
+            transparent: true,
+            opacity: Math.random() * 0.5 + 0.3
+        });
+        
+        const mesh = new THREE.Mesh(geometry, mat);
+        mesh.position.set(
+            (Math.random() - 0.5) * 150,
+            (Math.random() - 0.5) * 150,
+            (Math.random() - 0.5) * 200 
+        );
+        mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+        const scale = Math.random() * 1.5 + 0.5;
+        mesh.scale.set(scale, scale, scale);
+        
+        shapesGroup.add(mesh);
+    }
+    scene.add(shapesGroup);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    scene.add(ambientLight);
+    
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    dirLight.position.set(20, 20, 10);
+    scene.add(dirLight);
+
+    const goldLight = new THREE.PointLight(0xD4AF37, 3, 200);
+    goldLight.position.set(0, 0, 20);
+    scene.add(goldLight);
+
+    const steps = document.querySelectorAll('.winner-step');
+    const totalSteps = steps.length;
+    let clock = new THREE.Clock();
+
+    window.addEventListener('scroll', () => {
+        const rect = section.getBoundingClientRect();
+        const sectionTop = rect.top;
+        const sectionHeight = rect.height - window.innerHeight;
+        
+        let scrollPercent = 0;
+        if (sectionTop <= 0 && sectionTop >= -sectionHeight) {
+            scrollPercent = Math.abs(sectionTop) / sectionHeight;
+        } else if (sectionTop > 0) {
+            scrollPercent = 0;
+        } else {
+            scrollPercent = 1;
+        }
+
+        camera.position.z = 40 - (scrollPercent * 120); 
+        shapesGroup.rotation.y = scrollPercent * Math.PI;
+        shapesGroup.rotation.z = scrollPercent * 0.5;
+
+        const currentStepFloat = scrollPercent * totalSteps;
+        const currentStepIndex = Math.min(Math.floor(currentStepFloat), totalSteps - 1);
+        const stepProgress = currentStepFloat - currentStepIndex;
+
+        steps.forEach((step, index) => {
+            if (index === currentStepIndex) {
+                let opacity = 1;
+                let y = 0;
+                
+                if (stepProgress > 0.8) {
+                   opacity = 1 - ((stepProgress - 0.8) * 5); 
+                   y = -(stepProgress - 0.8) * 200;
+                } else if (stepProgress < 0.2 && index !== 0) {
+                   opacity = stepProgress * 5; 
+                   y = 50 - (stepProgress * 5 * 50);
+                }
+
+                step.style.opacity = Math.max(0, Math.min(1, opacity));
+                step.style.transform = `translateY(${y}px)`;
+                step.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
+            } else {
+                step.style.opacity = 0;
+                step.style.pointerEvents = 'none';
+            }
+        });
+    });
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    function animate() {
+        requestAnimationFrame(animate);
+        const time = clock.getElapsedTime();
+        
+        shapesGroup.children.forEach((shape, i) => {
+            shape.rotation.x += 0.001 * (i % 3 + 1);
+            shape.rotation.y += 0.002 * (i % 2 + 1);
+            shape.position.y += Math.sin(time + i) * 0.015;
+        });
+        
+        goldLight.intensity = 2 + Math.sin(time * 2) * 1;
+        renderer.render(scene, camera);
+    }
+    
+    animate();
+})();
+</script>
+
+<script>
+(function initWinners3D() {
+    const section = document.getElementById('oscar-winners-3d');
+    const canvas = document.getElementById('winners-canvas');
+    if (!section || !canvas) return;
+    
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x050505, 0.008);
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 40;
+
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const shapesGroup = new THREE.Group();
+    const geometry = new THREE.OctahedronGeometry(1, 0); 
+    
+    for (let i = 0; i < 400; i++) {
+        const mat = new THREE.MeshStandardMaterial({
+            color: 0xD4AF37,
+            roughness: 0.2,
+            metalness: 0.9,
+            transparent: true,
+            opacity: Math.random() * 0.5 + 0.3
+        });
+        
+        const mesh = new THREE.Mesh(geometry, mat);
+        mesh.position.set(
+            (Math.random() - 0.5) * 150,
+            (Math.random() - 0.5) * 150,
+            (Math.random() - 0.5) * 200 
+        );
+        mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+        const scale = Math.random() * 1.5 + 0.5;
+        mesh.scale.set(scale, scale, scale);
+        
+        shapesGroup.add(mesh);
+    }
+    scene.add(shapesGroup);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    scene.add(ambientLight);
+    
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    dirLight.position.set(20, 20, 10);
+    scene.add(dirLight);
+
+    const goldLight = new THREE.PointLight(0xD4AF37, 3, 200);
+    goldLight.position.set(0, 0, 20);
+    scene.add(goldLight);
+
+    let scrollPercent = 0;
+    let clock = new THREE.Clock();
+
+    window.addEventListener('scroll', () => {
+        const rect = section.getBoundingClientRect();
+        const sectionTop = rect.top;
+        const sectionHeight = rect.height - window.innerHeight;
+        
+        if (sectionTop <= 0 && sectionTop >= -sectionHeight) {
+            scrollPercent = Math.abs(sectionTop) / sectionHeight;
+        } else if (sectionTop > 0) {
+            scrollPercent = 0;
+        } else {
+            scrollPercent = 1;
+        }
+
+        camera.position.z = 40 - (scrollPercent * 120); 
+        shapesGroup.rotation.y = scrollPercent * Math.PI;
+        shapesGroup.rotation.z = scrollPercent * 0.5;
+
+        const step1 = document.getElementById('winner-step-1');
+        const step2 = document.getElementById('winner-step-2');
+        const step3 = document.getElementById('winner-step-3');
+
+        if (scrollPercent < 0.33) {
+            step1.style.opacity = 1 - (scrollPercent * 3);
+            step1.style.transform = `translateY(${scrollPercent * 100}px) scale(${1 + scrollPercent * 0.2})`;
+            step1.style.pointerEvents = scrollPercent < 0.15 ? 'auto' : 'none';
+            
+            step2.style.opacity = 0;
+            step2.style.pointerEvents = 'none';
+            step3.style.opacity = 0;
+            step3.style.pointerEvents = 'none';
+        } else if (scrollPercent >= 0.33 && scrollPercent < 0.66) {
+            step1.style.opacity = 0;
+            step1.style.pointerEvents = 'none';
+            
+            let p = (scrollPercent - 0.33) * 3;
+            if (p > 1) p = 1;
+            let fadeOut = scrollPercent > 0.55 ? 1 - ((scrollPercent - 0.55) * 9) : 1;
+            let finalOpacity = Math.min(p, Math.max(0, fadeOut));
+            
+            step2.style.opacity = finalOpacity;
+            step2.style.transform = `translateY(${50 - (p * 50)}px)`;
+            step2.style.pointerEvents = finalOpacity > 0.5 ? 'auto' : 'none';
+            
+            step3.style.opacity = 0;
+            step3.style.pointerEvents = 'none';
+        } else {
+            step1.style.opacity = 0;
+            step1.style.pointerEvents = 'none';
+            step2.style.opacity = 0;
+            step2.style.pointerEvents = 'none';
+            
+            let p = (scrollPercent - 0.66) * 3;
+            if (p > 1) p = 1;
+            
+            step3.style.opacity = p;
+            step3.style.transform = `translateY(${50 - (p * 50)}px)`;
+            step3.style.pointerEvents = p > 0.5 ? 'auto' : 'none';
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    function animate() {
+        requestAnimationFrame(animate);
+        const time = clock.getElapsedTime();
+        
+        shapesGroup.children.forEach((shape, i) => {
+            shape.rotation.x += 0.001 * (i % 3 + 1);
+            shape.rotation.y += 0.002 * (i % 2 + 1);
+            shape.position.y += Math.sin(time + i) * 0.015;
+        });
+        
+        goldLight.intensity = 2 + Math.sin(time * 2) * 1;
+        renderer.render(scene, camera);
+    }
+    
+    animate();
+})();
+</script>
+<!-- ============================================ -->
+<!-- SEÇÃO: SALA DE CINEMA 3D (com movimento)    -->
+<!-- ============================================ -->
+<section id="cinema-theater-3d" class="relative w-full h-screen bg-black overflow-hidden border-t border-[#D4AF37]/20">
+    <!-- UI sobreposta (não 3D) -->
+    <div class="absolute inset-0 z-20 pointer-events-none flex flex-col justify-between p-8 md:p-16">
+        <div class="flex justify-between items-start opacity-0" id="theater-ui-top">
+            <div class="bg-black/60 backdrop-blur-md p-4 border-l-2 border-[#D4AF37]">
+                <h2 class="text-[#D4AF37] font-cinzel text-2xl md:text-4xl font-black mb-1">CINE BASEMENT</h2>
+                <p class="text-white/60 text-xs uppercase tracking-[0.3em]">Sessão Contínua</p>
+            </div>
+            <div class="text-right">
+                <span id="movie-counter" class="text-white font-cinzel text-5xl font-black opacity-20">01</span>
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-end gap-8 opacity-0" id="theater-ui-bottom">
+            <div class="max-w-xl pointer-events-auto">
+                <h3 id="theater-movie-title" class="text-white font-cinzel text-4xl md:text-6xl font-black uppercase mb-4 leading-none">Pecadores</h3>
+                <p id="theater-movie-desc" class="text-white/70 text-sm md:text-base leading-relaxed mb-6">Dois irmãos gêmeos retornam à sua cidade natal e descobrem que um mal ainda maior os espera.</p>
+                <div class="flex gap-4">
+                    <button id="prev-trailer" class="group p-4 border border-white/20 hover:border-[#D4AF37] transition-all">
+                        <i data-lucide="chevron-left" class="text-white group-hover:text-[#D4AF37]"></i>
+                    </button>
+                    <button id="next-trailer" class="group p-4 border border-white/20 hover:border-[#D4AF37] transition-all">
+                        <i data-lucide="chevron-right" class="text-white group-hover:text-[#D4AF37]"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Canvas 3D -->
+    <canvas id="theater-canvas" class="absolute inset-0 z-10"></canvas>
+
+    <!-- Vídeos dos trailers (escondidos) -->
+    <video id="trailer-video" loop muted crossorigin="anonymous" playsinline class="hidden">
+       <source src="https://res.cloudinary.com/dzcaxmbjn/video/upload/v1773632464/e6f6ffe5-b3557218_n3eukq.mp4" type="video/mp4">
+    </video>
+</section>
+
+
+<script>
+(function initCinemaTheater() {
+    // ==================== CONFIGURAÇÕES ====================
+    const section = document.getElementById('cinema-theater-3d');
+    const canvas = document.getElementById('theater-canvas');
+    const video = document.getElementById('trailer-video');
+    if (!section || !canvas) return;
+
+    // LISTA DE FILMES (substitua as URLs pelos links diretos dos seus trailers em MP4)
+    const movies = [
+        { 
+            title: "Pecadores (Sinners)", 
+            desc: "Dois irmãos gêmeos retornam à sua cidade natal tentando deixar suas vidas para trás e começar de novo, mas descobrem que um mal ainda maior os espera nas sombras daquele lugar.",
+            url: "https://res.cloudinary.com/dzcaxmbjn/video/upload/v1773632464/e6f6ffe5-b3557218_n3eukq.mp4"
+        },
+        { 
+            title: "Zootopia 2", 
+            desc: "A nova aventura animada da Disney. A dupla dinâmica Judy Hopps e Nick Wilde retornam para desvendar um novo mistério na cidade dos animais.",
+            url: "https://res.cloudinary.com/dzcaxmbjn/video/upload/v1773632580/f5b42cb6-1b51e54d_m6erop.mp4"
+        },
+        { 
+            title: "Foi Só um Acidente", 
+            desc: "Uma comédia francesa surpreendente que conquistou o público com seu humor ácido e situações inusitadas. O que poderia dar errado?",
+            url: "https://res.cloudinary.com/dzcaxmbjn/video/upload/v1773632711/1295b15c-91c82044_f3gfxp.mp4"
+        }
+    ];
+    let currentIndex = 0;
+
+    // ==================== CENA THREE.JS ====================
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x030303);
+
+    // Câmera (inicia no fundo da sala)
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 8, 42);
+
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+
+    // ==================== LUZES ====================
+    const ambientLight = new THREE.AmbientLight(0x404060);
+    scene.add(ambientLight);
+
+    // Luz direcional (projetor)
+    const projectorLight = new THREE.DirectionalLight(0xffeedd, 2);
+    projectorLight.position.set(0, 20, 35);
+    projectorLight.castShadow = true;
+    projectorLight.shadow.mapSize.width = 1024;
+    projectorLight.shadow.mapSize.height = 1024;
+    projectorLight.shadow.camera.near = 10;
+    projectorLight.shadow.camera.far = 60;
+    projectorLight.shadow.camera.left = -20;
+    projectorLight.shadow.camera.right = 20;
+    projectorLight.shadow.camera.top = 20;
+    projectorLight.shadow.camera.bottom = -20;
+    scene.add(projectorLight);
+
+    // Luzes de emergência laterais
+    const emergencyLightLeft = new THREE.PointLight(0xaa8855, 0.5);
+    emergencyLightLeft.position.set(-18, 5, 0);
+    scene.add(emergencyLightLeft);
+    const emergencyLightRight = new THREE.PointLight(0xaa8855, 0.5);
+    emergencyLightRight.position.set(18, 5, 0);
+    scene.add(emergencyLightRight);
+
+    // Luz da tela (mais forte para tela maior)
+    const screenLight = new THREE.RectAreaLight(0xffffff, 4, 50, 24);
+    screenLight.position.set(0, 16, -12);
+    screenLight.lookAt(0, 0, 0);
+    scene.add(screenLight);
+
+    // ==================== CONSTRUÇÃO DA SALA ====================
+    // Chão
+    const floorGeo = new THREE.PlaneGeometry(100, 100);
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0x1a0f0a, roughness: 0.8 });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = 0;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    // Tapete central
+    const carpetGeo = new THREE.PlaneGeometry(36, 60);
+    const carpetMat = new THREE.MeshStandardMaterial({ color: 0x2a0f0a, roughness: 0.9 });
+    const carpet = new THREE.Mesh(carpetGeo, carpetMat);
+    carpet.rotation.x = -Math.PI / 2;
+    carpet.position.y = 0.01;
+    carpet.position.z = 5;
+    carpet.receiveShadow = true;
+    scene.add(carpet);
+
+    // Parede do fundo (onde fica a tela)
+    const backWallGeo = new THREE.PlaneGeometry(100, 50);
+    const backWallMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 0.9 });
+    const backWall = new THREE.Mesh(backWallGeo, backWallMat);
+    backWall.position.set(0, 25, -20);
+    backWall.receiveShadow = true;
+    scene.add(backWall);
+
+    // Paredes laterais
+    const sideWallGeo = new THREE.PlaneGeometry(70, 50);
+    const sideWallMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 0.9 });
+
+    const leftWall = new THREE.Mesh(sideWallGeo, sideWallMat);
+    leftWall.position.set(-50, 25, 0);
+    leftWall.rotation.y = Math.PI / 2;
+    leftWall.receiveShadow = true;
+    scene.add(leftWall);
+
+    const rightWall = new THREE.Mesh(sideWallGeo, sideWallMat);
+    rightWall.position.set(50, 25, 0);
+    rightWall.rotation.y = -Math.PI / 2;
+    rightWall.receiveShadow = true;
+    scene.add(rightWall);
+
+    // Teto
+    const ceilingGeo = new THREE.PlaneGeometry(100, 70);
+    const ceilingMat = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.7, side: THREE.DoubleSide });
+    const ceiling = new THREE.Mesh(ceilingGeo, ceilingMat);
+    ceiling.rotation.x = Math.PI / 2;
+    ceiling.position.y = 50;
+    ceiling.receiveShadow = true;
+    scene.add(ceiling);
+
+    // ==================== TELA MAIOR (MOLDURA E VÍDEO) ====================
+    const frameThickness = 2.0;
+    const frameWidth = 56;       // Aumentado de 44 para 56
+    const frameHeight = 28;      // Aumentado de 22 para 28
+    const frameDepth = 1.5;
+    const frameMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.4, metalness: 0.2 });
+
+    // Moldura externa
+    const frameLeft = new THREE.Mesh(new THREE.BoxGeometry(frameThickness, frameHeight, frameDepth), frameMat);
+    frameLeft.position.set(-frameWidth/2 - frameThickness/2, 18, -19);
+    scene.add(frameLeft);
+
+    const frameRight = new THREE.Mesh(new THREE.BoxGeometry(frameThickness, frameHeight, frameDepth), frameMat);
+    frameRight.position.set(frameWidth/2 + frameThickness/2, 18, -19);
+    scene.add(frameRight);
+
+    const frameTop = new THREE.Mesh(new THREE.BoxGeometry(frameWidth + frameThickness*2, frameThickness, frameDepth), frameMat);
+    frameTop.position.set(0, 18 + frameHeight/2 + frameThickness/2, -19);
+    scene.add(frameTop);
+
+    const frameBottom = new THREE.Mesh(new THREE.BoxGeometry(frameWidth + frameThickness*2, frameThickness, frameDepth), frameMat);
+    frameBottom.position.set(0, 18 - frameHeight/2 - frameThickness/2, -19);
+    scene.add(frameBottom);
+
+    // Tela
+    const screenGeo = new THREE.PlaneGeometry(frameWidth - 2, frameHeight - 2);
+    const videoTexture = new THREE.VideoTexture(video);
+    videoTexture.minFilter = THREE.LinearFilter;
+    videoTexture.magFilter = THREE.LinearFilter;
+    const screenMat = new THREE.MeshStandardMaterial({
+        map: videoTexture,
+        emissive: 0xffffff,
+        emissiveMap: videoTexture,
+        emissiveIntensity: 0.9,
+        side: THREE.DoubleSide
+    });
+    const screen = new THREE.Mesh(screenGeo, screenMat);
+    screen.position.set(0, 18, -18.5); // Mais à frente da moldura
+    screen.castShadow = false;
+    screen.receiveShadow = false;
+    scene.add(screen);
+
+    // ==================== CORTINAS LATERAIS ====================
+    const curtainMat = new THREE.MeshStandardMaterial({ color: 0x220000, roughness: 0.9 });
+    const curtainLeft = new THREE.Mesh(new THREE.BoxGeometry(12, 30, 2), curtainMat);
+    curtainLeft.position.set(-35, 15, -18);
+    scene.add(curtainLeft);
+    const curtainRight = new THREE.Mesh(new THREE.BoxGeometry(12, 30, 2), curtainMat);
+    curtainRight.position.set(35, 15, -18);
+    scene.add(curtainRight);
+
+    // ==================== POLTRONAS (SIMPLIFICADAS) ====================
+    function createSeat(x, z) {
+        const seatGroup = new THREE.Group();
+        
+        const baseGeo = new THREE.BoxGeometry(1.4, 0.5, 1.4);
+        const baseMat = new THREE.MeshStandardMaterial({ color: 0x2a0f0a, roughness: 0.7 });
+        const base = new THREE.Mesh(baseGeo, baseMat);
+        base.position.y = 0.25;
+        base.castShadow = true;
+        base.receiveShadow = true;
+        seatGroup.add(base);
+
+        const backGeo = new THREE.BoxGeometry(1.4, 1.2, 0.4);
+        const backMat = new THREE.MeshStandardMaterial({ color: 0x2a0f0a, roughness: 0.7 });
+        const back = new THREE.Mesh(backGeo, backMat);
+        back.position.set(0, 0.9, -0.6);
+        back.castShadow = true;
+        back.receiveShadow = true;
+        seatGroup.add(back);
+
+        seatGroup.position.set(x, 0.5, z);
+        return seatGroup;
+    }
+
+    // Fileiras de poltronas
+    const rows = 8;
+    const cols = 14;
+    const spacingX = 2.0;
+    const spacingZ = 3.2;
+    const startX = -((cols-1) * spacingX) / 2;
+    const startZ = 18; // Primeira fileira mais perto da tela
+
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            const seat = createSeat(startX + c * spacingX, startZ + r * spacingZ);
+            scene.add(seat);
+        }
+    }
+
+    // ==================== PROJETOR (DETALHE) ====================
+    const projBase = new THREE.Mesh(new THREE.BoxGeometry(2.5, 1.2, 3.5), new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.4, metalness: 0.6 }));
+    projBase.position.set(0, 5, 38);
+    projBase.castShadow = true;
+    projBase.receiveShadow = true;
+    scene.add(projBase);
+
+    const projLens = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, 1, 16), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.8 }));
+    projLens.rotation.x = Math.PI / 2;
+    projLens.position.set(0, 5.6, 40);
+    projLens.castShadow = true;
+    projLens.receiveShadow = true;
+    scene.add(projLens);
+
+    // ==================== MOVIMENTO COM O MOUSE ====================
+    let mouseX = 0, mouseY = 0;
+    let targetCameraX = 0, targetCameraY = 8, targetCameraZ = 42; // Posição base
+
+    document.addEventListener('mousemove', (event) => {
+        // Normaliza as coordenadas do mouse (-1 a 1)
+        mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+        mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        // Calcula posição alvo da câmera baseada no mouse
+        targetCameraX = mouseX * 4;        // Move lateralmente até 4 unidades
+        targetCameraY = 8 + mouseY * 2;    // Move verticalmente até 2 unidades
+        targetCameraZ = 42 + mouseX * 2;    // Aproxima/afasta sutilmente
+    });
+
+    // ==================== INTERFACE E EVENTOS ====================
+    function updateTheaterContent(index) {
+        const movie = movies[index];
+
+        // Fade out do vídeo
+        gsap.to(screenMat, {
+            emissiveIntensity: 0,
+            duration: 0.3,
+            onComplete: () => {
+                // Atualiza a fonte do vídeo
+                const source = document.createElement('source');
+                source.src = movie.url;
+                source.type = 'video/mp4';
+                video.innerHTML = ''; // Limpa sources anteriores
+                video.appendChild(source);
+                video.load(); // Carrega o novo vídeo
+                video.play().catch(e => console.log("Autoplay bloqueado:", e));
+                gsap.to(screenMat, { emissiveIntensity: 0.9, duration: 0.5 });
+            }
+        });
+
+        // Atualiza textos da UI
+        gsap.to(["#theater-movie-title", "#theater-movie-desc"], {
+            opacity: 0,
+            y: 10,
+            duration: 0.3,
+            onComplete: () => {
+                document.getElementById('theater-movie-title').textContent = movie.title;
+                document.getElementById('theater-movie-desc').textContent = movie.desc;
+                document.getElementById('movie-counter').textContent = (index + 1).toString().padStart(2, '0');
+                gsap.to(["#theater-movie-title", "#theater-movie-desc"], { opacity: 1, y: 0, duration: 0.5 });
+            }
+        });
+    }
+
+    document.getElementById('next-trailer').onclick = () => {
+        currentIndex = (currentIndex + 1) % movies.length;
+        updateTheaterContent(currentIndex);
+    };
+
+    document.getElementById('prev-trailer').onclick = () => {
+        currentIndex = (currentIndex - 1 + movies.length) % movies.length;
+        updateTheaterContent(currentIndex);
+    };
+
+    // Inicia a reprodução quando a seção entra na tela
+    ScrollTrigger.create({
+        trigger: section,
+        start: "top center",
+        onEnter: () => {
+            // Configura o primeiro vídeo
+            const source = document.createElement('source');
+            source.src = movies[0].url;
+            source.type = 'video/mp4';
+            video.innerHTML = '';
+            video.appendChild(source);
+            video.play().catch(e => console.log("Autoplay bloqueado:", e));
+            
+            gsap.to(["#theater-ui-top", "#theater-ui-bottom"], { opacity: 1, duration: 1, stagger: 0.3 });
+        }
+    });
+
+    // ==================== RENDER LOOP ====================
+    function animate() {
+        requestAnimationFrame(animate);
+
+        // Suaviza o movimento da câmera (interpolação linear)
+        camera.position.x += (targetCameraX - camera.position.x) * 0.05;
+        camera.position.y += (targetCameraY - camera.position.y) * 0.05;
+        camera.position.z += (targetCameraZ - camera.position.z) * 0.05;
+
+        // A câmera sempre olha para a tela (ponto central)
+        camera.lookAt(0, 18, -15);
+
+        // Pequeno efeito adicional: a luz da tela acompanha sutilmente
+        screenLight.position.x = -mouseX * 2; // Desloca levemente com o mouse
+
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    // ==================== RESIZE ====================
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Inicializa os ícones Lucide
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+})();
+</script> 
+
+<section id="votacao-oscar" class="relative w-full min-h-screen bg-[#050505] py-24 border-t border-[#D4AF37]/20 z-40">
+    <div class="container mx-auto px-4 md:px-8 max-w-7xl flex flex-col md:flex-row gap-8">
+        
+        <div class="w-full md:w-3/4 space-y-16">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-6xl text-[#D4AF37] font-cinzel tracking-widest uppercase font-black">Faça Suas Apostas</h2>
+                <p class="text-white/70 mt-4 font-montserrat">Escolha seus favoritos em cada categoria</p>
+            </div>
+            
+            {% for cat in categorias %}
+            <div class="categoria-bloco" data-cat-id="{{ cat.id }}">
+                <h3 class="text-2xl text-white font-cinzel mb-6 uppercase border-b border-white/10 pb-2">{{ cat.nome }}</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {% for p in produtos %}
+                        {% if p.categoria_id == cat.id %}
+                        <div class="nominee-card relative cursor-pointer group rounded-lg overflow-hidden border border-white/10 hover:border-[#D4AF37] transition-all" onclick="selecionarVoto('{{ cat.id }}', '{{ cat.nome }}', '{{ p.id }}', '{{ p.nome }}', this)">
+                            <div class="aspect-[2/3] w-full relative bg-[#111]">
+                                <img src="{{ p.imagem_destaque or p.imagem }}" class="w-full h-full object-cover filter brightness-75 group-hover:brightness-100 transition-all">
+                                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <span class="text-[#D4AF37] font-bold uppercase tracking-widest text-sm border border-[#D4AF37] px-4 py-2 rounded-full bg-black/80">Votar</span>
+                                </div>
+                                <div class="voto-check absolute top-2 right-2 bg-[#D4AF37] text-black w-8 h-8 rounded-full flex items-center justify-center opacity-0 transform scale-0 transition-all z-10 shadow-lg">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-[#111] border-t border-white/10">
+                                <h4 class="text-white text-sm font-bold font-montserrat truncate">{{ p.nome }}</h4>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="w-full md:w-1/4">
+            <div class="sticky top-24 bg-gradient-to-b from-[#111] to-[#050505] border border-[#D4AF37]/30 rounded-xl p-6 shadow-2xl">
+                <h3 class="text-[#D4AF37] font-cinzel text-xl font-bold uppercase mb-4 text-center border-b border-white/10 pb-4">Seu Cartão de Votos</h3>
+                
+                <div id="resumo-votos" class="space-y-3 mb-6 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
+                    <p class="text-white/50 text-sm text-center italic mt-4">Nenhum voto registrado ainda</p>
+                </div>
+                
+                <div class="border-t border-white/10 pt-4 space-y-4">
+                    <input type="text" id="voto-nome" placeholder="Seu Nome" class="w-full bg-black/50 border border-white/20 rounded p-3 text-white focus:border-[#D4AF37] focus:outline-none font-montserrat text-sm">
+                    <input type="email" id="voto-email" placeholder="Seu E-mail" class="w-full bg-black/50 border border-white/20 rounded p-3 text-white focus:border-[#D4AF37] focus:outline-none font-montserrat text-sm">
+                    <input type="text" id="voto-whatsapp" placeholder="WhatsApp Opcional" class="w-full bg-black/50 border border-white/20 rounded p-3 text-white focus:border-[#D4AF37] focus:outline-none font-montserrat text-sm">
+                    
+                    <button id="btn-enviar-votos" onclick="enviarVotos()" class="w-full bg-[#D4AF37] text-black font-bold uppercase tracking-widest py-4 rounded hover:bg-white transition-colors opacity-50 cursor-not-allowed" disabled>
+                        Confirmar Votos
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</section>
+
+<style>
+    .nominee-card.selecionado {
+        border-color: #D4AF37;
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+    }
+    .nominee-card.selecionado img {
+        filter: brightness(1.1);
+    }
+    .nominee-card.selecionado .voto-check {
+        opacity: 1;
+        transform: scale(1);
+    }
+    .nominee-card.selecionado .bg-black\/50 {
+        display: none !important;
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 4px; }
+</style>
+
+<script>
+    const meusVotos = {};
+
+    function selecionarVoto(catId, catNome, prodId, prodNome, elemento) {
+        meusVotos[catId] = {
+            categoria: catNome,
+            indicadoId: prodId,
+            indicadoNome: prodNome
+        };
+
+        const containerCategoria = elemento.closest('.categoria-bloco');
+        containerCategoria.querySelectorAll('.nominee-card').forEach(card => {
+            card.classList.remove('selecionado');
+        });
+        
+        elemento.classList.add('selecionado');
+        atualizarResumo();
+    }
+
+    function atualizarResumo() {
+        const resumoDiv = document.getElementById('resumo-votos');
+        resumoDiv.innerHTML = '';
+        
+        let votosContados = 0;
+
+        for (const [catId, voto] of Object.entries(meusVotos)) {
+            votosContados++;
+            resumoDiv.innerHTML += `
+                <div class="text-sm bg-black/40 p-3 rounded border border-white/5">
+                    <span class="text-white/50 text-[10px] uppercase block mb-1">${voto.categoria}</span>
+                    <span class="text-[#D4AF37] font-bold truncate block">${voto.indicadoNome}</span>
+                </div>
+            `;
+        }
+
+        const btnEnviar = document.getElementById('btn-enviar-votos');
+        if (votosContados > 0) {
+            btnEnviar.disabled = false;
+            btnEnviar.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+            resumoDiv.innerHTML = '<p class="text-white/50 text-sm text-center italic mt-4">Nenhum voto registrado ainda</p>';
+        }
+    }
+
+    async function enviarVotos() {
+        const nome = document.getElementById('voto-nome').value;
+        const email = document.getElementById('voto-email').value;
+        const whatsapp = document.getElementById('voto-whatsapp').value;
+
+        if (!nome || !email) {
+            alert('Preencha nome e email para registrar os votos');
+            return;
+        }
+
+        const btn = document.getElementById('btn-enviar-votos');
+        btn.innerHTML = 'ENVIANDO...';
+        btn.disabled = true;
+
+        const formData = new FormData();
+        formData.append('nome', nome);
+        formData.append('email', email);
+        formData.append('whatsapp', whatsapp || '00000000000');
+        formData.append('profissao', JSON.stringify(meusVotos)); 
+
+        try {
+            const response = await fetch('/{{ loja.slug_url }}/captura-lead', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (response.ok) {
+                btn.innerHTML = 'VOTOS REGISTRADOS';
+                btn.classList.replace('bg-[#D4AF37]', 'bg-green-500');
+                btn.classList.add('text-white');
+                setTimeout(() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 2000);
+            } else {
+                throw new Error('Falha');
+            }
+        } catch (error) {
+            alert('Erro de conexao tente novamente');
+            btn.innerHTML = 'Confirmar Votos';
+            btn.disabled = false;
+        }
+    }
+</script>
+    <section id="next-section" class="h-screen w-full bg-black flex items-center justify-center border-t border-[#D4AF37]/20">
+        <h2 class="text-3xl text-[#D4AF37] font-cinzel">Próxima Seção Aqui</h2>
+    </section>
+</main>
+
+<script>
+    lucide.createIcons();
+    gsap.registerPlugin(ScrollTrigger);
+
+    window.scrollTo(0, 0);
+
+    const clapperboard = document.getElementById('clapperboard');
+    const clapperTop = document.getElementById('clapper-top');
+    const loaderOverlay = document.getElementById('loader-overlay');
+    const flashOverlay = document.getElementById('flash-overlay');
+    const mainHeader = document.getElementById('main-header');
+    const heroElements = document.querySelectorAll('.hero-element');
+
+    let startParticleAssembly = null;
+
+    gsap.to(clapperTop, {
+        rotation: -45,
+        duration: 1,
+        ease: "elastic.out(1, 0.5)",
+        delay: 0.5
+    });
+
+    clapperboard.addEventListener('click', () => {
+        gsap.timeline()
+            .to(clapperTop, { rotation: -50, duration: 0.1, ease: "power2.in" })
+            .to(clapperTop, { rotation: 0, duration: 0.15, ease: "power4.in" })
+            .to(flashOverlay, { opacity: 1, duration: 0.05 })
+            .to(loaderOverlay, { opacity: 0, duration: 0 }, "+=0.1")
+            .to(flashOverlay, { opacity: 0, duration: 0.8, ease: "power2.out", onStart: () => {
+                loaderOverlay.style.display = 'none';
+                document.body.style.overflow = '';
+                initHeroAnimations();
+            }});
+    }, { once: true });
+
+    function initHeroAnimations() {
+        gsap.to(mainHeader, {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power3.out"
+        });
+
+        gsap.to(heroElements, {
+            opacity: 1,
+            y: 0,
+            duration: 1.2,
+            stagger: 0.2,
+            ease: "power4.out"
+        });
+
+        const heroSection = document.getElementById('hero-section');
+        gsap.to(heroSection, {
+            scrollTrigger: {
+                trigger: heroSection,
+                start: "top top",
+                end: "+=100%",
+                pin: true,
+                scrub: 1
+            },
+            opacity: 1,
+            scale: 1
+        });
+
+        if (startParticleAssembly) {
+            startParticleAssembly();
+        }
+    }
+
+    const spotlight = document.getElementById('hero-spotlight');
+    document.addEventListener('mousemove', (e) => {
+        const x = (e.clientX / window.innerWidth) * 100;
+        const y = (e.clientY / window.innerHeight) * 100;
+        spotlight.style.setProperty('--mouse-x', `${x}%`);
+        spotlight.style.setProperty('--mouse-y', `${y}%`);
+    });
+
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x0a0a0a, window.innerWidth < 768 ? 0.00025 : 0.0012);
+    
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 5000);
+    camera.position.z = window.innerWidth < 768 ? 1800 : 500;
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild(renderer.domElement);
+
+    let particleSystem;
+    let bgParticleSystem;
+    const pointer = new THREE.Vector2(9999, 9999);
+    const raycaster = new THREE.Raycaster();
+    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    const clock = new THREE.Clock();
+    let dummy = { value: 0 };
+
+    function createParticleTexture(glow) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 64;
+        canvas.height = 64;
+        const context = canvas.getContext('2d');
+        const gradient = context.createRadialGradient(32, 32, 0, 32, 32, 32);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+        gradient.addColorStop(0.2, glow ? 'rgba(255, 215, 0, 1.0)' : 'rgba(255, 225, 50, 1.0)');
+        gradient.addColorStop(1, 'rgba(0,0,0,0)');
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, 64, 64);
+        return new THREE.CanvasTexture(canvas);
+    }
+
+    function createBackgroundParticles() {
+        const bgGeo = new THREE.BufferGeometry();
+        const bgCount = 400;
+        const bgPos = new Float32Array(bgCount * 3);
+        const bgColors = new Float32Array(bgCount * 3);
+
+        for(let i = 0; i < bgCount * 3; i+=3) {
+            bgPos[i] = (Math.random() - 0.5) * 2000;
+            bgPos[i+1] = (Math.random() - 0.5) * 1000;
+            bgPos[i+2] = (Math.random() - 0.5) * 1500 - 300;
+
+            const shade = Math.random() * 0.6 + 0.4;
+            bgColors[i] = 212/255 * shade; 
+            bgColors[i+1] = 175/255 * shade;
+            bgColors[i+2] = 55/255 * shade;
+        }
+
+        bgGeo.setAttribute('position', new THREE.BufferAttribute(bgPos, 3));
+        bgGeo.setAttribute('color', new THREE.BufferAttribute(bgColors, 3));
+
+        const bgMat = new THREE.PointsMaterial({
+            size: 6,
+            vertexColors: true,
+            map: createParticleTexture(true),
+            blending: THREE.AdditiveBlending,
+            transparent: true,
+            opacity: 0.3,
+            depthWrite: false
+        });
+
+        bgParticleSystem = new THREE.Points(bgGeo, bgMat);
+        scene.add(bgParticleSystem);
+    }
+
+    function initParticles() {
+        const isMobile = window.innerWidth < 768;
+        const textCanvas = document.createElement('canvas');
+        const ctx = textCanvas.getContext('2d', { willReadFrequently: true });
+        const w = 1600;
+        const h = isMobile ? 1200 : 600;
+        textCanvas.width = w;
+        textCanvas.height = h;
+
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, 0, w, h);
+        
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#D4AF37';
+
+        if (isMobile) {
+            ctx.font = 'bold 200px "Cinzel"';
+            ctx.fillText('THE', w/2, h/2 - 400);
+            ctx.fillText('98TH', w/2, h/2 - 200);
+            ctx.fillText('ACADEMY', w/2, h/2);
+            ctx.fillText('AWARDS', w/2, h/2 + 200);
+            ctx.fillText('2026', w/2, h/2 + 400);
+        } else {
+            ctx.font = 'bold 100px "Cinzel"';
+            ctx.fillText('THE 98TH', w/2, h / 2 - 140);
+            ctx.fillText('ACADEMY AWARDS', w/2, h / 2);
+            ctx.fillText('2026', w/2, h / 2 + 140);
+        }
+
+        const imgData = ctx.getImageData(0, 0, w, h).data;
+        const positions = [];
+        const colors = [];
+        const basePositions = [];
+        const randomOffsets = [];
+
+        const colorGold = new THREE.Color('#FFD700'); 
+        const colorLightGold = new THREE.Color('#FFF8DC');
+
+        const scaleMultiplier = 0.58;
+
+        for (let y = 0; y < h; y += 3) {
+            for (let x = 0; x < w; x += 3) {
+                const index = (x + y * w) * 4;
+                const r = imgData[index];
+
+                if (r > 50) {
+                    const pX = (x - w / 2) * scaleMultiplier;
+                    const pY = -(y - h / 2) * scaleMultiplier;
+                    const pZ = 0;
+
+                    positions.push(
+                        pX + (Math.random() - 0.5) * 2000, 
+                        pY + (Math.random() - 0.5) * 2000, 
+                        pZ + Math.random() * 1500 + 1000 
+                    );
+                    
+                    basePositions.push(pX, pY, pZ);
+                    randomOffsets.push(Math.random() * Math.PI * 2);
+
+                    if (Math.random() > 0.8) {
+                        colors.push(colorLightGold.r, colorLightGold.g, colorLightGold.b);
+                    } else {
+                        colors.push(colorGold.r, colorGold.g, colorGold.b);
+                    }
+                }
+            }
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geometry.setAttribute('basePosition', new THREE.Float32BufferAttribute(basePositions, 3));
+        geometry.setAttribute('randomOffset', new THREE.Float32BufferAttribute(randomOffsets, 1));
+
+        const material = new THREE.PointsMaterial({
+            size: isMobile ? 8.0 : 6.0,
+            vertexColors: true,
+            map: createParticleTexture(false),
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            transparent: true,
+            opacity: 1.0
+        });
+
+        particleSystem = new THREE.Points(geometry, material);
+        scene.add(particleSystem);
+        
+        createBackgroundParticles();
+
+        const posAttribute = geometry.attributes.position;
+        const baseAttribute = geometry.attributes.basePosition;
+        
+        startParticleAssembly = () => {
+            gsap.to(dummy, {
+                value: 1,
+                duration: 3.5,
+                ease: "power4.out",
+                onUpdate: () => {
+                    const progress = dummy.value;
+                    for (let i = 0; i < posAttribute.count; i++) {
+                        const px = posAttribute.getX(i);
+                        const py = posAttribute.getY(i);
+                        const pz = posAttribute.getZ(i);
+                        
+                        const bx = baseAttribute.getX(i);
+                        const by = baseAttribute.getY(i);
+                        const bz = baseAttribute.getZ(i);
+                        
+                        posAttribute.setXYZ(
+                            i,
+                            px + (bx - px) * (progress * 0.15),
+                            py + (by - py) * (progress * 0.15),
+                            pz + (bz - pz) * (progress * 0.15)
+                        );
+                    }
+                    posAttribute.needsUpdate = true;
+                }
+            });
+        };
+    }
+
+    document.fonts.ready.then(() => {
+        initParticles();
+    });
+
+    window.addEventListener('mousemove', (event) => {
+        pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+        pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.position.z = window.innerWidth < 768 ? 1800 : 500;
+        scene.fog.density = window.innerWidth < 768 ? 0.00025 : 0.0012;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    function animate() {
+        requestAnimationFrame(animate);
+        const time = clock.getElapsedTime();
+
+        if (bgParticleSystem) {
+            const bgPos = bgParticleSystem.geometry.attributes.position;
+            for(let i=0; i<bgPos.count; i++) {
+                const y = bgPos.getY(i);
+                bgPos.setY(i, y + Math.sin(time + i) * 0.3);
+            }
+            bgPos.needsUpdate = true;
+            bgParticleSystem.rotation.y = time * 0.05;
+        }
+
+        if (particleSystem) {
+            const positions = particleSystem.geometry.attributes.position;
+            const basePositions = particleSystem.geometry.attributes.basePosition;
+            const offsets = particleSystem.geometry.attributes.randomOffset;
+            
+            raycaster.setFromCamera(pointer, camera);
+            const mouse3D = new THREE.Vector3();
+            raycaster.ray.intersectPlane(plane, mouse3D);
+
+            for (let i = 0; i < positions.count; i++) {
+                const bx = basePositions.getX(i);
+                const by = basePositions.getY(i);
+                const bz = basePositions.getZ(i);
+                const offset = offsets.getX(i);
+
+                let px = positions.getX(i);
+                let py = positions.getY(i);
+                let pz = positions.getZ(i);
+
+                if (dummy.value > 0.8) {
+                    const dx = mouse3D.x - px;
+                    const dy = mouse3D.y - py;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const interactRadius = 70;
+
+                    if (distance < interactRadius) {
+                        const force = Math.pow((interactRadius - distance) / interactRadius, 2);
+                        const pushX = (dx / distance) * force * 30;
+                        const pushY = (dy / distance) * force * 30;
+                        px -= pushX;
+                        py -= pushY;
+                        pz += force * 50; 
+                    }
+                }
+
+                px += (bx - px) * 0.15;
+                py += (by - py) * 0.15;
+                pz += (bz - pz) * 0.15;
+
+                py += Math.sin(time * 2.0 + offset) * 0.15;
+                px += Math.cos(time * 2.0 + offset) * 0.1;
+
+                positions.setXYZ(i, px, py, pz);
+            }
+            
+            positions.needsUpdate = true;
+            particleSystem.rotation.y = Math.sin(time * 0.5) * 0.05;
+            particleSystem.rotation.x = Math.cos(time * 0.3) * 0.02;
+            
+            camera.position.x = Math.sin(time * 0.3) * 30;
+            camera.position.y = Math.cos(time * 0.3) * 15;
+            camera.lookAt(scene.position);
+        }
+
+        renderer.render(scene, camera);
+    }
+    animate();
+</script>
+
+</body>
+</html>
