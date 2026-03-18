@@ -856,9 +856,9 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   <div id="canvas-container" class="absolute inset-0 w-full h-full block"></div>
 
   <script type="module">
-    import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
-    import { GLTFLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
-    import { OrbitControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+    import * as THREE from 'https://esm.sh/three@0.160.0';
+    import { GLTFLoader } from 'https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'https://esm.sh/three@0.160.0/examples/jsm/controls/OrbitControls.js';
 
     const container = document.getElementById('canvas-container');
     const scene = new THREE.Scene();
@@ -921,7 +921,9 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     }
     animate();
   </script>
-</section><footer id="contact">
+</section>
+
+<footer id="contact">
   <div class="footer-blocks fade-in">
     <div class="footer-block">
       <h2>Start a Project</h2>
