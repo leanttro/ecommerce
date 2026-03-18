@@ -852,8 +852,8 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   </div>
 </section>
 
-<section id="quarto3d" style="width: 100%; height: 100vh; position: relative; overflow: hidden; background-color: #050505;">
-  <div id="canvas-container" style="width: 100%; height: 100%; display: block;"></div>
+<section id="quarto3d" class="relative w-full h-screen bg-[#050505] z-[999] overflow-hidden">
+  <div id="canvas-container" class="absolute inset-0 w-full h-full block"></div>
   
   <script type="module">
     import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
@@ -878,7 +878,6 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.target.set(0, 1, 0);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
@@ -886,8 +885,6 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     const directionalLight = new THREE.DirectionalLight(0xfff0dd, 2);
     directionalLight.position.set(5, 5, 2);
     directionalLight.castShadow = true;
-    directionalLight.shadow.mapSize.width = 2048;
-    directionalLight.shadow.mapSize.height = 2048;
     scene.add(directionalLight);
 
     const fillLight = new THREE.DirectionalLight(0xcceeff, 0.5);
@@ -895,45 +892,36 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     scene.add(fillLight);
 
     const loader = new GLTFLoader();
+    
+    // Tenta carregar forçando a busca na raiz da mesma pasta
     loader.load(
-        'Quarto.glb',
+        './Quarto.glb', 
         function (gltf) {
             const model = gltf.scene;
-            
-            model.traverse((child) => {
-                if (child.isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                    if (child.material) {
-                        child.material.envMapIntensity = 1.0;
-                    }
-                }
-            });
-
             scene.add(model);
+            console.log("Modelo carregado com sucesso!");
         },
         function (xhr) {
             console.log((xhr.loaded / xhr.total * 100) + '% carregado');
         },
         function (error) {
-            console.error(error);
+            // SE DER MERDA, VAI APARECER UM POP-UP NA TELA
+            alert("ERRO AO CARREGAR O ARQUIVO 3D: Verifique se o nome está exato e na mesma pasta. Aperte F12 para ver o console.");
+            console.error("Erro detalhado do GLTF:", error);
         }
     );
 
-    window.addEventListener('resize', onWindowResize, false);
-
-    function onWindowResize() {
+    window.addEventListener('resize', () => {
         camera.aspect = container.clientWidth / container.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
-    }
+    });
 
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
         renderer.render(scene, camera);
     }
-
     animate();
   </script>
 </section>
