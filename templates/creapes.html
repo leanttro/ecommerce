@@ -854,20 +854,11 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 
 <section id="quarto3d" class="relative w-full h-screen bg-[#050505] z-[999] overflow-hidden">
   <div id="canvas-container" class="absolute inset-0 w-full h-full block"></div>
-  
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-      }
-    }
-  </script>
 
   <script type="module">
-    import * as THREE from 'three';
-    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+    import { GLTFLoader } from 'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js';
 
     const container = document.getElementById('canvas-container');
     const scene = new THREE.Scene();
@@ -912,7 +903,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
             console.log((xhr.loaded / xhr.total * 100) + '% carregado');
         },
         function (error) {
-            alert('Erro ao carregar o arquivo 3D. Verifique o console.');
+            alert('Erro ao carregar o arquivo 3D no Dokploy.');
             console.error(error);
         }
     );
@@ -930,8 +921,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     }
     animate();
   </script>
-</section>
-<footer id="contact">
+</section><footer id="contact">
   <div class="footer-blocks fade-in">
     <div class="footer-block">
       <h2>Start a Project</h2>
