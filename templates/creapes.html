@@ -903,7 +903,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     const loader = new GLTFLoader();
     
     loader.load(
-        '/static/Quarto.glb', 
+        '{{ url_for("static", filename="Quarto.glb") }}', 
         function (gltf) {
             const model = gltf.scene;
             scene.add(model);
