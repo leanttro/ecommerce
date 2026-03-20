@@ -314,7 +314,7 @@ nav {
 .cinematic-bar.top { top: 0; transform: translateY(-100%); }
 .cinematic-bar.bottom { bottom: 0; transform: translateY(100%); }
 
-.evolve-texts { position: relative; z-index: 4; width: 100%; height: clamp(4rem, 8vw, 8rem); display: flex; justify-content: center; align-items: center; perspective: 1000px; transform-style: preserve-3d; }
+.evolve-texts { position: relative; z-index: 4; width: 100%; height: clamp(4rem, 8vw, 8rem); display: flex; justify-content: center; align-items: center; perspective: 1000px; }
 .evolve-phrase {
   position: absolute; width: 100%; text-align: center;
   font-size: clamp(2.5rem, 5vw, 6rem);
@@ -322,6 +322,11 @@ nav {
   color: var(--text);
   text-shadow: 0 4px 30px rgba(0,0,0,1);
   margin: 0; pointer-events: none;
+}
+
+.hover-move {
+  display: inline-block;
+  will-change: transform;
 }
 
 .phrase-1.active { animation: flashStrikeIn 0.5s cubic-bezier(0.1, 1, 0.2, 1) forwards; color: var(--accent); }
@@ -620,6 +625,18 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 }
 .social-links { display: flex; gap: 1.5rem; }
 
+.cinematic-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 10;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
+  animation: flicker 0.15s infinite; opacity: 0.4; mix-blend-mode: overlay;
+}
+.cinematic-overlay::after {
+  content: ""; position: absolute; top: -100%; left: -100%; width: 300%; height: 300%;
+  background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+  opacity: 0.3; animation: grain 8s steps(10) infinite; pointer-events: none;
+}
+
 @media (max-width: 900px) {
   nav { padding: 0.8rem 2rem; }
   .hero-titles-list { left: 2rem; bottom: 3rem; }
@@ -766,10 +783,10 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     <div class="cinematic-bar top"></div>
     <div class="cinematic-bar bottom"></div>
     <div class="evolve-texts">
-      <h2 class="evolve-phrase phrase-1">VAMOS EVOLUIR COM VOCÊ</h2>
-      <h2 class="evolve-phrase phrase-2">LET'S EVOLVE TOGETHER</h2>
-      <h2 class="evolve-phrase phrase-3">ÉVOLUONS ENSEMBLE</h2>
-      <h2 class="evolve-phrase phrase-4">让我们一起努力</h2>
+      <h2 class="evolve-phrase phrase-1"><span class="hover-move">VAMOS EVOLUIR COM VOCÊ</span></h2>
+      <h2 class="evolve-phrase phrase-2"><span class="hover-move">LET'S EVOLVE TOGETHER</span></h2>
+      <h2 class="evolve-phrase phrase-3"><span class="hover-move">ÉVOLUONS ENSEMBLE</span></h2>
+      <h2 class="evolve-phrase phrase-4"><span class="hover-move">让我们一起努力</span></h2>
     </div>
   </div>
 </div>
@@ -824,12 +841,10 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   </div>
 </section>
 
-<section id="quarto3d" style="position: relative; width: 100%; height: 100vh; background-color: #020205; z-index: 999; overflow: hidden;">
-  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 10%; background: #000; z-index: 20;"></div>
-  <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 10%; background: #000; z-index: 20;"></div>
-  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; opacity: 0.25; mix-blend-mode: overlay; background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
-  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 11; background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.95) 120%); box-shadow: inset 0 0 120px rgba(0,0,0,0.9);"></div>
-  <div id="canvas-container" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; display: block; filter: contrast(1.15) saturate(0.85) sepia(0.15) brightness(0.9) hue-rotate(-5deg);"></div>
+<section id="quarto3d" style="position: relative; width: 100%; height: 100vh; background: url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat; z-index: 999; overflow: hidden; box-shadow: inset 0 0 200px rgba(0,0,0,0.95);">
+  <div class="cinematic-overlay"></div>
+  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%); pointer-events: none; z-index: 1;"></div>
+  <div id="canvas-container" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; display: block; z-index: 2;"></div>
 
   <script type="importmap">
     {
@@ -847,20 +862,6 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 
     const container = document.getElementById('canvas-container');
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x020205);
-
-    const starsGeometry = new THREE.BufferGeometry();
-    const starsMaterial = new THREE.PointsMaterial({color: 0xffffff, size: 0.015, transparent: true, opacity: 0.8});
-    const starsVertices = [];
-    for(let i=0; i<3000; i++) {
-        const x = (Math.random() - 0.5) * 50;
-        const y = (Math.random() - 0.5) * 50;
-        const z = (Math.random() - 0.5) * 50;
-        starsVertices.push(x, y, z);
-    }
-    starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
-    const starField = new THREE.Points(starsGeometry, starsMaterial);
-    scene.add(starField);
 
     const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.set(-0.1, 1.2, 1.8);
@@ -917,7 +918,6 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
-        starField.rotation.y += 0.0002;
         renderer.render(scene, camera);
     }
     animate();
@@ -1086,37 +1086,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   const evolveSection = document.querySelector('.evolve-wrapper');
   const evolvePhrases = document.querySelectorAll('.evolve-phrase');
   const flashBang = document.querySelector('.flash-bang');
-  const evolveTextsContainer = document.querySelector('.evolve-texts');
   let evolveLastIndex = -1;
-
-  if (evolveSection && evolveTextsContainer) {
-    evolveSection.addEventListener('mousemove', (e) => {
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
-        const mouseX = (e.clientX / windowWidth - 0.5) * 2; 
-        const mouseY = (e.clientY / windowHeight - 0.5) * 2; 
-
-        gsap.to(evolveTextsContainer, {
-            x: mouseX * -40,
-            y: mouseY * -40,
-            rotationX: mouseY * 15,
-            rotationY: mouseX * -15,
-            duration: 0.6,
-            ease: "power2.out"
-        });
-    });
-
-    evolveSection.addEventListener('mouseleave', () => {
-        gsap.to(evolveTextsContainer, {
-            x: 0,
-            y: 0,
-            rotationX: 0,
-            rotationY: 0,
-            duration: 1,
-            ease: "elastic.out(1, 0.3)"
-        });
-    });
-  }
 
   let calcScroll = () => {
     const windowHeight = window.innerHeight;
@@ -1206,6 +1176,30 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
             scrub: 1,
             anticipatePin: 1
         }
+    });
+  }
+
+  const evolveSticky = document.querySelector('.evolve-sticky');
+  const hoverMoves = document.querySelectorAll('.hover-move');
+
+  if (evolveSticky && hoverMoves.length > 0) {
+    evolveSticky.addEventListener('mousemove', (e) => {
+      const { clientX, clientY } = e;
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+
+      hoverMoves.forEach((text) => {
+        const depth = 0.08;
+        const moveX = (clientX - centerX) * depth;
+        const moveY = (clientY - centerY) * depth;
+
+        gsap.to(text, {
+          x: moveX,
+          y: moveY,
+          duration: 1,
+          ease: "power2.out"
+        });
+      });
     });
   }
 </script>
