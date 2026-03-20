@@ -636,6 +636,40 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
   opacity: 0.3; animation: grain 8s steps(10) infinite; pointer-events: none;
 }
+.cinematic-grade {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 11;
+  background: linear-gradient(45deg, rgba(16, 22, 38, 0.4) 0%, rgba(255, 145, 0, 0.1) 100%);
+  mix-blend-mode: color;
+}
+.cinematic-vignette {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 12;
+  background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.95) 100%);
+}
+.cinematic-bars::before, .cinematic-bars::after {
+  content: ''; position: absolute; left: 0; width: 100%; height: 10%; background: #000; z-index: 15; pointer-events: none;
+}
+.cinematic-bars::before { top: 0; }
+.cinematic-bars::after { bottom: 0; }
+
+@keyframes flicker {
+  0% { opacity: 0.3; }
+  50% { opacity: 0.4; }
+  100% { opacity: 0.3; }
+}
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -10%); }
+  20% { transform: translate(-15%, 5%); }
+  30% { transform: translate(7%, -25%); }
+  40% { transform: translate(-5%, 25%); }
+  50% { transform: translate(-15%, 10%); }
+  60% { transform: translate(15%, 0%); }
+  70% { transform: translate(0%, 15%); }
+  80% { transform: translate(3%, 35%); }
+  90% { transform: translate(-10%, 10%); }
+}
 
 @media (max-width: 900px) {
   nav { padding: 0.8rem 2rem; }
@@ -841,8 +875,10 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   </div>
 </section>
 
-<section id="quarto3d" style="position: relative; width: 100%; height: 100vh; background: url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat; z-index: 999; overflow: hidden; box-shadow: inset 0 0 200px rgba(0,0,0,0.95);">
+<section id="quarto3d" class="cinematic-bars" style="position: relative; width: 100%; height: 100vh; background: url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat; z-index: 999; overflow: hidden; box-shadow: inset 0 0 200px rgba(0,0,0,0.95);">
   <div class="cinematic-overlay"></div>
+  <div class="cinematic-grade"></div>
+  <div class="cinematic-vignette"></div>
   <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%); pointer-events: none; z-index: 1;"></div>
   <div id="canvas-container" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; display: block; z-index: 2;"></div>
 
@@ -880,6 +916,11 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     controls.dampingFactor = 0.05;
     controls.target.set(-0.1, 1.1, 0);
     controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.minPolarAngle = Math.PI / 2.05;
+    controls.maxPolarAngle = Math.PI / 2.05;
+    controls.minAzimuthAngle = -0.15;
+    controls.maxAzimuthAngle = 0.15;
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
