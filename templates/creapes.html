@@ -567,17 +567,6 @@ nav {
 section { padding: 8rem 4rem; position: relative; z-index: 5; background: var(--bg); }
 .section-title { font-size: 2.5rem; margin-bottom: 4rem; opacity: 0.9; }
 
-.services-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 4rem;
-}
-
-.service-item h3 { font-size: 1.5rem; margin: 1.5rem 0 1rem; }
-.service-item p { line-height: 1.6; color: #aaa; }
-.icon { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; }
-.service-item:hover .icon { filter: brightness(1.2); }
-
 .split-screen { display: flex; gap: 6rem; }
 .manifesto { flex: 1; font-size: 1.5rem; line-height: 1.5; }
 .manifesto span { color: var(--accent); font-weight: 500; }
@@ -835,24 +824,9 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   </div>
 </section>
 
-<section id="services" class="services">
-  <h2 class="section-title fade-in">Capabilities</h2>
-  <div class="services-grid fade-in">
-    {% for post in posts %}
-    <div class="service-item">
-      {% if post.capa %}
-      <img src="{{ post.capa }}" class="icon" alt="Ícone">
-      {% else %}
-      <div class="icon">🎬</div>
-      {% endif %}
-      <h3>{{ post.titulo }}</h3>
-      <p>{{ post.resumo }}</p>
-    </div>
-    {% endfor %}
-  </div>
-</section>
-
-<section id="quarto3d" style="position: relative; width: 100%; height: 100vh; background-color: #050505; z-index: 999; overflow: hidden;">
+<section id="quarto3d" style="position: relative; width: 100%; height: 100vh; background-color: #020205; z-index: 999; overflow: hidden;">
+  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; opacity: 0.25; mix-blend-mode: overlay; background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
+  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 11; background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.95) 120%); box-shadow: inset 0 0 120px rgba(0,0,0,0.9);"></div>
   <div id="canvas-container" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; display: block;"></div>
 
   <script type="importmap">
@@ -871,6 +845,20 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 
     const container = document.getElementById('canvas-container');
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x020205);
+
+    const starsGeometry = new THREE.BufferGeometry();
+    const starsMaterial = new THREE.PointsMaterial({color: 0xffffff, size: 0.015, transparent: true, opacity: 0.8});
+    const starsVertices = [];
+    for(let i=0; i<3000; i++) {
+        const x = (Math.random() - 0.5) * 50;
+        const y = (Math.random() - 0.5) * 50;
+        const z = (Math.random() - 0.5) * 50;
+        starsVertices.push(x, y, z);
+    }
+    starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
+    const starField = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(starField);
 
     const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.set(-0.1, 1.2, 1.8);
@@ -927,6 +915,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
+        starField.rotation.y += 0.0002;
         renderer.render(scene, camera);
     }
     animate();
