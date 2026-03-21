@@ -216,6 +216,9 @@
     .start-hero-anim .animate-banner-text {
         animation: bannerFadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
+{% if loja.clean_cards_mode %}
+header a, header span, header i, header button { color: var(--bg-color) !important; stroke: var(--bg-color) !important; }
+{% endif %}
 </style>
 </head>
 <body>
@@ -532,14 +535,19 @@
             </div>
 
             {% for p in produtos %}
-            <div class="case-card shadow-xl border border-[rgba(0,0,0,0.05)]" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
-                <img src="{{ p.imagem }}" alt="{{ p.nome }}">
+            <div class="case-card {% if not loja.disable_card_shadow %}shadow-xl border border-[rgba(0,0,0,0.05)]{% endif %}" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
+                <img src="{{ p.imagem }}" alt="{{ p.nome }}" class="{% if loja.clean_cards_mode %}!filter-none{% endif %}">
                 <div class="case-info">
+                    {% if not loja.hide_card_title %}
                     <h3 class="case-title font-display">{{ p.nome }}</h3>
+                    {% endif %}
+                    
+                    {% if not loja.hide_explore_button %}
                     <div class="flex items-center gap-3">
                         <span class="text-[10px] uppercase tracking-widest font-semibold opacity-90">Explorar</span>
                         <div class="w-8 h-[1px] bg-white opacity-80"></div>
                     </div>
+                    {% endif %}
                 </div>
             </div>
             {% else %}
