@@ -4,10 +4,12 @@ import os
 import json
 import uuid
 import time
+import re
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from werkzeug.middleware.proxy_fix import ProxyFix
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -18,12 +20,18 @@ load_dotenv()
 
 app = Flask(__name__)
 
+# Configuração para extrair o IP real por trás de proxies/load balancers
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
 # CORREÇÃO DE ERRO 404 BARRAS NA URL
 # Isso faz o sistema aceitar tanto slug quanto slug/
 app.url_map.strict_slashes = False 
 
 # Em produção defina uma SECRET_KEY fixa no .env
 app.secret_key = os.getenv("SECRET_KEY", "chave_secreta_super_segura_saas_2026")
+
+# Proteção passiva contra CSRF nas sessões
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 serializer = URLSafeTimedSerializer(app.secret_key)
 
@@ -54,6 +62,11 @@ RATE_LIMIT_DATA = {}
 MAX_REQUESTS = 5
 TIME_WINDOW = 60 # segundos
 
+def get_client_ip():
+    if request.headers.get('X-Forwarded-For'):
+        return request.headers.get('X-Forwarded-For').split(',')[0].strip()
+    return request.remote_addr
+
 def check_rate_limit(ip, action):
     current_time = time.time()
     key = f"{ip}_{action}"
@@ -70,6 +83,11 @@ def check_rate_limit(ip, action):
     
     RATE_LIMIT_DATA[key].append(current_time)
     return True
+
+def sanitize_input(text):
+    if not text: return text
+    # Remove tentativas de injeção de script
+    return re.sub(r'<(script|iframe|object|embed|applet|style|link)', r'&lt;\1', str(text), flags=re.IGNORECASE)
 
 # SEGURANÇA BLOQUEIO DE BOTS
 BLOCKED_USER_AGENTS = ['python-requests', 'curl', 'postmanruntime', 'wget', 'urllib', 'bot', 'spider', 'crawler']
@@ -257,7 +275,7 @@ def cadastro():
     
     if request.method == 'POST':
         # SEGURANÇA Verifica Rate Limit Proteção contra criação em massa spam
-        client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        client_ip = get_client_ip()
         if not check_rate_limit(client_ip, 'cadastro'):
             flash('Muitas tentativas de cadastro. Por favor, tente novamente mais tarde.', 'error')
             return render_template('cadastro.html'), 429
@@ -618,7 +636,7 @@ def admin_login(loja_slug):
 
     if request.method == 'POST':
         # SEGURANÇA Verifica Rate Limit Proteção contra força bruta no login
-        client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        client_ip = get_client_ip()
         if not check_rate_limit(client_ip, 'login'):
             flash('Muitas tentativas de login. Por favor, aguarde alguns minutos.', 'error')
             loja_visual = {**g.loja, "logo": get_img_url(g.loja.get('logo')), "slug_url": loja_slug}
@@ -669,39 +687,39 @@ def admin_painel(loja_slug):
             "font_corpo": request.form.get('font_corpo'),
             "linkbannerprincipal1": request.form.get('link1'),
             "linkbannerprincipal2": request.form.get('link2'),
-            "banner1_titulo": request.form.get('banner1_titulo'),
-            "banner1_subtitulo": request.form.get('banner1_subtitulo'),
-            "banner1_botao": request.form.get('banner1_botao'),
-            "banner2_titulo": request.form.get('banner2_titulo'),
-            "banner2_subtitulo": request.form.get('banner2_subtitulo'),
-            "banner2_botao": request.form.get('banner2_botao'),
+            "banner1_titulo": sanitize_input(request.form.get('banner1_titulo')),
+            "banner1_subtitulo": sanitize_input(request.form.get('banner1_subtitulo')),
+            "banner1_botao": sanitize_input(request.form.get('banner1_botao')),
+            "banner2_titulo": sanitize_input(request.form.get('banner2_titulo')),
+            "banner2_subtitulo": sanitize_input(request.form.get('banner2_subtitulo')),
+            "banner2_botao": sanitize_input(request.form.get('banner2_botao')),
             "linkbannermenor1": request.form.get('linkbannermenor1'),
             "linkbannermenor2": request.form.get('linkbannermenor2'),
             "frase1": request.form.get('frase1'),
             "frase2": request.form.get('frase2'),
             "frase3": request.form.get('frase3'),
             "layout_order": request.form.get('layout_order'),
-            "titulo_produtos": request.form.get('titulo_produtos'),
+            "titulo_produtos": sanitize_input(request.form.get('titulo_produtos')),
             "ocultar_produtos": True if request.form.get('ocultar_produtos') else False,
-            "titulo_categorias": request.form.get('titulo_categorias'),
+            "titulo_categorias": sanitize_input(request.form.get('titulo_categorias')),
             "ocultar_categorias": True if request.form.get('ocultar_categorias') else False,
-            "titulo_novidades": request.form.get('titulo_novidades'),
+            "titulo_novidades": sanitize_input(request.form.get('titulo_novidades')),
             "ocultar_novidades": True if request.form.get('ocultar_novidades') else False,
-            "titulo_blog": request.form.get('titulo_blog'),
+            "titulo_blog": sanitize_input(request.form.get('titulo_blog')),
             "ocultar_blog": True if request.form.get('ocultar_blog') else False,
             "ocultar_busca": True if request.form.get('ocultar_busca') else False,
             "ocultar_banner": True if request.form.get('ocultar_banner') else False,
             "ocultar_banners_menores": True if request.form.get('ocultar_banners_menores') else False,
-            "sobre_titulo": request.form.get('sobre_titulo'),
-            "sobre_texto": request.form.get('sobre_texto'),
+            "sobre_titulo": sanitize_input(request.form.get('sobre_titulo')),
+            "sobre_texto": sanitize_input(request.form.get('sobre_texto')),
             "ocultar_sobre": True if request.form.get('ocultar_sobre') else False,
-            "titulo_formulario": request.form.get('titulo_formulario'),
+            "titulo_formulario": sanitize_input(request.form.get('titulo_formulario')),
             "ocultar_formulario": True if request.form.get('ocultar_formulario') else False,
             "clean_cards_mode": True if request.form.get('clean_cards_mode') else False,
             "hide_card_title": True if request.form.get('hide_card_title') else False,
             "hide_explore_button": True if request.form.get('hide_explore_button') else False,
             "disable_card_shadow": True if request.form.get('disable_card_shadow') else False,
-            "chamada_rodape": request.form.get('chamada_rodape'),
+            "chamada_rodape": sanitize_input(request.form.get('chamada_rodape')),
             "logos_clientes": request.form.get('logos_clientes'),
             "endereco_fisico": request.form.get('endereco_fisico'),
             "mostrar_mapa": True if request.form.get('mostrar_mapa') else False,
@@ -818,6 +836,12 @@ def admin_salvar_categoria(loja_slug):
 
     try:
         if cat_id:
+            # PROTEÇÃO IDOR
+            check = requests.get(f"{DIRECTUS_URL}/items/categorias/{cat_id}?fields=loja_id", headers=headers)
+            if check.status_code != 200 or check.json().get('data', {}).get('loja_id') != g.loja_id:
+                flash('Acesso negado. Tentativa de alteração inválida.', 'error')
+                return redirect(f'/{loja_slug}/admin/painel#categorias')
+                
             requests.patch(f"{DIRECTUS_URL}/items/categorias/{cat_id}", headers=headers, json=payload)
             flash('Categoria atualizada!', 'success')
         else:
@@ -937,6 +961,12 @@ def admin_salvar_produto(loja_slug):
     headers = get_headers()
     try:
         if prod_id:
+            # PROTEÇÃO IDOR
+            check = requests.get(f"{DIRECTUS_URL}/items/produtos/{prod_id}?fields=loja_id", headers=headers)
+            if check.status_code != 200 or check.json().get('data', {}).get('loja_id') != g.loja_id:
+                flash('Acesso negado. Tentativa de alteração inválida.', 'error')
+                return redirect(f'/{loja_slug}/admin/painel#produtos')
+                
             requests.patch(f"{DIRECTUS_URL}/items/produtos/{prod_id}", headers=headers, json=payload)
             flash('Produto atualizado!', 'success')
         else:
@@ -996,6 +1026,12 @@ def admin_salvar_post(loja_slug):
     headers = get_headers()
     try:
         if post_id:
+            # PROTEÇÃO IDOR
+            check = requests.get(f"{DIRECTUS_URL}/items/posts/{post_id}?fields=loja_id", headers=headers)
+            if check.status_code != 200 or check.json().get('data', {}).get('loja_id') != g.loja_id:
+                flash('Acesso negado. Tentativa de alteração inválida.', 'error')
+                return redirect(f'/{loja_slug}/admin/painel#blog')
+                
             requests.patch(f"{DIRECTUS_URL}/items/posts/{post_id}", headers=headers, json=payload)
             flash('Post atualizado!', 'success')
         else:
