@@ -219,37 +219,37 @@
                 <div class="overflow-x-auto bg-gray-50 rounded-lg border border-gray-200">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-100">
-                             <tr>
+                              <tr>
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Imagem</th>
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Nome</th>
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Preço</th>
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Estoque</th>
                                 <th class="px-6 py-3 text-right text-xs font-bold text-gray-600 uppercase tracking-wider">Ações</th>
-                             </tr>
+                              </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             {% for prod in produtos %}
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <img src="{{ prod.imagem_destaque }}" class="h-12 w-12 object-cover rounded border border-gray-200 bg-gray-100">
-                                 </td>
+                                  </td>
                                 <td class="px-6 py-4"><div class="text-sm font-bold text-gray-900 line-clamp-1">{{ prod.nome }}</div></td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-bold">
                                     {% if prod.consulte %}Customizado{% else %}R$ {{ "%.2f"|format(prod.preco) }}{% endif %}
-                                 </td>
+                                  </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ prod.estoque }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <button onclick='clonarProduto({{ prod | tojson }})' class="text-green-500 hover:text-green-700 mr-3" title="Clonar para outra categoria"><i data-lucide="copy" class="w-4 h-4"></i></button>
                                     <button onclick='editarProduto({{ prod | tojson }})'
                                      class="text-blue-500 hover:text-blue-700 mr-3"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
                                     <a href="/{{ loja.slug_url }}/admin/produto/excluir/{{ prod.id }}" class="text-red-500 hover:text-red-700" onclick="return confirm('Excluir este produto?')"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
-                                 </td>
-                             </tr>
+                                  </td>
+                              </tr>
                              {% else %}
-                             <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Nenhum produto cadastrado.</td></tr>
+                              <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Nenhum produto cadastrado.</td></tr>
                             {% endfor %}
                         </tbody>
-                     </table>
+                      </table>
                 </div>
             </section>
 
@@ -285,12 +285,12 @@
                 <div class="overflow-x-auto bg-gray-50 rounded-lg border border-gray-200">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-100">
-                             <tr>
+                              <tr>
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Nome</th>
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">WhatsApp</th>
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">E-mail</th>
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Data</th>
-                             </tr>
+                              </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             {% for lead in inscritos %}
@@ -300,15 +300,15 @@
                                     <a href="https://wa.me/55{{ lead.whatsapp|replace(' ', '')|replace('-', '')|replace('(', '')|replace(')', '') }}" target="_blank" class="text-green-600 hover:text-green-800 flex items-center gap-1">
                                         <i data-lucide="message-circle" class="w-4 h-4"></i> {{ lead.whatsapp }}
                                     </a>
-                                 </td>
+                                  </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ lead.email }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ lead.date_created[:10] if lead.date_created else '--' }}</td>
-                             </tr>
+                              </tr>
                              {% else %}
-                             <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Nenhum lead inscrito ainda.</td></tr>
+                              <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Nenhum lead inscrito ainda.</td></tr>
                             {% endfor %}
                         </tbody>
-                     </table>
+                      </table>
                 </div>
             </section>
 
@@ -331,12 +331,12 @@
                 <div id="traditionalListView" class="overflow-x-auto bg-gray-50 rounded-lg border border-gray-200">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-100">
-                             <tr>
+                              <tr>
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Data / Hora</th>
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
                                 <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cliente (Opcional)</th>
                                 <th class="px-6 py-3 text-right text-xs font-bold text-gray-600 uppercase tracking-wider">Ações</th>
-                             </tr>
+                              </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             {% for horario in agenda %}
@@ -348,18 +348,18 @@
                                     {% else %}
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Ocupado</span>
                                     {% endif %}
-                                 </td>
+                                  </td>
                                 <td class="px-6 py-4 text-sm text-gray-700">{{ horario.cliente_nome or '--' }}</td>
                                 <td class="px-6 py-4 text-right text-sm font-medium">
                                     <button onclick='editarHorario({{ horario | tojson }})' class="text-blue-500 hover:text-blue-700 mr-3"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
                                     <a href="/{{ loja.slug_url }}/admin/agenda/excluir/{{ horario.id }}" class="text-red-500 hover:text-red-700" onclick="return confirm('Excluir este horário?')"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
-                                 </td>
-                             </tr>
+                                  </td>
+                              </tr>
                             {% else %}
-                             <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Nenhum horário cadastrado.</td></tr>
+                              <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Nenhum horário cadastrado.</td></tr>
                             {% endfor %}
                         </tbody>
-                     </table>
+                      </table>
                 </div>
 
                 <!-- NOVA VISUALIZAÇÃO KANBAN (Quadro Trello) -->
@@ -1374,7 +1374,7 @@
             }
         });
 
-        // ========== NOVA LÓGICA PARA O QUADRO KANBAN ==========
+        // ========== NOVA LÓGICA PARA O QUADRO KANBAN (CORRIGIDA PARA HORÁRIO LOCAL) ==========
         let sortableInstances = [];
 
         // Obtém os dados da agenda do template (já disponível em agendaData)
@@ -1386,22 +1386,23 @@
             return `${hour.toString().padStart(2,'0')}:00`;
         });
 
-        // Função para obter a data no formato YYYY-MM-DD a partir de um objeto Date
-        function formatDateKey(date) {
-            return date.toISOString().split('T')[0];
+        // Função para obter a data no formato YYYY-MM-DD usando horário local (sem UTC)
+        function formatDateKeyLocal(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
 
         // Cria um mapa dos compromissos existentes: key = "YYYY-MM-DD|HH:MM"
         function buildAppointmentMap(agenda) {
             const map = new Map();
             agenda.forEach(item => {
-                // O campo data_hora pode vir em vários formatos. Tentamos extrair a data e hora.
                 let dataHoraStr = item.data_hora_formatada || item.data_hora;
                 if (!dataHoraStr) return;
-                // Tenta converter para objeto Date
                 let date = new Date(dataHoraStr);
                 if (isNaN(date.getTime())) return;
-                const dateKey = formatDateKey(date);
+                const dateKey = formatDateKeyLocal(date);
                 const hour = date.getHours().toString().padStart(2,'0');
                 const timeKey = `${hour}:00`;
                 const fullKey = `${dateKey}|${timeKey}`;
@@ -1414,10 +1415,10 @@
             return map;
         }
 
-        // Gera os próximos N dias a partir de hoje (N = 7 por padrão)
+        // Gera os próximos N dias a partir de hoje (incluindo hoje)
         function getNextDays(count = 7) {
             const today = new Date();
-            today.setHours(0,0,0,0);
+            today.setHours(0, 0, 0, 0); // zera horas para comparação local
             const days = [];
             for (let i = 0; i < count; i++) {
                 const d = new Date(today);
@@ -1429,12 +1430,13 @@
 
         // Cria o HTML de uma coluna de dia
         function createDayColumn(date, appointmentMap) {
-            const dateKey = formatDateKey(date);
+            const dateKey = formatDateKeyLocal(date);
             const dayName = date.toLocaleDateString('pt-BR', { weekday: 'short' });
             const dayNumber = date.getDate();
             const month = date.toLocaleDateString('pt-BR', { month: 'short' });
             const label = `${dayName} ${dayNumber} ${month}`;
-            const isToday = formatDateKey(new Date()) === dateKey;
+            const todayKey = formatDateKeyLocal(new Date());
+            const isToday = todayKey === dateKey;
             const headerClass = isToday ? 'bg-pink-50 text-pink-700' : 'bg-gray-50 text-gray-700';
 
             let cardsHtml = '';
@@ -1446,7 +1448,6 @@
                 let draggableAttr = '';
                 let dataId = '';
                 if (appointment) {
-                    // Card com compromisso (arrastável)
                     cardClass += 'appointment-card cursor-grab';
                     draggableAttr = 'draggable="true"';
                     dataId = `data-id="${appointment.id}"`;
@@ -1461,7 +1462,6 @@
                         </div>
                     `;
                 } else {
-                    // Slot vazio (não arrastável)
                     cardClass += 'empty-slot';
                     content = `
                         <div class="flex justify-between items-center text-gray-500">
@@ -1477,7 +1477,6 @@
                 `;
             }
 
-            // Adiciona um card especial "Adicionar Tarefa" no final
             cardsHtml += `
                 <div class="time-card add-task-card cursor-pointer" onclick="openQuickAddTask('${dateKey}')">
                     <div class="flex justify-center items-center gap-2 text-pink-600">
@@ -1510,19 +1509,14 @@
                 const colHtml = createDayColumn(day, appointmentMap);
                 container.insertAdjacentHTML('beforeend', colHtml);
             });
-            // Reaplica os ícones do Lucide
             lucide.createIcons();
-
-            // Reconfigura o drag-and-drop nativo (HTML5)
             setupDragAndDrop();
         }
 
-        // Configura o drag-and-drop nativo para os cards arrastáveis
         function setupDragAndDrop() {
             const draggables = document.querySelectorAll('#kanbanBoardView .time-card.appointment-card');
             const dropZones = document.querySelectorAll('#kanbanBoardView .cards-list');
 
-            // Remove listeners antigos para evitar duplicação
             draggables.forEach(el => {
                 el.removeEventListener('dragstart', handleDragStart);
                 el.removeEventListener('dragend', handleDragEnd);
@@ -1569,24 +1563,19 @@
             const sourceId = draggedItemId;
             if (!sourceId) return;
 
-            // Obter data e hora de destino
             const targetDate = targetList.getAttribute('data-date');
             let targetHour = null;
             if (targetCard && targetCard.classList.contains('time-card')) {
                 targetHour = targetCard.getAttribute('data-time');
             } else {
-                // Se drop for na área vazia da lista, pegar o horário mais próximo (primeiro ou último)
                 const cards = Array.from(targetList.querySelectorAll('.time-card:not(.add-task-card)'));
                 if (cards.length === 0) return;
-                // Pega o horário do primeiro card
                 targetHour = cards[0].getAttribute('data-time');
             }
             if (!targetHour) return;
 
-            // Montar data/hora completa no formato ISO (YYYY-MM-DDTHH:MM:00)
             const targetDateTime = `${targetDate}T${targetHour}:00`;
 
-            // Enviar requisição para atualizar o compromisso
             fetch(`/{{ loja.slug_url }}/admin/agenda/update/${sourceId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1595,20 +1584,12 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Atualizar os dados locais
-                    // Em produção, o ideal é recarregar a agenda do servidor
-                    // Vamos simular atualizando o item no array agendaData
                     const agendaItem = agendaData.find(a => a.id == sourceId);
                     if (agendaItem) {
                         agendaItem.data_hora = targetDateTime;
                         agendaItem.data_hora_formatada = targetDateTime;
                     }
                     refreshKanbanBoard();
-                    // Também atualiza a tabela tradicional (recarregando via AJAX ou simplesmente dando refresh na página)
-                    // Por simplicidade, recarregamos a página? Não, porque o usuário pode perder dados não salvos.
-                    // Vamos apenas exibir um toast e atualizar a tabela via recarregamento suave.
-                    // Para não complicar, podemos recarregar a agenda via AJAX e re-renderizar a tabela.
-                    // Mas para manter o exemplo enxuto, vamos mostrar um alerta de sucesso.
                     alert('Compromisso movido com sucesso!');
                 } else {
                     alert('Erro ao mover o compromisso.');
@@ -1620,32 +1601,25 @@
             });
         }
 
-        // Abre um modal rápido para adicionar tarefa em um determinado dia
         function openQuickAddTask(dateKey) {
-            // Preencher o campo de data no modal de agenda existente
             const modal = document.getElementById('agendaModal');
             const dataInput = document.getElementById('agendaDataHora');
-            // Definir o valor com a data e horário padrão 09:00
             dataInput.value = `${dateKey}T09:00`;
-            // Garantir que o modal seja aberto como novo horário
             document.getElementById('agendaId').value = '';
             document.getElementById('agendaDisponivel').checked = true;
             document.getElementById('agendaCliente').value = '';
             document.getElementById('agendaModalTitle').innerText = 'Adicionar Compromisso';
             toggleModal('agendaModal');
-            // Após salvar, recarregaremos o quadro
-            const originalSubmit = document.getElementById('agendaForm').submit;
             const form = document.getElementById('agendaForm');
-            form.addEventListener('submit', function onSubmit(e) {
-                // Após o submit, vamos esperar um pouco e atualizar o quadro
+            const onSubmit = function(e) {
                 setTimeout(() => {
                     refreshKanbanBoard();
                 }, 500);
                 form.removeEventListener('submit', onSubmit);
-            });
+            };
+            form.addEventListener('submit', onSubmit);
         }
 
-        // Inicialização do quadro Kanban e alternância entre visualizações
         document.addEventListener('DOMContentLoaded', function() {
             const toggleListView = document.getElementById('toggleListViewBtn');
             const toggleBoardView = document.getElementById('toggleBoardViewBtn');
@@ -1664,26 +1638,22 @@
                     boardView.classList.remove('hidden');
                     toggleBoardView.classList.add('active');
                     toggleListView.classList.remove('active');
-                    refreshKanbanBoard(); // Garante que o quadro esteja atualizado ao alternar
+                    refreshKanbanBoard();
                 });
-                // Se o quadro já estiver visível (por algum motivo), inicialize-o
                 if (!boardView.classList.contains('hidden')) {
                     refreshKanbanBoard();
                 }
             }
         });
 
-        // Adiciona o botão flutuante de tarefa (já existe no HTML)
         const floatingBtn = document.getElementById('floatingAddTaskBtn');
         if (floatingBtn) {
             floatingBtn.addEventListener('click', () => {
-                // Abre o modal de agenda com data de hoje
-                const todayKey = formatDateKey(new Date());
+                const todayKey = formatDateKeyLocal(new Date());
                 openQuickAddTask(todayKey);
             });
         }
 
-        // Expor a função para ser usada globalmente
         window.openQuickAddTask = openQuickAddTask;
     </script>
 </body>
