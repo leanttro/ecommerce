@@ -400,10 +400,10 @@ nav {
 .clients-right::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
 .clients-track { display: flex; align-items: center; gap: 6rem; width: max-content; animation: marquee-clients 160s linear infinite; }
 .clients-track.reverse { animation-direction: reverse; animation-duration: 50s;}
-.clients-track img { height: 160px; object-fit: contain; max-width: 300px; filter: grayscale(100%) brightness(0.6); transition: all 0.4s var(--ease); }
+.clients-track img { height: 140px; object-fit: contain; max-width: 300px; filter: grayscale(100%) brightness(0.6); transition: all 0.4s var(--ease); }
 .clients-track img:hover { filter: grayscale(0%) brightness(1); transform: scale(1.1) !important; animation-play-state: paused; }
 @keyframes marquee-clients { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-@media (max-width: 900px) { .clients-section { flex-direction: column; padding: 2rem 2rem; gap: 2rem; } .clients-left { flex: none; width: 100%; text-align: center; } .clients-right::before, .clients-right::after { width: 50px; } .clients-track img { height: 115px; } }
+@media (max-width: 900px) { .clients-section { flex-direction: column; padding: 2rem 2rem; gap: 2rem; } .clients-left { flex: none; width: 100%; text-align: center; } .clients-right::before, .clients-right::after { width: 50px; } .clients-track img { height: 100px; } }
 
 .portfolio-horizontal-wrapper {
   height: 100vh;
@@ -647,13 +647,6 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   pointer-events: none; z-index: 12;
   background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.95) 100%);
 }
-.old-camera-filter {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  pointer-events: none; z-index: 13;
-  background: rgba(139, 107, 74, 0.15);
-  mix-blend-mode: color-burn;
-  filter: sepia(40%) contrast(120%);
-}
 .cinematic-bars::before, .cinematic-bars::after {
   content: ''; position: absolute; left: 0; width: 100%; height: 10%; background: #000; z-index: 15; pointer-events: none;
 }
@@ -882,97 +875,6 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   </div>
 </section>
 
-<section id="quarto3d" class="cinematic-bars" style="position: relative; width: 100%; height: 100vh; background: url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat; z-index: 999; overflow: hidden; box-shadow: inset 0 0 200px rgba(0,0,0,0.95);">
-  <div class="cinematic-overlay"></div>
-  <div class="cinematic-grade"></div>
-  <div class="cinematic-vignette"></div>
-  <div class="old-camera-filter"></div>
-  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 15%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,1) 100%); box-shadow: inset 0 0 150px #000; pointer-events: none; z-index: 20; backdrop-filter: contrast(1.15) brightness(0.95);"></div>
-  <div id="canvas-container" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; display: block; z-index: 2;"></div>
-
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-      }
-    }
-  </script>
-
-  <script type="module">
-    import * as THREE from 'three';
-    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
-    const container = document.getElementById('canvas-container');
-    const scene = new THREE.Scene();
-
-    const camera = new THREE.PerspectiveCamera(30, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(-0.1, 1.2, 1.2);
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    container.appendChild(renderer.domElement);
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.target.set(-0.1, 1.1, 0);
-    controls.enableZoom = false;
-    controls.enablePan = false;
-    controls.minPolarAngle = Math.PI / 2.05;
-    controls.maxPolarAngle = Math.PI / 2.05;
-    controls.minAzimuthAngle = -0.15;
-    controls.maxAzimuthAngle = 0.15;
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
-
-    const directionalLight = new THREE.DirectionalLight(0xfff0dd, 2);
-    directionalLight.position.set(5, 5, 2);
-    directionalLight.castShadow = true;
-    scene.add(directionalLight);
-
-    const fillLight = new THREE.DirectionalLight(0xcceeff, 0.5);
-    fillLight.position.set(-5, 3, -5);
-    scene.add(fillLight);
-
-    const loader = new GLTFLoader();
-    
-    loader.load(
-        '{{ url_for("static", filename="Quarto.glb") }}', 
-        function (gltf) {
-            const model = gltf.scene;
-            scene.add(model);
-        },
-        function (xhr) {
-            console.log(Math.round((xhr.loaded / xhr.total * 100)) + ' por cento carregado');
-        },
-        function (error) {
-            console.error(error);
-        }
-    );
-
-    window.addEventListener('resize', () => {
-        camera.aspect = container.clientWidth / container.clientHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(container.clientWidth, container.clientHeight);
-    });
-
-    function animate() {
-        requestAnimationFrame(animate);
-        controls.update();
-        renderer.render(scene, camera);
-    }
-    animate();
-  </script>
-</section>
-
 <footer id="contact">
   <div class="footer-blocks fade-in">
     <div class="footer-block">
@@ -1078,6 +980,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   let currentSlide = 0;
   const slides = document.querySelectorAll('.slide');
   const titleItems = document.querySelectorAll('.hero-title-item');
+  let slideInterval;
 
   function goToSlide(index) {
     if(slides.length === 0) return;
@@ -1090,6 +993,8 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     
     if(slides[currentSlide]) slides[currentSlide].classList.add('active');
     if(titleItems[currentSlide]) titleItems[currentSlide].classList.add('active');
+    
+    resetInterval();
   }
 
   function nextSlide() {
@@ -1098,32 +1003,16 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     goToSlide(next);
   }
 
-  function prevSlide() {
-    if(slides.length <= 1) return;
-    let prev = (currentSlide - 1 + slides.length) % slides.length;
-    goToSlide(prev);
+  function resetInterval() {
+    if(slideInterval) clearInterval(slideInterval);
+    if(slides.length > 1) {
+        slideInterval = setInterval(nextSlide, 5000);
+    }
   }
 
-  let isHeroScrolling = false;
-  const heroEl = document.getElementById('hero');
-  let touchStartY = 0;
-
-  heroEl.addEventListener('wheel', (e) => {
-    if (!isHeroScrolling) {
-      isHeroScrolling = true;
-      if (e.deltaY > 0) nextSlide();
-      else prevSlide();
-      setTimeout(() => isHeroScrolling = false, 1000);
-    }
-  });
-
-  heroEl.addEventListener('touchstart', e => touchStartY = e.touches[0].clientY);
-  heroEl.addEventListener('touchend', e => {
-    if(isHeroScrolling) return;
-    let touchEndY = e.changedTouches[0].clientY;
-    if(touchStartY - touchEndY > 50) { isHeroScrolling = true; nextSlide(); setTimeout(() => isHeroScrolling = false, 1000); }
-    else if(touchEndY - touchStartY > 50) { isHeroScrolling = true; prevSlide(); setTimeout(() => isHeroScrolling = false, 1000); }
-  });
+  if(slides.length > 1) {
+    slideInterval = setInterval(nextSlide, 5000);
+  }
 
   const videoModal = document.getElementById('videoModal');
   const vimeoPlayer = document.getElementById('vimeoPlayer');
@@ -1136,11 +1025,13 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     }
     vimeoPlayer.src = finalUrl;
     videoModal.classList.add('active');
+    if(slideInterval) clearInterval(slideInterval);
   }
 
   function closeVideo() {
     videoModal.classList.remove('active');
     vimeoPlayer.src = ''; 
+    resetInterval();
   }
 
   const evolveSection = document.querySelector('.evolve-wrapper');
