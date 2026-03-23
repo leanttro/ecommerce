@@ -341,7 +341,7 @@ def cadastro():
             "font_tamanho_base": 16,
             "font_titulo": "Poppins",
             "font_corpo": "Inter",
-            "layout_order": "banner,busca,categorias,produtos,banners_menores,novidades,mapa,footer",
+            "layout_order": "banner,busca,categorias,produtos,banners_menores,novidades,blog,sobre,mapa,footer",
             
             "linkbannerprincipal1": "#",
             "linkbannerprincipal2": "#"
@@ -485,6 +485,15 @@ def index(loja_slug):
                 })
     except: pass
 
+    # 4 Busca Agenda
+    agenda = []
+    try:
+        url_agenda = f"{DIRECTUS_URL}/items/agenda?filter[loja_id][_eq]={g.loja_id}&sort=data_hora"
+        r_agenda = requests.get(url_agenda, headers=headers)
+        if r_agenda.status_code == 200:
+            agenda = r_agenda.json()['data']
+    except: pass
+
     # Recupera o objeto da categoria selecionada (para passar o nome e dados dela pro HTML)
     cat_obj = None
     if cat_filter:
@@ -527,6 +536,7 @@ def index(loja_slug):
                          produtos=produtos, 
                          novidades=novidades, 
                          posts=posts,
+                         agenda=agenda,
                          cat_selecionada_obj=cat_obj,
                          directus_url=DIRECTUS_URL)
 
@@ -723,7 +733,9 @@ def admin_painel(loja_slug):
             "logos_clientes": request.form.get('logos_clientes'),
             "endereco_fisico": request.form.get('endereco_fisico'),
             "mostrar_mapa": True if request.form.get('mostrar_mapa') else False,
-            "mostrar_whatsapp_flutuante": True if request.form.get('mostrar_whatsapp_flutuante') else False
+            "mostrar_whatsapp_flutuante": True if request.form.get('mostrar_whatsapp_flutuante') else False,
+            "ocultar_agenda": True if request.form.get('ocultar_agenda') else False,
+            "titulo_agenda": sanitize_input(request.form.get('titulo_agenda'))
         }
         
         nova_senha = request.form.get('nova_senha')
@@ -744,6 +756,7 @@ def admin_painel(loja_slug):
     produtos = []
     posts = []
     inscritos = []
+    agenda = []
 
     try:
         r_cat = requests.get(f"{DIRECTUS_URL}/items/categorias?filter[loja_id][_eq]={g.loja_id}&sort=sort", headers=headers)
@@ -778,6 +791,9 @@ def admin_painel(loja_slug):
         
         r_leads = requests.get(f"{DIRECTUS_URL}/items/clientes_loja?filter[loja_id][_eq]={g.loja_id}&sort=-date_created", headers=headers)
         if r_leads.status_code == 200: inscritos = r_leads.json()['data']
+
+        r_agenda = requests.get(f"{DIRECTUS_URL}/items/agenda?filter[loja_id][_eq]={g.loja_id}&sort=data_hora", headers=headers)
+        if r_agenda.status_code == 200: agenda = r_agenda.json()['data']
         
     except Exception as e:
         print(f"Erro ao carregar dados do painel: {e}")
@@ -790,6 +806,8 @@ def admin_painel(loja_slug):
             g.loja['layout_order'] += ",sobre"
         if 'mapa' not in g.loja['layout_order']:
             g.loja['layout_order'] += ",mapa"
+        if 'agenda' not in g.loja['layout_order']:
+            g.loja['layout_order'] += ",agenda"
 
     loja_visual = {
         **g.loja,
@@ -811,7 +829,8 @@ def admin_painel(loja_slug):
                            categorias=categorias, 
                            produtos=produtos, 
                            posts=posts,
-                           inscritos=inscritos)
+                           inscritos=inscritos,
+                           agenda=agenda)
 
 # CRUD CATEGORIAS
 # Atualizado removeu prefixo loja
@@ -1060,6 +1079,57 @@ def admin_excluir_post(loja_slug, id):
     # PROTEÇÃO IDOR FIM
         
     return redirect(f'/{loja_slug}/admin/painel#blog')
+
+# CRUD AGENDA
+@app.route('/<loja_slug>/admin/agenda/salvar', methods=['POST'])
+def admin_salvar_agenda(loja_slug):
+    if session.get('loja_admin_id') != g.loja_id: return redirect('/')
+    
+    agenda_id = request.form.get('id')
+    data_hora_formatada = request.form.get('data_hora_formatada')
+    disponivel = True if request.form.get('disponivel') == 'on' else False
+    cliente_nome = request.form.get('cliente_nome')
+    
+    payload = {
+        "loja_id": g.loja_id,
+        "data_hora_formatada": data_hora_formatada,
+        "disponivel": disponivel,
+        "cliente_nome": cliente_nome
+    }
+
+    headers = get_headers()
+    try:
+        if agenda_id:
+            # PROTEÇÃO IDOR
+            check = requests.get(f"{DIRECTUS_URL}/items/agenda/{agenda_id}?fields=loja_id", headers=headers)
+            if check.status_code != 200 or check.json().get('data', {}).get('loja_id') != g.loja_id:
+                flash('Acesso negado.', 'error')
+                return redirect(f'/{loja_slug}/admin/painel#agenda')
+                
+            requests.patch(f"{DIRECTUS_URL}/items/agenda/{agenda_id}", headers=headers, json=payload)
+            flash('Horário atualizado!', 'success')
+        else:
+            requests.post(f"{DIRECTUS_URL}/items/agenda", headers=headers, json=payload)
+            flash('Horário criado!', 'success')
+    except Exception as e:
+        flash(f'Erro ao salvar agenda: {e}', 'error')
+
+    return redirect(f'/{loja_slug}/admin/painel#agenda')
+
+@app.route('/<loja_slug>/admin/agenda/excluir/<id>')
+def admin_excluir_agenda(loja_slug, id):
+    if session.get('loja_admin_id') != g.loja_id: return redirect('/')
+    
+    headers = get_headers()
+    check = requests.get(f"{DIRECTUS_URL}/items/agenda/{id}?fields=loja_id", headers=headers)
+    
+    if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
+        requests.delete(f"{DIRECTUS_URL}/items/agenda/{id}", headers=headers)
+        flash('Horário removido!', 'success')
+    else:
+        flash('Acesso negado.', 'error')
+        
+    return redirect(f'/{loja_slug}/admin/painel#agenda')
 
 
 # ROTA RECUPERAR SENHA (Estilo Copia)
