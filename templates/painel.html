@@ -947,7 +947,7 @@
                     
                     <div>
                         <label class="block text-sm font-bold mb-2">Selecione o Dia e Horário</label>
-                        <input type="datetime-local" name="data_hora_formatada" id="agendaDataHora" class="w-full border rounded p-3 focus:border-pink-500 outline-none bg-white border-gray-300 rounded-lg" required>
+                        <input type="datetime-local" name="data_hora" id="agendaDataHora" class="w-full border rounded p-3 focus:border-pink-500 outline-none bg-white border-gray-300 rounded-lg" required>
                     </div>
                     
                     <div class="flex items-center gap-2 mt-4">
@@ -1067,9 +1067,13 @@
 
         function editarHorario(horario) {
             document.getElementById('agendaId').value = horario.id;
-            // O campo datetime-local espera o formato ISO sem segundos
-            const val = horario.data_hora_formatada || horario.data_hora || '';
-            document.getElementById('agendaDataHora').value = val.substring(0, 16).replace(' ', 'T');
+            // O campo datetime-local espera o formato ISO sem segundos (YYYY-MM-DDTHH:MM)
+            if (horario.data_hora) {
+                const val = horario.data_hora.substring(0, 16).replace(' ', 'T');
+                document.getElementById('agendaDataHora').value = val;
+            } else {
+                document.getElementById('agendaDataHora').value = '';
+            }
             document.getElementById('agendaDisponivel').checked = horario.disponivel;
             document.getElementById('agendaCliente').value = horario.cliente_nome || '';
             document.getElementById('agendaModalTitle').innerText = 'Editar Horário';
