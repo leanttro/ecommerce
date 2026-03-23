@@ -1,1100 +1,2533 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CREAPES | Soluções Audiovisuais</title>
-    <link rel="icon" type="image/png" href="https://via.placeholder.com/32">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/postprocessing/EffectComposer.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/postprocessing/RenderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/postprocessing/ShaderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/shaders/CopyShader.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ loja.nome }} | Elite Audiovisual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+:root {
+  --bg: {{ loja.cor_fundo }};
+  --text: {{ loja.cor_texto }};
+  --accent: {{ loja.cor_primaria }};
+  --glass: rgba(5, 5, 5, 0.6);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-    <style>
-        /* RESET E VARIÁVEIS - MANTIDO */
-        :root {
-            --primary: #FF0033;
-            --primary-rgb: 255, 0, 51;
-            --dark: #000000;
-            --dark-grey: #0a0a0a;
-            --light-grey: #1a1a1a;
-            --text: #ffffff;
-            --text-dim: rgba(255,255,255,0.7);
-            --font-main: 'Montserrat', sans-serif;
-            --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-            --z-noise: -1;
-            --z-content: 1;
-            --z-overlay: 10;
-            --z-3d: 5;
-            --z-nav: 100;
-        }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* RESET E ESTILOS GERAIS - MANTIDO */
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
-        body {
-            font-family: var(--font-main);
-            background-color: var(--dark);
-            color: var(--text);
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            overscroll-behavior-y: none;
-        }
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
 
-        /* UTILITÁRIOS - MANTIDO */
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 40px; }
-        .red-accent { color: var(--primary); }
-        .hidden { opacity: 0; pointer-events: none; visibility: hidden; }
+body.loading {
+  overflow: hidden;
+}
 
-        /* NOISE BACKGROUND GLOBAL - MANTIDO */
-        #noise-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3%3Ffilter id='noiseFilter'%3E%3Cfeburbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            background-size: 200px 200px;
-            opacity: 0.05;
-            z-index: var(--z-noise);
-            pointer-events: none;
-        }
+#loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
 
-        /* HEADER & NAV - MANTIDO */
-        header {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100px;
-            z-index: var(--z-nav);
-            display: flex; align-items: center;
-            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
-            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-            transition: transform 0.4s var(--ease-in-out), background 0.4s var(--ease-in-out);
-        }
-        header.scrolled { background: rgba(0,0,0,0.9); height: 80px; }
-        header.nav-hidden { transform: translateY(-100%); }
+.loader-panel {
+  position: absolute;
+  width: 100%;
+  height: 50vh;
+  background: #020202; 
+  z-index: 0;
+}
+.loader-panel.top { top: 0; }
+.loader-panel.bottom { bottom: 0; }
 
-        nav.container { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 24px; font-weight: 900; color: var(--text); text-decoration: none; text-transform: uppercase; letter-spacing: 2px; }
-        .logo span { color: var(--primary); }
-        .nav-links { display: flex; gap: 40px; list-style: none; }
-        .nav-links a { font-size: 14px; font-weight: 500; color: var(--text); text-decoration: none; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s; }
-        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+.loader-brand {
+  display: flex;
+  gap: 0.4vw;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: var(--text);
+  z-index: 2;
+}
 
-        .burger { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
-        .burger div { width: 25px; height: 2px; background-color: var(--text); transition: all 0.3s; }
+.loader-char-wrap {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.2rem;
+}
 
-        /* HERO SECTION - REVISADO */
-        #hero-sec {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-            background-color: var(--dark-grey);
-            z-index: var(--z-content);
-            cursor: pointer; /* Indica que é interativo */
-        }
+.loader-char {
+  display: inline-block;
+  transform-origin: center bottom;
+  will-change: transform, opacity, color;
+}
 
-        .hero-slide {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0;
-            z-index: 1;
-            transition: opacity 1s var(--ease-in-out);
-            overflow: hidden;
-        }
-        .hero-slide.active { opacity: 1; z-index: 2; }
+h1, h2, h3, .brand {
+  font-family: 'Space Grotesk', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
 
-        /* Media Container for Video - MANTIDO */
-        .slide-media {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1;
-        }
-        .video-fallback, .hero-video {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: auto; height: auto;
-            min-width: 100%; min-height: 100%;
-            transform: translate(-50%, -50%) scale(1.1); /* Slight zoom for transition */
-            object-fit: cover;
-            object-position: center;
-            /* pointer-events: none; */ /* Permite interação se necessário */
-            opacity: 0.9;
-            filter: contrast(1.1) brightness(0.9) saturate(0.9) blur(10px);
-            transition: transform 1.2s var(--ease-in-out), filter 1.2s var(--ease-in-out);
-        }
-        
-        .hero-slide.active .video-fallback,
-        .hero-slide.active .hero-video {
-            transform: translate(-50%, -50%) scale(1.0);
-            filter: contrast(1) brightness(1) saturate(1) blur(0px);
-        }
+a { color: var(--text); text-decoration: none; transition: color 0.3s var(--ease); }
+a:hover { color: var(--accent); }
 
-        /* Overlay text - MANTIDO */
-        .hero-content {
-            position: absolute;
-            bottom: 15%; left: 0; width: 100%;
-            z-index: 3;
-            color: var(--text);
-            padding: 0 10%;
-            pointer-events: none;
-        }
-        .hero-label { font-size: 14px; text-transform: uppercase; letter-spacing: 3px; font-weight: 500; display: block; margin-bottom: 10px; opacity: 0; transform: translateY(20px); transition: all 0.8s 0.3s; }
-        .hero-title { font-size: 72px; font-weight: 900; line-height: 1.1; max-width: 700px; text-transform: uppercase; opacity: 0; transform: translateY(30px); transition: all 0.8s 0.5s; margin-left: -5px; }
-        .hero-title span { color: var(--primary); }
+.fade-in {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
 
-        .hero-slide.active .hero-label,
-        .hero-slide.active .hero-title { opacity: 1; transform: translateY(0); }
+nav {
+  position: fixed;
+  top: 0; left: 0; width: 100%;
+  padding: 0.8rem 4rem;
+  display: flex; justify-content: space-between; align-items: center;
+  background: #000000;
+  z-index: 100;
+}
 
-        /* Hero Indicators - MANTIDO */
-        #hero-indicators {
-            position: absolute;
-            bottom: 50px; right: 50px;
-            z-index: 4;
-            display: flex; flex-direction: column; gap: 10px;
-            pointer-events: none;
-        }
-        .hero-indicator {
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.3);
-            background: none;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .hero-indicator.active {
-            background: var(--text);
-            border-color: var(--text);
-            transform: scale(1.2);
-        }
+.nav-left, .nav-right { display: flex; align-items: center; flex: 1; }
+.nav-right { justify-content: flex-end; }
 
-        /* OVERLAY GLOBAL - MANTIDO */
-        .global-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: var(--z-overlay);
-            display: flex; align-items: center; justify-content: center;
-            background-color: var(--dark);
-            pointer-events: all;
-            transition: opacity 1.5s var(--ease-in-out);
-        }
-        .global-overlay.fade-out { opacity: 0; pointer-events: none; }
-        .overlay-center { text-align: center; }
-        .overlay-title { font-size: 80px; font-weight: 900; color: var(--text); text-transform: uppercase; opacity: 0; animation: blink-in 1.5s forwards 0.5s; }
-        .overlay-title span { color: var(--primary); }
+.brand { 
+  font-size: 1.5rem; 
+  font-weight: 700; 
+  letter-spacing: 0.1em; 
+  position: absolute; 
+  left: 50%; 
+  transform: translateX(-50%);
+  color: #ffffff;
+}
 
-        @keyframes blink-in {
-            0% { opacity: 0; transform: scale(1.1) rotate(2deg); filter: blur(5px); }
-            50% { opacity: 1; transform: scale(1) rotate(0deg); filter: blur(0px); }
-            100% { opacity: 1; transform: scale(1.01) rotate(-1deg); filter: blur(2px); }
-        }
+.menu-btn {
+  display: flex; align-items: center; gap: 0.8rem;
+  background: none; border: none; color: #ffffff;
+  font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500;
+  cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em;
+  transition: color 0.3s var(--ease);
+}
 
-        /* 3D SECTION - REVISADO */
-        #threed-sec {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-            background-color: var(--dark-grey);
-            display: flex; align-items: center; justify-content: center;
-            color: var(--text);
-            z-index: var(--z-content);
-        }
+.menu-btn:hover { color: var(--accent); }
 
-        #threed-canvas {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100vh;
-            z-index: var(--z-3d);
-        }
+.menu-icon { display: flex; flex-direction: column; gap: 4px; }
+.menu-icon span { display: block; width: 24px; height: 1px; background-color: currentColor; transition: background-color 0.3s var(--ease); }
 
-        .threed-grid {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: grid; grid-template-columns: repeat(2, 1fr);
-            z-index: calc(var(--z-3d) + 1);
-            pointer-events: none;
-        }
+.search-btn {
+  background: none; border: none; color: #ffffff;
+  cursor: pointer; transition: color 0.3s var(--ease);
+}
+.search-btn:hover { color: var(--accent); }
 
-        .threed-content-left {
-            display: flex; flex-direction: column; justify-content: flex-end;
-            padding: 100px 5% 100px 10%;
-            border-right: 1px solid rgba(255,255,255,0.05);
-            background: linear-gradient(90deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 100%);
-        }
+.hero {
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg);
+}
 
-        .threed-content-right {
-            display: flex; flex-direction: column; justify-content: flex-start;
-            padding: 100px 10% 100px 5%;
-        }
+.slide {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease), transform 8s linear;
+  transform: scale(1.05);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  z-index: 1;
+}
 
-        .threed-label { font-size: 14px; text-transform: uppercase; letter-spacing: 3px; font-weight: 500; opacity: 0.7; margin-bottom: 20px; }
-        .threed-title { font-size: 72px; font-weight: 900; line-height: 1; text-transform: uppercase; margin-bottom: 30px; letter-spacing: -1px; }
-        .threed-title span { color: var(--primary); display: block; font-size: 96px; margin-top: 10px; }
-        .threed-desc { font-size: 16px; line-height: 1.8; color: var(--text-dim); max-width: 500px; margin-bottom: 50px; }
-        .threed-btn {
-            display: inline-block; padding: 20px 40px;
-            background: none; border: 2px solid var(--text);
-            color: var(--text); text-decoration: none; font-size: 14px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 2px;
-            pointer-events: all;
-            position: relative; overflow: hidden;
-            transition: border-color 0.4s;
-        }
-        .threed-btn::before { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 100%; background: var(--text); z-index: -1; transition: width 0.4s var(--ease-in-out); }
-        .threed-btn:hover { color: var(--dark); border-color: var(--text); }
-        .threed-btn:hover::before { width: 100%; }
+.slide.active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 2;
+}
 
-        .threed-info-block {
-            max-width: 500px;
-            padding: 30px; border: 1px solid rgba(255,255,255,0.05);
-            background: rgba(255,255,255,0.02);
-            transition: border-color 0.4s, background 0.4s;
-            margin-bottom: 30px;
-        }
-        .threed-info-block:hover { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); }
-        .threed-info-title { font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; color: var(--text); }
-        .threed-info-title span { color: var(--primary); margin-right: 8px; }
-        .threed-info-desc { font-size: 14px; line-height: 1.6; color: var(--text-dim); }
+.play-link {
+  display: block; width: 100%; height: 100%; position: relative; cursor: pointer;
+}
 
-        /* NOSSA EVOLUÇÃO - MANTIDO */
-        #timeline-sec {
-            width: 100%; min-height: 100vh;
-            position: relative; overflow: hidden;
-            background-color: var(--dark);
-            z-index: var(--z-content);
-            padding: 150px 0;
-            cursor: default;
-        }
+.play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  display: flex; justify-content: center; align-items: center;
+  z-index: 3;
+  color: var(--text);
+  transition: all 0.4s var(--ease);
+}
 
-        #threed-trigger { position: absolute; top: -100px; width: 100%; height: 100px; }
+.play-btn svg {
+  width: 100%; height: 100%;
+  fill: transparent;
+  stroke-width: 0.5;
+  transition: all 0.4s var(--ease);
+}
 
-        .timeline-scroll-container { width: 100%; height: 100%; display: flex; align-items: center; position: relative; }
-        .timeline-track { display: flex; will-change: transform; transition: transform 0.1s linear; }
+.play-link:hover .play-btn {
+  transform: translate(-50%, -50%) scale(1.1);
+  color: var(--accent);
+}
 
-        .timeline-header {
-            width: 400px; height: 600px;
-            display: flex; flex-direction: column; justify-content: center;
-            padding-right: 50px;
-            position: relative; margin-right: 100px;
-            flex-shrink: 0;
-        }
-        .timeline-header::after { content: ''; position: absolute; right: 0; top: 0; height: 100%; width: 1px; background: rgba(255,255,255,0.1); }
-        .timeline-label { font-size: 14px; text-transform: uppercase; letter-spacing: 3px; font-weight: 500; opacity: 0.7; margin-bottom: 20px; color: var(--primary); }
-        .timeline-title { font-size: 64px; font-weight: 900; line-height: 1; text-transform: uppercase; letter-spacing: -2px; }
-        .timeline-title span { display: block; font-weight: 300; font-size: 56px; }
+.play-link:hover .play-btn svg { fill: rgba(208, 255, 0, 0.2); stroke: var(--accent); stroke-width: 1; }
 
-        .timeline-item {
-            width: 350px; height: 600px;
-            display: flex; flex-direction: column; justify-content: flex-end;
-            margin-right: 60px;
-            position: relative;
-            flex-shrink: 0;
-            background-color: var(--light-grey);
-            border: 1px solid rgba(255,255,255,0.03);
-            overflow: hidden;
-            transition: border-color 0.4s, background 0.4s;
-        }
-        .timeline-item:hover { border-color: rgba(255,255,255,0.08); background-color: rgba(25,25,25,1); }
-        
-        .timeline-item-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover; background-position: center;
-            filter: grayscale(1) brightness(0.7);
-            transition: transform 0.5s, filter 0.5s;
-            z-index: 1;
-        }
-        .timeline-item:hover .timeline-item-bg { transform: scale(1.05); filter: grayscale(0) brightness(0.8); }
+.hero-titles-list {
+  position: absolute;
+  bottom: 4rem;
+  left: 4rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
 
-        .timeline-item-content {
-            position: relative; z-index: 2;
-            padding: 40px;
-            background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.9) 100%);
-        }
-        .timeline-year { font-size: 14px; color: var(--primary); font-weight: 700; margin-bottom: 10px; opacity: 0.8; }
-        .timeline-project { font-size: 18px; color: var(--text); font-weight: 700; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; line-height: 1.3; }
-        .timeline-project span { font-weight: 400; color: rgba(255,255,255,0.7); text-transform: none; }
-        .timeline-line { width: 50px; height: 1px; background: rgba(255,255,255,0.3); transition: width 0.4s; }
-        .timeline-item:hover .timeline-line { width: 80px; background: var(--primary); }
+.hero-title-item {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  color: rgba(245, 245, 247, 0.4);
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 0;
+  display: inline-flex;
+  align-items: flex-start;
+}
 
-        /* NOSSOS CLIENTES - REVISADO */
-        #clients-sec {
-            width: 100%; min-height: 100vh;
-            position: relative; overflow: hidden;
-            background-color: var(--dark-grey);
-            z-index: var(--z-content);
-            padding: 150px 0;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: default;
-        }
-        
-        #clients-trigger { position: absolute; top: -100px; width: 100%; height: 100px; }
+.hero-title-item.active, .hero-title-item:hover {
+  color: var(--text);
+}
 
-        .clients-grid-wrapper { width: 100%; max-width: 1400px; margin: 0 auto; padding: 0 40px; position: relative; }
-        .clients-header { text-align: center; margin-bottom: 100px; }
-        .clients-label { font-size: 14px; text-transform: uppercase; letter-spacing: 3px; font-weight: 500; opacity: 0.7; margin-bottom: 20px; color: var(--primary); display: block; }
-        .clients-title { font-size: 64px; font-weight: 900; line-height: 1; text-transform: uppercase; letter-spacing: -2px; color: var(--text); }
-        .clients-title span { font-weight: 300; font-size: 56px; }
+.hero-title-item .year {
+  font-size: 0.8rem;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0;
+  margin-left: 0.8rem;
+  margin-top: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
 
-        .clients-marquee { width: 100%; overflow: hidden; position: relative; margin-bottom: 10px; padding: 20px 0; }
-        .clients-marquee::before, .clients-marquee::after { content:''; position: absolute; top: 0; width: 200px; height: 100%; z-index: 2; pointer-events: none; }
-        .clients-marquee::before { left: 0; background: linear-gradient(90deg, var(--dark-grey) 0%, rgba(10,10,10,0) 100%); }
-        .clients-marquee::after { right: 0; background: linear-gradient(-90deg, var(--dark-grey) 0%, rgba(10,10,10,0) 100%); }
-        
-        .clients-track {
-            display: flex;
-            width: fit-content;
-            animation: marquee 100s linear infinite;
-            will-change: transform;
-        }
-        .clients-track:hover { animation-play-state: paused; }
+.hero-title-item.active .year, .hero-title-item:hover .year {
+  opacity: 1;
+}
 
-        .clients-row { display: flex; gap: 10px; flex-shrink: 0; }
-        
-        /* AUMENTO DO TAMANHO DO LOGO */
-        .client-item {
-            position: relative;
-            overflow: hidden;
-            border-radius: 12px;
-            background: rgba(255,255,255,0.03);
-            padding: 20px;
-            height: 140px; /* Aumentado de 120px */
-            width: 140px;  /* Aumentado de 120px */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
-            flex-shrink: 0;
-        }
-        .client-item::after { content:''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(var(--primary-rgb),0.1) 0%, rgba(255,255,255,0) 100%); opacity: 0; transition: opacity 0.3s; z-index: 1; }
-        .client-item:hover { transform: scale(1.03); background: rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .client-item:hover::after { opacity: 1; }
+.video-modal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: #000;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease);
+}
 
-        .client-logo {
-            max-width: 90px;
-            max-height: 90px;
-            filter: grayscale(1) brightness(0.9);
-            opacity: 0.7;
-            transition: filter 0.3s ease, opacity 0.3s ease;
-            position: relative; z-index: 2;
-        }
-        .client-item:hover .client-logo { filter: grayscale(0) brightness(1.2) drop-shadow(0 0 10px rgba(255,255,255,0.5)); opacity: 1; }
+.video-modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
 
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.iframe-container {
+  width: 90%;
+  height: 90%;
+  max-width: 1600px;
+}
 
-        /* ENTRE EM CONTATO - MANTIDO */
-        #contact-sec {
-            width: 100%; min-height: 100vh;
-            position: relative; overflow: hidden;
-            background-color: var(--dark);
-            z-index: var(--z-content);
-            padding: 150px 0;
-            display: flex; align-items: center;
-            cursor: default;
-        }
-        
-        #contact-trigger { position: absolute; top: -100px; width: 100%; height: 100px; }
+.iframe-container iframe {
+  width: 100%;
+  height: 100%;
+}
 
-        .contact-content {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
-            position: relative; z-index: 2;
-        }
+.close-modal {
+  position: absolute;
+  top: 2rem;
+  right: 3rem;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  z-index: 10000;
+  transition: color 0.3s;
+}
 
-        .contact-text { display: flex; flex-direction: column; justify-content: center; }
-        .contact-label { font-size: 14px; text-transform: uppercase; letter-spacing: 3px; font-weight: 500; opacity: 0.7; margin-bottom: 20px; color: var(--primary); display: block; }
-        .contact-title { font-size: 64px; font-weight: 900; line-height: 1; text-transform: uppercase; letter-spacing: -2px; margin-bottom: 30px; }
-        .contact-desc { font-size: 16px; line-height: 1.8; color: var(--text-dim); max-width: 500px; margin-bottom: 50px; }
-        .contact-info { display: flex; flex-direction: column; gap: 20px; }
-        .contact-link { font-size: 20px; font-weight: 500; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 15px; transition: color 0.3s; }
-        .contact-link:hover { color: var(--primary); }
-        .contact-link i { color: var(--primary); font-size: 24px; }
+.close-modal:hover {
+  color: var(--accent);
+}
 
-        .contact-form-wrapper {
-            background: rgba(25,25,25,1);
-            border: 1px solid rgba(255,255,255,0.05);
-            padding: 60px;
-            display: flex; flex-direction: column; gap: 30px;
-            transition: border-color 0.4s;
-        }
-        .contact-form-wrapper:hover { border-color: rgba(255,255,255,0.1); }
-        .form-group { width: 100%; }
-        .form-input {
-            width: 100%; padding: 20px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            color: var(--text); font-family: var(--font-main); font-size: 14px;
-            transition: border-color 0.3s, background 0.3s;
-        }
-        .form-input:focus { border-color: var(--primary); background: rgba(255,255,255,0.05); }
-        textarea.form-input { height: 150px; resize: none; }
-        
-        .contact-btn {
-            display: block; width: 100%; padding: 20px 40px;
-            background: none; border: 2px solid var(--primary);
-            color: var(--text); text-decoration: none; font-size: 14px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 2px;
-            position: relative; overflow: hidden;
-            transition: color 0.4s;
-            cursor: pointer;
-        }
-        .contact-btn::before { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 100%; background: var(--primary); z-index: -1; transition: width 0.4s var(--ease-in-out); }
-        .contact-btn:hover { color: var(--dark); }
-        .contact-btn:hover::before { width: 100%; }
+.evolve-wrapper { height: 250vh; position: relative; background: var(--bg); }
+.evolve-sticky {
+  position: sticky; top: 0; height: 100vh; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.evolve-bg-video {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;
+}
+.evolve-bg-video video {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.evolve-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,5,5,0.65); z-index: 2;
+}
+.flash-bang {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: #fff; opacity: 0; z-index: 3; pointer-events: none; mix-blend-mode: overlay;
+}
+.flash-bang.fire {
+  animation: bang 0.4s cubic-bezier(0.1, 1, 0.2, 1);
+}
+@keyframes bang {
+  0% { opacity: 1; filter: brightness(3); }
+  100% { opacity: 0; filter: brightness(1); }
+}
 
-        /* FOOTER - MANTIDO */
-        footer {
-            width: 100%; padding: 60px 0;
-            background-color: var(--dark);
-            border-top: 1px solid rgba(255,255,255,0.05);
-            text-align: center;
-            z-index: var(--z-content);
-            position: relative;
-            cursor: default;
-        }
-        .footer-logo { font-size: 32px; font-weight: 900; color: var(--text); text-decoration: none; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; display: inline-block; }
-        .footer-logo span { color: var(--primary); }
-        .footer-nav { list-style: none; display: flex; gap: 30px; justify-content: center; margin-bottom: 40px; }
-        .footer-nav a { text-decoration: none; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-size: 12px; font-weight: 500; transition: color 0.3s; }
-        .footer-nav a:hover { color: var(--primary); }
-        .footer-social { display: flex; gap: 20px; justify-content: center; margin-bottom: 40px; }
-        .footer-social-link { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
-        .footer-social-link:hover { color: var(--text); border-color: var(--primary); background: var(--primary); }
-        .copyright { font-size: 12px; color: rgba(255,255,255,0.3); letter-spacing: 1px; }
+.cinematic-bar {
+  position: absolute; left: 0; width: 100%; height: 25vh;
+  background: #000; z-index: 3; will-change: transform;
+}
+.cinematic-bar.top { top: 0; transform: translateY(-100%); }
+.cinematic-bar.bottom { bottom: 0; transform: translateY(100%); }
 
-        /* RESPONSIVIDADE - MANTIDO */
-        @media (max-width: 1024px) {
-            .hero-title { font-size: 56px; }
-            .threed-grid { grid-template-columns: 1fr; grid-template-rows: auto auto; height: 100vh; pointer-events: auto; position: static; }
-            .threed-content-left { padding: 100px 5% 50px 5%; border-right: none; height: 50vh; justify-content: center; position: absolute; bottom: 0; background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%); width: 100%; border-top: 1px solid rgba(255,255,255,0.05); }
-            .threed-content-right { display: none; }
-            .timeline-track { transform: translateX(0) !important; display: grid; grid-template-columns: 1fr; gap: 40px; }
-            .timeline-scroll-container { height: auto; display: block; overflow: visible; }
-            .timeline-track-wrapper { height: auto; }
-            .timeline-header { width: 100%; height: auto; margin-right: 0; padding-right: 0; text-align: center; align-items: center; }
-            .timeline-item { width: 100%; height: 500px; margin-right: 0; }
-            .contact-content { grid-template-columns: 1fr; gap: 50px; }
-            .clients-row { flex-wrap: wrap; justify-content: center; }
-            /* AUMENTO DO TAMANHO DO LOGO RESPONSIVO */
-            .client-item { width: 120px; height: 120px; } /* Mantido menor em mobile */
-        }
+.evolve-texts { position: relative; z-index: 4; width: 100%; height: clamp(4rem, 8vw, 8rem); display: flex; justify-content: center; align-items: center; perspective: 1000px; }
+.evolve-phrase {
+  position: absolute; width: 100%; text-align: center;
+  font-size: clamp(2.5rem, 5vw, 6rem);
+  opacity: 0;
+  color: var(--text);
+  text-shadow: 0 4px 30px rgba(0,0,0,1);
+  margin: 0; pointer-events: none;
+}
 
-        @media (max-width: 768px) {
-            header { height: 80px; }
-            nav.container { padding: 0 20px; }
-            .nav-links { display: none; position: fixed; top: 80px; left: 0; width: 100%; background: var(--dark); padding: 40px; flex-direction: column; text-align: center; gap: 30px; transform: translateY(-100%); transition: transform 0.4s; z-index: 99; border-top: 1px solid rgba(255,255,255,0.05); }
-            .nav-links.open { transform: translateY(0); }
-            .burger { display: flex; }
-            .hero-title { font-size: 40px; }
-            .threed-title { font-size: 40px; }
-            .threed-title span { font-size: 56px; }
-            .timeline-title { font-size: 48px; }
-            .timeline-title span { font-size: 40px; }
-            .clients-title { font-size: 48px; }
-            .clients-title span { font-size: 40px; }
-            .contact-title { font-size: 48px; }
-            .clients-marquee::before, .clients-marquee::after { width: 100px; }
-        }
-    </style>
+.hover-move {
+  display: inline-block;
+  will-change: transform;
+}
+
+.phrase-1.active { animation: flashStrikeIn 0.5s cubic-bezier(0.1, 1, 0.2, 1) forwards; color: var(--accent); }
+.phrase-1.passed { animation: flashStrikeOut 0.3s forwards; }
+
+.phrase-2.active { animation: glitchStrikeIn 0.6s cubic-bezier(0.1, 1, 0.2, 1) forwards; color: #fff; text-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent); }
+.phrase-2.passed { animation: glitchStrikeOut 0.3s forwards; }
+
+.phrase-3.active { animation: blurStrikeIn 0.5s ease-out forwards; color: var(--accent); }
+.phrase-3.passed { animation: blurStrikeOut 0.3s forwards; }
+
+.phrase-4.active { animation: electricStrikeIn 0.5s forwards; color: #fff; text-shadow: 0 0 10px #fff; }
+.phrase-4.passed { animation: electricStrikeOut 0.3s forwards; }
+
+@keyframes flashStrikeIn {
+  0% { opacity: 0; transform: scale(3) translateZ(200px); filter: brightness(10) blur(20px); }
+  50% { opacity: 1; filter: brightness(5) blur(0px); }
+  100% { opacity: 1; transform: scale(1) translateZ(0); filter: brightness(1) blur(0px); }
+}
+@keyframes flashStrikeOut {
+  0% { opacity: 1; transform: scale(1); filter: brightness(1); }
+  100% { opacity: 0; transform: scale(0.5) translateY(-100px); filter: brightness(5) blur(10px); }
+}
+
+@keyframes glitchStrikeIn {
+  0% { opacity: 0; transform: skewX(-40deg) scale(1.5); filter: brightness(10); clip-path: polygon(0 0, 100% 0, 100% 10%, 0 10%); }
+  15% { opacity: 1; transform: skewX(30deg) scale(1.3); clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); filter: brightness(5); }
+  30% { transform: skewX(-20deg) scale(1.1); clip-path: polygon(0 40%, 100% 40%, 100% 60%, 0 60%); }
+  45% { transform: skewX(10deg) scale(1.05); clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%); }
+  60% { transform: skewX(0deg) scale(1); clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); filter: brightness(3); }
+  100% { opacity: 1; transform: skewX(0deg) scale(1); filter: brightness(1); clip-path: none; }
+}
+@keyframes glitchStrikeOut {
+  0% { opacity: 1; transform: scale(1); filter: brightness(1); }
+  50% { opacity: 1; transform: skewX(20deg) scale(1.2); filter: brightness(5); }
+  100% { opacity: 0; transform: skewX(-40deg) scale(0.2) translateY(-100px); filter: brightness(10); }
+}
+
+@keyframes blurStrikeIn {
+  0% { opacity: 0; transform: translateX(200px) scale(2); filter: blur(30px) brightness(5); letter-spacing: 40px; }
+  100% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0px) brightness(1); letter-spacing: -0.02em; }
+}
+@keyframes blurStrikeOut {
+  0% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0px) brightness(1); }
+  100% { opacity: 0; transform: translateX(-200px) scale(0.5); filter: blur(30px) brightness(5); letter-spacing: -20px; }
+}
+
+@keyframes electricStrikeIn {
+  0% { opacity: 0; filter: contrast(10) brightness(10) invert(1); transform: scale(1.5); }
+  10% { opacity: 1; filter: contrast(1) brightness(1) invert(0); }
+  20% { opacity: 0; filter: contrast(10) brightness(10) invert(1); transform: scale(1.2); }
+  30% { opacity: 1; filter: contrast(1) brightness(1) invert(0); }
+  40% { opacity: 0; filter: contrast(5) brightness(5); }
+  100% { opacity: 1; transform: scale(1); filter: none; }
+}
+@keyframes electricStrikeOut {
+  0% { opacity: 1; transform: scale(1); }
+  10% { opacity: 0; filter: brightness(10); }
+  20% { opacity: 1; filter: brightness(1); }
+  100% { opacity: 0; transform: scale(3); filter: blur(20px) brightness(5); }
+}
+
+.clients-section { padding: 1.5rem 4rem; background: var(--bg); display: flex; gap: 4rem; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); overflow: hidden; position: relative; z-index: 5;}
+.clients-left { flex: 0 0 22%; }
+.clients-left h2 { font-size: clamp(1.2rem, 1.8vw, 1.8rem); line-height: 1.1; margin-bottom: 0.3rem; color: var(--text); white-space: nowrap; }
+.clients-left .accent-dot { color: var(--accent); }
+.clients-link { font-family: 'Inter', sans-serif; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.5rem; opacity: 0.7; }
+.clients-right { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 3rem; position: relative;}
+.clients-right::before, .clients-right::after { content: ''; position: absolute; top: 0; width: 100px; height: 100%; z-index: 2; pointer-events: none; }
+.clients-right::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
+.clients-right::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
+.clients-track { display: flex; align-items: center; gap: 6rem; width: max-content; animation: marquee-clients 160s linear infinite; }
+.clients-track.reverse { animation-direction: reverse; animation-duration: 50s;}
+.clients-track img { height: 160px; object-fit: contain; max-width: 300px; filter: grayscale(100%) brightness(0.6); transition: all 0.4s var(--ease); }
+.clients-track img:hover { filter: grayscale(0%) brightness(1); transform: scale(1.1) !important; animation-play-state: paused; }
+@keyframes marquee-clients { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+@media (max-width: 900px) { .clients-section { flex-direction: column; padding: 2rem 2rem; gap: 2rem; } .clients-left { flex: none; width: 100%; text-align: center; } .clients-right::before, .clients-right::after { width: 50px; } .clients-track img { height: 115px; } }
+
+.portfolio-horizontal-wrapper {
+  height: 100vh;
+  position: relative;
+  background: var(--bg);
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.portfolio-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.portfolio-bg-animation {
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 150px 150px;
+  transform: perspective(1000px) rotateX(70deg) translateY(-150px) translateZ(-300px);
+  animation: gridMovePortfolio 25s linear infinite;
+  opacity: 0.5;
+}
+
+.portfolio-glow {
+  position: absolute;
+  width: 100vw; height: 100vh;
+  background: radial-gradient(ellipse at center, rgba(208, 255, 0, 0.12) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  animation: pulseBgGlowPortfolio 10s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes gridMovePortfolio {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 300px; }
+}
+
+@keyframes pulseBgGlowPortfolio {
+  0% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+}
+
+.portfolio-section-title {
+  position: absolute;
+  top: 4rem; left: 4rem;
+  z-index: 10;
+  font-size: 2.5rem;
+  opacity: 0.9;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+}
+
+.portfolio-track {
+  display: flex;
+  align-items: flex-start;
+  gap: 6vw;
+  padding: 0 50vw 0 10vw; 
+  width: max-content;
+  height: 80vh;
+  margin-top: 10vh;
+  z-index: 5;
+  will-change: transform;
+}
+
+.port-item {
+  position: relative;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #111;
+  cursor: pointer;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+  opacity: 0.8;
+  transition: opacity 0.5s var(--ease), transform 0.8s var(--ease), box-shadow 0.5s var(--ease);
+}
+
+.port-item:hover {
+  opacity: 1;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.9);
+}
+
+.port-item video, .port-item .vimeo-port-bg {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  filter: grayscale(90%) contrast(1.2);
+  transition: filter 0.8s var(--ease);
+}
+
+.port-item:hover video, .port-item:hover .vimeo-port-bg {
+  filter: grayscale(0%) contrast(1);
+}
+
+.port-text {
+  flex-shrink: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2vw;
+  color: var(--text);
+  opacity: 0.75;
+  white-space: normal;
+  width: 20vw;
+  margin: 0 2vw;
+  line-height: 1.2;
+}
+
+.size-l { width: 22vw; aspect-ratio: 16/9; }
+.size-sq { width: 14vw; aspect-ratio: 16/9; }
+.size-m { width: 18vw; aspect-ratio: 16/9; margin-top: 5vh; }
+.size-s { width: 12vw; aspect-ratio: 16/9; }
+.size-xs { width: 9vw; aspect-ratio: 16/9; }
+
+.align-top { align-self: flex-start; margin-top: 5vh; }
+.align-center { align-self: center; }
+.align-bottom { align-self: flex-end; margin-bottom: 8vh; }
+
+.port-item:nth-child(even) { transform: translateY(8vh); }
+.port-item:nth-child(3n) { transform: translateY(-5vh); }
+.port-item:nth-child(5n) { transform: translateY(3vh); }
+
+.port-info {
+  position: absolute;
+  bottom: -100%; left: 0; width: 100%;
+  padding: 1.5rem;
+  background: linear-gradient(to top, rgba(5,5,5,0.98), transparent);
+  transition: bottom 0.5s var(--ease);
+  border-bottom: 2px solid var(--accent);
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.port-item:hover .port-info { bottom: 0; }
+.port-info h3 { font-size: 1.2rem; margin-bottom: 0.4rem; color: var(--accent); }
+.port-info p { font-size: 0.9rem; opacity: 0.8; }
+
+.port-item-caption {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+}
+
+.port-item:hover .port-item-caption {
+  opacity: 1;
+}
+
+section { padding: 8rem 4rem; position: relative; z-index: 5; background: var(--bg); }
+.section-title { font-size: 2.5rem; margin-bottom: 4rem; opacity: 0.9; }
+
+.split-screen { display: flex; gap: 6rem; }
+.manifesto { flex: 1; font-size: 1.5rem; line-height: 1.5; }
+.manifesto span { color: var(--accent); font-weight: 500; }
+
+.team-grid {
+  flex: 1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;
+}
+.team-grid .avatar:first-child { grid-column: span 2; aspect-ratio: 21/9; }
+
+.avatar { background: #222; border-radius: 2px; overflow: hidden; aspect-ratio: 1; }
+.avatar img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: grayscale(100%); transition: filter 0.5s var(--ease), transform 0.5s var(--ease);
+}
+.avatar:hover img { filter: grayscale(0%); transform: scale(1.05); }
+
+footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #111; }
+.footer-blocks { display: flex; gap: 6rem; margin-bottom: 6rem; flex-wrap: wrap;}
+.footer-block { flex: 1; min-width: 300px; }
+.footer-block h2 { font-size: 2rem; margin-bottom: 2rem; }
+
+.contact-form { display: flex; flex-direction: column; gap: 2rem; }
+.input-group input {
+  width: 100%; padding: 1rem 0; background: transparent; border: none;
+  border-bottom: 1px solid #333; color: var(--text);
+  font-family: 'Inter', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.3s;
+}
+.input-group input:focus { border-bottom-color: var(--accent); }
+
+.btn-submit {
+  align-self: flex-start; background: transparent; color: var(--text); border: 1px solid #333;
+  padding: 1rem 2.5rem; font-family: 'Space Grotesk'; cursor: pointer;
+  border-radius: 50px; transition: all 0.3s;
+}
+.btn-submit:hover {
+  border-color: var(--accent); color: var(--bg); background: var(--accent);
+  box-shadow: 0 0 15px rgba(208, 255, 0, 0.3);
+}
+
+.work-with-us { font-size: 1.2rem; line-height: 1.6; color: #888; }
+.arrow-link {
+  display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 2rem;
+  font-family: 'Space Grotesk'; font-size: 1.2rem;
+}
+.arrow-link span { transition: transform 0.3s var(--ease); color: var(--accent); }
+.arrow-link:hover span { transform: translateX(10px); }
+
+.footer-bottom {
+  display: flex; justify-content: space-between; padding-top: 2rem;
+  border-top: 1px solid #111; font-size: 0.8rem; color: #555;
+}
+.social-links { display: flex; gap: 1.5rem; }
+
+.cinematic-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 10;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
+  animation: flicker 0.15s infinite; opacity: 0.4; mix-blend-mode: overlay;
+}
+.cinematic-overlay::after {
+  content: ""; position: absolute; top: -100%; left: -100%; width: 300%; height: 300%;
+  background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+  opacity: 0.3; animation: grain 8s steps(10) infinite; pointer-events: none;
+}
+.cinematic-grade {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 11;
+  background: linear-gradient(45deg, rgba(16, 22, 38, 0.4) 0%, rgba(255, 145, 0, 0.1) 100%);
+  mix-blend-mode: color;
+}
+.cinematic-vignette {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 12;
+  background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.95) 100%);
+}
+.old-camera-filter {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 13;
+  background: rgba(139, 107, 74, 0.15);
+  mix-blend-mode: color-burn;
+  filter: sepia(40%) contrast(120%);
+}
+.cinematic-bars::before, .cinematic-bars::after {
+  content: ''; position: absolute; left: 0; width: 100%; height: 10%; background: #000; z-index: 15; pointer-events: none;
+}
+.cinematic-bars::before { top: 0; }
+.cinematic-bars::after { bottom: 0; }
+
+@keyframes flicker {
+  0% { opacity: 0.3; }
+  50% { opacity: 0.4; }
+  100% { opacity: 0.3; }
+}
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -10%); }
+  20% { transform: translate(-15%, 5%); }
+  30% { transform: translate(7%, -25%); }
+  40% { transform: translate(-5%, 25%); }
+  50% { transform: translate(-15%, 10%); }
+  60% { transform: translate(15%, 0%); }
+  70% { transform: translate(0%, 15%); }
+  80% { transform: translate(3%, 35%); }
+  90% { transform: translate(-10%, 10%); }
+}
+
+@media (max-width: 900px) {
+  nav { padding: 0.8rem 2rem; }
+  .hero-titles-list { left: 2rem; bottom: 3rem; }
+  section { padding: 5rem 2rem; }
+  .split-screen, .footer-blocks { flex-direction: column; gap: 3rem; }
+  .portfolio-track { gap: 8vw; height: 60vh; margin-top: 15vh; padding: 0 60vw 0 10vw; }
+  .size-l, .size-sq, .size-m, .size-s, .size-xs { width: 50vw; }
+  .port-text { font-size: 5vw; width: 60vw; margin: 0 5vw; }
+}
+</style>
 </head>
-<body id="smooth-wrapper">
-    <div id="noise-bg"></div>
+<body class="loading">
 
-    <div class="global-overlay fade-out" id="overlay">
-        <div class="overlay-center">
-            <div class="overlay-title">C<span>R</span>EAPES</div>
+<div id="loader">
+  <div class="loader-panel top"></div>
+  <div class="loader-panel bottom"></div>
+  <div class="loader-brand" id="loaderBrand"></div>
+</div>
+
+<nav>
+  <div class="nav-left">
+    <button class="menu-btn">
+      <div class="menu-icon">
+        <span></span>
+        <span></span>
+      </div>
+      Menu
+    </button>
+  </div>
+  <div class="brand">{{ loja.nome }}</div>
+  <div class="nav-right">
+    <button class="search-btn">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    </button>
+  </div>
+</nav>
+
+<header class="hero" id="hero">
+  {% set hero_videos = [] %}
+  {% for p in produtos %}
+    {% set p_cat = p.categoria_id.id if p.categoria_id is mapping else p.categoria_id %}
+    {% for c in categorias %}
+      {% if p_cat|string == c.id|string and ('hero' in c.slug|lower or 'hero' in c.nome|lower) %}
+        {% set _ = hero_videos.append(p) %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+
+  {% for p in hero_videos %}
+    {% set bg_link = p.link_projeto %}
+    {% if bg_link and 'vimeo.com' in bg_link and 'player.vimeo.com' not in bg_link %}
+      {% set clean_url = bg_link.split('?')[0].strip('/') %}
+      {% set link_parts = clean_url.split('/') %}
+      {% if link_parts|length >= 5 %}
+        {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] ~ '?h=' ~ link_parts[4] %}
+      {% elif link_parts|length == 4 %}
+        {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] %}
+      {% endif %}
+    {% endif %}
+
+    {% set modal_link = p.whatsapp_projeto %}
+    {% if modal_link and 'vimeo.com' in modal_link and 'player.vimeo.com' not in modal_link %}
+      {% set m_clean_url = modal_link.split('?')[0].strip('/') %}
+      {% set m_link_parts = m_clean_url.split('/') %}
+      {% if m_link_parts|length >= 5 %}
+        {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] ~ '?h=' ~ m_link_parts[4] %}
+      {% elif m_link_parts|length == 4 %}
+        {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] %}
+      {% endif %}
+    {% endif %}
+
+  <div class="slide {% if loop.first %}active{% endif %}">
+    
+    {% if bg_link and 'vimeo.com' in bg_link %}
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1; pointer-events: none;">
+      <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1" style="width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) translateZ(0); backface-visibility: hidden; border: none; filter: brightness(0.6);" allow="autoplay; fullscreen"></iframe>
+    </div>
+    {% elif bg_link %}
+    <video src="{{ bg_link }}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: -1; filter: brightness(0.6); pointer-events: none;"></video>
+    {% endif %}
+
+    <div class="play-link" onclick="openVideo('{{ modal_link }}')">
+      <div class="play-btn">
+        <svg viewBox="0 0 24 24" stroke="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="hero-titles-list">
+    {% for p in hero_videos %}
+      {% set modal_link = p.whatsapp_projeto %}
+      {% if modal_link and 'vimeo.com' in modal_link and 'player.vimeo.com' not in modal_link %}
+        {% set m_clean_url = modal_link.split('?')[0].strip('/') %}
+        {% set m_link_parts = m_clean_url.split('/') %}
+        {% if m_link_parts|length >= 5 %}
+          {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] ~ '?h=' ~ m_link_parts[4] %}
+        {% elif m_link_parts|length == 4 %}
+          {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] %}
+        {% endif %}
+      {% endif %}
+    <h1 class="hero-title-item {% if loop.first %}active{% endif %}" onmouseenter="goToSlide({{ loop.index0 }})" onclick="openVideo('{{ modal_link }}')">{{ p.nome }} <span class="year">{{ p.estoque }}</span></h1>
+    {% endfor %}
+  </div>
+
+  <div id="videoModal" class="video-modal">
+    <button class="close-modal" onclick="closeVideo()">✕</button>
+    <div class="iframe-container">
+      <iframe id="vimeoPlayer" src="" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</header>
+
+{% if loja.logos_clientes %}
+<section class="clients-section fade-in">
+  <div class="clients-left">
+    <h2>Nossos clientes<span class="accent-dot">.</span></h2>
+    <a href="#contact" class="clients-link">Conheça todos &rarr;</a>
+  </div>
+  <div class="clients-right">
+    {% set client_logos = loja.logos_clientes.split('\n') %}
+    <div class="clients-track">
+      {% for i in range(4) %}
+        {% for logo in client_logos %}
+          {% if logo.strip() %}
+          <img src="{{ logo.strip() }}" alt="Cliente">
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<div class="evolve-wrapper">
+  <div class="evolve-sticky">
+    <div class="evolve-bg-video">
+      <video autoplay loop muted playsinline>
+        <source src="https://res.cloudinary.com/dzcaxmbjn/video/upload/v1772571265/dynamic-ink-blots-symbolizing-movement-and-fluidit-2026-01-28-04-31-04-utc_eqom6l.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="evolve-overlay"></div>
+    <div class="flash-bang"></div>
+    <div class="cinematic-bar top"></div>
+    <div class="cinematic-bar bottom"></div>
+    <div class="evolve-texts">
+      <h2 class="evolve-phrase phrase-1"><span class="hover-move">VAMOS EVOLUIR COM VOCÊ</span></h2>
+      <h2 class="evolve-phrase phrase-2"><span class="hover-move">LET'S EVOLVE TOGETHER</span></h2>
+      <h2 class="evolve-phrase phrase-3"><span class="hover-move">ÉVOLUONS ENSEMBLE</span></h2>
+      <h2 class="evolve-phrase phrase-4"><span class="hover-move">让我们一起努力</span></h2>
+    </div>
+  </div>
+</div>
+
+<section id="work" class="portfolio-horizontal-wrapper">
+  <div class="portfolio-sticky">
+    <div class="portfolio-bg-animation"></div>
+    <div class="portfolio-glow"></div>
+    <h2 class="portfolio-section-title fade-in">Selected Work</h2>
+    
+    <div class="portfolio-track">
+      {% set port_videos = [] %}
+      {% for p in produtos %}
+        {% set p_cat = p.categoria_id.id if p.categoria_id is mapping else p.categoria_id %}
+        {% for c in categorias %}
+          {% if p_cat|string == c.id|string and ('portfolio' in c.slug|lower or 'portfólio' in c.nome|lower or 'portfolio' in c.nome|lower) %}
+            {% set _ = port_videos.append(p) %}
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+
+      {% for p in port_videos %}
+      <div class="port-item {% if loop.index % 3 == 0 %}size-s align-top{% elif loop.index % 2 == 0 %}size-sq align-bottom{% else %}size-l align-center{% endif %}">
+        
+        {% set bg_link = p.link_projeto %}
+        {% if bg_link and 'vimeo.com' in bg_link and 'player.vimeo.com' not in bg_link %}
+          {% set clean_url = bg_link.split('?')[0].strip('/') %}
+          {% set link_parts = clean_url.split('/') %}
+          {% if link_parts|length >= 5 %}
+            {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] ~ '?h=' ~ link_parts[4] %}
+          {% elif link_parts|length == 4 %}
+            {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] %}
+          {% endif %}
+        {% endif %}
+
+        {% if bg_link and 'vimeo.com' in bg_link %}
+        <div class="vimeo-port-bg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none;">
+          <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; border: none;" allow="autoplay; fullscreen"></iframe>
         </div>
+        {% elif bg_link %}
+        <video src="{{ bg_link }}" autoplay loop muted playsinline></video>
+        {% endif %}
+
+        <div class="port-info">
+          <h3>{{ p.nome }}</h3>
+          <p>{{ p.origem }}</p>
+        </div>
+        <div class="port-item-caption">{{ p.descricao }} | {{ p.estoque }}</div>
+      </div>
+      {% endfor %}
     </div>
+  </div>
+</section>
 
-    <header id="main-header">
-        <nav class="container">
-            <a href="#hero-sec" class="logo">CRE<span>A</span>PES</a>
-            <ul class="nav-links">
-                <li><a href="#hero-sec">Início</a></li>
-                <li><a href="#threed-sec">Inovação 3D</a></li>
-                <li><a href="#timeline-sec">Evolução</a></li>
-                <li><a href="#clients-sec">Nossos Clientes</a></li>
-                <li><a href="#contact-sec">Contato</a></li>
-            </ul>
-            <div class="burger">
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-        </nav>
-    </header>
+<section id="quarto3d" class="cinematic-bars" style="position: relative; width: 100%; height: 100vh; background: url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat; z-index: 999; overflow: hidden; box-shadow: inset 0 0 200px rgba(0,0,0,0.95);">
+  <div class="cinematic-overlay"></div>
+  <div class="cinematic-grade"></div>
+  <div class="cinematic-vignette"></div>
+  <div class="old-camera-filter"></div>
+  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 15%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,1) 100%); box-shadow: inset 0 0 150px #000; pointer-events: none; z-index: 20; backdrop-filter: contrast(1.15) brightness(0.95);"></div>
+  <div id="canvas-container" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; display: block; z-index: 2;"></div>
 
-    <div id="smooth-content">
-        <main>
-            <section id="hero-sec">
-                <div class="hero-slide active">
-                    <div class="slide-media">
-                        <video loop muted autoplay preload="auto" class="video-fallback">
-                            <source src="vimeo_loop_2.mp4" type="video/mp4">
-                        </video>
-                    </div>
-                    <div class="hero-content">
-                        <span class="hero-label">Produção Criativa</span>
-                        <h1 class="hero-title">Produção Criativa</h1>
-                    </div>
-                </div>
-                <div class="hero-slide">
-                    <div class="slide-media">
-                        <video loop muted autoplay preload="auto" class="video-fallback">
-                            <source src="vimeo_loop_2.mp4" type="video/mp4">
-                        </video>
-                    </div>
-                    <div class="hero-content">
-                        <span class="hero-label">Soluções Visuais</span>
-                        <h1 class="hero-title">Soluções Visuais</h1>
-                    </div>
-                </div>
-                <div class="hero-slide">
-                    <div class="slide-media">
-                        <video loop muted autoplay preload="auto" class="video-fallback">
-                            <source src="vimeo_loop_2.mp4" type="video/mp4">
-                        </video>
-                    </div>
-                    <div class="hero-content">
-                        <span class="hero-label">Experiência Imersiva</span>
-                        <h1 class="hero-title">Experiência Imersiva</h1>
-                    </div>
-                </div>
-                <div id="hero-indicators">
-                    <span class="hero-indicator active"></span>
-                    <span class="hero-indicator"></span>
-                    <span class="hero-indicator"></span>
-                </div>
-            </section>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
 
-            <section id="threed-sec">
-                <div id="threed-canvas"></div>
-                <div class="threed-grid">
-                    <div class="threed-content-left">
-                        <span class="threed-label">Foco no futuro</span>
-                        <h2 class="threed-title">A Nova<br>Fronteira <span>VISUAL</span></h2>
-                        <p class="threed-desc">Combinando a força do audiovisual com a inovação 3D e WebGL, criamos experiências que transpassam os limites das telas tradicionais.</p>
-                        <a href="#contact-sec" class="threed-btn">Explorar Tecnologia</a>
-                    </div>
-                    <div class="threed-content-right">
-                        <div class="threed-info-block">
-                            <h3 class="threed-info-title"><span>#</span> MODELAGEM 3D</h3>
-                            <p class="threed-info-desc">Criação de assets de alta qualidade e otimizados para tempo real.</p>
-                        </div>
-                        <div class="threed-info-block">
-                            <h3 class="threed-info-title"><span>#</span> MOTION GRAPHICS</h3>
-                            <p class="threed-info-desc">Animações fluidas e envolventes que explicam e impressionam.</p>
-                        </div>
-                        <div class="threed-info-block">
-                            <h3 class="threed-info-title"><span>#</span> WEBGL INTERATIVO</h3>
-                            <p class="threed-info-desc">Integrando experiências imersivas diretamente na web.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-            <section id="timeline-sec">
-                <div id="threed-trigger"></div>
-                <div class="container timeline-track-wrapper">
-                    <div class="timeline-scroll-container">
-                        <div class="timeline-track">
-                            <div class="timeline-header">
-                                <span class="timeline-label">Nossa Jornada</span>
-                                <h2 class="timeline-title">Nossa<br><span>Evolução</span></h2>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-item-bg" style="background-image: url('placeholder-evolucao-1.jpg');"></div>
-                                <div class="timeline-item-content">
-                                    <div class="timeline-year">2020</div>
-                                    <h3 class="timeline-project">Início Criativo <span>- Fundação</span></h3>
-                                    <div class="timeline-line"></div>
-                                </div>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-item-bg" style="background-image: url('placeholder-evolucao-2.jpg');"></div>
-                                <div class="timeline-item-content">
-                                    <div class="timeline-year">2021</div>
-                                    <h3 class="timeline-project">Expansão Digital <span>- Novas Soluções</span></h3>
-                                    <div class="timeline-line"></div>
-                                </div>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-item-bg" style="background-image: url('placeholder-evolucao-3.jpg');"></div>
-                                <div class="timeline-item-content">
-                                    <div class="timeline-year">2022</div>
-                                    <h3 class="timeline-project">Audiovisual de Impacto <span>- Reconhecimento</span></h3>
-                                    <div class="timeline-line"></div>
-                                </div>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-item-bg" style="background-image: url('placeholder-evolucao-4.jpg');"></div>
-                                <div class="timeline-item-content">
-                                    <div class="timeline-year">2023</div>
-                                    <h3 class="timeline-project">Inovação 3D <span>- Fronteira Tecnológica</span></h3>
-                                    <div class="timeline-line"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
 
-            <section id="clients-sec">
-                <div id="clients-trigger"></div>
-                <div class="clients-grid-wrapper">
-                    <div class="clients-header">
-                        <span class="clients-label">Parcerias de Sucesso</span>
-                        <h2 class="clients-title">Nossos <span>Clientes</span></h2>
-                    </div>
-                    
-                    <div class="clients-marquee">
-                        <div class="clients-track">
-                            <div class="clients-row">
-                                <div class="client-item"><img src="placeholder_logo_1.png" alt="Cliente 1" class="client-logo"></div>
-                                <div class="client-item"><img src="placeholder_logo_2.png" alt="Cliente 2" class="client-logo"></div>
-                                <div class="client-item"><img src="placeholder_logo_3.png" alt="Cliente 3" class="client-logo"></div>
-                                <div class="client-item"><img src="placeholder_logo_4.png" alt="Cliente 4" class="client-logo"></div>
-                                <div class="client-item"><img src="placeholder_logo_5.png" alt="Cliente 5" class="client-logo"></div>
-                                <div class="client-item"><img src="placeholder_logo_1.png" alt="Cliente 1" class="client-logo"></div>
-                                <div class="client-item"><img src="placeholder_logo_2.png" alt="Cliente 2" class="client-logo"></div>
-                            </div>
-                            <div class="clients-row">
-                                <div class="client-item"><img src="placeholder_logo_1.png" alt="Cliente 1" class="client-logo"></div>
-                                <div class="client-item"><img src="placeholder_logo_2.png" alt="Cliente 2" class="client-logo"></div>
-                                <div class="client-item"><img src="placeholder_logo_3.png" alt="Cliente 3" class="client-logo"></div>
-                                <div class="client-item"><img src="placeholder_logo_4.png" alt="Cliente 4" class="client-logo"></div>
-                                <div class="client-item"><img src="placeholder_logo_5.png" alt="Cliente 5" class="client-logo"></div>
-                                <div class="client-item"><img src="placeholder_logo_1.png" alt="Cliente 1" class="client-logo"></div>
-                                <div class="client-item"><img src="placeholder_logo_2.png" alt="Cliente 2" class="client-logo"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+    const camera = new THREE.PerspectiveCamera(30, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(-0.1, 1.2, 1.2);
 
-            <section id="contact-sec">
-                <div id="contact-trigger"></div>
-                <div class="container contact-content">
-                    <div class="contact-text">
-                        <span class="contact-label">Vamos Criar</span>
-                        <h2 class="contact-title">Dê Vida à sua<br>Próxima<br><span>Solução</span></h2>
-                        <p class="contact-desc">Conte-nos sobre sua próxima visão. Estamos prontos para transformar suas ideias em impacto audiovisual e experiências imersivas.</p>
-                        <div class="contact-info">
-                            <a href="mailto:contato@creapes.com" class="contact-link"><i class="fas fa-envelope"></i> contato@creapes.com</a>
-                            <a href="tel:+551199999999" class="contact-link"><i class="fas fa-phone-alt"></i> +55 11 99999-9999</a>
-                        </div>
-                    </div>
-                    <div class="contact-form-wrapper">
-                        <div class="form-group"><input type="text" class="form-input" placeholder="Seu Nome"></div>
-                        <div class="form-group"><input type="email" class="form-input" placeholder="Seu E-mail"></div>
-                        <div class="form-group"><textarea class="form-input" placeholder="Sua Mensagem"></textarea></div>
-                        <button class="contact-btn">Enviar Mensagem</button>
-                    </div>
-                </div>
-            </section>
-        </main>
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
 
-        <footer>
-            <div class="container">
-                <a href="#hero-sec" class="footer-logo">CRE<span>A</span>PES</a>
-                <ul class="footer-nav">
-                    <li><a href="#hero-sec">Início</a></li>
-                    <li><a href="#threed-sec">Inovação 3D</a></li>
-                    <li><a href="#timeline-sec">Evolução</a></li>
-                    <li><a href="#clients-sec">Nossos Clientes</a></li>
-                    <li><a href="#contact-sec">Contato</a></li>
-                </ul>
-                <div class="footer-social">
-                    <a href="#" class="footer-social-link"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="footer-social-link"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" class="footer-social-link"><i class="fab fa-vimeo-v"></i></a>
-                </div>
-                <p class="copyright">&copy; 2023 CREAPES. Todos os direitos reservados.</p>
-            </div>
-        </footer>
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.target.set(-0.1, 1.1, 0);
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.minPolarAngle = Math.PI / 2.05;
+    controls.maxPolarAngle = Math.PI / 2.05;
+    controls.minAzimuthAngle = -0.15;
+    controls.maxAzimuthAngle = 0.15;
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xfff0dd, 2);
+    directionalLight.position.set(5, 5, 2);
+    directionalLight.castShadow = true;
+    scene.add(directionalLight);
+
+    const fillLight = new THREE.DirectionalLight(0xcceeff, 0.5);
+    fillLight.position.set(-5, 3, -5);
+    scene.add(fillLight);
+
+    const loader = new GLTFLoader();
+    
+    loader.load(
+        '{{ url_for("static", filename="Quarto.glb") }}', 
+        function (gltf) {
+            const model = gltf.scene;
+            scene.add(model);
+        },
+        function (xhr) {
+            console.log(Math.round((xhr.loaded / xhr.total * 100)) + ' por cento carregado');
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+
+    window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</section>
+
+<footer id="contact">
+  <div class="footer-blocks fade-in">
+    <div class="footer-block">
+      <h2>Start a Project</h2>
+      <form class="contact-form">
+        <div class="input-group"><input type="text" placeholder="Seu Nome"></div>
+        <div class="input-group"><input type="email" placeholder="Seu E-mail"></div>
+        <div class="input-group"><input type="text" placeholder="Sobre o que vamos criar?"></div>
+        <button type="button" class="btn-submit">Enviar Briefing</button>
+      </form>
     </div>
+    <div class="footer-block">
+      <h2>Join the Crew</h2>
+      <p class="work-with-us">Buscamos mentes inquietas. Editores de vídeo, motion designers e coloristas que respiram arte e tecnologia. Se você quer ultrapassar os limites do audiovisual, seu lugar é aqui.</p>
+      <a href="https://wa.me/{{ loja.whatsapp_comercial }}" target="_blank" class="arrow-link">Trabalhe Conosco <span>&rarr;</span></a>
+    </div>
+  </div>
+  <div class="footer-bottom fade-in">
+    <div class="copyright">&copy; 2026 {{ loja.nome }}. All rights reserved.</div>
+    <div class="social-links">
+      {% if loja.instagram_url %}
+      <a href="{{ loja.instagram_url }}" target="_blank">Instagram</a>
+      {% endif %}
+      <a href="#">Vimeo</a>
+      <a href="#">LinkedIn</a>
+    </div>
+  </div>
+</footer>
 
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script>
+  gsap.registerPlugin(ScrollTrigger);
 
-    <script>
-        // SHADER DE VINHETA (PARA POST-PROCESSING) - MANTIDO
-        const VignetteShader = {
-            uniforms: {
-                "tDiffuse": { value: null },
-                "offset": { value: 1.0 },
-                "darkness": { value: 1.0 }
-            },
-            vertexShader: [
-                "varying vec2 vUv;",
-                "void main() {",
-                    "vUv = uv;",
-                    "gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
-                "}"
-            ].join("\n"),
-            fragmentShader: [
-                "uniform float offset;",
-                "uniform float darkness;",
-                "uniform sampler2D tDiffuse;",
-                "varying vec2 vUv;",
-                "void main() {",
-                    "vec4 texel = texture2D( tDiffuse, vUv );",
-                    "vec2 uv = ( vUv - vec2( 0.5 ) ) * 2.0;",
-                    "gl_FragColor = vec4( mix( texel.rgb, vec3( 1.0 - darkness ), dot( uv, uv ) * offset ), texel.a );",
-                "}"
-            ].join("\n")
-        };
+  const loaderBrand = document.getElementById('loaderBrand');
+  const brandName = 'LOADING';
+  
+  loaderBrand.innerHTML = brandName.split('').map(char => {
+    return `<span class="loader-char-wrap"><span class="loader-char">${char}</span></span>`;
+  }).join('');
 
-        // NOVO SHADER DE FILTRO CÂMERA ANTIGA (GRAIN)
-        const CameraFilterShader = {
-            uniforms: {
-                "tDiffuse": { value: null },
-                "amount": { value: 0.1 },  // Quantidade de grão (0.0 a 1.0)
-                "opacity": { value: 1.0 },
-                "seed": { value: 0.0 } // Usado para a animação do grão
-            },
-            vertexShader: [
-                "varying vec2 vUv;",
-                "void main() {",
-                    "vUv = uv;",
-                    "gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
-                "}"
-            ].join("\n"),
-            fragmentShader: [
-                "uniform float amount;",
-                "uniform float opacity;",
-                "uniform float seed;",
-                "uniform sampler2D tDiffuse;",
-                "varying vec2 vUv;",
-                "float rand(vec2 co) {",
-                    "return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);",
-                "}",
-                "void main() {",
-                    "vec4 texel = texture2D(tDiffuse, vUv);",
-                    "float noise = rand(vUv + seed) * amount;",
-                    "texel.rgb = texel.rgb + noise;",
-                    "gl_FragColor = vec4(texel.rgb, opacity);",
-                "}"
-            ].join("\n")
-        };
+  const tlLoader = gsap.timeline({
+    onComplete: () => {
+      document.body.classList.remove('loading');
+      document.getElementById('loader').style.display = 'none';
+      if(typeof calcScroll === 'function') calcScroll();
+      ScrollTrigger.refresh();
+    }
+  });
 
-        // --- GLOBAL SETUP & PRELOADER - MANTIDO ---
-        window.addEventListener('load', () => {
-            document.getElementById('overlay').classList.add('fade-out');
+  tlLoader.set('.loader-char', { yPercent: 120, skewY: 10 })
+  
+  .to('.loader-char', {
+    yPercent: 0,
+    skewY: 0,
+    duration: 1,
+    stagger: 0.05,
+    ease: 'expo.out'
+  })
+  
+  .to('.loader-char', {
+    scaleY: 0.2,
+    scaleX: 1.5,
+    color: 'var(--accent)',
+    duration: 0.3,
+    stagger: { amount: 0.2, from: 'center', yoyo: true, repeat: 1 },
+    ease: 'power2.inOut'
+  }, '+=0.2')
+  
+  .to('.loader-char', {
+    yPercent: -120,
+    skewY: -10,
+    duration: 0.6,
+    stagger: 0.04,
+    ease: 'power4.in'
+  }, '+=0.1')
+  
+  .to('.loader-panel.top', {
+    yPercent: -100,
+    duration: 1.2,
+    ease: 'expo.inOut'
+  }, '-=0.4')
+  .to('.loader-panel.bottom', {
+    yPercent: 100,
+    duration: 1.2,
+    ease: 'expo.inOut'
+  }, '-=1.2')
+  .to('#loader', {
+    opacity: 0,
+    duration: 0.3
+  }, '-=0.3');
+
+  const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.fade-in').forEach(element => { observer.observe(element); });
+
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const titleItems = document.querySelectorAll('.hero-title-item');
+
+  function goToSlide(index) {
+    if(slides.length === 0) return;
+    if(index === currentSlide) return;
+
+    if(slides[currentSlide]) slides[currentSlide].classList.remove('active');
+    if(titleItems[currentSlide]) titleItems[currentSlide].classList.remove('active');
+    
+    currentSlide = index;
+    
+    if(slides[currentSlide]) slides[currentSlide].classList.add('active');
+    if(titleItems[currentSlide]) titleItems[currentSlide].classList.add('active');
+  }
+
+  function nextSlide() {
+    if(slides.length <= 1) return;
+    let next = (currentSlide + 1) % slides.length;
+    goToSlide(next);
+  }
+
+  function prevSlide() {
+    if(slides.length <= 1) return;
+    let prev = (currentSlide - 1 + slides.length) % slides.length;
+    goToSlide(prev);
+  }
+
+  let isHeroScrolling = false;
+  const heroEl = document.getElementById('hero');
+  let touchStartY = 0;
+
+  heroEl.addEventListener('wheel', (e) => {
+    if (!isHeroScrolling) {
+      isHeroScrolling = true;
+      if (e.deltaY > 0) nextSlide();
+      else prevSlide();
+      setTimeout(() => isHeroScrolling = false, 1000);
+    }
+  });
+
+  heroEl.addEventListener('touchstart', e => touchStartY = e.touches[0].clientY);
+  heroEl.addEventListener('touchend', e => {
+    if(isHeroScrolling) return;
+    let touchEndY = e.changedTouches[0].clientY;
+    if(touchStartY - touchEndY > 50) { isHeroScrolling = true; nextSlide(); setTimeout(() => isHeroScrolling = false, 1000); }
+    else if(touchEndY - touchStartY > 50) { isHeroScrolling = true; prevSlide(); setTimeout(() => isHeroScrolling = false, 1000); }
+  });
+
+  const videoModal = document.getElementById('videoModal');
+  const vimeoPlayer = document.getElementById('vimeoPlayer');
+
+  function openVideo(url) {
+    if(!url) return;
+    let finalUrl = url;
+    if(finalUrl.includes('vimeo.com') && !finalUrl.includes('autoplay=')) {
+      finalUrl += (finalUrl.includes('?') ? '&' : '?') + 'autoplay=1';
+    }
+    vimeoPlayer.src = finalUrl;
+    videoModal.classList.add('active');
+  }
+
+  function closeVideo() {
+    videoModal.classList.remove('active');
+    vimeoPlayer.src = ''; 
+  }
+
+  const evolveSection = document.querySelector('.evolve-wrapper');
+  const evolvePhrases = document.querySelectorAll('.evolve-phrase');
+  const flashBang = document.querySelector('.flash-bang');
+  let evolveLastIndex = -1;
+
+  let calcScroll = () => {
+    const windowHeight = window.innerHeight;
+    const topBar = document.querySelector('.cinematic-bar.top');
+    const bottomBar = document.querySelector('.cinematic-bar.bottom');
+
+    if(evolveSection) {
+      const rect = evolveSection.getBoundingClientRect();
+      
+      if (rect.top <= 0 && rect.bottom >= windowHeight) {
+         const totalScroll = rect.height - windowHeight;
+         const currentScroll = -rect.top;
+         let progress = currentScroll / totalScroll;
+
+         if(topBar && bottomBar) {
+             let barProgress = Math.min(Math.max(progress / 0.08, 0), 1);
+             topBar.style.transform = `translateY(${ -100 + (barProgress * 100) }%)`;
+             bottomBar.style.transform = `translateY(${ 100 - (barProgress * 100) }%)`;
+         }
+
+         let activeIndex = 0;
+         if (progress > 0.8) activeIndex = 3;
+         else if (progress > 0.5) activeIndex = 2;
+         else if (progress > 0.15) activeIndex = 1; 
+         else activeIndex = 0;
+
+         if (activeIndex !== evolveLastIndex) {
+             if(flashBang && evolveLastIndex !== -1) {
+                 flashBang.classList.remove('fire');
+                 void flashBang.offsetWidth;
+                 flashBang.classList.add('fire');
+             }
+             evolveLastIndex = activeIndex;
+         }
+
+         evolvePhrases.forEach((phrase, index) => {
+           if (index === activeIndex) {
+             phrase.className = `evolve-phrase phrase-${index + 1} active`;
+           } else if (index < activeIndex) {
+             phrase.className = `evolve-phrase phrase-${index + 1} passed`;
+           } else {
+             phrase.className = `evolve-phrase phrase-${index + 1}`;
+           }
+         });
+      } else if (rect.top > 0) {
+         if(topBar && bottomBar) {
+             topBar.style.transform = `translateY(-100%)`;
+             bottomBar.style.transform = `translateY(100%)`;
+         }
+         evolveLastIndex = -1;
+         evolvePhrases.forEach((phrase, i) => {
+            phrase.className = i === 0 ? `evolve-phrase phrase-${i + 1} active` : `evolve-phrase phrase-${i + 1}`;
+         });
+      } else if (rect.bottom < windowHeight) {
+         if(topBar && bottomBar) {
+             topBar.style.transform = `translateY(0%)`;
+             bottomBar.style.transform = `translateY(0%)`;
+         }
+         evolveLastIndex = 3;
+         evolvePhrases.forEach((phrase, i) => {
+            phrase.className = i === 3 ? `evolve-phrase phrase-${i + 1} active` : `evolve-phrase phrase-${i + 1} passed`;
+         });
+      }
+    }
+  };
+
+  window.addEventListener('load', calcScroll);
+  window.addEventListener('resize', calcScroll);
+  window.addEventListener('scroll', calcScroll);
+
+  const portfolioSection = document.querySelector('.portfolio-horizontal-wrapper');
+  const portfolioTrack = document.querySelector('.portfolio-track');
+
+  if (portfolioSection && portfolioTrack) {
+    const scrollWidth = portfolioTrack.scrollWidth;
+    const viewportWidth = window.innerWidth;
+    const scrollDistance = scrollWidth - viewportWidth;
+
+    gsap.to(portfolioTrack, {
+        x: () => -scrollDistance,
+        ease: 'none',
+        scrollTrigger: {
+            trigger: portfolioSection,
+            start: 'top top',
+            end: () => '+=' + scrollDistance, 
+            pin: true,
+            scrub: 1,
+            anticipatePin: 1
+        }
+    });
+  }
+
+  const evolveSticky = document.querySelector('.evolve-sticky');
+  const hoverMoves = document.querySelectorAll('.hover-move');
+
+  if (evolveSticky && hoverMoves.length > 0) {
+    evolveSticky.addEventListener('mousemove', (e) => {
+      const { clientX, clientY } = e;
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+
+      hoverMoves.forEach((text) => {
+        const depth = 0.08;
+        const moveX = (clientX - centerX) * depth;
+        const moveY = (clientY - centerY) * depth;
+
+        gsap.to(text, {
+          x: moveX,
+          y: moveY,
+          duration: 1,
+          ease: "power2.out"
         });
+      });
+    });
+  }
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ loja.nome }} | Elite Audiovisual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+:root {
+  --bg: {{ loja.cor_fundo }};
+  --text: {{ loja.cor_texto }};
+  --accent: {{ loja.cor_primaria }};
+  --glass: rgba(5, 5, 5, 0.6);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-        // --- MAIN INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', () => {
-            gsap.registerPlugin(ScrollTrigger);
-            
-            initSmoothScroll();
-            initNavigation();
-            initHeroSlides(); // Hero slides revisado para troca manual
-            initThreeJS();   // 3D revisado para zoom e filtro
-            initTimeline();
-            initClients();
-            initContactForm();
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.loading {
+  overflow: hidden;
+}
+
+#loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.loader-panel {
+  position: absolute;
+  width: 100%;
+  height: 50vh;
+  background: #020202; 
+  z-index: 0;
+}
+.loader-panel.top { top: 0; }
+.loader-panel.bottom { bottom: 0; }
+
+.loader-brand {
+  display: flex;
+  gap: 0.4vw;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: var(--text);
+  z-index: 2;
+}
+
+.loader-char-wrap {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.2rem;
+}
+
+.loader-char {
+  display: inline-block;
+  transform-origin: center bottom;
+  will-change: transform, opacity, color;
+}
+
+h1, h2, h3, .brand {
+  font-family: 'Space Grotesk', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+a { color: var(--text); text-decoration: none; transition: color 0.3s var(--ease); }
+a:hover { color: var(--accent); }
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+nav {
+  position: fixed;
+  top: 0; left: 0; width: 100%;
+  padding: 0.8rem 4rem;
+  display: flex; justify-content: space-between; align-items: center;
+  background: #000000;
+  z-index: 100;
+}
+
+.nav-left, .nav-right { display: flex; align-items: center; flex: 1; }
+.nav-right { justify-content: flex-end; }
+
+.brand { 
+  font-size: 1.5rem; 
+  font-weight: 700; 
+  letter-spacing: 0.1em; 
+  position: absolute; 
+  left: 50%; 
+  transform: translateX(-50%);
+  color: #ffffff;
+}
+
+.menu-btn {
+  display: flex; align-items: center; gap: 0.8rem;
+  background: none; border: none; color: #ffffff;
+  font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500;
+  cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em;
+  transition: color 0.3s var(--ease);
+}
+
+.menu-btn:hover { color: var(--accent); }
+
+.menu-icon { display: flex; flex-direction: column; gap: 4px; }
+.menu-icon span { display: block; width: 24px; height: 1px; background-color: currentColor; transition: background-color 0.3s var(--ease); }
+
+.search-btn {
+  background: none; border: none; color: #ffffff;
+  cursor: pointer; transition: color 0.3s var(--ease);
+}
+.search-btn:hover { color: var(--accent); }
+
+.hero {
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg);
+}
+
+.slide {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease), transform 8s linear;
+  transform: scale(1.05);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  z-index: 1;
+}
+
+.slide.active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 2;
+}
+
+.play-link {
+  display: block; width: 100%; height: 100%; position: relative; cursor: pointer;
+}
+
+.play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  display: flex; justify-content: center; align-items: center;
+  z-index: 3;
+  color: var(--text);
+  transition: all 0.4s var(--ease);
+}
+
+.play-btn svg {
+  width: 100%; height: 100%;
+  fill: transparent;
+  stroke-width: 0.5;
+  transition: all 0.4s var(--ease);
+}
+
+.play-link:hover .play-btn {
+  transform: translate(-50%, -50%) scale(1.1);
+  color: var(--accent);
+}
+
+.play-link:hover .play-btn svg { fill: rgba(208, 255, 0, 0.2); stroke: var(--accent); stroke-width: 1; }
+
+.hero-titles-list {
+  position: absolute;
+  bottom: 4rem;
+  left: 4rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.hero-title-item {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  color: rgba(245, 245, 247, 0.4);
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 0;
+  display: inline-flex;
+  align-items: flex-start;
+}
+
+.hero-title-item.active, .hero-title-item:hover {
+  color: var(--text);
+}
+
+.hero-title-item .year {
+  font-size: 0.8rem;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0;
+  margin-left: 0.8rem;
+  margin-top: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.hero-title-item.active .year, .hero-title-item:hover .year {
+  opacity: 1;
+}
+
+.video-modal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: #000;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease);
+}
+
+.video-modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.iframe-container {
+  width: 90%;
+  height: 90%;
+  max-width: 1600px;
+}
+
+.iframe-container iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.close-modal {
+  position: absolute;
+  top: 2rem;
+  right: 3rem;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  z-index: 10000;
+  transition: color 0.3s;
+}
+
+.close-modal:hover {
+  color: var(--accent);
+}
+
+.evolve-wrapper { height: 250vh; position: relative; background: var(--bg); }
+.evolve-sticky {
+  position: sticky; top: 0; height: 100vh; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.evolve-bg-video {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;
+}
+.evolve-bg-video video {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.evolve-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,5,5,0.65); z-index: 2;
+}
+.flash-bang {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: #fff; opacity: 0; z-index: 3; pointer-events: none; mix-blend-mode: overlay;
+}
+.flash-bang.fire {
+  animation: bang 0.4s cubic-bezier(0.1, 1, 0.2, 1);
+}
+@keyframes bang {
+  0% { opacity: 1; filter: brightness(3); }
+  100% { opacity: 0; filter: brightness(1); }
+}
+
+.cinematic-bar {
+  position: absolute; left: 0; width: 100%; height: 25vh;
+  background: #000; z-index: 3; will-change: transform;
+}
+.cinematic-bar.top { top: 0; transform: translateY(-100%); }
+.cinematic-bar.bottom { bottom: 0; transform: translateY(100%); }
+
+.evolve-texts { position: relative; z-index: 4; width: 100%; height: clamp(4rem, 8vw, 8rem); display: flex; justify-content: center; align-items: center; perspective: 1000px; }
+.evolve-phrase {
+  position: absolute; width: 100%; text-align: center;
+  font-size: clamp(2.5rem, 5vw, 6rem);
+  opacity: 0;
+  color: var(--text);
+  text-shadow: 0 4px 30px rgba(0,0,0,1);
+  margin: 0; pointer-events: none;
+}
+
+.hover-move {
+  display: inline-block;
+  will-change: transform;
+}
+
+.phrase-1.active { animation: flashStrikeIn 0.5s cubic-bezier(0.1, 1, 0.2, 1) forwards; color: var(--accent); }
+.phrase-1.passed { animation: flashStrikeOut 0.3s forwards; }
+
+.phrase-2.active { animation: glitchStrikeIn 0.6s cubic-bezier(0.1, 1, 0.2, 1) forwards; color: #fff; text-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent); }
+.phrase-2.passed { animation: glitchStrikeOut 0.3s forwards; }
+
+.phrase-3.active { animation: blurStrikeIn 0.5s ease-out forwards; color: var(--accent); }
+.phrase-3.passed { animation: blurStrikeOut 0.3s forwards; }
+
+.phrase-4.active { animation: electricStrikeIn 0.5s forwards; color: #fff; text-shadow: 0 0 10px #fff; }
+.phrase-4.passed { animation: electricStrikeOut 0.3s forwards; }
+
+@keyframes flashStrikeIn {
+  0% { opacity: 0; transform: scale(3) translateZ(200px); filter: brightness(10) blur(20px); }
+  50% { opacity: 1; filter: brightness(5) blur(0px); }
+  100% { opacity: 1; transform: scale(1) translateZ(0); filter: brightness(1) blur(0px); }
+}
+@keyframes flashStrikeOut {
+  0% { opacity: 1; transform: scale(1); filter: brightness(1); }
+  100% { opacity: 0; transform: scale(0.5) translateY(-100px); filter: brightness(5) blur(10px); }
+}
+
+@keyframes glitchStrikeIn {
+  0% { opacity: 0; transform: skewX(-40deg) scale(1.5); filter: brightness(10); clip-path: polygon(0 0, 100% 0, 100% 10%, 0 10%); }
+  15% { opacity: 1; transform: skewX(30deg) scale(1.3); clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); filter: brightness(5); }
+  30% { transform: skewX(-20deg) scale(1.1); clip-path: polygon(0 40%, 100% 40%, 100% 60%, 0 60%); }
+  45% { transform: skewX(10deg) scale(1.05); clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%); }
+  60% { transform: skewX(0deg) scale(1); clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); filter: brightness(3); }
+  100% { opacity: 1; transform: skewX(0deg) scale(1); filter: brightness(1); clip-path: none; }
+}
+@keyframes glitchStrikeOut {
+  0% { opacity: 1; transform: scale(1); filter: brightness(1); }
+  50% { opacity: 1; transform: skewX(20deg) scale(1.2); filter: brightness(5); }
+  100% { opacity: 0; transform: skewX(-40deg) scale(0.2) translateY(-100px); filter: brightness(10); }
+}
+
+@keyframes blurStrikeIn {
+  0% { opacity: 0; transform: translateX(200px) scale(2); filter: blur(30px) brightness(5); letter-spacing: 40px; }
+  100% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0px) brightness(1); letter-spacing: -0.02em; }
+}
+@keyframes blurStrikeOut {
+  0% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0px) brightness(1); }
+  100% { opacity: 0; transform: translateX(-200px) scale(0.5); filter: blur(30px) brightness(5); letter-spacing: -20px; }
+}
+
+@keyframes electricStrikeIn {
+  0% { opacity: 0; filter: contrast(10) brightness(10) invert(1); transform: scale(1.5); }
+  10% { opacity: 1; filter: contrast(1) brightness(1) invert(0); }
+  20% { opacity: 0; filter: contrast(10) brightness(10) invert(1); transform: scale(1.2); }
+  30% { opacity: 1; filter: contrast(1) brightness(1) invert(0); }
+  40% { opacity: 0; filter: contrast(5) brightness(5); }
+  100% { opacity: 1; transform: scale(1); filter: none; }
+}
+@keyframes electricStrikeOut {
+  0% { opacity: 1; transform: scale(1); }
+  10% { opacity: 0; filter: brightness(10); }
+  20% { opacity: 1; filter: brightness(1); }
+  100% { opacity: 0; transform: scale(3); filter: blur(20px) brightness(5); }
+}
+
+.clients-section { padding: 1.5rem 4rem; background: var(--bg); display: flex; gap: 4rem; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); overflow: hidden; position: relative; z-index: 5;}
+.clients-left { flex: 0 0 22%; }
+.clients-left h2 { font-size: clamp(1.2rem, 1.8vw, 1.8rem); line-height: 1.1; margin-bottom: 0.3rem; color: var(--text); white-space: nowrap; }
+.clients-left .accent-dot { color: var(--accent); }
+.clients-link { font-family: 'Inter', sans-serif; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.5rem; opacity: 0.7; }
+.clients-right { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 3rem; position: relative;}
+.clients-right::before, .clients-right::after { content: ''; position: absolute; top: 0; width: 100px; height: 100%; z-index: 2; pointer-events: none; }
+.clients-right::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
+.clients-right::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
+.clients-track { display: flex; align-items: center; gap: 6rem; width: max-content; animation: marquee-clients 160s linear infinite; }
+.clients-track.reverse { animation-direction: reverse; animation-duration: 50s;}
+.clients-track img { height: 160px; object-fit: contain; max-width: 300px; filter: grayscale(100%) brightness(0.6); transition: all 0.4s var(--ease); }
+.clients-track img:hover { filter: grayscale(0%) brightness(1); transform: scale(1.1) !important; animation-play-state: paused; }
+@keyframes marquee-clients { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+@media (max-width: 900px) { .clients-section { flex-direction: column; padding: 2rem 2rem; gap: 2rem; } .clients-left { flex: none; width: 100%; text-align: center; } .clients-right::before, .clients-right::after { width: 50px; } .clients-track img { height: 115px; } }
+
+.portfolio-horizontal-wrapper {
+  height: 100vh;
+  position: relative;
+  background: var(--bg);
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.portfolio-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.portfolio-bg-animation {
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 150px 150px;
+  transform: perspective(1000px) rotateX(70deg) translateY(-150px) translateZ(-300px);
+  animation: gridMovePortfolio 25s linear infinite;
+  opacity: 0.5;
+}
+
+.portfolio-glow {
+  position: absolute;
+  width: 100vw; height: 100vh;
+  background: radial-gradient(ellipse at center, rgba(208, 255, 0, 0.12) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  animation: pulseBgGlowPortfolio 10s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes gridMovePortfolio {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 300px; }
+}
+
+@keyframes pulseBgGlowPortfolio {
+  0% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+}
+
+.portfolio-section-title {
+  position: absolute;
+  top: 4rem; left: 4rem;
+  z-index: 10;
+  font-size: 2.5rem;
+  opacity: 0.9;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+}
+
+.portfolio-track {
+  display: flex;
+  align-items: flex-start;
+  gap: 6vw;
+  padding: 0 50vw 0 10vw; 
+  width: max-content;
+  height: 80vh;
+  margin-top: 10vh;
+  z-index: 5;
+  will-change: transform;
+}
+
+.port-item {
+  position: relative;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #111;
+  cursor: pointer;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+  opacity: 0.8;
+  transition: opacity 0.5s var(--ease), transform 0.8s var(--ease), box-shadow 0.5s var(--ease);
+}
+
+.port-item:hover {
+  opacity: 1;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.9);
+}
+
+.port-item video, .port-item .vimeo-port-bg {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  filter: grayscale(90%) contrast(1.2);
+  transition: filter 0.8s var(--ease);
+}
+
+.port-item:hover video, .port-item:hover .vimeo-port-bg {
+  filter: grayscale(0%) contrast(1);
+}
+
+.port-text {
+  flex-shrink: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2vw;
+  color: var(--text);
+  opacity: 0.75;
+  white-space: normal;
+  width: 20vw;
+  margin: 0 2vw;
+  line-height: 1.2;
+}
+
+.size-l { width: 22vw; aspect-ratio: 16/9; }
+.size-sq { width: 14vw; aspect-ratio: 16/9; }
+.size-m { width: 18vw; aspect-ratio: 16/9; margin-top: 5vh; }
+.size-s { width: 12vw; aspect-ratio: 16/9; }
+.size-xs { width: 9vw; aspect-ratio: 16/9; }
+
+.align-top { align-self: flex-start; margin-top: 5vh; }
+.align-center { align-self: center; }
+.align-bottom { align-self: flex-end; margin-bottom: 8vh; }
+
+.port-item:nth-child(even) { transform: translateY(8vh); }
+.port-item:nth-child(3n) { transform: translateY(-5vh); }
+.port-item:nth-child(5n) { transform: translateY(3vh); }
+
+.port-info {
+  position: absolute;
+  bottom: -100%; left: 0; width: 100%;
+  padding: 1.5rem;
+  background: linear-gradient(to top, rgba(5,5,5,0.98), transparent);
+  transition: bottom 0.5s var(--ease);
+  border-bottom: 2px solid var(--accent);
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.port-item:hover .port-info { bottom: 0; }
+.port-info h3 { font-size: 1.2rem; margin-bottom: 0.4rem; color: var(--accent); }
+.port-info p { font-size: 0.9rem; opacity: 0.8; }
+
+.port-item-caption {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+}
+
+.port-item:hover .port-item-caption {
+  opacity: 1;
+}
+
+section { padding: 8rem 4rem; position: relative; z-index: 5; background: var(--bg); }
+.section-title { font-size: 2.5rem; margin-bottom: 4rem; opacity: 0.9; }
+
+.split-screen { display: flex; gap: 6rem; }
+.manifesto { flex: 1; font-size: 1.5rem; line-height: 1.5; }
+.manifesto span { color: var(--accent); font-weight: 500; }
+
+.team-grid {
+  flex: 1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;
+}
+.team-grid .avatar:first-child { grid-column: span 2; aspect-ratio: 21/9; }
+
+.avatar { background: #222; border-radius: 2px; overflow: hidden; aspect-ratio: 1; }
+.avatar img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: grayscale(100%); transition: filter 0.5s var(--ease), transform 0.5s var(--ease);
+}
+.avatar:hover img { filter: grayscale(0%); transform: scale(1.05); }
+
+footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #111; }
+.footer-blocks { display: flex; gap: 6rem; margin-bottom: 6rem; flex-wrap: wrap;}
+.footer-block { flex: 1; min-width: 300px; }
+.footer-block h2 { font-size: 2rem; margin-bottom: 2rem; }
+
+.contact-form { display: flex; flex-direction: column; gap: 2rem; }
+.input-group input {
+  width: 100%; padding: 1rem 0; background: transparent; border: none;
+  border-bottom: 1px solid #333; color: var(--text);
+  font-family: 'Inter', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.3s;
+}
+.input-group input:focus { border-bottom-color: var(--accent); }
+
+.btn-submit {
+  align-self: flex-start; background: transparent; color: var(--text); border: 1px solid #333;
+  padding: 1rem 2.5rem; font-family: 'Space Grotesk'; cursor: pointer;
+  border-radius: 50px; transition: all 0.3s;
+}
+.btn-submit:hover {
+  border-color: var(--accent); color: var(--bg); background: var(--accent);
+  box-shadow: 0 0 15px rgba(208, 255, 0, 0.3);
+}
+
+.work-with-us { font-size: 1.2rem; line-height: 1.6; color: #888; }
+.arrow-link {
+  display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 2rem;
+  font-family: 'Space Grotesk'; font-size: 1.2rem;
+}
+.arrow-link span { transition: transform 0.3s var(--ease); color: var(--accent); }
+.arrow-link:hover span { transform: translateX(10px); }
+
+.footer-bottom {
+  display: flex; justify-content: space-between; padding-top: 2rem;
+  border-top: 1px solid #111; font-size: 0.8rem; color: #555;
+}
+.social-links { display: flex; gap: 1.5rem; }
+
+.cinematic-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 10;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
+  animation: flicker 0.15s infinite; opacity: 0.4; mix-blend-mode: overlay;
+}
+.cinematic-overlay::after {
+  content: ""; position: absolute; top: -100%; left: -100%; width: 300%; height: 300%;
+  background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+  opacity: 0.3; animation: grain 8s steps(10) infinite; pointer-events: none;
+}
+.cinematic-grade {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 11;
+  background: linear-gradient(45deg, rgba(16, 22, 38, 0.4) 0%, rgba(255, 145, 0, 0.1) 100%);
+  mix-blend-mode: color;
+}
+.cinematic-vignette {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 12;
+  background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.95) 100%);
+}
+.old-camera-filter {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 13;
+  background: rgba(139, 107, 74, 0.15);
+  mix-blend-mode: color-burn;
+  filter: sepia(40%) contrast(120%);
+}
+.cinematic-bars::before, .cinematic-bars::after {
+  content: ''; position: absolute; left: 0; width: 100%; height: 10%; background: #000; z-index: 15; pointer-events: none;
+}
+.cinematic-bars::before { top: 0; }
+.cinematic-bars::after { bottom: 0; }
+
+@keyframes flicker {
+  0% { opacity: 0.3; }
+  50% { opacity: 0.4; }
+  100% { opacity: 0.3; }
+}
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -10%); }
+  20% { transform: translate(-15%, 5%); }
+  30% { transform: translate(7%, -25%); }
+  40% { transform: translate(-5%, 25%); }
+  50% { transform: translate(-15%, 10%); }
+  60% { transform: translate(15%, 0%); }
+  70% { transform: translate(0%, 15%); }
+  80% { transform: translate(3%, 35%); }
+  90% { transform: translate(-10%, 10%); }
+}
+
+@media (max-width: 900px) {
+  nav { padding: 0.8rem 2rem; }
+  .hero-titles-list { left: 2rem; bottom: 3rem; }
+  section { padding: 5rem 2rem; }
+  .split-screen, .footer-blocks { flex-direction: column; gap: 3rem; }
+  .portfolio-track { gap: 8vw; height: 60vh; margin-top: 15vh; padding: 0 60vw 0 10vw; }
+  .size-l, .size-sq, .size-m, .size-s, .size-xs { width: 50vw; }
+  .port-text { font-size: 5vw; width: 60vw; margin: 0 5vw; }
+}
+</style>
+</head>
+<body class="loading">
+
+<div id="loader">
+  <div class="loader-panel top"></div>
+  <div class="loader-panel bottom"></div>
+  <div class="loader-brand" id="loaderBrand"></div>
+</div>
+
+<nav>
+  <div class="nav-left">
+    <button class="menu-btn">
+      <div class="menu-icon">
+        <span></span>
+        <span></span>
+      </div>
+      Menu
+    </button>
+  </div>
+  <div class="brand">{{ loja.nome }}</div>
+  <div class="nav-right">
+    <button class="search-btn">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    </button>
+  </div>
+</nav>
+
+<header class="hero" id="hero">
+  {% set hero_videos = [] %}
+  {% for p in produtos %}
+    {% set p_cat = p.categoria_id.id if p.categoria_id is mapping else p.categoria_id %}
+    {% for c in categorias %}
+      {% if p_cat|string == c.id|string and ('hero' in c.slug|lower or 'hero' in c.nome|lower) %}
+        {% set _ = hero_videos.append(p) %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+
+  {% for p in hero_videos %}
+    {% set bg_link = p.link_projeto %}
+    {% if bg_link and 'vimeo.com' in bg_link and 'player.vimeo.com' not in bg_link %}
+      {% set clean_url = bg_link.split('?')[0].strip('/') %}
+      {% set link_parts = clean_url.split('/') %}
+      {% if link_parts|length >= 5 %}
+        {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] ~ '?h=' ~ link_parts[4] %}
+      {% elif link_parts|length == 4 %}
+        {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] %}
+      {% endif %}
+    {% endif %}
+
+    {% set modal_link = p.whatsapp_projeto %}
+    {% if modal_link and 'vimeo.com' in modal_link and 'player.vimeo.com' not in modal_link %}
+      {% set m_clean_url = modal_link.split('?')[0].strip('/') %}
+      {% set m_link_parts = m_clean_url.split('/') %}
+      {% if m_link_parts|length >= 5 %}
+        {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] ~ '?h=' ~ m_link_parts[4] %}
+      {% elif m_link_parts|length == 4 %}
+        {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] %}
+      {% endif %}
+    {% endif %}
+
+  <div class="slide {% if loop.first %}active{% endif %}">
+    
+    {% if bg_link and 'vimeo.com' in bg_link %}
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1; pointer-events: none;">
+      <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1" style="width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) translateZ(0); backface-visibility: hidden; border: none; filter: brightness(0.6);" allow="autoplay; fullscreen"></iframe>
+    </div>
+    {% elif bg_link %}
+    <video src="{{ bg_link }}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: -1; filter: brightness(0.6); pointer-events: none;"></video>
+    {% endif %}
+
+    <div class="play-link" onclick="openVideo('{{ modal_link }}')">
+      <div class="play-btn">
+        <svg viewBox="0 0 24 24" stroke="currentColor"><polygon points="7 4 20 12 7 20 7 4"></polygon></svg>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="hero-titles-list">
+    {% for p in hero_videos %}
+      {% set modal_link = p.whatsapp_projeto %}
+      {% if modal_link and 'vimeo.com' in modal_link and 'player.vimeo.com' not in modal_link %}
+        {% set m_clean_url = modal_link.split('?')[0].strip('/') %}
+        {% set m_link_parts = m_clean_url.split('/') %}
+        {% if m_link_parts|length >= 5 %}
+          {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] ~ '?h=' ~ m_link_parts[4] %}
+        {% elif m_link_parts|length == 4 %}
+          {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] %}
+        {% endif %}
+      {% endif %}
+    <h1 class="hero-title-item {% if loop.first %}active{% endif %}" onmouseenter="goToSlide({{ loop.index0 }})" onclick="openVideo('{{ modal_link }}')">{{ p.nome }} <span class="year">{{ p.estoque }}</span></h1>
+    {% endfor %}
+  </div>
+
+  <div id="videoModal" class="video-modal">
+    <button class="close-modal" onclick="closeVideo()">✕</button>
+    <div class="iframe-container">
+      <iframe id="vimeoPlayer" src="" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</header>
+
+{% if loja.logos_clientes %}
+<section class="clients-section fade-in">
+  <div class="clients-left">
+    <h2>Nossos clientes<span class="accent-dot">.</span></h2>
+    <a href="#contact" class="clients-link">Conheça todos &rarr;</a>
+  </div>
+  <div class="clients-right">
+    {% set client_logos = loja.logos_clientes.split('\n') %}
+    <div class="clients-track">
+      {% for i in range(4) %}
+        {% for logo in client_logos %}
+          {% if logo.strip() %}
+          <img src="{{ logo.strip() }}" alt="Cliente">
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<div class="evolve-wrapper">
+  <div class="evolve-sticky">
+    <div class="evolve-bg-video">
+      <video autoplay loop muted playsinline>
+        <source src="https://res.cloudinary.com/dzcaxmbjn/video/upload/v1772571265/dynamic-ink-blots-symbolizing-movement-and-fluidit-2026-01-28-04-31-04-utc_eqom6l.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="evolve-overlay"></div>
+    <div class="flash-bang"></div>
+    <div class="cinematic-bar top"></div>
+    <div class="cinematic-bar bottom"></div>
+    <div class="evolve-texts">
+      <h2 class="evolve-phrase phrase-1"><span class="hover-move">VAMOS EVOLUIR COM VOCÊ</span></h2>
+      <h2 class="evolve-phrase phrase-2"><span class="hover-move">LET'S EVOLVE TOGETHER</span></h2>
+      <h2 class="evolve-phrase phrase-3"><span class="hover-move">ÉVOLUONS ENSEMBLE</span></h2>
+      <h2 class="evolve-phrase phrase-4"><span class="hover-move">让我们一起努力</span></h2>
+    </div>
+  </div>
+</div>
+
+<section id="work" class="portfolio-horizontal-wrapper">
+  <div class="portfolio-sticky">
+    <div class="portfolio-bg-animation"></div>
+    <div class="portfolio-glow"></div>
+    <h2 class="portfolio-section-title fade-in">Selected Work</h2>
+    
+    <div class="portfolio-track">
+      {% set port_videos = [] %}
+      {% for p in produtos %}
+        {% set p_cat = p.categoria_id.id if p.categoria_id is mapping else p.categoria_id %}
+        {% for c in categorias %}
+          {% if p_cat|string == c.id|string and ('portfolio' in c.slug|lower or 'portfólio' in c.nome|lower or 'portfolio' in c.nome|lower) %}
+            {% set _ = port_videos.append(p) %}
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+
+      {% for p in port_videos %}
+      <div class="port-item {% if loop.index % 3 == 0 %}size-s align-top{% elif loop.index % 2 == 0 %}size-sq align-bottom{% else %}size-l align-center{% endif %}">
+        
+        {% set bg_link = p.link_projeto %}
+        {% if bg_link and 'vimeo.com' in bg_link and 'player.vimeo.com' not in bg_link %}
+          {% set clean_url = bg_link.split('?')[0].strip('/') %}
+          {% set link_parts = clean_url.split('/') %}
+          {% if link_parts|length >= 5 %}
+            {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] ~ '?h=' ~ link_parts[4] %}
+          {% elif link_parts|length == 4 %}
+            {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] %}
+          {% endif %}
+        {% endif %}
+
+        {% if bg_link and 'vimeo.com' in bg_link %}
+        <div class="vimeo-port-bg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none;">
+          <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; border: none;" allow="autoplay; fullscreen"></iframe>
+        </div>
+        {% elif bg_link %}
+        <video src="{{ bg_link }}" autoplay loop muted playsinline></video>
+        {% endif %}
+
+        <div class="port-info">
+          <h3>{{ p.nome }}</h3>
+          <p>{{ p.origem }}</p>
+        </div>
+        <div class="port-item-caption">{{ p.descricao }} | {{ p.estoque }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="quarto3d" class="cinematic-bars" style="position: relative; width: 100%; height: 100vh; background: url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat; z-index: 999; overflow: hidden; box-shadow: inset 0 0 200px rgba(0,0,0,0.95);">
+  <div class="cinematic-overlay"></div>
+  <div class="cinematic-grade"></div>
+  <div class="cinematic-vignette"></div>
+  <div class="old-camera-filter"></div>
+  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent 15%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,1) 100%); box-shadow: inset 0 0 150px #000; pointer-events: none; z-index: 20; backdrop-filter: contrast(1.15) brightness(0.95);"></div>
+  <div id="canvas-container" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; display: block; z-index: 2;"></div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(30, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(-0.1, 1.2, 1.2);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.target.set(-0.1, 1.1, 0);
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.minPolarAngle = Math.PI / 2.05;
+    controls.maxPolarAngle = Math.PI / 2.05;
+    controls.minAzimuthAngle = -0.15;
+    controls.maxAzimuthAngle = 0.15;
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xfff0dd, 2);
+    directionalLight.position.set(5, 5, 2);
+    directionalLight.castShadow = true;
+    scene.add(directionalLight);
+
+    const fillLight = new THREE.DirectionalLight(0xcceeff, 0.5);
+    fillLight.position.set(-5, 3, -5);
+    scene.add(fillLight);
+
+    const loader = new GLTFLoader();
+    
+    loader.load(
+        '{{ url_for("static", filename="Quarto.glb") }}', 
+        function (gltf) {
+            const model = gltf.scene;
+            scene.add(model);
+        },
+        function (xhr) {
+            console.log(Math.round((xhr.loaded / xhr.total * 100)) + ' por cento carregado');
+        },
+        function (error) {
+            console.error(error);
+        }
+    );
+
+    window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</section>
+
+<footer id="contact">
+  <div class="footer-blocks fade-in">
+    <div class="footer-block">
+      <h2>Start a Project</h2>
+      <form class="contact-form">
+        <div class="input-group"><input type="text" placeholder="Seu Nome"></div>
+        <div class="input-group"><input type="email" placeholder="Seu E-mail"></div>
+        <div class="input-group"><input type="text" placeholder="Sobre o que vamos criar?"></div>
+        <button type="button" class="btn-submit">Enviar Briefing</button>
+      </form>
+    </div>
+    <div class="footer-block">
+      <h2>Join the Crew</h2>
+      <p class="work-with-us">Buscamos mentes inquietas. Editores de vídeo, motion designers e coloristas que respiram arte e tecnologia. Se você quer ultrapassar os limites do audiovisual, seu lugar é aqui.</p>
+      <a href="https://wa.me/{{ loja.whatsapp_comercial }}" target="_blank" class="arrow-link">Trabalhe Conosco <span>&rarr;</span></a>
+    </div>
+  </div>
+  <div class="footer-bottom fade-in">
+    <div class="copyright">&copy; 2026 {{ loja.nome }}. All rights reserved.</div>
+    <div class="social-links">
+      {% if loja.instagram_url %}
+      <a href="{{ loja.instagram_url }}" target="_blank">Instagram</a>
+      {% endif %}
+      <a href="#">Vimeo</a>
+      <a href="#">LinkedIn</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  const loaderBrand = document.getElementById('loaderBrand');
+  const brandName = 'LOADING';
+  
+  loaderBrand.innerHTML = brandName.split('').map(char => {
+    return `<span class="loader-char-wrap"><span class="loader-char">${char}</span></span>`;
+  }).join('');
+
+  const tlLoader = gsap.timeline({
+    onComplete: () => {
+      document.body.classList.remove('loading');
+      document.getElementById('loader').style.display = 'none';
+      if(typeof calcScroll === 'function') calcScroll();
+      ScrollTrigger.refresh();
+    }
+  });
+
+  tlLoader.set('.loader-char', { yPercent: 120, skewY: 10 })
+  
+  .to('.loader-char', {
+    yPercent: 0,
+    skewY: 0,
+    duration: 1,
+    stagger: 0.05,
+    ease: 'expo.out'
+  })
+  
+  .to('.loader-char', {
+    scaleY: 0.2,
+    scaleX: 1.5,
+    color: 'var(--accent)',
+    duration: 0.3,
+    stagger: { amount: 0.2, from: 'center', yoyo: true, repeat: 1 },
+    ease: 'power2.inOut'
+  }, '+=0.2')
+  
+  .to('.loader-char', {
+    yPercent: -120,
+    skewY: -10,
+    duration: 0.6,
+    stagger: 0.04,
+    ease: 'power4.in'
+  }, '+=0.1')
+  
+  .to('.loader-panel.top', {
+    yPercent: -100,
+    duration: 1.2,
+    ease: 'expo.inOut'
+  }, '-=0.4')
+  .to('.loader-panel.bottom', {
+    yPercent: 100,
+    duration: 1.2,
+    ease: 'expo.inOut'
+  }, '-=1.2')
+  .to('#loader', {
+    opacity: 0,
+    duration: 0.3
+  }, '-=0.3');
+
+  const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.fade-in').forEach(element => { observer.observe(element); });
+
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const titleItems = document.querySelectorAll('.hero-title-item');
+
+  function goToSlide(index) {
+    if(slides.length === 0) return;
+    if(index === currentSlide) return;
+
+    if(slides[currentSlide]) slides[currentSlide].classList.remove('active');
+    if(titleItems[currentSlide]) titleItems[currentSlide].classList.remove('active');
+    
+    currentSlide = index;
+    
+    if(slides[currentSlide]) slides[currentSlide].classList.add('active');
+    if(titleItems[currentSlide]) titleItems[currentSlide].classList.add('active');
+  }
+
+  function nextSlide() {
+    if(slides.length <= 1) return;
+    let next = (currentSlide + 1) % slides.length;
+    goToSlide(next);
+  }
+
+  function prevSlide() {
+    if(slides.length <= 1) return;
+    let prev = (currentSlide - 1 + slides.length) % slides.length;
+    goToSlide(prev);
+  }
+
+  let isHeroScrolling = false;
+  const heroEl = document.getElementById('hero');
+  let touchStartY = 0;
+
+  heroEl.addEventListener('wheel', (e) => {
+    if (!isHeroScrolling) {
+      isHeroScrolling = true;
+      if (e.deltaY > 0) nextSlide();
+      else prevSlide();
+      setTimeout(() => isHeroScrolling = false, 1000);
+    }
+  });
+
+  heroEl.addEventListener('touchstart', e => touchStartY = e.touches[0].clientY);
+  heroEl.addEventListener('touchend', e => {
+    if(isHeroScrolling) return;
+    let touchEndY = e.changedTouches[0].clientY;
+    if(touchStartY - touchEndY > 50) { isHeroScrolling = true; nextSlide(); setTimeout(() => isHeroScrolling = false, 1000); }
+    else if(touchEndY - touchStartY > 50) { isHeroScrolling = true; prevSlide(); setTimeout(() => isHeroScrolling = false, 1000); }
+  });
+
+  const videoModal = document.getElementById('videoModal');
+  const vimeoPlayer = document.getElementById('vimeoPlayer');
+
+  function openVideo(url) {
+    if(!url) return;
+    let finalUrl = url;
+    if(finalUrl.includes('vimeo.com') && !finalUrl.includes('autoplay=')) {
+      finalUrl += (finalUrl.includes('?') ? '&' : '?') + 'autoplay=1';
+    }
+    vimeoPlayer.src = finalUrl;
+    videoModal.classList.add('active');
+  }
+
+  function closeVideo() {
+    videoModal.classList.remove('active');
+    vimeoPlayer.src = ''; 
+  }
+
+  const evolveSection = document.querySelector('.evolve-wrapper');
+  const evolvePhrases = document.querySelectorAll('.evolve-phrase');
+  const flashBang = document.querySelector('.flash-bang');
+  let evolveLastIndex = -1;
+
+  let calcScroll = () => {
+    const windowHeight = window.innerHeight;
+    const topBar = document.querySelector('.cinematic-bar.top');
+    const bottomBar = document.querySelector('.cinematic-bar.bottom');
+
+    if(evolveSection) {
+      const rect = evolveSection.getBoundingClientRect();
+      
+      if (rect.top <= 0 && rect.bottom >= windowHeight) {
+         const totalScroll = rect.height - windowHeight;
+         const currentScroll = -rect.top;
+         let progress = currentScroll / totalScroll;
+
+         if(topBar && bottomBar) {
+             let barProgress = Math.min(Math.max(progress / 0.08, 0), 1);
+             topBar.style.transform = `translateY(${ -100 + (barProgress * 100) }%)`;
+             bottomBar.style.transform = `translateY(${ 100 - (barProgress * 100) }%)`;
+         }
+
+         let activeIndex = 0;
+         if (progress > 0.8) activeIndex = 3;
+         else if (progress > 0.5) activeIndex = 2;
+         else if (progress > 0.15) activeIndex = 1; 
+         else activeIndex = 0;
+
+         if (activeIndex !== evolveLastIndex) {
+             if(flashBang && evolveLastIndex !== -1) {
+                 flashBang.classList.remove('fire');
+                 void flashBang.offsetWidth;
+                 flashBang.classList.add('fire');
+             }
+             evolveLastIndex = activeIndex;
+         }
+
+         evolvePhrases.forEach((phrase, index) => {
+           if (index === activeIndex) {
+             phrase.className = `evolve-phrase phrase-${index + 1} active`;
+           } else if (index < activeIndex) {
+             phrase.className = `evolve-phrase phrase-${index + 1} passed`;
+           } else {
+             phrase.className = `evolve-phrase phrase-${index + 1}`;
+           }
+         });
+      } else if (rect.top > 0) {
+         if(topBar && bottomBar) {
+             topBar.style.transform = `translateY(-100%)`;
+             bottomBar.style.transform = `translateY(100%)`;
+         }
+         evolveLastIndex = -1;
+         evolvePhrases.forEach((phrase, i) => {
+            phrase.className = i === 0 ? `evolve-phrase phrase-${i + 1} active` : `evolve-phrase phrase-${i + 1}`;
+         });
+      } else if (rect.bottom < windowHeight) {
+         if(topBar && bottomBar) {
+             topBar.style.transform = `translateY(0%)`;
+             bottomBar.style.transform = `translateY(0%)`;
+         }
+         evolveLastIndex = 3;
+         evolvePhrases.forEach((phrase, i) => {
+            phrase.className = i === 3 ? `evolve-phrase phrase-${i + 1} active` : `evolve-phrase phrase-${i + 1} passed`;
+         });
+      }
+    }
+  };
+
+  window.addEventListener('load', calcScroll);
+  window.addEventListener('resize', calcScroll);
+  window.addEventListener('scroll', calcScroll);
+
+  const portfolioSection = document.querySelector('.portfolio-horizontal-wrapper');
+  const portfolioTrack = document.querySelector('.portfolio-track');
+
+  if (portfolioSection && portfolioTrack) {
+    const scrollWidth = portfolioTrack.scrollWidth;
+    const viewportWidth = window.innerWidth;
+    const scrollDistance = scrollWidth - viewportWidth;
+
+    gsap.to(portfolioTrack, {
+        x: () => -scrollDistance,
+        ease: 'none',
+        scrollTrigger: {
+            trigger: portfolioSection,
+            start: 'top top',
+            end: () => '+=' + scrollDistance, 
+            pin: true,
+            scrub: 1,
+            anticipatePin: 1
+        }
+    });
+  }
+
+  const evolveSticky = document.querySelector('.evolve-sticky');
+  const hoverMoves = document.querySelectorAll('.hover-move');
+
+  if (evolveSticky && hoverMoves.length > 0) {
+    evolveSticky.addEventListener('mousemove', (e) => {
+      const { clientX, clientY } = e;
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+
+      hoverMoves.forEach((text) => {
+        const depth = 0.08;
+        const moveX = (clientX - centerX) * depth;
+        const moveY = (clientY - centerY) * depth;
+
+        gsap.to(text, {
+          x: moveX,
+          y: moveY,
+          duration: 1,
+          ease: "power2.out"
         });
-
-        // --- SMOOTH SCROLLING - MANTIDO ---
-        function initSmoothScroll() {
-            // GSAP SmoothScroll (requer GSAP Premium/Bonus). Se não houver, falha silenciosamente.
-            if (typeof ScrollSmoother !== "undefined") {
-                ScrollSmoother.create({
-                    smooth: 1.5,               
-                    effects: true,             
-                    normalizeScroll: true      
-                });
-            }
-        }
-
-        // --- NAVIGATION - MANTIDO ---
-        function initNavigation() {
-            const header = document.getElementById('main-header');
-            const navLinks = document.querySelector('.nav-links');
-            const burger = document.querySelector('.burger');
-            let lastScroll = 0;
-
-            window.addEventListener('scroll', () => {
-                const currentScroll = window.pageYOffset;
-                if (currentScroll > 100) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-
-                if (currentScroll > 500 && currentScroll > lastScroll && !navLinks.classList.contains('open')) {
-                    header.classList.add('nav-hidden');
-                } else {
-                    header.classList.remove('nav-hidden');
-                }
-                lastScroll = currentScroll;
-            });
-
-            burger.addEventListener('click', () => {
-                navLinks.classList.toggle('open');
-                burger.classList.toggle('toggle');
-            });
-        }
-
-        // --- HERO SLIDES - REVISADO PARA TROCA SOMENTE COM ROLAGEM/DESLISE ---
-        function initHeroSlides() {
-            const slides = document.querySelectorAll('.hero-slide');
-            const indicators = document.querySelectorAll('.hero-indicator');
-            const container = document.getElementById('hero-sec');
-            let slideIndex = 0;
-            // let slideInterval; // Intervalo automático removido
-            let isAnimating = false;
-
-            function updateSlides(prevIndex) {
-                isAnimating = true;
-                
-                // Hide current active elements
-                slides[prevIndex].classList.remove('active');
-                indicators[prevIndex].classList.remove('active');
-
-                // Fade In new elements
-                slides[slideIndex].classList.add('active');
-                indicators[slideIndex].classList.add('active');
-                
-                // Prevent over-rapid switching
-                setTimeout(() => { isAnimating = false; }, 1000); // tempo da animação (1s)
-            }
-
-            function nextSlide() {
-                if (isAnimating) return;
-                const prevIndex = slideIndex;
-                slideIndex = (slideIndex + 1) % slides.length;
-                updateSlides(prevIndex);
-            }
-
-            // Função para slide anterior
-            function prevSlide() {
-                if (isAnimating) return;
-                const prevIndex = slideIndex;
-                slideIndex = (slideIndex - 1 + slides.length) % slides.length;
-                updateSlides(prevIndex);
-            }
-
-            // --- ESCUTADORES DE EVENTOS PARA ROLAGEM E DESLISE ---
-            
-            // 1. Mouse Wheel Scroll (Rolagem do Mouse)
-            container.addEventListener('wheel', (event) => {
-                if (Math.abs(event.deltaY) > 20) { // Ignora micro-rolagens
-                    if (event.deltaY > 0) {
-                        nextSlide(); // Scroll down -> Próximo
-                    } else {
-                        prevSlide(); // Scroll up -> Anterior
-                    }
-                }
-            });
-
-            // 2. Touch Swipe (Deslise no Celular)
-            let touchStartX = 0;
-            let touchEndX = 0;
-            container.addEventListener('touchstart', (event) => {
-                touchStartX = event.changedTouches[0].screenX;
-            });
-
-            container.addEventListener('touchend', (event) => {
-                touchEndX = event.changedTouches[0].screenX;
-                handleSwipe();
-            });
-
-            function handleSwipe() {
-                const swipeThreshold = 50; // Mínimo de pixels para considerar swipe
-                if (touchStartX - touchEndX > swipeThreshold) {
-                    nextSlide(); // Swipe left -> Próximo
-                } else if (touchEndX - touchStartX > swipeThreshold) {
-                    prevSlide(); // Swipe right -> Anterior
-                }
-            }
-
-            // --- LÓGICA DE TROCA AUTOMÁTICA REMOVIDA ---
-            // slideInterval = setInterval(nextSlide, 7000);
-            
-            // Se houver interação direta nos indicadores (opcional, mas mantido se já existia)
-            indicators.forEach((ind, index) => {
-                ind.style.pointerEvents = 'auto'; // Re-ativa cliques nos indicadores se necessário
-                ind.addEventListener('click', () => {
-                    if(isAnimating) return;
-                    // clearInterval(slideInterval); // Não é mais necessário
-                    const prevIndex = slideIndex;
-                    slideIndex = index;
-                    if(slideIndex !== prevIndex) updateSlides(prevIndex);
-                    // slideInterval = setInterval(nextSlide, 7000); // Não re-ativa
-                });
-            });
-
-            // Lógica de pause/play no mouse enter (removida)
-            /*
-            container.addEventListener('mouseenter', () => clearInterval(slideInterval));
-            container.addEventListener('mouseleave', () => {
-                clearInterval(slideInterval);
-                slideInterval = setInterval(nextSlide, 7000);
-            });
-            */
-        }
-
-        // --- THREE.JS SECTION - REVISADO PARA ZOOM E FILTRO ---
-        function initThreeJS() {
-            if (typeof THREE === "undefined") return;
-
-            const container = document.getElementById('threed-canvas');
-            const width = container.offsetWidth;
-            const height = container.offsetHeight;
-            let scene, camera, renderer, model, composer, vignettePass, oldCameraPass;
-            let mouseX = 0, mouseY = 0;
-
-            // --- SETUP CENA E CÂMERA (ZOOM AUMENTADO) ---
-            scene = new THREE.Scene();
-            scene.fog = new THREE.Fog(0x0a0a0a, 10, 500);
-
-            // AUMENTO DO ZOOM: Reduzido FOV (Field Of View) de 45 para 30 (quanto menor, mais zoom)
-            camera = new THREE.PerspectiveCamera(30, (window.innerWidth / window.innerHeight) * 0.5, 0.1, 1000);
-            // Ajuste leve na posição Z para aproximação suave, mantendo o modelo visível
-            camera.position.set(0, 5, -45); // Posição original: (0, 5, -50). Alterado para -45.
-            camera.lookAt(0, 0, 0);
-
-            // --- RENDERER E POST-PROCESSING (NOVO FILTRO) ---
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(width, height);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.shadowMap.enabled = true;
-            renderer.outputEncoding = THREE.sRGBEncoding;
-            container.appendChild(renderer.domElement);
-
-            // Setup EffectComposer para múltiplos passes
-            composer = new THREE.EffectComposer(renderer);
-            composer.addPass(new THREE.RenderPass(scene, camera));
-
-            // 1. Passe de Vinheta Existente
-            vignettePass = new THREE.ShaderPass(VignetteShader);
-            vignettePass.uniforms.darkness.value = 1.0;
-            vignettePass.uniforms.offset.value = 0.5;
-            composer.addPass(vignettePass);
-
-            // 2. NOVO Passe de Filtro Câmera Antiga (Granulação)
-            oldCameraPass = new THREE.ShaderPass(CameraFilterShader);
-            oldCameraPass.uniforms.amount.value = 0.08; // Intensidade do grão
-            oldCameraPass.renderToScreen = true; // Define como o último passe a ser renderizado
-            composer.addPass(oldCameraPass);
-
-            // --- LIGHTING - MANTIDO ---
-            scene.add(new THREE.AmbientLight(0xffffff, 0.3));
-            const mainLight = new THREE.DirectionalLight(0xffffff, 1);
-            mainLight.position.set(10, 20, 10);
-            mainLight.castShadow = true;
-            scene.add(mainLight);
-
-            // --- CARREGAMENTO DO MODELO 3D - MANTIDO ---
-            if (typeof THREE.GLTFLoader !== "undefined") {
-                const loader = new THREE.GLTFLoader();
-                loader.load('camera_creapes.glb', (gltf) => {
-                    model = gltf.scene;
-                    
-                    // AUMENTO DO ZOOM: Aumento de escala do modelo (levemente maior)
-                    model.scale.set(0.28, 0.28, 0.28); // Escala original: 0.25
-                    model.position.set(0, -20, -10); // Posição original: (0,-20,-10). Mantido.
-                    
-                    model.traverse((o) => {
-                        if (o.isMesh) {
-                            o.castShadow = true;
-                            o.receiveShadow = true;
-                            // MANTIDO: Configuração de materiais se houver problemas de luz
-                            /*
-                            if(o.material.isMeshStandardMaterial){
-                                o.material.metalness = 0.8;
-                                o.material.roughness = 0.3;
-                            }
-                            */
-                        }
-                    });
-                    scene.add(model);
-                });
-            }
-
-            // --- INTERAÇÃO COM MOUSE E LOOP (FILTRO ANIMADO) ---
-            window.addEventListener('mousemove', (e) => {
-                mouseX = (e.clientX - width / 2) / 500;
-                mouseY = (e.clientY - height / 2) / 500;
-            });
-
-            function animate() {
-                requestAnimationFrame(animate);
-                if (model) {
-                    // MANTIDO: Rotação suave no mouse move
-                    gsap.to(model.rotation, { y: mouseX * 0.5, x: -mouseY * 0.2, duration: 1, ease: "power1.out" });
-                }
-                
-                // MANTIDO: Animação suave no Z (movimento natural)
-                gsap.to(camera.position, {
-                    z: (-45 + mouseX * 2), // Base Z original -50, alterado para -45 para o zoom.
-                    duration: 2, ease: "power1.inOut"
-                });
-
-                // NOVO: Atualiza a semente do filtro de grão para animá-lo
-                if (oldCameraPass) {
-                    oldCameraPass.uniforms.seed.value = Math.random();
-                }
-
-                //renderer.render(scene, camera); // Render direto removido
-                composer.render(); // Render via composer para post-processing
-            }
-            animate();
-
-            // --- RESIZE HANDLING - MANTIDO ---
-            window.addEventListener('resize', () => {
-                const newWidth = container.offsetWidth;
-                const newHeight = container.offsetHeight;
-                
-                camera.aspect = (window.innerWidth / window.innerHeight) * 0.5;
-                camera.updateProjectionMatrix();
-                
-                renderer.setSize(newWidth, newHeight);
-                composer.setSize(newWidth, newHeight);
-            });
-        }
-
-        // --- NOSSA EVOLUÇÃO (TIMELINE SCROLL) - MANTIDO ---
-        function initTimeline() {
-            if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
-
-            const timelineTrack = document.querySelector('.timeline-track');
-            const section = document.getElementById('timeline-sec');
-
-            if (!timelineTrack) return;
-
-            // Desktop Horizontal Scroll
-            if (window.innerWidth > 1024) {
-                const tlWidth = timelineTrack.offsetWidth;
-                const windowWidth = window.innerWidth;
-                const scrollWidth = tlWidth - windowWidth + 100; // Offset
-
-                gsap.to(timelineTrack, {
-                    x: -scrollWidth,
-                    ease: "none",
-                    scrollTrigger: {
-                        trigger: section,
-                        start: "top top",
-                        end: () => "+=" + scrollWidth,
-                        pin: true,
-                        scrub: 1, // Smooth scrolling
-                        anticipatePin: 1,
-                        //markers: true, // Para debug
-                    }
-                });
-            } else {
-                // Mobile Vertical Scroll (GSAP desnecessário, CSS cuida)
-                // gsap.to(section, { scrollTrigger: { trigger: section, start: "top top", pin: false } }); // Comentado
-            }
-        }
-
-        // --- NOSSOS CLIENTES - MANTIDO ---
-        function initClients() {
-            // Lógica para marquee suave se necessário no futuro
-            // Atualmente rodando via CSS animation.
-        }
-
-        // --- CONTACT FORM - MANTIDO ---
-        function initContactForm() {
-            // Lógica de envio de form
-        }
-
-    </script>
+      });
+    });
+  }
+</script>
 </body>
 </html>
