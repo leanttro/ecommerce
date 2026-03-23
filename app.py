@@ -341,7 +341,7 @@ def cadastro():
             "font_tamanho_base": 16,
             "font_titulo": "Poppins",
             "font_corpo": "Inter",
-            "layout_order": "banner,busca,categorias,produtos,banners_menores,novidades,blog,sobre,mapa,footer",
+            "layout_order": "banner,busca,categorias,produtos,banners_menores,novidades,mapa,footer",
             
             "linkbannerprincipal1": "#",
             "linkbannerprincipal2": "#"
@@ -491,7 +491,16 @@ def index(loja_slug):
         url_agenda = f"{DIRECTUS_URL}/items/agenda?filter[loja_id][_eq]={g.loja_id}&sort=data_hora"
         r_agenda = requests.get(url_agenda, headers=headers)
         if r_agenda.status_code == 200:
-            agenda = r_agenda.json()['data']
+            for item in r_agenda.json()['data']:
+                try:
+                    if item.get('data_hora'):
+                        dt = datetime.fromisoformat(item['data_hora'].replace('Z', '').replace(' ', 'T'))
+                        item['data_hora_formatada'] = dt.strftime('%d/%m/%Y às %H:%M')
+                    else:
+                        item['data_hora_formatada'] = "Sem data"
+                except:
+                    item['data_hora_formatada'] = item.get('data_hora')
+                agenda.append(item)
     except: pass
 
     # Recupera o objeto da categoria selecionada (para passar o nome e dados dela pro HTML)
@@ -793,7 +802,17 @@ def admin_painel(loja_slug):
         if r_leads.status_code == 200: inscritos = r_leads.json()['data']
 
         r_agenda = requests.get(f"{DIRECTUS_URL}/items/agenda?filter[loja_id][_eq]={g.loja_id}&sort=data_hora", headers=headers)
-        if r_agenda.status_code == 200: agenda = r_agenda.json()['data']
+        if r_agenda.status_code == 200:
+            for item in r_agenda.json()['data']:
+                try:
+                    if item.get('data_hora'):
+                        dt = datetime.fromisoformat(item['data_hora'].replace('Z', '').replace(' ', 'T'))
+                        item['data_hora_formatada'] = dt.strftime('%d/%m/%Y às %H:%M')
+                    else:
+                        item['data_hora_formatada'] = "Sem data"
+                except:
+                    item['data_hora_formatada'] = item.get('data_hora')
+                agenda.append(item)
         
     except Exception as e:
         print(f"Erro ao carregar dados do painel: {e}")
@@ -1086,13 +1105,18 @@ def admin_salvar_agenda(loja_slug):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
     
     agenda_id = request.form.get('id')
-    data_hora_formatada = request.form.get('data_hora_formatada')
+    # O datetime-local vem como '2026-10-25T14:00'
+    data_hora = request.form.get('data_hora')
     disponivel = True if request.form.get('disponivel') == 'on' else False
     cliente_nome = request.form.get('cliente_nome')
     
+    # Garante que o Directus entenda o formato de data
+    if data_hora and 'T' in data_hora:
+        data_hora = data_hora.replace('T', ' ') + ":00"
+    
     payload = {
         "loja_id": g.loja_id,
-        "data_hora_formatada": data_hora_formatada,
+        "data_hora": data_hora,
         "disponivel": disponivel,
         "cliente_nome": cliente_nome
     }
