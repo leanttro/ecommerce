@@ -312,7 +312,6 @@
                 </div>
             </section>
 
-            <!-- ========== SEÇÃO AGENDA (ORIGINAL + NOVA ÁREA KANBAN) ========== -->
             <section id="agenda" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hidden">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2"><i data-lucide="calendar" class="text-pink-600"></i> Agenda / Horários</h2>
@@ -321,13 +320,11 @@
                     </button>
                 </div>
 
-                <!-- Botão de alternância entre visualização tradicional e quadro Kanban -->
                 <div class="flex gap-2 mb-6 border-b border-gray-200 pb-2">
                     <button id="toggleListViewBtn" class="agenda-toggle-btn px-4 py-2 rounded-full text-sm font-bold border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 active">Lista Tradicional</button>
                     <button id="toggleBoardViewBtn" class="agenda-toggle-btn px-4 py-2 rounded-full text-sm font-bold border border-gray-300 bg-white text-gray-700 hover:bg-gray-50">Quadro Kanban</button>
                 </div>
 
-                <!-- Visualização tradicional (original) -->
                 <div id="traditionalListView" class="overflow-x-auto bg-gray-50 rounded-lg border border-gray-200">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-100">
@@ -362,19 +359,15 @@
                       </table>
                 </div>
 
-                <!-- NOVA VISUALIZAÇÃO KANBAN (Quadro Trello) -->
                 <div id="kanbanBoardView" class="hidden">
                     <div class="board-container overflow-x-auto flex gap-4 pb-4">
-                        <!-- As colunas serão preenchidas dinamicamente via JavaScript -->
                     </div>
-                    <!-- Botão flutuante para adicionar compromisso diretamente no quadro -->
                     <div class="floating-add-btn" id="floatingAddTaskBtn">
                         <i data-lucide="plus" class="w-6 h-6"></i>
                     </div>
                 </div>
             </section>
 
-            <!-- DEMONSTRANDO QUE O RESTO DO CÓDIGO NÃO FOI ALTERADO -->
             <form action="/{{ loja.slug_url }}/admin/painel" method="POST" enctype="multipart/form-data">
                 
                 <section id="sobre" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hidden space-y-6">
@@ -848,7 +841,6 @@
         </main>
     </div>
 
-    <!-- Modais (categoria, produto, post, agenda) permanecem inalterados -->
     <div id="categoriaModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
         <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
         <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto animate-fade-in-down">
@@ -1398,7 +1390,7 @@
         function buildAppointmentMap(agenda) {
             const map = new Map();
             agenda.forEach(item => {
-                let dataHoraStr = item.data_hora_formatada || item.data_hora;
+                let dataHoraStr = item.data_hora;
                 if (!dataHoraStr) return;
                 let date = new Date(dataHoraStr);
                 if (isNaN(date.getTime())) return;
