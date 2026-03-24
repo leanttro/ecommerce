@@ -1789,8 +1789,9 @@
         <p class="text-white/60 font-montserrat uppercase tracking-widest text-sm">Gere sua estrela oficial e comprove sua presenca</p>
     </div>
     <div class="relative w-full max-w-[600px] aspect-square flex items-center justify-center" id="star-stage" style="perspective: 1200px;">
-        <div class="w-full h-full transform transition-all duration-1000" style="transform: rotateX(35deg);" id="star-wrapper">
-            <svg viewBox="-10 -10 120 120" class="w-full h-full drop-shadow-[0_0_100px_rgba(212,175,55,0.7)]">
+        <div class="relative w-full h-full transform transition-all duration-1000 flex items-center justify-center" style="transform: rotateX(35deg); transform-style: preserve-3d; will-change: transform;" id="star-wrapper">
+            
+            <svg viewBox="-10 -10 120 120" class="absolute w-full h-full drop-shadow-[0_0_100px_rgba(212,175,55,0.7)] z-0">
                 <defs>
                     <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" style="stop-color:#FFDF00;stop-opacity:1" />
@@ -1826,6 +1827,14 @@
                       stroke-width="2"
                       filter="url(#glow)"/>
 
+                <path id="hall-star-gold" 
+                      d="M50,5 L64.6,37.7 L98,40.2 L72.5,62.8 L80,95 L50,77 L20,95 L27.5,62.8 L2,40.2 L35.4,37.7 Z" 
+                      fill="url(#gold-grad)" 
+                      stroke="url(#gold-grad)" 
+                      stroke-width="2"
+                      opacity="0"
+                      filter="url(#glow)"/>
+
                 <path d="M50,8 L63,38 L94,40.2 L70.5,61 L77.5,91 L50,75 L22.5,91 L29.5,61 L6,40.2 L37,38 Z" 
                       fill="none" 
                       stroke="url(#gold-grad)" 
@@ -1843,20 +1852,9 @@
                 <g id="movie-icon" transform="translate(42, 58) scale(0.6)" fill="url(#gold-grad)" filter="url(#glow)">
                     <path d="M22,2v2h-2v-2h-2v2h-2v-2h-2v2h-2v-2h-2v2h-2v-2h-2v20h20v-20h-2zM20,20h-16v-12h16v12zM18,10l-12,4v-2l12,-4z" />
                 </g>
-
-                <text id="star-name-display" 
-                      x="50" 
-                      y="48" 
-                      font-family="'Montserrat', sans-serif" 
-                      font-size="8" 
-                      fill="url(#gold-grad)" 
-                      text-anchor="middle" 
-                      font-weight="900" 
-                      opacity="0" 
-                      filter="url(#glow)"
-                      style="letter-spacing: -0.02em; text-transform: uppercase; text-shadow: 0px 2px 4px rgba(0,0,0,0.8);">
-                </text>
             </svg>
+
+            <div id="star-name-display" class="absolute w-full text-center opacity-0 z-10 flex justify-center items-center px-4" style="top: 42%; left: 0; color: #D4AF37; font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: clamp(1rem, 5vw, 2.2rem); text-shadow: 0px 4px 15px rgba(0,0,0,1); letter-spacing: 2px;"></div>
         </div>
     </div>
 
@@ -1875,7 +1873,7 @@
     async function gravarEstrelaCinema() {
         const nomeIn = document.getElementById('star-name-input').value.trim();
         const display = document.getElementById('star-name-display');
-        const star = document.getElementById('hall-star-main');
+        const goldStar = document.getElementById('hall-star-gold');
         const wrapper = document.getElementById('star-wrapper');
 
         if(!nomeIn) {
@@ -1895,8 +1893,8 @@
         
         const tl = gsap.timeline();
         
-        tl.to(wrapper, { rotationX: 0, scale: 1.1, duration: 1.5, ease: "expo.out" })
-          .to(star, { fill: 'url(#gold-grad)', duration: 1, ease: "power2.inOut" }, "-=1")
+        tl.to(wrapper, { rotationX: 0, scale: 1.05, duration: 1.5, ease: "expo.out" })
+          .to(goldStar, { opacity: 1, duration: 1, ease: "power2.inOut" }, "-=1")
           .to(display, { 
               opacity: 1, 
               scale: 1, 
@@ -1928,8 +1926,9 @@
             const starStage = document.getElementById('star-stage');
             html2canvas(starStage, {
                 backgroundColor: '#050505',
-                scale: 3,
-                useCORS: true
+                scale: 2, 
+                useCORS: true,
+                logging: false
             }).then(canvas => {
                 const imgData = canvas.toDataURL('image/jpeg', 0.9);
                 document.getElementById('download-area').innerHTML = `
@@ -1938,8 +1937,10 @@
                     </a>
                 `;
                 document.querySelector('#star-form-container p').innerText = 'Imagem gerada com sucesso. Compartilhe seu legado.';
+            }).catch(err => {
+                document.querySelector('#star-form-container p').innerText = 'Erro ao gerar a imagem no celular tire um print da tela';
             });
-        }, 1500);
+        }, 1800);
     }
 </script>
     <section class="w-full py-16 border-t border-[#D4AF37]/30 bg-black" id="social-proof-section">
