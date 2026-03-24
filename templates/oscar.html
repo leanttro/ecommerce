@@ -9,6 +9,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
     :root { 
@@ -2118,7 +2119,7 @@
         delay: 0.5
     });
 
-    clapperboard.addEventListener('click', () => {
+    document.addEventListener('click', () => {
         const tl = gsap.timeline();
         
         tl.to(clapperTop, { rotation: -50, duration: 0.1, ease: "power2.in" })
