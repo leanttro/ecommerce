@@ -1,1314 +1,1230 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session, g, flash
+import streamlit as st
+import pandas as pd
 import requests
-import os
-import json
-import uuid
-import time
-import re
-from datetime import datetime, timedelta
-from dotenv import load_dotenv
-from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename
-from werkzeug.middleware.proxy_fix import ProxyFix
+from groq import Groq
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+from email.mime.base import MIMEBase
+from email.mime.image import MIMEImage
+from email import encoders
+from datetime import datetime, date
+import time
+import os
+import random
+import urllib3
+import json
+import urllib.parse
+import re
+import concurrent.futures
+from io import BytesIO
+import base64
 
-# Carrega variáveis de ambiente
-load_dotenv()
+st.set_page_config(page_title="LEANTTRO CRM & SNIPER", layout="wide", page_icon="⚡")
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+os.environ["STREAMLIT_CLIENT_SHOW_ERROR_DETAILS"] = "false"
 
-app = Flask(__name__)
-
-# Configuração para extrair o IP real por trás de proxies/load balancers
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
-
-# CORREÇÃO DE ERRO 404 BARRAS NA URL
-# Isso faz o sistema aceitar tanto slug quanto slug/
-app.url_map.strict_slashes = False 
-
-# Em produção defina uma SECRET_KEY fixa no .env
-app.secret_key = os.getenv("SECRET_KEY", "chave_secreta_super_segura_saas_2026")
-
-# Proteção passiva contra CSRF nas sessões
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-
-serializer = URLSafeTimedSerializer(app.secret_key)
-
-# CONFIGURAÇÃO DE DOMÍNIO BASE
-DOMINIO_BASE = "leanttro.com"
-
-# CONFIGURAÇÕES GERAIS
-# Remove barra final da URL para evitar erros de concatenação
-DIRECTUS_URL = os.getenv("DIRECTUS_URL", "https://api2.leanttro.com").rstrip('/')
-DIRECTUS_TOKEN = os.getenv("DIRECTUS_TOKEN", "") 
-SUPERFRETE_TOKEN = os.getenv("SUPERFRETE_TOKEN", "")
-SUPERFRETE_URL = os.getenv("SUPERFRETE_URL", "https://api.superfrete.com/api/v0/calculator")
-CEP_ORIGEM_PADRAO = "01026000" # Fallback se a loja não tiver CEP configurado
-
-# CONFIGURAÇÕES DE E-MAIL SMTP
-SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
-SMTP_USER = os.getenv("SMTP_USER", "")
-SMTP_PASS = os.getenv("SMTP_PASS", "")
-
-# BLACKLIST DE ROTAS PALAVRAS RESERVADAS
-# Rotas que não devem ser tratadas como SLUG de loja
-# ADICIONADO catalogo AQUI PARA NÃO CONFUNDIR COM LOJA
-BLACKLIST_ROTAS = ['static', 'cadastro', 'catalogo', 'login', 'logout', 'api', 'admin', 'favicon.ico']
-
-# SEGURANÇA RATE LIMITING NA MEMÓRIA
-RATE_LIMIT_DATA = {}
-MAX_REQUESTS = 5
-TIME_WINDOW = 60 # segundos
-
-def get_client_ip():
-    if request.headers.get('X-Forwarded-For'):
-        return request.headers.get('X-Forwarded-For').split(',')[0].strip()
-    return request.remote_addr
-
-def check_rate_limit(ip, action):
-    current_time = time.time()
-    key = f"{ip}_{action}"
-    
-    if key not in RATE_LIMIT_DATA:
-        RATE_LIMIT_DATA[key] = []
-    
-    # Limpa requisições antigas fora da janela de tempo
-    RATE_LIMIT_DATA[key] = [t for t in RATE_LIMIT_DATA[key] if current_time - t < TIME_WINDOW]
-    
-    # Se atingiu o limite bloqueia
-    if len(RATE_LIMIT_DATA[key]) >= MAX_REQUESTS:
-        return False
-    
-    RATE_LIMIT_DATA[key].append(current_time)
-    return True
-
-def sanitize_input(text):
-    if not text: return text
-    # Remove tentativas de injeção de script
-    return re.sub(r'<(script|iframe|object|embed|applet|style|link)', r'&lt;\1', str(text), flags=re.IGNORECASE)
-
-# SEGURANÇA BLOQUEIO DE BOTS
-BLOCKED_USER_AGENTS = ['python-requests', 'curl', 'postmanruntime', 'wget', 'urllib', 'bot', 'spider', 'crawler']
-
-@app.before_request
-def block_bots():
-    user_agent = request.headers.get('User-Agent', '').lower()
-    for bot in BLOCKED_USER_AGENTS:
-        if bot in user_agent:
-            return "Acesso negado. Tráfego automatizado não permitido.", 403
-
-# FUNÇÕES AUXILIARES
-def get_headers():
-    return {"Authorization": f"Bearer {DIRECTUS_TOKEN}", "Content-Type": "application/json"}
-
-def get_upload_headers():
-    # Para upload não se usa Content-Type json
-    return {"Authorization": f"Bearer {DIRECTUS_TOKEN}"}
-
-def get_img_url(image_id_or_obj):
-    # Trata URLs de imagens vindas do Directus ID Objeto ou URL completa com compressão webp
-    if not image_id_or_obj: return ""
-    if isinstance(image_id_or_obj, dict): return f"{DIRECTUS_URL}/assets/{image_id_or_obj.get('id')}?quality=80&format=webp"
-    if isinstance(image_id_or_obj, str) and image_id_or_obj.startswith('http'): return image_id_or_obj
-    return f"{DIRECTUS_URL}/assets/{image_id_or_obj}?quality=80&format=webp"
-
-def upload_file_to_directus(file_storage):
-    # Faz upload de arquivo para o Directus e retorna o ID
-    try:
-        url = f"{DIRECTUS_URL}/files"
-        filename = secure_filename(file_storage.filename)
-        files = {'file': (filename, file_storage, file_storage.mimetype)}
-        
-        response = requests.post(url, headers=get_upload_headers(), files=files)
-        
-        if response.status_code in [200, 201]:
-            return response.json()['data']['id']
-        else:
-            print(f"Erro no Upload Directus: {response.text}")
-    except Exception as e:
-        print(f"Exceção no upload: {e}")
-    return None
-
-def gerar_slug(texto):
-    if not texto: return ""
-    import unicodedata
-    texto = unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('utf-8')
-    return texto.lower().strip().replace(' ', '-',).replace('/', '-').replace('.', '')
-
-def send_reset_email(user_email, reset_url, nome_loja):
-    if not SMTP_USER or not SMTP_PASS:
-        print("Configurações de SMTP ausentes. E-mail não enviado.")
-        return False
-
-    try:
-        msg = MIMEMultipart()
-        msg['From'] = f"Leanttro <{SMTP_USER}>"
-        msg['To'] = user_email
-        msg['Subject'] = f"Recuperação de Senha - {nome_loja}"
-
-        body = f"Olá!\n\nVocê solicitou a redefinição da sua senha de acesso para a loja {nome_loja}.\n\nClique no link abaixo para criar uma nova senha. Este link expira em 30 minutos.\n\n{reset_url}\n\nSe você não fez este pedido, basta ignorar este e-mail.\n\nAtenciosamente,\nEquipe Leanttro"
-        msg.attach(MIMEText(body, 'plain', 'utf-8'))
-
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()
-        server.login(SMTP_USER, SMTP_PASS)
-        server.send_message(msg)
-        server.quit()
-        return True
-    except Exception as e:
-        print(f"Erro ao enviar e-mail de recuperação: {e}")
-        return False
-
-# MIDDLEWARE IDENTIFICAÇÃO DA LOJA DOMÍNIO OU PATH
-@app.before_request
-def identificar_loja():
-    # Identifica qual loja está sendo acessada.
-    # Prioridade 1 Domínio Próprio Ex lojadaju.com.br
-    # Prioridade 2 Path Slug Ex leanttro.com/doces
-    
-    # Ignora arquivos estáticos
-    if request.path.startswith('/static'):
-        return
-
-    # Reinicia variáveis globais
-    g.loja = None
-    g.loja_id = None
-    g.slug_atual = None
-    g.layout_list = []
-
-    # Detecta Host e Path
-    host = request.host.split(':')[0] # Remove porta se existir
-    path_parts = request.path.strip('/').split('/')
-    primeiro_segmento = path_parts[0] if path_parts else ""
-
-    headers = get_headers()
-    loja_encontrada = None
-
-    # 1 VERIFICAÇÃO DE DOMÍNIO PRÓPRIO
-    # Se não for o domínio principal do SaaS nem localhost
-    if host not in ['leanttro.com', 'www.leanttro.com', 'catalogo.leanttro.com', 'localhost', '127.0.0.1']:
-        try:
-            host_clean = host.replace('www.', '')
-            url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=*.*"
-            resp = requests.get(url, headers=headers)
-            if resp.status_code == 200 and len(resp.json()['data']) > 0:
-                loja_encontrada = resp.json()['data'][0]
-                g.slug_atual = loja_encontrada.get('slug') # Define o slug mesmo estando em domínio próprio
-        except Exception as e:
-            print(f"Erro Middleware Domínio: {e}")
-
-    # 2 VERIFICAÇÃO DE PATH SLUG
-    # Se não achou por domínio tenta pelo primeiro segmento da URL
-    # Verifica se o primeiro segmento NÃO é uma palavra reservada
-    if not loja_encontrada and primeiro_segmento and primeiro_segmento not in BLACKLIST_ROTAS:
-        g.slug_atual = primeiro_segmento
-        try:
-            url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]={g.slug_atual}&fields=*.*"
-            resp = requests.get(url, headers=headers)
-            if resp.status_code == 200 and len(resp.json()['data']) > 0:
-                loja_encontrada = resp.json()['data'][0]
-        except Exception as e:
-            print(f"Erro Middleware Slug: {e}")
-
-    # 3 FALLBACK PARA DOMÍNIO PRINCIPAL -> TECNOLOGIA (ABRE DIRETO NO DOMÍNIO)
-    if not loja_encontrada and host in ['leanttro.com', 'www.leanttro.com', 'localhost', '127.0.0.1'] and primeiro_segmento not in BLACKLIST_ROTAS:
-        g.slug_atual = "tecnologia"
-        try:
-            url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=tecnologia&fields=*.*"
-            resp = requests.get(url, headers=headers)
-            if resp.status_code == 200 and len(resp.json()['data']) > 0:
-                loja_encontrada = resp.json()['data'][0]
-        except Exception as e:
-            print(f"Erro Middleware Tecnologia Fallback: {e}")
-
-    # SE A LOJA FOI IDENTIFICADA Por Domínio ou Slug configura o ambiente
-    if loja_encontrada:
-        g.loja = loja_encontrada
-        g.loja_id = g.loja['id']
-        
-        # Tratamento de Layout e Configs Visuais Fallback se vazio
-        if not g.loja.get('layout_order'):
-            g.loja['layout_order'] = "banner,busca,categorias,produtos,banners_menores,novidades,blog,sobre,mapa,footer"
-        
-        # Configs Visuais Padrão
-        if not g.loja.get('font_tamanho_base'): g.loja['font_tamanho_base'] = 16
-        if not g.loja.get('cor_titulo'): g.loja['cor_titulo'] = "#111827"
-        if not g.loja.get('cor_texto'): g.loja['cor_texto'] = "#374151"
-        if not g.loja.get('cor_fundo'): g.loja['cor_fundo'] = "#ffffff"
-        
-        g.layout_list = g.loja['layout_order'].split(',')
-        
-        # Adiciona URL base para templates Se for domínio próprio ou tecnologia no domínio principal, base é vazia
-        if g.slug_atual == "tecnologia" and host in ['leanttro.com', 'www.leanttro.com', 'localhost', '127.0.0.1']:
-            g.loja['base_url'] = ""
-        else:
-            g.loja['base_url'] = f"/{g.slug_atual}"
-
-# ROTA RAIZ DO SAAS
-@app.route('/')
-def home_saas():
-    host = request.host.split(':')[0]
-    
-    # 1 Se for o subdomínio da Landing Page
-    if 'catalogo.leanttro.com' in host:
-        return render_template('catalogo.html')
-
-    # 2 Se for domínio próprio de cliente já identificado no middleware
-    if g.loja:
-        # Chama a função index da loja definida abaixo
-        return index(g.slug_atual)
-
-    # 3 Caso contrário leanttro.com raiz mostra a Landing Page também
-    return render_template('catalogo.html')
-
-# ROTA ESPECÍFICA DA LANDING PAGE
-# Garante que catalogo funcione sem tentar buscar loja
-@app.route('/catalogo')
-def landing_page_rota():
-    return render_template('catalogo.html')
-
-# ROTA DE CADASTRO CRIAR NOVA LOJA
-@app.route('/cadastro', methods=['GET', 'POST'])
-def cadastro():
-    
-    if request.method == 'POST':
-        # SEGURANÇA Verifica Rate Limit Proteção contra criação em massa spam
-        client_ip = get_client_ip()
-        if not check_rate_limit(client_ip, 'cadastro'):
-            flash('Muitas tentativas de cadastro. Por favor, tente novamente mais tarde.', 'error')
-            return render_template('cadastro.html'), 429
-
-        nome = request.form.get('nome')
-        slug_input = request.form.get('slug')
-        
-        # Garante slug limpo
-        slug = slug_input.lower().strip().replace(' ', '-',).replace('/', '-').replace('.', '') if slug_input else ""
-        
-        email = request.form.get('email').strip()
-        whatsapp = request.form.get('whatsapp', '').replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
-        senha = request.form.get('senha')
-
-        # Link agora é baseado na raiz clean URL
-        link_loja = f"{DOMINIO_BASE}/{slug}"
-
-        # 1 Validações Básicas
-        if not all([nome, slug, email, whatsapp, senha]):
-            flash('Preencha todos os campos obrigatórios.', 'error')
-            return render_template('cadastro.html')
-
-        # 2 Verifica palavras reservadas
-        if slug in BLACKLIST_ROTAS:
-             flash(f'O endereço {slug} não é permitido. Escolha outro.', 'error')
-             return render_template('cadastro.html')
-
-        # 3 Verifica se já existe Slug ou Email
-        headers = get_headers()
-        filtro = f"?filter[_or][0][slug][_eq]={slug}&filter[_or][1][email][_eq]={email}"
-        try:
-            check = requests.get(f"{DIRECTUS_URL}/items/lojas{filtro}", headers=headers)
-            if check.status_code == 200 and len(check.json()['data']) > 0:
-                existing = check.json()['data'][0]
-                if existing.get('slug') == slug:
-                    flash(f'O endereço {slug} já está em uso. Escolha outro.', 'error')
-                else:
-                    flash('Este e-mail já possui uma loja cadastrada.', 'error')
-                return render_template('cadastro.html')
-        except Exception as e:
-            print(f"Erro ao verificar existência: {e}")
-            flash('Erro de conexão ao verificar disponibilidade.', 'error')
-            return render_template('cadastro.html')
-
-        # 4 Cria a Loja com Configurações Padrão
-        senha_hash = generate_password_hash(senha)
-
-        payload = {
-            "status": "published",
-            "nome": nome,
-            "dominio": link_loja, # Salva referência
-            "slug": slug,             
-            "email": email,
-            "whatsapp_comercial": whatsapp,
-            "senha_admin": senha_hash,
-            
-            # Configurações Visuais Padrão e Template
-            "template_ativo": "index",
-            "cor_primaria": "#db2777",
-            "cor_titulo": "#111827",
-            "cor_texto": "#374151",
-            "cor_fundo": "#ffffff",
-            "font_tamanho_base": 16,
-            "font_titulo": "Poppins",
-            "font_corpo": "Inter",
-            "layout_order": "banner,busca,categorias,produtos,banners_menores,novidades,mapa,footer",
-            
-            "linkbannerprincipal1": "#",
-            "linkbannerprincipal2": "#"
-        }
-
-        try:
-            r = requests.post(f"{DIRECTUS_URL}/items/lojas", headers=headers, json=payload)
-            
-            if r.status_code in [200, 201]:
-                data = r.json().get('data')
-                novo_id = data['id']
-                
-                # LOGIN AUTOMÁTICO
-                session['loja_admin_id'] = novo_id
-                session.permanent = True
-                
-                flash('Loja criada com sucesso!', 'success')
-                
-                # REDIRECIONA PARA O PAINEL COM A NOVA URL SEM LOJA
-                return redirect(f"/{slug}/admin/painel")
-            else:
-                try:
-                    erro_msg = r.json().get('errors', [{'message': 'Erro desconhecido'}])[0]['message']
-                except:
-                    erro_msg = r.text
-                flash(f'Erro ao criar loja: {erro_msg}', 'error')
-                
-        except Exception as e:
-            print(f"Erro Exception Create: {e}")
-            flash('Erro interno de conexão.', 'error')
-
-    return render_template('cadastro.html')
-
-
-# ROTA INDEX A VITRINE DA LOJA
-# Atualizado removeu prefixo loja
-@app.route('/<loja_slug>/')
-def index(loja_slug):
-    if not g.loja: 
-        return "Loja não encontrada", 404
-
-    headers = get_headers()
-    
-    # 1 Busca Categorias
-    categorias = []
-    try:
-        url_cat = f"{DIRECTUS_URL}/items/categorias?filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published&sort=sort"
-        r_cat = requests.get(url_cat, headers=headers)
-        if r_cat.status_code == 200: categorias = r_cat.json()['data']
-    except: pass
-
-    # 2 Busca Produtos
-    cat_filter = request.args.get('categoria')
-    busca_query = request.args.get('busca') 
-    
-    filter_str = f"filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published"
-        
-    if busca_query:
-        filter_str += f"&filter[nome][_icontains]={busca_query}"
-
-    produtos = []
-    novidades = []
-
-    try:
-        url_prod = f"{DIRECTUS_URL}/items/produtos?{filter_str}&fields=*.*"
-        r_prod = requests.get(url_prod, headers=headers)
-        
-        if r_prod.status_code == 200:
-            raw_prods = r_prod.json()['data']
-            
-            # Filtra categoria no Python para garantir que produtos sem categoria apareçam sempre
-            if cat_filter:
-                filtered_prods = []
-                for p in raw_prods:
-                    cv = p.get('categoria_id')
-                    if isinstance(cv, dict): cv = cv.get('id')
-                    if str(cv) == str(cat_filter) or not p.get('categoria_id'):
-                        filtered_prods.append(p)
-                raw_prods = filtered_prods
-                
-            # Ordena pela posição e previne erros se o campo sort não existir no banco
-            def get_sort_val(p):
-                try:
-                    return int(p.get('sort')) if p.get('sort') is not None else 999999
-                except:
-                    return 999999
-                    
-            raw_prods.sort(key=get_sort_val)
-
-            for p in raw_prods:
-                img = get_img_url(p.get('imagem_destaque') or p.get('imagem1'))
-                
-                # Repassamos as variantes cruas, sem processar fotos
-                variantes = p.get('variantes') or []
-
-                try: preco_float = float(p.get('preco', 0))
-                except: preco_float = 0.0
-                
-                try: estoque_val = int(p.get('estoque')) if p.get('estoque') is not None else 0
-                except: estoque_val = 0
-
-                cat_val = p.get('categoria_id')
-                if isinstance(cat_val, dict): cat_val = cat_val.get('id')
-
-                prod_obj = {
-                    "id": p['id'], "nome": p['nome'], "slug": p['slug'],
-                    "preco": preco_float,
-                    "imagem": img, 
-                    "imagem1": get_img_url(p.get('imagem1')),
-                    "imagem2": get_img_url(p.get('imagem2')),
-                    "imagem_secundaria": get_img_url(p.get('imagem_secundaria')),
-                    "categoria_id": cat_val,
-                    "variantes": variantes, "origem": p.get('origem'),
-                    "urgencia": p.get('status_urgencia'), "classe_frete": p.get('classe_frete'),
-                    "estoque": estoque_val, "consulte": p.get('consulte', False),
-                    "a_partir_de": p.get('a_partir_de', False),
-                    "layout_case": p.get('layout_case', False),
-                    "link_projeto": p.get('link_projeto'),
-                    "whatsapp_projeto": p.get('whatsapp_projeto')
-                }
-                produtos.append(prod_obj)
-                
-                if p.get('status_urgencia') in ['Alta Procura', 'Lancamento']:
-                    novidades.append(prod_obj)
-
-    except Exception as e:
-        print(f"Erro produtos: {e}")
-
-    # 3 Busca Posts
-    posts = []
-    try:
-        url_blog = f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published&limit=3&sort=-date_created"
-        r_blog = requests.get(url_blog, headers=headers)
-        if r_blog.status_code == 200:
-            for post in r_blog.json()['data']:
-                posts.append({
-                    "titulo": post['titulo'], "slug": post['slug'],
-                    "resumo": post.get('resumo', ''),
-                    "capa": get_img_url(post.get('capa')),
-                    "data": datetime.fromisoformat(post['date_created'].split('T')[0]).strftime('%d/%m/%Y')
-                })
-    except: pass
-
-    # 4 Busca Agenda
-    agenda = []
-    try:
-        url_agenda = f"{DIRECTUS_URL}/items/agenda?filter[loja_id][_eq]={g.loja_id}&sort=data_hora"
-        r_agenda = requests.get(url_agenda, headers=headers)
-        if r_agenda.status_code == 200:
-            for item in r_agenda.json()['data']:
-                try:
-                    if item.get('data_hora'):
-                        dt = datetime.fromisoformat(item['data_hora'].replace('Z', '').replace(' ', 'T'))
-                        item['data_hora_formatada'] = dt.strftime('%d/%m/%Y às %H:%M')
-                    else:
-                        item['data_hora_formatada'] = "Sem data"
-                except:
-                    item['data_hora_formatada'] = item.get('data_hora')
-                agenda.append(item)
-    except: pass
-
-    # Recupera o objeto da categoria selecionada (para passar o nome e dados dela pro HTML)
-    cat_obj = None
-    if cat_filter:
-        for c in categorias:
-            if str(c.get('id')) == str(cat_filter):
-                cat_obj = c
-                break
-
-    loja_visual = {
-        **g.loja,
-        "logo": get_img_url(g.loja.get('logo')),
-        "banner1": get_img_url(g.loja.get('bannerprincipal1')),
-        "banner2": get_img_url(g.loja.get('bannerprincipal2')),
-        "bannermenor1": get_img_url(g.loja.get('bannermenor1')),
-        "bannermenor2": get_img_url(g.loja.get('bannermenor2')),
-        "sobre_imagem_url": get_img_url(g.loja.get('sobre_imagem')),
-        "slug_url": loja_slug # Passamos o slug para montar links no HTML
+st.markdown("""
+<style>
+    :root {
+        --bg-color: #F5F5F7;
+        --surface: #FFFFFF;
+        --text-main: #1D1D1F;
+        --text-muted: #86868B;
+        --blue: #0071E3;
+        --border: #D2D2D7;
+        --red: #FF3B30;
+        --green: #34C759;
     }
+
+    .stApp { background-color: var(--bg-color); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     
-    # DEFINE QUAL TEMPLATE RENDERIZAR
-    if loja_slug == 'creapes':
-        template_name = 'creapes'
-    elif loja_slug == 'onepiece':
-        template_name = 'onepiece'
-    elif loja_slug == 'oscar':
-        template_name = 'oscar'
+    h1, h2, h3, h4, h5, h6 { font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 600 !important; color: var(--text-main); letter-spacing: -0.5px; }
+    p, div, label, span { font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: var(--text-main); }
+
+    section[data-testid="stSidebar"] { background-color: var(--surface); border-right: 1px solid var(--border); }
+    section[data-testid="stSidebar"] h1, section[data-testid="stSidebar"] h2, section[data-testid="stSidebar"] h3, section[data-testid="stSidebar"] span, section[data-testid="stSidebar"] p, section[data-testid="stSidebar"] label { color: var(--text-main) !important; }
+
+    div.stButton > button { background-color: var(--blue) !important; color: #FFFFFF !important; border: none; border-radius: 8px; font-weight: 500; font-family: -apple-system, sans-serif; padding: 0.5rem 1rem; transition: all 0.2s ease; }
+    div.stButton > button:hover { background-color: #005BB5 !important; transform: scale(0.98); }
+    
+    a[data-testid="stLinkButton"] { background-color: var(--blue) !important; color: #FFFFFF !important; border: none; border-radius: 8px; font-weight: 500; font-family: -apple-system, sans-serif; padding: 0.5rem 1rem; text-decoration: none; display: inline-block; text-align: center; transition: all 0.2s ease; }
+    a[data-testid="stLinkButton"]:hover { background-color: #005BB5 !important; transform: scale(0.98); }
+
+    div[data-baseweb="input"] { background-color: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+    div[data-baseweb="base-input"] input { color: var(--text-main) !important; -webkit-text-fill-color: var(--text-main) !important; }
+
+    div[data-testid="stMetric"] { background-color: var(--surface); border: 1px solid var(--border); padding: 15px; border-radius: 12px; border-left: 4px solid var(--blue); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    div[data-testid="stMetric"] label { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; }
+    div[data-testid="stMetric"] div[data-testid="stMetricValue"] { color: var(--text-main); font-weight: 700; }
+
+    div[data-testid="stDataFrame"] { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    
+    .stTabs [data-baseweb="tab-list"] { gap: 20px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+    .stTabs [data-baseweb="tab"] { background-color: transparent; border: none; color: var(--text-muted); font-weight: 500; padding: 10px 5px; }
+    .stTabs [aria-selected="true"] { color: var(--blue) !important; border-bottom: 2px solid var(--blue) !important; background-color: transparent !important; }
+
+    .leanttro-header { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 30px; text-align: center; }
+    .leanttro-title { font-size: 2.5rem; line-height: 1.2; color: var(--text-main); margin: 0; font-weight: 700; letter-spacing: -1px; }
+    .blue-text { color: var(--blue); }
+    .leanttro-sub { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; font-weight: 400; }
+    
+    .stProgress > div > div > div > div { background-color: var(--blue); }
+    span[data-baseweb="tag"] { background-color: #E5E5EA !important; color: var(--text-main) !important; border-radius: 6px; }
+    span[data-baseweb="tag"] span { color: var(--text-main) !important; }
+    span[data-baseweb="tag"] svg { fill: var(--text-muted) !important; }
+
+    .lead-card { background-color: var(--surface) !important; padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+    .lead-card:hover { border-color: var(--blue); }
+    .score-hot { border-left: 4px solid var(--blue); } 
+    .score-warm { border-left: 4px solid var(--text-muted); }    
+    .lead-title { font-size: 18px; font-weight: 600; color: var(--text-main); margin-bottom: 5px; text-decoration: none; display: block; }
+    .lead-title:hover { color: var(--blue); }
+    .tag-nicho { background-color: #F5F5F7; color: var(--text-muted); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; border: 1px solid var(--border); margin-right: 5px; }
+    .recommendation-box { background-color: #F5F5F7; border: 1px solid var(--border); padding: 12px; margin-top: 15px; border-radius: 8px; }
+    .rec-title { color: var(--blue); font-weight: 600; font-size: 12px; }
+    .rec-text { font-size: 13px; color: var(--text-main); margin-top: 4px; line-height: 1.5; }
+    
+    .stTextArea textarea { color: var(--text-main) !important; -webkit-text-fill-color: var(--text-main) !important; background-color: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+    .stSelectbox > div > div { background-color: var(--surface); color: var(--text-main); border: 1px solid var(--border); border-radius: 8px; }
+    .stNumberInput input { color: var(--text-main) !important; -webkit-text-fill-color: var(--text-main) !important; }
+</style>
+""", unsafe_allow_html=True)
+
+DIRECTUS_URL = os.getenv("DIRECTUS_URL", "")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "") 
+SERPER_API_KEY = os.getenv("SERPER_API_KEY", "")
+TRACKING_WEBHOOK_KEY = os.getenv("TRACKING_WEBHOOK_KEY", "")
+
+groq_client = None
+if GROQ_API_KEY:
+    try:
+        groq_client = Groq(api_key=GROQ_API_KEY)
+    except:
+        pass
+
+def render_header():
+    st.markdown("""
+    <div class="leanttro-header">
+        <h1 class="leanttro-title">LEAN<span class="blue-text">TTRO</span>.</h1>
+        <div class="leanttro-sub">CRM & INTELLIGENCE HUB</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+def get_user_table_name(user_id):
+    clean_id = str(user_id).replace("-", "_")
+    return f"crm_{clean_id}"
+
+def get_tracking_file(user_id):
+    return f"tracking_wpp_{user_id}.json"
+
+def get_tracking_data(user_id):
+    file_path = get_tracking_file(user_id)
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            data = json.load(f)
+            if "manual_limit" not in data:
+                data["manual_limit"] = 30
+            return data
     else:
-        template_name = g.loja.get('template_ativo') or 'index'
-        if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional', 'tecnologia', 'onepiece', 'oscar']:
-            template_name = 'index'
-            
-        # Se for o tema de tecnologia e clicar em uma categoria específica, vai para a página exclusiva de categoria
-        if template_name == 'tecnologia' and cat_filter:
-            template_name = 'categoria_tecnologia'
+        data = {
+            "start_date": str(date.today()),
+            "last_run_date": str(date.today()),
+            "sent_today": 0,
+            "last_run_hour": str(datetime.now().strftime("%Y-%m-%d %H")),
+            "sent_this_hour": 0,
+            "manual_limit": 30
+        }
+        with open(file_path, 'w') as f:
+            json.dump(data, f)
+        return data
 
-    return render_template(f'{template_name}.html', 
-                         loja=loja_visual, 
-                         layout=g.layout_list,
-                         categorias=categorias, 
-                         produtos=produtos, 
-                         novidades=novidades, 
-                         posts=posts,
-                         agenda=agenda,
-                         cat_selecionada_obj=cat_obj,
-                         directus_url=DIRECTUS_URL)
+def save_tracking_data(user_id, data):
+    with open(get_tracking_file(user_id), 'w') as f:
+        json.dump(data, f)
 
-
-# ROTA DETALHE DO PRODUTO
-# Atualizado removeu prefixo loja
-@app.route('/<loja_slug>/produto/<slug>')
-def produto(loja_slug, slug):
-    if not g.loja: return "Loja não encontrada", 404
-
-    headers = get_headers()
-    url = f"{DIRECTUS_URL}/items/produtos?filter[slug][_eq]={slug}&filter[loja_id][_eq]={g.loja_id}&fields=*.*"
-    r = requests.get(url, headers=headers)
+def inicializar_crm_usuario(token, user_id):
+    table_name = get_user_table_name(user_id)
+    base_url = DIRECTUS_URL.rstrip('/')
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     
-    if r.status_code == 200 and r.json()['data']:
-        p = r.json()['data'][0]
-        
-        cv = p.get('categoria_id')
-        if isinstance(cv, dict): p['categoria_id'] = cv.get('id')
-        
-        p['imagem_destaque'] = get_img_url(p.get('imagem_destaque'))
-        p['imagem1'] = get_img_url(p.get('imagem1'))
-        p['imagem2'] = get_img_url(p.get('imagem2'))
-        
-        galeria = []
-        if p.get('imagem_destaque'): galeria.append(p['imagem_destaque'])
-        if p.get('imagem1'): galeria.append(p['imagem1'])
-        if p.get('imagem2'): galeria.append(p['imagem2'])
-        
-        if not galeria:
-            galeria = ["https://placehold.co/600x600?text=Sem+Imagem"]
-            
-        p['galeria'] = galeria
-
-        # Variantes agora usam formato de grupos, não buscamos imagem individual mais
-        if p.get('variantes'):
+    r = requests.get(f"{base_url}/collections/{table_name}", headers=headers, verify=False)
+    if r.status_code != 200:
+        schema = {"collection": table_name, "schema": {}, "meta": {"icon": "rocket", "note": "Leanttro CRM Table"}}
+        requests.post(f"{base_url}/collections", json=schema, headers=headers, verify=False)
+    
+    campos = [
+        {"field": "nome", "type": "string", "meta": {"interface": "input", "width": "half", "icon": "person"}},
+        {"field": "empresa", "type": "string", "meta": {"interface": "input", "width": "half", "icon": "domain"}},
+        {"field": "email", "type": "string", "meta": {"interface": "input", "width": "half", "icon": "email"}},
+        {"field": "telefone", "type": "string", "meta": {"interface": "input", "width": "half", "icon": "phone"}},
+        {"field": "origem", "type": "string", "meta": {"interface": "input", "width": "half", "icon": "map"}},
+        {"field": "url", "type": "string", "meta": {"interface": "input", "width": "full", "icon": "link"}},
+        {"field": "status", "type": "string", "meta": {"interface": "select-dropdown", "options": {"choices": [{"text": "NOVO", "value": "Novo"}, {"text": "QUENTE", "value": "Quente"}, {"text": "CLIENTE", "value": "Cliente"}, {"text": "ENVIADO EM MASSA", "value": "ENVIADO EM MASSA"}]}}},
+        {"field": "obs", "type": "text", "meta": {"interface": "input-multiline"}}
+    ]
+    
+    for campo in campos:
+        try:
+            requests.post(f"{base_url}/fields/{table_name}", json=campo, headers=headers, verify=False)
+        except:
             pass 
 
-        try: p['preco'] = float(p.get('preco', 0))
-        except: p['preco'] = 0.0
-            
-        try: p['estoque'] = int(p.get('estoque')) if p.get('estoque') is not None else 0
-        except: p['estoque'] = 0
-
-        p['a_partir_de'] = p.get('a_partir_de', False)
-        p['layout_case'] = p.get('layout_case', False)
-
-        loja_visual = {
-            **g.loja,
-            "logo": get_img_url(g.loja.get('logo')),
-            "slug_url": loja_slug
-        }
-
-        # VERIFICA O TEMPLATE DA LOJA PARA RENDERIZAR O PRODUTO CORRETO
-        template_produto = 'produtos.html'
-        template_ativo = g.loja.get('template_ativo')
+    r_smtp = requests.get(f"{base_url}/collections/config_smtp", headers=headers, verify=False)
+    if r_smtp.status_code != 200:
+        schema_smtp = {"collection": "config_smtp", "schema": {}, "meta": {"icon": "email", "note": "SMTP Users Config"}}
+        requests.post(f"{base_url}/collections", json=schema_smtp, headers=headers, verify=False)
+        campos_smtp = [
+            {"field": "smtp_host", "type": "string"},
+            {"field": "smtp_port", "type": "integer"},
+            {"field": "smtp_user", "type": "string"},
+            {"field": "smtp_pass", "type": "string"}
+        ]
+        for c in campos_smtp: requests.post(f"{base_url}/fields/config_smtp", json=c, headers=headers, verify=False)
         
-        if template_ativo in ['direto', 'direto_index']:
-            template_produto = 'direto_produto.html'
-        elif template_ativo == 'institucional' or p.get('layout_case'):
-            template_produto = 'case.html'
-        elif template_ativo == 'tecnologia':
-            template_produto = 'case_tecnologia.html'
+    return True, "CRM Initialized"
 
-        return render_template(template_produto, p=p, loja=loja_visual, directus_url=DIRECTUS_URL)
+def criar_coluna_dinamica(token, user_id, nome_campo, tipo_interface):
+    table_name = get_user_table_name(user_id)
+    base_url = DIRECTUS_URL.rstrip('/')
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    slug = nome_campo.lower().strip().replace(" ", "_", ).replace("ç", "c")
+    mapa = {"Texto": "string", "Número": "integer", "Data": "date"}
+    type_d = mapa.get(tipo_interface, "string")
+    payload = {"field": slug, "type": type_d, "meta": {"interface": "input", "width": "full"}, "schema": {"is_nullable": True}}
+    r = requests.post(f"{base_url}/fields/{table_name}", json=payload, headers=headers, verify=False)
+    return r.status_code == 200
 
-# ROTA PARA O CARTAZ INDIVIDUAL DO PERSONAGEM (WANTED)
-@app.route('/<loja_slug>/personagem/<slug>')
-def personagem_wanted(loja_slug, slug):
-    if not g.loja: return "Loja não encontrada", 404
-    headers = get_headers()
-    # Busca o personagem específico
-    url = f"{DIRECTUS_URL}/items/produtos?filter[slug][_eq]={slug}&filter[loja_id][_eq]={g.loja_id}&fields=*.*"
-    r = requests.get(url, headers=headers)
-    
-    if r.status_code == 200 and r.json()['data']:
-        p = r.json()['data'][0]
-        
-        # TRATAMENTO DE SEGURANÇA PARA NÃO DAR ERRO 500
-        try: p['preco'] = float(p.get('preco', 0))
-        except: p['preco'] = 0.0
-        
-        p['imagem_destaque'] = get_img_url(p.get('imagem_destaque') or p.get('imagem1'))
-        p['descricao'] = p.get('descricao', 'Sem descrição disponível.')
-
-        loja_visual = {
-            **g.loja, 
-            "logo": get_img_url(g.loja.get('logo')), 
-            "slug_url": loja_slug
-        }
-        return render_template('personagensone.html', p=p, loja=loja_visual)
-    
-    return "Pirata não encontrado", 404
-
-
-# ROTA ADMIN LOGIN
-# Atualizado removeu prefixo loja
-@app.route('/<loja_slug>/admin', methods=['GET', 'POST'])
-def admin_login(loja_slug):
-    if not g.loja:
-        return "Loja não encontrada", 404
-
-    if session.get('loja_admin_id') == g.loja_id:
-        return redirect(f'/{loja_slug}/admin/painel')
-
-    if request.method == 'POST':
-        # SEGURANÇA Verifica Rate Limit Proteção contra força bruta no login
-        client_ip = get_client_ip()
-        if not check_rate_limit(client_ip, 'login'):
-            flash('Muitas tentativas de login. Por favor, aguarde alguns minutos.', 'error')
-            loja_visual = {**g.loja, "logo": get_img_url(g.loja.get('logo')), "slug_url": loja_slug}
-            return render_template('login_admin.html', loja=loja_visual), 429
-
-        senha = request.form.get('senha')
-        
-        if g.loja.get('senha_admin') and check_password_hash(g.loja['senha_admin'], senha):
-            session['loja_admin_id'] = g.loja_id
-            session.permanent = True
-            return redirect(f'/{loja_slug}/admin/painel')
-        else:
-            flash('Senha incorreta', 'error')
-    
-    loja_visual = {**g.loja, "logo": get_img_url(g.loja.get('logo')), "slug_url": loja_slug}
-    return render_template('login_admin.html', loja=loja_visual)
-
-
-# ROTA PAINEL DE EDIÇÃO
-# Atualizado removeu prefixo loja
-@app.route('/<loja_slug>/admin/painel', methods=['GET', 'POST'])
-def admin_painel(loja_slug):
-    if not g.loja: return redirect('/')
-    
-    if session.get('loja_admin_id') != g.loja_id:
-        return redirect(f'/{loja_slug}/admin')
-
-    headers = get_headers()
-
-    if request.method == 'POST':
-        files_map = {}
-        for key in ['logo', 'bannerprincipal1', 'bannerprincipal2', 'bannermenor1', 'bannermenor2', 'sobre_imagem']:
-            f = request.files.get(key)
-            if f and f.filename:
-                fid = upload_file_to_directus(f)
-                if fid: files_map[key] = fid
-
-        payload = {
-            "nome": request.form.get('nome'),
-            "whatsapp_comercial": request.form.get('whatsapp'),
-            "template_ativo": request.form.get('template_ativo') or 'index',
-            "cor_primaria": request.form.get('cor_primaria'),
-            "cor_titulo": request.form.get('cor_titulo'), 
-            "cor_texto": request.form.get('cor_texto'),
-            "cor_fundo": request.form.get('cor_fundo'),
-            "font_tamanho_base": request.form.get('font_tamanho_base'),
-            "font_titulo": request.form.get('font_titulo'),
-            "font_corpo": request.form.get('font_corpo'),
-            "linkbannerprincipal1": request.form.get('link1'),
-            "linkbannerprincipal2": request.form.get('link2'),
-            "banner1_titulo": sanitize_input(request.form.get('banner1_titulo')),
-            "banner1_subtitulo": sanitize_input(request.form.get('banner1_subtitulo')),
-            "banner1_botao": sanitize_input(request.form.get('banner1_botao')),
-            "banner2_titulo": sanitize_input(request.form.get('banner2_titulo')),
-            "banner2_subtitulo": sanitize_input(request.form.get('banner2_subtitulo')),
-            "banner2_botao": sanitize_input(request.form.get('banner2_botao')),
-            "linkbannermenor1": request.form.get('linkbannermenor1'),
-            "linkbannermenor2": request.form.get('linkbannermenor2'),
-            "frase1": request.form.get('frase1'),
-            "frase2": request.form.get('frase2'),
-            "frase3": request.form.get('frase3'),
-            "layout_order": request.form.get('layout_order'),
-            "titulo_produtos": sanitize_input(request.form.get('titulo_produtos')),
-            "ocultar_produtos": True if request.form.get('ocultar_produtos') else False,
-            "titulo_categorias": sanitize_input(request.form.get('titulo_categorias')),
-            "ocultar_categorias": True if request.form.get('ocultar_categorias') else False,
-            "titulo_novidades": sanitize_input(request.form.get('titulo_novidades')),
-            "ocultar_novidades": True if request.form.get('ocultar_novidades') else False,
-            "titulo_blog": sanitize_input(request.form.get('titulo_blog')),
-            "ocultar_blog": True if request.form.get('ocultar_blog') else False,
-            "ocultar_busca": True if request.form.get('ocultar_busca') else False,
-            "ocultar_banner": True if request.form.get('ocultar_banner') else False,
-            "ocultar_banners_menores": True if request.form.get('ocultar_banners_menores') else False,
-            "sobre_titulo": sanitize_input(request.form.get('sobre_titulo')),
-            "sobre_texto": sanitize_input(request.form.get('sobre_texto')),
-            "ocultar_sobre": True if request.form.get('ocultar_sobre') else False,
-            "titulo_formulario": sanitize_input(request.form.get('titulo_formulario')),
-            "ocultar_formulario": True if request.form.get('ocultar_formulario') else False,
-            "clean_cards_mode": True if request.form.get('clean_cards_mode') else False,
-            "hide_card_title": True if request.form.get('hide_card_title') else False,
-            "hide_explore_button": True if request.form.get('hide_explore_button') else False,
-            "disable_card_shadow": True if request.form.get('disable_card_shadow') else False,
-            "chamada_rodape": sanitize_input(request.form.get('chamada_rodape')),
-            "logos_clientes": request.form.get('logos_clientes'),
-            "endereco_fisico": request.form.get('endereco_fisico'),
-            "mostrar_mapa": True if request.form.get('mostrar_mapa') else False,
-            "mostrar_whatsapp_flutuante": True if request.form.get('mostrar_whatsapp_flutuante') else False,
-            "ocultar_agenda": True if request.form.get('ocultar_agenda') else False,
-            "titulo_agenda": sanitize_input(request.form.get('titulo_agenda'))
-        }
-        
-        nova_senha = request.form.get('nova_senha')
-        if nova_senha:
-            payload['senha_admin'] = generate_password_hash(nova_senha)
-        
-        payload.update(files_map)
-
-        try:
-            requests.patch(f"{DIRECTUS_URL}/items/lojas/{g.loja_id}", headers=headers, json=payload)
-            flash('Loja atualizada com sucesso!', 'success')
-        except Exception as e:
-            flash(f'Erro ao salvar: {e}', 'error')
-        
-        return redirect(f'/{loja_slug}/admin/painel')
-
-    categorias = []
-    produtos = []
-    posts = []
-    inscritos = []
-    agenda = []
-
+def carregar_dados(token, user_id):
     try:
-        r_cat = requests.get(f"{DIRECTUS_URL}/items/categorias?filter[loja_id][_eq]={g.loja_id}&sort=sort", headers=headers)
-        if r_cat.status_code == 200: categorias = r_cat.json()['data']
+        table = get_user_table_name(user_id)
+        r = requests.get(f"{DIRECTUS_URL}/items/{table}?limit=-1", headers={"Authorization": f"Bearer {token}"}, verify=False)
+        if r.status_code == 200:
+            df = pd.DataFrame(r.json()['data'])
+            if 'id' in df.columns:
+                cols_pri = ['id', 'nome', 'empresa', 'email', 'telefone', 'origem', 'status']
+                cols_existentes = [c for c in cols_pri if c in df.columns]
+                cols_restantes = [c for c in df.columns if c not in cols_existentes]
+                return df[cols_existentes + cols_restantes]
+    except: pass
+    return pd.DataFrame(columns=["nome", "empresa", "email", "status", "telefone"])
 
-        r_prod = requests.get(f"{DIRECTUS_URL}/items/produtos?filter[loja_id][_eq]={g.loja_id}&limit=100&fields=*.*", headers=headers)
-        if r_prod.status_code == 200: 
-            raw_prods = r_prod.json()['data']
-            
-            # Ordena pela posição no Python e previne erros se o campo sort não existir no banco
-            def get_sort_val(p):
-                try:
-                    return int(p.get('sort')) if p.get('sort') is not None else 999999
-                except:
-                    return 999999
-            
-            raw_prods.sort(key=get_sort_val)
-            
-            for p in raw_prods:
-                p['imagem_destaque'] = get_img_url(p.get('imagem_destaque'))
-                try: p['preco'] = float(p['preco']) if p.get('preco') else 0.0
-                except: p['preco'] = 0.0
-                
-                # Tratamento: Se a categoria vier como objeto do Directus, extrai o ID
-                cv = p.get('categoria_id')
-                if isinstance(cv, dict): p['categoria_id'] = cv.get('id')
-                
-                produtos.append(p)
+def salvar_lead_crm(token, user_id, dados):
+    table = get_user_table_name(user_id)
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    payload = {"status": "Novo"}
+    for k, v in dados.items():
+        payload[k] = str(v)
+    r = requests.post(f"{DIRECTUS_URL}/items/{table}", json=payload, headers=headers, verify=False)
+    return r.status_code in [200, 204]
 
-        r_post = requests.get(f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&limit=20&sort=-date_created&fields=id,titulo,date_created", headers=headers)
-        if r_post.status_code == 200: posts = r_post.json()['data']
-        
-        r_leads = requests.get(f"{DIRECTUS_URL}/items/clientes_loja?filter[loja_id][_eq]={g.loja_id}&sort=-date_created", headers=headers)
-        if r_leads.status_code == 200: inscritos = r_leads.json()['data']
-
-        r_agenda = requests.get(f"{DIRECTUS_URL}/items/agenda?filter[loja_id][_eq]={g.loja_id}&sort=data_hora", headers=headers)
-        if r_agenda.status_code == 200:
-            for item in r_agenda.json()['data']:
-                try:
-                    if item.get('data_hora'):
-                        dt = datetime.fromisoformat(item['data_hora'].replace('Z', '').replace(' ', 'T'))
-                        item['data_hora_formatada'] = dt.strftime('%d/%m/%Y às %H:%M')
-                    else:
-                        item['data_hora_formatada'] = "Sem data"
-                except:
-                    item['data_hora_formatada'] = item.get('data_hora')
-                agenda.append(item)
-        
-    except Exception as e:
-        print(f"Erro ao carregar dados do painel: {e}")
-
-    # Garante que a seção sobre e banners_menores existam na string de layout padrão
-    if g.loja.get('layout_order'):
-        if 'banners_menores' not in g.loja['layout_order']:
-            g.loja['layout_order'] += ",banners_menores"
-        if 'sobre' not in g.loja['layout_order']:
-            g.loja['layout_order'] += ",sobre"
-        if 'mapa' not in g.loja['layout_order']:
-            g.loja['layout_order'] += ",mapa"
-        if 'agenda' not in g.loja['layout_order']:
-            g.loja['layout_order'] += ",agenda"
-
-    loja_visual = {
-        **g.loja,
-        "logo_url": get_img_url(g.loja.get('logo')),
-        "banner1_url": get_img_url(g.loja.get('bannerprincipal1')),
-        "banner2_url": get_img_url(g.loja.get('bannerprincipal2')),
-        "bannermenor1_url": get_img_url(g.loja.get('bannermenor1')),
-        "bannermenor2_url": get_img_url(g.loja.get('bannermenor2')),
-        "sobre_imagem_url": get_img_url(g.loja.get('sobre_imagem')),
-        "slug_url": loja_slug
-    }
-
-    template_painel = 'painel.html'
-    if loja_slug == 'creapes':
-        template_painel = 'painel_creapes.html'
-
-    return render_template(template_painel, 
-                           loja=loja_visual, 
-                           categorias=categorias, 
-                           produtos=produtos, 
-                           posts=posts,
-                           inscritos=inscritos,
-                           agenda=agenda)
-
-# CRUD CATEGORIAS
-# Atualizado removeu prefixo loja
-@app.route('/<loja_slug>/admin/categoria/salvar', methods=['POST'])
-def admin_salvar_categoria(loja_slug):
-    if session.get('loja_admin_id') != g.loja_id: return redirect('/')
-    
-    nome = request.form.get('nome')
-    cat_id = request.form.get('id')
-    
-    if not nome:
-        flash('Nome da categoria é obrigatório', 'error')
-        return redirect(f'/{loja_slug}/admin/painel#categorias')
-
-    headers = get_headers()
-    payload = {
-        "nome": nome,
-        "slug": gerar_slug(nome),
-        "loja_id": g.loja_id,
-        "status": "published"
-    }
-
+def carregar_dados_bot(token):
     try:
-        if cat_id:
-            # PROTEÇÃO IDOR
-            check = requests.get(f"{DIRECTUS_URL}/items/categorias/{cat_id}?fields=loja_id", headers=headers)
-            if check.status_code != 200 or check.json().get('data', {}).get('loja_id') != g.loja_id:
-                flash('Acesso negado. Tentativa de alteração inválida.', 'error')
-                return redirect(f'/{loja_slug}/admin/painel#categorias')
-                
-            requests.patch(f"{DIRECTUS_URL}/items/categorias/{cat_id}", headers=headers, json=payload)
-            flash('Categoria atualizada!', 'success')
-        else:
-            requests.post(f"{DIRECTUS_URL}/items/categorias", headers=headers, json=payload)
-            flash('Categoria criada!', 'success')
-    except Exception as e:
-        flash(f'Erro ao salvar categoria: {e}', 'error')
+        r = requests.get(f"{DIRECTUS_URL}/items/clients_bot?limit=-1", headers={"Authorization": f"Bearer {token}"}, verify=False)
+        if r.status_code == 200:
+            df = pd.DataFrame(r.json()['data'])
+            if not df.empty:
+                rename_map = {}
+                if 'name' in df.columns: rename_map['name'] = 'nome'
+                if 'whatsapp' in df.columns: rename_map['whatsapp'] = 'telefone'
+                df.rename(columns=rename_map, inplace=True)
+            cols_desejadas = ['id', 'nome', 'email', 'telefone', 'dor_principal', 'session_uuid']
+            cols_existentes = [c for c in cols_desejadas if c in df.columns]
+            return df[cols_existentes]
+    except: pass
+    return pd.DataFrame()
 
-    return redirect(f'/{loja_slug}/admin/painel#categorias')
+def atualizar_item(token, user_id, item_id, dados):
+    table = get_user_table_name(user_id)
+    requests.patch(f"{DIRECTUS_URL}/items/{table}/{item_id}", json=dados, headers={"Authorization": f"Bearer {token}"}, verify=False)
 
-# Atualizado removeu prefixo loja
-# CORREÇÃO DE ROTA Removido int id para id para aceitar UUID
-@app.route('/<loja_slug>/admin/categoria/excluir/<id>')
-def admin_excluir_categoria(loja_slug, id):
-    if session.get('loja_admin_id') != g.loja_id: return redirect('/')
-    
-    # PROTEÇÃO IDOR INÍCIO
-    headers = get_headers()
-    check = requests.get(f"{DIRECTUS_URL}/items/categorias/{id}?fields=loja_id", headers=headers)
-    
-    if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
-        requests.delete(f"{DIRECTUS_URL}/items/categorias/{id}", headers=headers)
-        flash('Categoria removida!', 'success')
+def carregar_config_smtp(token):
+    try:
+        base_url = DIRECTUS_URL.rstrip('/')
+        r = requests.get(f"{base_url}/items/config_smtp?limit=1", headers={"Authorization": f"Bearer {token}"}, verify=False)
+        if r.status_code == 200:
+            data = r.json()['data']
+            if data and len(data) > 0: return data[0]
+    except: pass
+    return {}
+
+def salvar_config_smtp(token, dados):
+    base_url = DIRECTUS_URL.rstrip('/')
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    existente = carregar_config_smtp(token)
+    if existente and 'id' in existente:
+        r = requests.patch(f"{base_url}/items/config_smtp/{existente['id']}", json=dados, headers=headers, verify=False)
     else:
-        flash('Acesso negado ou item não encontrado.', 'error')
-    # PROTEÇÃO IDOR FIM
-        
-    return redirect(f'/{loja_slug}/admin/painel#categorias')
+        r = requests.post(f"{base_url}/items/config_smtp", json=dados, headers=headers, verify=False)
+    return r.status_code in [200, 204]
 
-
-# CRUD PRODUTOS
-# Atualizado removeu prefixo loja
-@app.route('/<loja_slug>/admin/produto/salvar', methods=['POST'])
-def admin_salvar_produto(loja_slug):
-    if session.get('loja_admin_id') != g.loja_id: return redirect('/')
-    
-    prod_id = request.form.get('id')
-    nome = request.form.get('nome')
-    
-    # Busca a categoria garantindo pegar do select ou do hidden da atualização anterior
-    cat_id = request.form.get('categoria_id')
-    if not cat_id or cat_id.strip() == "": 
-        cat_id = request.form.get('categoria')
-        
-    if not cat_id or cat_id.strip() == "": 
-        cat_id = None
-        
-    preco = request.form.get('preco')
-    try: preco = float(preco) if preco else 0
-    except: preco = 0
-        
-    estoque = request.form.get('estoque')
-    try: estoque = int(estoque) if estoque else 0
-    except: estoque = 0
-    
-    sort_val = request.form.get('sort')
-    try: sort_val = int(sort_val) if sort_val and sort_val.strip() != "" else None
-    except: sort_val = None
-    
-    consulte_form = request.form.get('consulte')
-    consulte = True if consulte_form == 'on' else False
-
-    a_partir_de_form = request.form.get('a_partir_de')
-    a_partir_de = True if a_partir_de_form == 'on' else False
-
-    layout_case_form = request.form.get('layout_case')
-    layout_case = True if layout_case_form == 'on' else False
-
-    variantes_raw = request.form.get('variantes')
+def contar_envios_hoje(token):
     try:
-        variantes = json.loads(variantes_raw) if variantes_raw else []
-    except:
-        variantes = []
+        base_url = DIRECTUS_URL.rstrip('/')
+        hoje_str = datetime.now().strftime("%Y-%m-%d")
+        url = f"{base_url}/items/historico_envios?filter[data_envio][_gte]={hoje_str}&filter[user_created][_eq]=$CURRENT_USER&aggregate[count]=*"
+        r = requests.get(url, headers={"Authorization": f"Bearer {token}"}, verify=False)
+        if r.status_code == 200:
+            data = r.json()['data']
+            if isinstance(data, list) and len(data) > 0:
+                return int(data[0].get('count', 0))
+    except: pass
+    return 0
 
-    payload = {
-        "status": "published",
-        "loja_id": g.loja_id,
-        "nome": nome,
-        "preco": preco,
-        "estoque": estoque,
-        "consulte": consulte,
-        "a_partir_de": a_partir_de,
-        "layout_case": layout_case,
-        "variantes": variantes,
-        "descricao": request.form.get('descricao'),
-        "link_projeto": request.form.get('link_projeto'),
-        "whatsapp_projeto": request.form.get('whatsapp_projeto'),
-        "sort": sort_val
-    }
-    
-    if cat_id:
-        payload["categoria_id"] = cat_id
-    else:
-        payload["categoria_id"] = None
-    
-    if not prod_id and nome:
-        payload["slug"] = gerar_slug(nome) + "-" + str(uuid.uuid4())[:4]
-
-    # Upload da Imagem Principal Destaque
-    f = request.files.get('imagem')
-    if f and f.filename:
-        fid = upload_file_to_directus(f)
-        if fid: payload['imagem_destaque'] = fid
-
-    # Upload da Imagem 1
-    f1 = request.files.get('imagem1')
-    if f1 and f1.filename:
-        fid1 = upload_file_to_directus(f1)
-        if fid1: payload['imagem1'] = fid1
-
-    # Upload da Imagem 2
-    f2 = request.files.get('imagem2')
-    if f2 and f2.filename:
-        fid2 = upload_file_to_directus(f2)
-        if fid2: payload['imagem2'] = fid2
-
-    headers = get_headers()
+def registrar_log_envio(token, destinatario, assunto, status):
     try:
-        if prod_id:
-            # PROTEÇÃO IDOR
-            check = requests.get(f"{DIRECTUS_URL}/items/produtos/{prod_id}?fields=loja_id", headers=headers)
-            if check.status_code != 200 or check.json().get('data', {}).get('loja_id') != g.loja_id:
-                flash('Acesso negado. Tentativa de alteração inválida.', 'error')
-                return redirect(f'/{loja_slug}/admin/painel#produtos')
-                
-            requests.patch(f"{DIRECTUS_URL}/items/produtos/{prod_id}", headers=headers, json=payload)
-            flash('Produto atualizado!', 'success')
+        base_url = DIRECTUS_URL.rstrip('/')
+        payload = {"data_envio": datetime.now().isoformat(), "destinatario": destinatario, "assunto": assunto, "status": status, "aberto": False}
+        r = requests.post(f"{base_url}/items/historico_envios", json=payload, headers={"Authorization": f"Bearer {token}"}, verify=False)
+        if r.status_code in [200, 201]: return r.json()['data']['id']
+    except: pass
+    return None
+
+def atualizar_status_envio(token, log_id, novo_status, erro_msg=None):
+    try:
+        base_url = DIRECTUS_URL.rstrip('/')
+        payload = {"status": novo_status}
+        if erro_msg: payload["obs"] = erro_msg
+        requests.patch(f"{base_url}/items/historico_envios/{log_id}", json=payload, headers={"Authorization": f"Bearer {token}"}, verify=False)
+    except: pass
+
+def enviar_email_smtp(smtp_config, to, subject, body, anexo=None, tracking_url=None):
+    try:
+        to = str(to).strip()
+        subject = str(subject).strip()
+        
+        body = str(body).replace('\n', '<br>')
+        
+        if tracking_url:
+            cache_buster = random.randint(1000, 999999)
+            url_final = f"{tracking_url}&r={cache_buster}"
+            pixel_html = f'<img src="{url_final}" width="1" height="1" style="display:block; width:1px; height:1px; opacity:0.01;" alt="" />'
+            if "</body>" in body: body = body.replace("</body>", f"{pixel_html}</body>")
+            else: body += pixel_html
+
+        usar_imagem_inline = False
+        if anexo is not None and "{{imagem}}" in body.lower():
+            if "image" in anexo.type: usar_imagem_inline = True
+
+        if usar_imagem_inline:
+            msg = MIMEMultipart('related')
+            msg['From'] = smtp_config['user']
+            msg['To'] = to
+            msg['Subject'] = subject
+            msg_alternative = MIMEMultipart('alternative')
+            msg.attach(msg_alternative)
+            cid_id = "imagem_corpo"
+            body_atualizado = body.replace("{{imagem}}", f'<br><img src="cid:{cid_id}" style="max-width:100%; height:auto;"><br>')
+            msg_alternative.attach(MIMEText(body_atualizado, 'html', 'utf-8'))
+            img_data = anexo.getvalue()
+            image = MIMEImage(img_data)
+            image.add_header('Content-ID', f'<{cid_id}>') 
+            image.add_header('Content-Disposition', 'inline', filename=anexo.name)
+            msg.attach(image)
         else:
-            requests.post(f"{DIRECTUS_URL}/items/produtos", headers=headers, json=payload)
-            flash('Produto criado!', 'success')
-    except Exception as e:
-        flash(f'Erro interno ao salvar produto: {e}', 'error')
-        
-    # CORREÇÃO Redireciona para produtos
-    return redirect(f'/{loja_slug}/admin/painel#produtos')
+            msg = MIMEMultipart()
+            msg['From'] = smtp_config['user']
+            msg['To'] = to
+            msg['Subject'] = subject
+            msg.attach(MIMEText(body, 'html', 'utf-8'))
+            if anexo is not None:
+                part = MIMEBase('application', 'octet-stream')
+                part.set_payload(anexo.getvalue())
+                encoders.encode_base64(part)
+                part.add_header('Content-Disposition', f'attachment; filename="{anexo.name}"')
+                msg.attach(part)
 
-# Atualizado removeu prefixo loja
-# CORREÇÃO DE ROTA Removido int id para id para aceitar UUID Resolvido erro 404
-@app.route('/<loja_slug>/admin/produto/excluir/<id>')
-def admin_excluir_produto(loja_slug, id):
-    if session.get('loja_admin_id') != g.loja_id: return redirect('/')
-    
-    # PROTEÇÃO IDOR INÍCIO
-    headers = get_headers()
-    check = requests.get(f"{DIRECTUS_URL}/items/produtos/{id}?fields=loja_id", headers=headers)
-    
-    if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
-        requests.delete(f"{DIRECTUS_URL}/items/produtos/{id}", headers=headers)
-        flash('Produto removido!', 'success')
-    else:
-        flash('Acesso negado ou item não encontrado.', 'error')
-    # PROTEÇÃO IDOR FIM
-        
-    return redirect(f'/{loja_slug}/admin/painel#produtos')
+        server = smtplib.SMTP(smtp_config['host'], int(smtp_config['port']))
+        server.starttls()
+        server.login(smtp_config['user'], smtp_config['pass'])
+        server.sendmail(smtp_config['user'], to, msg.as_string())
+        server.quit()
+        return True, "OK"
+    except Exception as e: return False, str(e)
 
+def gerar_copy_ia(ctx, dados_cliente=None):
+    if not groq_client: return "Erro", "Configure a GROQ_API_KEY no ambiente"
+    empresa = ctx.get('empresa', 'Nossa Empresa')
+    descricao = ctx.get('descricao', 'Soluções Digitais')
+    segmento_alvo = ctx.get('segmento_alvo', '') 
+    dor_cliente = ""
+    if dados_cliente is not None and 'dor_principal' in dados_cliente:
+        d = dados_cliente['dor_principal']
+        if d and str(d).lower() != 'none': dor_cliente = f"A principal dor ou necessidade deste cliente é: {d}. Use isso para personalizar o texto."
+    instrucao_segmento = ""
+    if segmento_alvo: instrucao_segmento = f"CONTEXTO IMPORTANTE: O público alvo deste disparo são empresas e pessoas do seguinte perfil e segmento: {segmento_alvo}. Adapte a linguagem e exemplos para eles."
 
-# CRUD POSTS BLOG
-# Atualizado removeu prefixo loja
-@app.route('/<loja_slug>/admin/post/salvar', methods=['POST'])
-def admin_salvar_post(loja_slug):
-    if session.get('loja_admin_id') != g.loja_id: return redirect('/')
-    
-    post_id = request.form.get('id')
-    titulo = request.form.get('titulo')
-    
-    payload = {
-        "status": "published",
-        "loja_id": g.loja_id,
-        "titulo": titulo,
-        "resumo": request.form.get('resumo'),
-        "conteudo": request.form.get('conteudo')
-    }
-
-    if not post_id and titulo:
-        payload["slug"] = gerar_slug(titulo)
-
-    f = request.files.get('capa')
-    if f and f.filename:
-        fid = upload_file_to_directus(f)
-        if fid: payload['capa'] = fid
-
-    headers = get_headers()
+    prompt = f"Aja como um copywriter profissional B2B. Escreva um email curto max 3 parágrafos de prospecção fria. Minha Empresa: {empresa}. O que vendemos: {descricao}. {instrucao_segmento}. {dor_cliente}. Tom Persuasivo direto e sem enrolação corporativa. Foco Marcar uma reunião ou resolver o problema dele. IMPORTANTE Não coloque Assunto no corpo apenas o texto do email."
     try:
-        if post_id:
-            # PROTEÇÃO IDOR
-            check = requests.get(f"{DIRECTUS_URL}/items/posts/{post_id}?fields=loja_id", headers=headers)
-            if check.status_code != 200 or check.json().get('data', {}).get('loja_id') != g.loja_id:
-                flash('Acesso negado. Tentativa de alteração inválida.', 'error')
-                return redirect(f'/{loja_slug}/admin/painel#blog')
-                
-            requests.patch(f"{DIRECTUS_URL}/items/posts/{post_id}", headers=headers, json=payload)
-            flash('Post atualizado!', 'success')
-        else:
-            requests.post(f"{DIRECTUS_URL}/items/posts", headers=headers, json=payload)
-            flash('Post criado!', 'success')
-    except Exception as e:
-        flash(f'Erro ao salvar post: {e}', 'error')
+        chat_completion = groq_client.chat.completions.create(messages=[{"role": "user", "content": prompt}], model="llama-3.3-70b-versatile")
+        return "Proposta Personalizada", chat_completion.choices[0].message.content
+    except Exception as e: return "Erro IA", str(e)
 
-    return redirect(f'/{loja_slug}/admin/painel#blog')
+def gerar_whatsapp_ia(ctx, dados_cliente=None):
+    if not groq_client: return "Erro API Key não configurada"
+    empresa = ctx.get('empresa', 'Leanttro')
+    descricao = ctx.get('descricao', 'Landing Pages')
+    nome = "Doutor"
+    dor = ""
+    if dados_cliente is not None:
+        nome = dados_cliente.get('nome', 'Doutor')
+        if 'dor_principal' in dados_cliente: dor = f"Foque na dor {dados_cliente['dor_principal']}"
 
-# Atualizado removeu prefixo loja
-# CORREÇÃO DE ROTA Removido int id para id
-@app.route('/<loja_slug>/admin/post/excluir/<id>')
-def admin_excluir_post(loja_slug, id):
-    if session.get('loja_admin_id') != g.loja_id: return redirect('/')
-    
-    # PROTEÇÃO IDOR INÍCIO
-    headers = get_headers()
-    check = requests.get(f"{DIRECTUS_URL}/items/posts/{id}?fields=loja_id", headers=headers)
-    
-    if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
-        requests.delete(f"{DIRECTUS_URL}/items/posts/{id}", headers=headers)
-        flash('Post removido!', 'success')
-    else:
-        flash('Acesso negado ou item não encontrado.', 'error')
-    # PROTEÇÃO IDOR FIM
-        
-    return redirect(f'/{loja_slug}/admin/painel#blog')
-
-# CRUD AGENDA
-@app.route('/<loja_slug>/admin/agenda/salvar', methods=['POST'])
-def admin_salvar_agenda(loja_slug):
-    if session.get('loja_admin_id') != g.loja_id: return redirect('/')
-    
-    agenda_id = request.form.get('id')
-    # O datetime-local vem como '2026-10-25T14:00'
-    data_hora = request.form.get('data_hora')
-    disponivel = True if request.form.get('disponivel') == 'on' else False
-    cliente_nome = request.form.get('cliente_nome')
-    concluido = True if request.form.get('concluido') == 'on' else False
-    
-    # Garante que o Directus entenda o formato de data
-    if data_hora and 'T' in data_hora:
-        data_hora = data_hora.replace('T', ' ') + ":00"
-    
-    payload = {
-        "loja_id": g.loja_id,
-        "data_hora": data_hora,
-        "disponivel": disponivel,
-        "cliente_nome": cliente_nome,
-        "concluido": concluido
-    }
-
-    headers = get_headers()
+    prompt = f"Aja como um especialista em vendas B2B via WhatsApp. Escreva uma mensagem MUITO CURTA máximo 2 frases e direta para abordagem fria. Contexto {empresa} vende {descricao}. Cliente {nome}. {dor}. OBRIGATÓRIO A mensagem DEVE incluir o link www.leanttro.com/zenilda-adv. Tom Informal vizinho mas profissional. Sem cara de robô. Objetivo Apenas despertar interesse para clicar no link e ver o exemplo."
     try:
-        if agenda_id:
-            # PROTEÇÃO IDOR
-            check = requests.get(f"{DIRECTUS_URL}/items/agenda/{agenda_id}?fields=loja_id", headers=headers)
-            if check.status_code != 200 or check.json().get('data', {}).get('loja_id') != g.loja_id:
-                flash('Acesso negado.', 'error')
-                return redirect(f'/{loja_slug}/admin/painel#agenda')
-                
-            requests.patch(f"{DIRECTUS_URL}/items/agenda/{agenda_id}", headers=headers, json=payload)
-            flash('Horário atualizado!', 'success')
-        else:
-            requests.post(f"{DIRECTUS_URL}/items/agenda", headers=headers, json=payload)
-            flash('Horário criado!', 'success')
-    except Exception as e:
-        flash(f'Erro ao salvar agenda: {e}', 'error')
+        chat_completion = groq_client.chat.completions.create(messages=[{"role": "user", "content": prompt}], model="llama-3.3-70b-versatile")
+        return chat_completion.choices[0].message.content
+    except Exception as e: return f"Erro IA {str(e)}"
 
-    return redirect(f'/{loja_slug}/admin/painel#agenda')
-
-@app.route('/<loja_slug>/admin/agenda/update/<id>', methods=['POST'])
-def admin_update_agenda_kanban(loja_slug, id):
-    if session.get('loja_admin_id') != g.loja_id:
-        return jsonify({"success": False, "erro": "Acesso negado"}), 403
-        
-    payload = request.get_json()
-    if not payload or 'data_hora' not in payload:
-        return jsonify({"success": False, "erro": "Dados invalidos"}), 400
-        
-    data_hora = payload['data_hora']
-    if data_hora and 'T' in data_hora:
-        data_hora = data_hora.replace('T', ' ')
-        if len(data_hora) == 16:
-            data_hora += ":00"
-            
-    update_payload = {"data_hora": data_hora}
-    headers = get_headers()
-    
+def validar_token(token):
     try:
-        check = requests.get(f"{DIRECTUS_URL}/items/agenda/{id}?fields=loja_id", headers=headers)
-        if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
-            r = requests.patch(f"{DIRECTUS_URL}/items/agenda/{id}", headers=headers, json=update_payload)
-            if r.status_code == 200:
-                return jsonify({"success": True})
-        return jsonify({"success": False, "erro": "Item nao encontrado"}), 404
-    except Exception as e:
-        return jsonify({"success": False, "erro": str(e)}), 500
+        r = requests.get(f"{DIRECTUS_URL}/users/me", headers={"Authorization": f"Bearer {token}"}, verify=False)
+        if r.status_code == 200: return r.json()['data']
+    except: pass
+    return None
 
-@app.route('/<loja_slug>/admin/agenda/toggle_concluido/<id>', methods=['POST'])
-def admin_toggle_concluido(loja_slug, id):
-    if session.get('loja_admin_id') != g.loja_id:
-        return jsonify({"success": False, "erro": "Acesso negado"}), 403
-        
-    payload = request.get_json()
-    concluido = payload.get('concluido', False)
-    headers = get_headers()
-    
+def search_google_serper(query, period, num_results=10):
+    url = "https://google.serper.dev/search"
+    payload_dict = {"q": query, "num": num_results, "gl": "br", "hl": "pt-br"}
+    if period: payload_dict["tbs"] = period
+    headers = {'X-API-KEY': SERPER_API_KEY, 'Content-Type': 'application/json'}
     try:
-        check = requests.get(f"{DIRECTUS_URL}/items/agenda/{id}?fields=loja_id", headers=headers)
-        if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
-            r = requests.patch(f"{DIRECTUS_URL}/items/agenda/{id}", headers=headers, json={"concluido": concluido})
-            if r.status_code == 200:
-                return jsonify({"success": True})
-        return jsonify({"success": False, "erro": "Item nao encontrado"}), 404
-    except Exception as e:
-        return jsonify({"success": False, "erro": str(e)}), 500
+        response = requests.request("POST", url, headers=headers, data=json.dumps(payload_dict))
+        if response.status_code != 200: return []
+        return response.json().get("organic", [])
+    except: return []
 
-@app.route('/<loja_slug>/admin/agenda/excluir/<id>')
-def admin_excluir_agenda(loja_slug, id):
-    if session.get('loja_admin_id') != g.loja_id: return redirect('/')
-    
-    headers = get_headers()
-    check = requests.get(f"{DIRECTUS_URL}/items/agenda/{id}?fields=loja_id", headers=headers)
-    
-    if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
-        requests.delete(f"{DIRECTUS_URL}/items/agenda/{id}", headers=headers)
-        flash('Horário removido!', 'success')
-    else:
-        flash('Acesso negado.', 'error')
-        
-    return redirect(f'/{loja_slug}/admin/painel#agenda')
+def search_google_maps_serper(query):
+    url = "https://google.serper.dev/places"
+    payload_dict = {"q": query, "gl": "br", "hl": "pt-br"}
+    headers = {'X-API-KEY': SERPER_API_KEY, 'Content-Type': 'application/json'}
+    try:
+        response = requests.request("POST", url, headers=headers, data=json.dumps(payload_dict))
+        if response.status_code != 200: return []
+        return response.json().get("places", [])
+    except: return []
 
+def analyze_lead_groq(title, snippet, link, groq_key, system_prompt):
+    if not groq_key: return {"score": 0, "autor": "Desc.", "produto_recomendado": "ERRO CHAVE", "argumento_venda": "Sem chave Groq"}
+    try:
+        completion = groq_client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": f"TITULO: {title}\nSNIPPET: {snippet}\nLINK: {link}"}],
+            temperature=0.1, response_format={"type": "json_object"}
+        )
+        return json.loads(completion.choices[0].message.content)
+    except: return {"score": 0, "autor": "Erro", "produto_recomendado": "Erro IA", "argumento_venda": "Falha na análise"}
 
-# ROTA RECUPERAR SENHA (Estilo Copia)
-@app.route('/<loja_slug>/esqueci-senha', methods=['GET', 'POST'])
-def esqueci_senha(loja_slug):
-    if not g.loja: return redirect('/')
-    error = None
-    success = None
+def process_single_item(item, system_prompt):
+    titulo = item.get('title', '')
+    link = item.get('link', '')
+    snippet = item.get('snippet', '')
+    data_pub = item.get('date', 'Data n/d')
+    analise = analyze_lead_groq(titulo, snippet, link, GROQ_API_KEY, system_prompt)
+    return {"item": item, "analise": analise, "titulo": titulo, "link": link, "snippet": snippet, "data_pub": data_pub}
 
-    if request.method == 'POST':
-        email = request.form.get('email', '').strip()
-        
-        if email == g.loja.get('email'):
-            token = serializer.dumps(email, salt='email-reset-salt')
-            
-            # Usando url_for com _external=True igual no app Copia
-            reset_url = url_for('reset_senha', token=token, _external=True)
-            
-            if send_reset_email(email, reset_url, g.loja.get('nome')):
-                success = "Um link de redefinição de senha foi enviado para o seu e-mail."
+def extrair_email(texto):
+    match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', str(texto))
+    return match.group(0) if match else None
+
+def extrair_whatsapp(texto):
+    padrao = r'(?:(?:\+|00)?55\s?)?(?:\(?([1-9][0-9])\)?\s?)?(?:((?:9\d|[2-9])\d{3})\-?(\d{4}))'
+    match = re.search(padrao, str(texto))
+    if match:
+        ddd, parte1, parte2 = match.groups()
+        if not ddd: ddd = "11" 
+        return f"55{ddd}{parte1}{parte2}".replace(" ", "").replace("-", "")
+    return None
+
+def limpar_nome(titulo):
+    if "•" in titulo: return titulo.split("•")[0].strip()
+    if "-" in titulo: return titulo.split("-")[0].strip()
+    if "|" in titulo: return titulo.split("|")[0].strip()
+    return titulo[:50]
+
+SUGESTOES_STRATEGICAS = {
+    "Sites de Freelance": ["procuro desenvolvedor site", "preciso de automação whatsapp", "criar catálogo online", "busco especialista em IA"],
+    "LinkedIn": ["alguém recomenda empresa para site", "busco profissional automação", "indicação criador de catálogo", "preciso integrar IA no meu negócio"],
+    "Grupos Facebook Web": ["preciso de um site", "alguém faz catálogo digital", "procuro quem faça automação", "orçamento para site"]
+}
+FONTES_MINERADOR = {
+    "Google Maps": "maps",
+    "Instagram": "site:instagram.com", 
+    "Facebook": "site:facebook.com", 
+    "LinkedIn": "site:linkedin.com/company", 
+    "Geral": ""
+}
+
+if 'token' not in st.session_state:
+    token_url = st.query_params.get("token")
+    if token_url:
+        user_data = validar_token(token_url)
+        if user_data:
+            st.session_state['token'] = token_url
+            st.session_state['user'] = user_data
+
+if 'token' not in st.session_state:
+    c1, c2, c3 = st.columns([1,1,1])
+    with c2:
+        render_header()
+        st.markdown("<p style='text-align:center; color:#888'>ACESSO RESTRITO</p>", unsafe_allow_html=True)
+        email = st.text_input("E-MAIL")
+        senha = st.text_input("SENHA", type="password")
+        if st.button("ACESSAR SISTEMA", width='stretch'):
+            login_sucesso = False
+            try:
+                r = requests.post(f"{DIRECTUS_URL}/auth/login", json={"email": email, "password": senha}, verify=False)
+                if r.status_code == 200:
+                    token = r.json()['data']['access_token']
+                    st.session_state['token'] = token
+                    u = requests.get(f"{DIRECTUS_URL}/users/me", headers={"Authorization": f"Bearer {token}"}, verify=False)
+                    st.session_state['user'] = u.json()['data']
+                    st.query_params["token"] = token
+                    login_sucesso = True
+                else: st.error("ACESSO NEGADO")
+            except: st.error("ERRO DE CONEXÃO")
+            if login_sucesso: st.rerun()
+    st.stop()
+
+token = st.session_state['token']
+user = st.session_state['user']
+user_id = user['id']
+st.query_params["token"] = token
+
+if 'setup_ok' not in st.session_state:
+    inicializar_crm_usuario(token, user_id)
+    st.session_state['setup_ok'] = True
+
+if 'smtp_loaded' not in st.session_state:
+    cfg = carregar_config_smtp(token)
+    if cfg:
+        st.session_state['smtp'] = {'host': cfg.get('smtp_host', 'smtp.gmail.com'), 'port': cfg.get('smtp_port', 587), 'user': cfg.get('smtp_user', ''), 'pass': cfg.get('smtp_pass', '')}
+        st.session_state['smtp_host_input'] = cfg.get('smtp_host', 'smtp.gmail.com')
+        st.session_state['smtp_port_input'] = int(cfg.get('smtp_port', 587))
+        st.session_state['smtp_user_input'] = cfg.get('smtp_user', '')
+        st.session_state['smtp_pass_input'] = cfg.get('smtp_pass', '')
+    st.session_state['smtp_loaded'] = True
+
+if "system_prompt_padrao" not in st.session_state:
+    st.session_state.system_prompt_padrao = "ATUE COMO Head de Vendas. OBJETIVO Encontrar quem está COMPRANDO ou BUSCANDO serviços e ignorar quem está vendendo ou postagens gringas. TAREFAS 1 O texto deve estar em Português do Brasil. 2 Identifique se o autor ESTÁ BUSCANDO o serviço Score 80 a 100. 3 Se for alguém VENDENDO ou agência concorrente Score é ZERO. SAÍDA JSON OBRIGATÓRIA { autor Nome de quem busca score 0 a 100 resumo_post Resumo do que a pessoa precisa produto_recomendado Serviço exato argumento_venda Como abordar para vender rápido }"
+
+if "saudacoes" not in st.session_state: st.session_state.saudacoes = ["Opa", "Olá", "Tudo bem", "Oi", "Fala"]
+if "delay_min" not in st.session_state: st.session_state.delay_min = 60
+if "delay_max" not in st.session_state: st.session_state.delay_max = 200
+if "blacklist" not in st.session_state: st.session_state.blacklist = set()
+
+with st.sidebar:
+    st.markdown(f"<h3>USER {user.get('first_name').upper()}</h3>", unsafe_allow_html=True)
+    if st.button("LOGOUT / SAIR"):
+        st.session_state.clear()
+        st.query_params.clear()
+        st.rerun()
+    st.divider()
+    with st.expander("🛠️ CONSTRUTOR DE TABELA"):
+        nc = st.text_input("NOME COLUNA")
+        tc = st.selectbox("TIPO", ["Texto", "Número", "Data"])
+        if st.button("CRIAR COLUNA"):
+            if criar_coluna_dinamica(token, user_id, nc, tc): st.success("CRIADO"), time.sleep(1), st.rerun()
+    with st.expander("🤖 DADOS DA EMPRESA IA", expanded=True):
+        en = st.text_input("NOME EMPRESA", value="Leanttro Especialista em Jurídico")
+        ed = st.text_area("O QUE VENDE", value="Landing Pages de Alta Conversão para Advogados Produto foco www.leanttro.com/zenilda-adv Ajuda a passar autoridade e captar clientes qualificados")
+        if st.button("SALVAR CONTEXTO"): st.session_state['ctx'] = {'empresa': en, 'descricao': ed}, st.success("SALVO")
+
+try:
+    render_header()
+    df = carregar_dados(token, user_id)
+    df_bot = carregar_dados_bot(token)
+
+    COTA_MAXIMA = 100
+    envios_realizados = contar_envios_hoje(token)
+    saldo_envios = COTA_MAXIMA - envios_realizados
+
+    k1, k2, k3 = st.columns(3)
+    k1.metric("TOTAL LEADS CRM", len(df))
+    k2.metric("LEADS BOT", len(df_bot))
+    k3.metric("SALDO EMAIL DIARIO", saldo_envios)
+
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["🎯 RADAR DE INTENÇÃO", "⛏️ MINERADOR DE DADOS", "📋 CRM E AÇÕES", "🚀 DISPARO SNIPER", "⚙️ CONFIGURAÇÕES"])
+
+    with tab1:
+        st.markdown("### CAÇADOR DE OPORTUNIDADES B2B")
+        c1, c2, c3, c4, c5 = st.columns([2, 2, 2, 2, 1])
+        with c1: origem = st.selectbox("Onde buscar", list(SUGESTOES_STRATEGICAS.keys()))
+        with c2: termo = st.text_input("Intenção de busca", placeholder="Ex preciso de site")
+        with c3: cidade_radar = st.text_input("Cidade (Opcional)", placeholder="Ex São Paulo")
+        with c4: tempo = st.selectbox("Período", ["Últimas 24 Horas", "Última Semana", "Último Mês", "Qualquer data"])
+        with c5: qtd = st.number_input("Qtd", 1, 50, 10)
+        btn = st.button("RASTREAR COMPRADORES", key="btn_radar")
+
+        if btn and termo:
+            if not (GROQ_API_KEY and SERPER_API_KEY): st.error("Configure as chaves.")
             else:
-                error = "Tivemos um problema ao enviar o e-mail. Verifique o servidor."
-        else:
-            error = "E-mail não corresponde ao cadastro desta loja."
-    
-    loja_visual = {**g.loja, "logo": get_img_url(g.loja.get('logo')), "slug_url": loja_slug}
-    return render_template('esqueci_senha.html', loja=loja_visual, error=error, success=success)
+                termo_busca = f'{termo} {cidade_radar}'.strip()
+                periodo_api = "qdr:d" if "24 Horas" in tempo else "qdr:w" if "Semana" in tempo else "qdr:m" if "Mês" in tempo else ""
+                query_final = f'site:linkedin.com/posts "{termo_busca}"' if origem == "LinkedIn" else f'(site:workana.com OR site:99freelas.com.br) "{termo_busca}"' if origem == "Sites de Freelance" else f'"{termo_busca}"'
+                
+                resultados = search_google_serper(query_final, periodo_api, qtd)
+                if not resultados: st.warning("Nenhum sinal encontrado.")
+                else:
+                    prog = st.progress(0)
+                    processed_results = []
+                    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+                        future_to_item = {executor.submit(process_single_item, item, st.session_state.system_prompt_padrao): item for item in resultados}
+                        completed = 0
+                        for future in concurrent.futures.as_completed(future_to_item):
+                            try: processed_results.append(future.result())
+                            except: pass
+                            completed += 1
+                            prog.progress(completed / len(resultados))
+                    
+                    processed_results.sort(key=lambda x: x['analise'].get('score', 0), reverse=True)
+                    for p in processed_results:
+                        analise = p['analise']
+                        score = analise.get('score', 0)
+                        if score < 50: continue
+                        autor = analise.get('autor', 'Desconhecido')
+                        css_class = "score-hot" if score >= 80 else "score-warm"
+                        
+                        st.markdown(f'<div class="lead-card {css_class}"><div><span style="color:var(--blue); font-weight:bold;">SCORE {score}</span> <span class="tag-nicho">Autor {autor}</span></div><div style="margin-top:10px;"><a href="{p["link"]}" target="_blank" class="lead-title">{p["titulo"]}</a></div><div class="recommendation-box"><div style="color:var(--text-main); font-weight:bold;">OFERTAR {analise.get("produto_recomendado", "N/A").upper()}</div><div class="rec-text">{analise.get("resumo_post", "")}</div></div></div>', unsafe_allow_html=True)
+                        if st.button(f"Salvar {autor} no CRM", key=f"save_{p['link']}"):
+                            salvar_lead_crm(token, user_id, {"nome": autor, "origem": "Radar", "url": p["link"], "obs": analise.get("resumo_post", "")})
+                            st.success("Salvo no CRM")
+                            time.sleep(1)
+                            st.rerun()
 
-@app.route('/reset-senha/<token>', methods=['GET', 'POST'])
-def reset_senha(token):
-    try:
-        email = serializer.loads(token, salt='email-reset-salt', max_age=1800)
-    except Exception:
-        return render_template('reset_senha.html', error="O link de recuperação é inválido ou expirou.")
+    with tab2:
+        st.markdown("### EXTRATOR DE CONTATOS LOCAIS")
+        c1, c2, c3 = st.columns([2, 2, 2])
+        with c1: nicho = st.text_input("Nicho", value="Clínica Odontológica")
+        with c2: cidade = st.text_input("Cidade Base", value="São Paulo")
+        with c3: fonte_alvo = st.selectbox("Fonte Específica", list(FONTES_MINERADOR.keys()))
+        bairros_txt = st.text_area("Lista de Bairros Separados por vírgula", value="Centro, Pinheiros", height=80)
+        
+        if "leads_isolados" not in st.session_state: st.session_state["leads_isolados"] = []
+        
+        if st.button("INICIAR EXTRAÇÃO", key="btn_zap_mine"):
+            lista_bairros = [b.strip() for b in bairros_txt.split(',') if b.strip()]
+            novos_leads = []
+            bar = st.progress(0)
+            prefixo_fonte = FONTES_MINERADOR[fonte_alvo]
+            
+            telefones_db = df['telefone'].dropna().astype(str).tolist() if not df.empty and 'telefone' in df.columns else []
+            emails_db = df['email'].dropna().astype(str).tolist() if not df.empty and 'email' in df.columns else []
+            
+            for i, bairro in enumerate(lista_bairros):
+                if fonte_alvo == "Google Maps":
+                    query_maps = f'{nicho} em {bairro} {cidade}'
+                    resultados_maps = search_google_maps_serper(query_maps)
+                    
+                    for r in resultados_maps:
+                        nome_empresa = r.get('title', '')
+                        zap_oficial = extrair_whatsapp(r.get('phoneNumber', ''))
+                        endereco = r.get('address', '')
+                        site = r.get('website', '')
+                        
+                        if zap_oficial:
+                            exists_local = any(l['Whatsapp'] == zap_oficial for l in st.session_state["leads_isolados"])
+                            exists_new = any(l['Whatsapp'] == zap_oficial for l in novos_leads)
+                            exists_db = zap_oficial in telefones_db
+                            
+                            if not exists_local and not exists_new and not exists_db:
+                                novos_leads.append({
+                                    "Empresa": limpar_nome(nome_empresa), 
+                                    "Nicho": nicho, 
+                                    "Bairro": bairro, 
+                                    "Endereço Real": endereco,
+                                    "Whatsapp": zap_oficial, 
+                                    "Email": "", 
+                                    "Fonte": "Google Maps", 
+                                    "Link": site
+                                })
+                else:
+                    query_base = f'{prefixo_fonte} "{nicho}" "{bairro}" "{cidade}"'
+                    for q in [f'{query_base} "whatsapp"', f'{query_base} "@gmail.com" OR "@hotmail.com"']:
+                        resultados = search_google_serper(q.strip(), period="", num_results=20)
+                        for r in resultados:
+                            texto_completo = (r.get('title', '') + " " + r.get('snippet', '')).lower()
+                            zap = extrair_whatsapp(texto_completo)
+                            email = extrair_email(texto_completo)
+                            
+                            if zap is None: zap = ""
+                            if email is None: email = ""
+                            
+                            if zap or email:
+                                exists_local = any((l['Whatsapp'] == zap and zap) or (l['Email'] == email and email) for l in st.session_state["leads_isolados"])
+                                exists_new = any((l['Whatsapp'] == zap and zap) or (l['Email'] == email and email) for l in novos_leads)
+                                exists_db = (zap and zap in telefones_db) or (email and email in emails_db)
+                                
+                                if not exists_local and not exists_new and not exists_db:
+                                    novos_leads.append({"Empresa": limpar_nome(r.get('title', '')), "Nicho": nicho, "Bairro": bairro, "Endereço Real": "N/A", "Whatsapp": zap, "Email": email, "Fonte": fonte_alvo, "Link": r.get('link')})
+                bar.progress((i + 1) / len(lista_bairros))
+                time.sleep(0.5) 
+            if novos_leads:
+                st.session_state["leads_isolados"].extend(novos_leads)
+                st.success(f"{len(novos_leads)} CONTATOS INÉDITOS ENCONTRADOS")
+        
+        if st.session_state["leads_isolados"]:
+            df_mine = pd.DataFrame(st.session_state["leads_isolados"])
+            st.dataframe(df_mine, width='stretch')
+            
+            buffer_mine = BytesIO()
+            with pd.ExcelWriter(buffer_mine, engine='openpyxl') as writer:
+                df_mine.to_excel(writer, index=False)
+            st.download_button(label="📥 BAIXAR EXCEL MINEIRADOS", data=buffer_mine.getvalue(), file_name="leads_mineirados.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            
+            if st.button("SALVAR TODOS NO CRM"):
+                df_atual = carregar_dados(token, user_id)
+                telefones_db = df_atual['telefone'].dropna().astype(str).tolist() if not df_atual.empty and 'telefone' in df_atual.columns else []
+                emails_db = df_atual['email'].dropna().astype(str).tolist() if not df_atual.empty and 'email' in df_atual.columns else []
+                
+                salvos = 0
+                duplicados = 0
+                for _, row in df_mine.iterrows():
+                    zap_row = str(row["Whatsapp"]).strip()
+                    email_row = str(row["Email"]).strip()
+                    
+                    is_dup_zap = zap_row and zap_row in telefones_db
+                    is_dup_email = email_row and email_row in emails_db
+                    
+                    if is_dup_zap or is_dup_email:
+                        duplicados += 1
+                        continue
+                    
+                    obs_text = f"Endereço: {row.get('Endereço Real', '')}" if row.get('Endereço Real') and row.get('Endereço Real') != "N/A" else ""    
+                    salvar_lead_crm(token, user_id, {"empresa": row["Empresa"], "email": email_row, "telefone": zap_row, "origem": row["Fonte"], "ramo": row["Nicho"], "url": row["Link"], "obs": obs_text, "bairro": row["Bairro"]})
+                    salvos += 1
+                    if zap_row: telefones_db.append(zap_row)
+                    if email_row: emails_db.append(email_row)
+                    
+                if duplicados > 0:
+                    st.warning(f"Ignorados {duplicados} contatos que ja estavam no CRM")
+                st.success(f"{salvos} novos contatos enviados para o banco de dados")
+                st.session_state["leads_isolados"] = []
+                time.sleep(2)
+                st.rerun()
 
-    error = None
-    success = None
-    
-    r = requests.get(f"{DIRECTUS_URL}/items/lojas?filter[email][_eq]={email}", headers=get_headers())
-    data = r.json().get('data')
-    
-    if not data: 
-        return render_template('reset_senha.html', error="Loja não encontrada para este e-mail.")
-    
-    loja_alvo = data[0]
+    with tab3:
+        with st.expander("FILTRAR E PERSONALIZAR TABELA", expanded=True):
+            f_c1, f_c2 = st.columns([1, 1])
+            with f_c1:
+                all_cols = list(df.columns)
+                if 'cols_visiveis_save' not in st.session_state: st.session_state['cols_visiveis_save'] = all_cols
+                st.session_state['cols_visiveis_save'] = [c for c in st.session_state['cols_visiveis_save'] if c in all_cols]
+                cols_visiveis = st.multiselect("Escolha e ordene as colunas", all_cols, default=st.session_state['cols_visiveis_save'])
+                if cols_visiveis != st.session_state['cols_visiveis_save']: st.session_state['cols_visiveis_save'] = cols_visiveis; st.rerun()
+            with f_c2:
+                col_para_filtrar = st.selectbox("Filtrar na coluna", ["Sem Filtro"] + all_cols)
+                filtro_valores = []
+                if col_para_filtrar != "Sem Filtro":
+                    valores_unicos = [str(x) for x in df[col_para_filtrar].unique()]
+                    filtro_valores = st.multiselect(f"Selecione valores de {col_para_filtrar}", valores_unicos)
+        
+        df_visual = df.copy()
+        if col_para_filtrar != "Sem Filtro" and filtro_valores: df_visual = df_visual[df_visual[col_para_filtrar].astype(str).isin(filtro_valores)]
+        if cols_visiveis:
+            cols_final = [c for c in cols_visiveis]
+            if 'id' not in cols_final and 'id' in df_visual.columns: cols_final.append('id')
+            df_visual = df_visual[cols_final]
 
-    if request.method == 'POST':
-        new_password = request.form.get('password')
-        if new_password:
-            hash_senha = generate_password_hash(new_password)
-            requests.patch(f"{DIRECTUS_URL}/items/lojas/{loja_alvo['id']}", 
-                         headers=get_headers(),
-                         json={'senha_admin': hash_senha})
-            success = "Sua senha foi atualizada com sucesso! Você já pode fazer login."
-        else:
-            error = "A senha não pode ficar em branco."
+        sub_t1, sub_t2 = st.tabs(["TABELA MESTRE", "TABELA BOT"])
+        with sub_t1:
+            col_config = {'id': st.column_config.Column("id", disabled=True, hidden=True)} if 'id' in df_visual.columns and 'id' not in cols_visiveis else {}
+            edited = st.data_editor(df_visual, num_rows="dynamic", width='stretch', key="editor", column_config=col_config)
+            
+            buffer_crm = BytesIO()
+            with pd.ExcelWriter(buffer_crm, engine='openpyxl') as writer:
+                df_visual.to_excel(writer, index=False)
+            st.download_button(label="📥 BAIXAR EXCEL CRM", data=buffer_crm.getvalue(), file_name="clientes_crm.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            
+            if st.button("SALVAR ALTERACOES NA BASE"):
+                chg = st.session_state["editor"]
+                for idx in chg.get("deleted_rows", []):
+                    try: requests.delete(f"{DIRECTUS_URL}/items/{get_user_table_name(user_id)}/{df_visual.iloc[idx]['id']}", headers={"Authorization": f"Bearer {token}"}, verify=False)
+                    except: pass
+                for idx, row in chg["edited_rows"].items():
+                    try: atualizar_item(token, user_id, df_visual.iloc[int(idx)]['id'], row)
+                    except: pass
+                max_id = 0
+                df_fresh = carregar_dados(token, user_id)
+                if not df_fresh.empty and 'id' in df_fresh.columns: max_id = pd.to_numeric(df_fresh['id'], errors='coerce').max()
+                proximo_id = int(max_id) + 1 if not pd.isna(max_id) else 1
+                for row in chg["added_rows"]:
+                    if 'id' not in row or not row['id']: row['id'] = proximo_id; proximo_id += 1
+                    requests.post(f"{DIRECTUS_URL}/items/{get_user_table_name(user_id)}", json=row, headers={"Authorization": f"Bearer {token}"}, verify=False)
+                st.toast("Dados atualizados", icon="✅")
+                time.sleep(1)
+                st.rerun()
+        with sub_t2:
+            st.dataframe(df_bot, width='stretch', height=400)
 
-    return render_template('reset_senha.html', error=error, success=success, token=token, loja=loja_alvo)
+        st.divider()
+        st.markdown("### AÇÕES RÁPIDAS LINHA UNICA")
+        col_fonte, col_cli, col_vazio = st.columns([1, 2, 3])
+        with col_fonte: fonte = st.radio("Fonte de Dados", ["Base Mestre", "Bot Automático"], horizontal=True)
+        df_ativo = df if fonte == "Base Mestre" else df_bot
+        with col_cli: sel_cli = st.selectbox("Selecione o Cliente para Agir", ["Selecione"] + (df_ativo['nome'].tolist() if not df_ativo.empty and 'nome' in df_ativo.columns else []))
+        
+        if sel_cli != "Selecione" and not df_ativo.empty:
+            dados_cli = df_ativo[df_ativo['nome'] == sel_cli].iloc[0]
+            act_c1, act_c2 = st.columns(2)
+            with act_c1:
+                st.markdown("#### WHATSAPP")
+                if st.button("GERAR TEXTO ZAP IA"): st.session_state['ai_zap_text'] = gerar_whatsapp_ia(st.session_state.get('ctx', {}), dados_cli); st.rerun()
+                msg_zap = st.text_area("Mensagem", value=st.session_state.get('ai_zap_text', "Olá tudo bem"), height=100)
+                nums = re.sub(r'\D', '', str(dados_cli.get('telefone', '')))
+                if nums: st.link_button("ENVIAR WHATSAPP", f"https://api.whatsapp.com/send?phone={nums if nums.startswith('55') and len(nums) > 11 else '55'+nums}&text={urllib.parse.quote(msg_zap)}", width='stretch')
+            with act_c2:
+                st.markdown("#### GMAIL IA")
+                if st.button("GERAR TEXTO COM IA"):
+                    assunto_ia, corpo_ia = gerar_copy_ia(st.session_state.get('ctx', {}), dados_cli)
+                    st.link_button("ABRIR NO GMAIL", f"https://mail.google.com/mail/?view=cm&fs=1&to={dados_cli.get('email', '')}&su={urllib.parse.quote(assunto_ia)}&body={urllib.parse.quote(corpo_ia.replace('{nome}', dados_cli.get('nome', '')))}", width='stretch')
 
-# ROTA CAPTURA DE LEADS (TECNOLOGIA)
-@app.route('/<loja_slug>/captura-lead', methods=['POST'])
-def captura_lead(loja_slug):
-    if not g.loja:
-        return jsonify({"erro": "Loja não encontrada"}), 404
+    with tab4:
+        st.markdown("### DISPARO EM MASSA EMAIL E WHATSAPP")
+        
+        subtab_int, subtab_ext = st.tabs(["[ 1 ] DISPARO INTERNO DO CRM", "[ 2 ] IMPORTAR EXCEL EXTERNO"])
+        
+        with subtab_int:
+            if not df.empty and not df_bot.empty:
+                df_temp = df.copy()
+                df_temp['fonte_dados'] = 'Mestre'
+                df_bot_temp = df_bot.copy()
+                df_bot_temp['fonte_dados'] = 'Bot'
+                df_unificado = pd.concat([df_temp, df_bot_temp], ignore_index=True)
+            elif not df.empty:
+                df_unificado = df.copy()
+                df_unificado['fonte_dados'] = 'Mestre'
+            elif not df_bot.empty:
+                df_unificado = df_bot.copy()
+                df_unificado['fonte_dados'] = 'Bot'
+            else:
+                df_unificado = pd.DataFrame()
+            
+            ocultar_enviados = st.checkbox("Ocultar contatos já enviados Proteção contra duplicidade", value=True)
+            if ocultar_enviados and not df_unificado.empty and 'status' in df_unificado.columns:
+                df_unificado = df_unificado[df_unificado['status'] != "ENVIADO EM MASSA"]
 
-    nome = request.form.get('nome')
-    whatsapp = request.form.get('whatsapp')
-    email = request.form.get('email')
-    # O campo profissao deve vir do front-end agora para alimentar a IA
-    profissao = request.form.get('profissao', 'Não informado')
+            if not df_unificado.empty:
+                with st.expander("🔍 FILTRAR LISTA DE DISPARO", expanded=True):
+                    f_col1, f_col2, f_col3, f_col4 = st.columns(4)
+                    with f_col1:
+                        opcoes_origem = [x for x in df_unificado['origem'].dropna().astype(str).unique() if x.strip() != ''] if 'origem' in df_unificado.columns else []
+                        filtro_origem = st.multiselect("Filtrar por Origem", opcoes_origem)
+                    with f_col2:
+                        opcoes_ramo = [x for x in df_unificado['ramo'].dropna().astype(str).unique() if x.strip() != ''] if 'ramo' in df_unificado.columns else []
+                        filtro_ramo = st.multiselect("Filtrar por Ramo", opcoes_ramo)
+                    with f_col3:
+                        opcoes_status = [x for x in df_unificado['status'].dropna().astype(str).unique() if x.strip() != ''] if 'status' in df_unificado.columns else []
+                        filtro_status = st.multiselect("Filtrar por Status", opcoes_status)
+                    with f_col4:
+                        opcoes_bairro = [x for x in df_unificado['bairro'].dropna().astype(str).unique() if x.strip() != ''] if 'bairro' in df_unificado.columns else []
+                        filtro_bairro = st.multiselect("Filtrar por Bairro", opcoes_bairro)
+                        
+                    if filtro_origem: df_unificado = df_unificado[df_unificado['origem'].astype(str).isin(filtro_origem)]
+                    if filtro_ramo: df_unificado = df_unificado[df_unificado['ramo'].astype(str).isin(filtro_ramo)]
+                    if filtro_status: df_unificado = df_unificado[df_unificado['status'].astype(str).isin(filtro_status)]
+                    if filtro_bairro: df_unificado = df_unificado[df_unificado['bairro'].astype(str).isin(filtro_bairro)]
+                
+            c1, c2 = st.columns([1, 1])
+            with c1:
+                metodo_envio = st.radio("MÉTODO DE DISPARO", ["Email SMTP", "WhatsApp Baileys API"], horizontal=True)
+                
+                if not df_unificado.empty:
+                    if metodo_envio == "Email SMTP":
+                        if 'email' in df_unificado.columns:
+                            df_unificado = df_unificado[df_unificado['email'].astype(str).str.strip().str.lower().isin(['nan', 'none', '']) == False]
+                        else:
+                            df_unificado = pd.DataFrame()
+                    else:
+                        if 'telefone' in df_unificado.columns:
+                            df_unificado = df_unificado[df_unificado['telefone'].astype(str).str.strip().str.lower().isin(['nan', 'none', '']) == False]
+                        else:
+                            df_unificado = pd.DataFrame()
+                    
+                    if not df_unificado.empty:
+                        def make_label(r):
+                            emp = str(r.get('empresa', ''))
+                            nm = str(r.get('nome', ''))
+                            if emp.lower() == 'nan' or not emp.strip(): emp = 'Sem Empresa'
+                            if nm.lower() == 'nan' or not nm.strip(): nm = 'Sem Nome'
+                            return f"Empresa: {emp} | Nome: {nm} | {r.get('fonte_dados', '')}"
+                        df_unificado['label'] = df_unificado.apply(make_label, axis=1)
+                
+                modo_lote = st.radio("MODO DE SELECAO", ["Manual", "Lote 10 Rapido", "Lote 50 em 4 Horas"], horizontal=True)
+                if modo_lote != "Manual":
+                    alvos_pre = []
+                    if not df_unificado.empty and 'status' in df_unificado.columns:
+                        df_novos = df_unificado[df_unificado['status'].astype(str).str.upper() == 'NOVO']
+                        limite = 10 if modo_lote == "Lote 10 Rapido" else 50
+                        alvos_pre = df_novos['label'].tolist()[:limite]
+                    alvos_finais = st.multiselect("ALVOS SELECIONADOS AUTOMATICAMENTE", alvos_pre, default=alvos_pre, disabled=True)
+                else:
+                    alvos_finais = st.multiselect("SELECIONE OS ALVOS DO CRM", df_unificado['label'].tolist() if not df_unificado.empty else [])
+                    
+            with c2:
+                if metodo_envio == "Email SMTP":
+                    assunto = st.text_input("ASSUNTO", key="ass_massa")
+                    st.caption("Dica: Use {{imagem}} no texto para inserir a imagem inline no corpo do e-mail.")
+                    corpo = st.text_area("CORPO HTML (Use {nome}, {empresa})", height=150, key="body_massa")
+                    file_anexo = st.file_uploader("ANEXAR ARQUIVO (IMG vira inline, PDF vira anexo)", key="file_int_email")
+                    if st.button("GERAR COPY EMAIL IA"): sug_a, sug_c = gerar_copy_ia(st.session_state.get('ctx', {})); st.info(sug_a); st.code(sug_c)
+                else:
+                    msg_wpp_massa = st.text_area("MENSAGEM WHATSAPP (Use {nome}, {empresa})", value="Opa {nome} tudo bem", height=150)
+                    file_anexo_wpp = st.file_uploader("ANEXAR IMAGEM (Opcional - WhatsApp)", type=["png", "jpg", "jpeg"], key="img_wpp_int")
+                    url_video_wpp = st.text_input("URL DO VÍDEO (Cloudinary ou MP4 direto)", key="vid_wpp_int")
+                    st.info("O envio usa as travas de proteção da aba Configuração")
+                    tracking = get_tracking_data(user_id)
+                    st.caption(f"Limite WhatsApp Hoje {tracking.get('manual_limit', 30)}. Enviados {tracking['sent_today']}")
 
-    if not all([nome, whatsapp, email]):
-        return jsonify({"erro": "Preencha todos os campos obrigatórios"}), 400
+            if st.button("🚀 INICIAR DISPARO EM MASSA"):
+                bar = st.progress(0)
+                log = st.empty()
+                
+                if metodo_envio == "Email SMTP":
+                    if not st.session_state.get('smtp') or not st.session_state['smtp'].get('host'): 
+                        st.error("CONFIGURE O SMTP NA ABA CONFIGURAÇÕES GERAIS")
+                    elif len(alvos_finais) > saldo_envios: st.error("SELEÇÃO MAIOR QUE SALDO")
+                    else:
+                        for i, label_sel in enumerate(alvos_finais):
+                            tgt = df_unificado[df_unificado['label'] == label_sel].iloc[0]
+                            email_real = str(tgt.get('email', '')).strip()
+                            if not email_real or "@" not in email_real or email_real.lower() == 'nan':
+                                log.warning(f"Sem email valido para {label_sel}")
+                                continue
+                                
+                            assunto_final = assunto.replace("{nome}", str(tgt.get('nome', '')).strip()).replace("{empresa}", str(tgt.get('empresa', '')).strip())    
+                            
+                            log_id = registrar_log_envio(token, email_real, assunto_final, "Enviando")
+                            url_pixel = f"{DIRECTUS_URL.rstrip('/')}/flows/trigger/{TRACKING_WEBHOOK_KEY}?log_id={log_id}" if log_id and TRACKING_WEBHOOK_KEY else None
+                            
+                            texto_final = corpo.replace("{nome}", str(tgt.get('nome', '')).strip()).replace("{empresa}", str(tgt.get('empresa', '')).strip())
+                            
+                            res, txt = enviar_email_smtp(st.session_state['smtp'], email_real, assunto_final, texto_final, file_anexo, url_pixel)
+                            if log_id: atualizar_status_envio(token, log_id, "Enviado" if res else f"Erro {txt}")
+                            if res and tgt.get('id'): atualizar_item(token, user_id, tgt['id'], {"status": "ENVIADO EM MASSA"})
+                            
+                            if res:
+                                log.success(f"ENVIADO PARA {email_real}")
+                            else:
+                                log.error(f"ERRO {email_real}")
+                                
+                            bar.progress((i+1)/len(alvos_finais))
+                            
+                            if i < len(alvos_finais) - 1:
+                                espera = random.randint(30, 90) if modo_lote != "Lote 50 em 4 Horas" else 288
+                                timer_ph = st.empty()
+                                for s in range(espera, 0, -1):
+                                    timer_ph.info(f"Aguardando {s}s para o proximo envio")
+                                    time.sleep(1)
+                                timer_ph.empty()
+                        
+                        st.success("DISPARO FINALIZADO COM SUCESSO")
+                        time.sleep(2)
+                        st.rerun()
+                
+                elif metodo_envio == "WhatsApp Baileys API":
+                    tracking = get_tracking_data(user_id)
+                    daily_limit = tracking.get("manual_limit", 30)
+                    today_str = str(date.today())
+                    current_hour_str = str(datetime.now().strftime("%Y-%m-%d %H"))
+                    
+                    if tracking["last_run_date"] != today_str: tracking["sent_today"] = 0; tracking["last_run_date"] = today_str
+                    if tracking["last_run_hour"] != current_hour_str: tracking["sent_this_hour"] = 0; tracking["last_run_hour"] = current_hour_str
 
-    # Inicializa o JSON com a profissão. O Directus Flow pode atualizar isso depois.
-    endereco_json = {
-        "profissao": profissao
-    }
+                    for i, label_sel in enumerate(alvos_finais):
+                        if tracking["sent_today"] >= daily_limit: st.warning("Limite diário atingido"); break
+                        if tracking["sent_this_hour"] >= 10: st.warning("Limite de hora atingido"); break
+                        
+                        tgt = df_unificado[df_unificado['label'] == label_sel].iloc[0]
+                        numero = extrair_whatsapp(str(tgt.get('telefone', '')))
+                        if not numero or numero.lower() == 'nan':
+                            log.warning(f"Sem WhatsApp para {label_sel}")
+                            continue
+                        
+                        try:
+                            msg_final_wpp = msg_wpp_massa.replace("{nome}", str(tgt.get('nome', '')).strip()).replace("{empresa}", str(tgt.get('empresa', '')).strip())
+                            
+                            payload = {"number": numero, "message": msg_final_wpp}
+                            
+                            if file_anexo_wpp is not None:
+                                img_base64 = base64.b64encode(file_anexo_wpp.getvalue()).decode('utf-8')
+                                payload["image"] = img_base64
+                                
+                            if url_video_wpp:
+                                payload["videoUrl"] = url_video_wpp
+                                
+                            res = requests.post("http://213.199.56.207:3001/disparar", json=payload, timeout=20)
+                            if res.status_code == 200:
+                                tracking["sent_today"] += 1
+                                tracking["sent_this_hour"] += 1
+                                save_tracking_data(user_id, tracking)
+                                log.success(f"WPP ENVIADO PARA {numero}")
+                                if tgt.get('id'): atualizar_item(token, user_id, tgt['id'], {"status": "ENVIADO EM MASSA"})
+                            else: log.error("Erro na API do Baileys")
+                        except: log.error("Falha de conexão com disparador")
+                        
+                        bar.progress((i+1)/len(alvos_finais))
+                        
+                        if i < len(alvos_finais) - 1:
+                            espera = random.randint(st.session_state.delay_min, st.session_state.delay_max) if modo_lote != "Lote 50 em 4 Horas" else 288
+                            timer_ph = st.empty()
+                            for s in range(espera, 0, -1):
+                                timer_ph.info(f"Aguardando {s}s para o proximo envio")
+                                time.sleep(1)
+                            timer_ph.empty()
+                        
+                    st.success("DISPARO FINALIZADO COM SUCESSO")
+                    time.sleep(2)
+                    st.rerun()
 
-    payload = {
-        "loja_id": g.loja_id,
-        "nome": nome,
-        "whatsapp": whatsapp,
-        "email": email,
-        "endereco_json": endereco_json
-    }
+        with subtab_ext:
+            st.markdown("### 📂 UPLOAD DE LISTA (EXCEL .xlsx)")
+            up_file = st.file_uploader("ARQUIVO EXCEL (Colunas obrigatórias: nome, email ou telefone)", type=["xlsx"])
+            
+            if up_file:
+                try:
+                    df_ext = pd.read_excel(up_file)
+                    df_ext.columns = [str(c).lower().strip() for c in df_ext.columns]
+                    
+                    st.dataframe(df_ext.head(), width='stretch')
+                    st.info(f"{len(df_ext)} LEADS ENCONTRADOS NO ARQUIVO")
 
-    try:
-        r = requests.post(f"{DIRECTUS_URL}/items/clientes_loja", headers=get_headers(), json=payload)
-        if r.status_code in [200, 201]:
-            return jsonify({"sucesso": True, "mensagem": "Cadastrado com sucesso!"})
-        return jsonify({"erro": "Erro ao salvar no banco de dados."}), 500
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 500
+                    col_imp_btn, col_imp_info = st.columns([1, 2])
+                    with col_imp_btn:
+                        if st.button("💾 IMPORTAR LISTA PARA O CRM", type="primary"):
+                            progress_text = "Importando leads para o banco de dados..."
+                            my_bar = st.progress(0, text=progress_text)
+                            
+                            table_name = get_user_table_name(user_id)
+                            base_url = DIRECTUS_URL.rstrip('/')
+                            headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+                            
+                            total_imp = len(df_ext)
+                            sucesso_imp = 0
+                            
+                            for idx, row in df_ext.iterrows():
+                                payload = {"status": "Novo"}
+                                for col in df_ext.columns:
+                                    slug = col.replace(' ', '_').replace('ç', 'c').replace('ã', 'a')
+                                    val = row[col]
+                                    if pd.isna(val): val = ""
+                                    payload[slug] = str(val)
 
+                                try:
+                                    r_imp = requests.post(f"{base_url}/items/{table_name}", json=payload, headers=headers, verify=False)
+                                    if r_imp.status_code in [200, 204]:
+                                        sucesso_imp += 1
+                                except:
+                                    pass
+                                
+                                my_bar.progress((idx + 1) / total_imp)
+                            
+                            my_bar.empty()
+                            st.success(f"✅ IMPORTAÇÃO CONCLUÍDA! {sucesso_imp} LEADS SALVOS NO CRM.")
+                            time.sleep(2)
+                            st.rerun()
 
-# API FRETE
-@app.route('/api/calcular-frete', methods=['POST'])
-def api_frete():
-    return jsonify([]) 
+                    st.markdown("---")
+                    
+                    st.markdown("#### 🚀 DISPARO DIRETO DA LISTA EXTERNA")
+                    metodo_envio_ext = st.radio("MÉTODO DE DISPARO EXTERNO", ["Email SMTP", "WhatsApp Baileys API"], horizontal=True, key="metodo_ext")
+                    
+                    if metodo_envio_ext == "Email SMTP":
+                        assunto_ext = st.text_input("ASSUNTO", key="ass_ext")
+                        st.caption("Dica: Use {{imagem}} no texto para inserir a imagem no corpo.")
+                        corpo_ext = st.text_area("CORPO HTML (Use {nome}, {empresa})", height=150, key="body_ext")
+                        file_anexo_ext = st.file_uploader("ANEXAR ARQUIVO (IMG vira inline, PDF vira anexo)", key="file_ext_up_email")
+                        
+                        if st.button("✨ GERAR COM IA (GROQ) - EXT"):
+                            sug_a, sug_c = gerar_copy_ia(st.session_state.get('ctx', {}))
+                            st.info(f"Assunto: {sug_a}")
+                            st.code(sug_c)
+                            
+                        if st.button("🚀 DISPARAR E-MAIL PARA LISTA EXTERNA"):
+                            if not st.session_state.get('smtp') or not st.session_state['smtp'].get('host'):
+                                st.error("SMTP OFF - CONFIGURE NA ABA CONFIGURAÇÕES GERAIS")
+                            elif 'email' not in df_ext.columns:
+                                st.error("O arquivo precisa ter uma coluna chamada 'email'.")
+                            elif len(df_ext[df_ext['email'].astype(str).str.contains("@")]) > saldo_envios:
+                                st.error(f"LISTA MAIOR QUE SALDO ({saldo_envios})")
+                            else:
+                                df_validos = df_ext[df_ext['email'].astype(str).str.contains("@")]
+                                bar2 = st.progress(0)
+                                log2 = st.empty()
+                                
+                                for i, row in df_validos.iterrows():
+                                    if i > 0:
+                                        wait = random.randint(30, 90)
+                                        timer_ext = st.empty()
+                                        for s in range(wait, 0, -1):
+                                            timer_ext.warning(f"⏳ ANTI-SPAM... {s}s")
+                                            time.sleep(1)
+                                        timer_ext.empty()
+                                    
+                                    nome_l = row.get('nome', 'Parceiro')
+                                    email_l = str(row['email']).strip()
+                                    empresa_l = row.get('empresa', '') if 'empresa' in row else ''
+                                    
+                                    assunto_final_ext = assunto_ext.replace("{nome}", str(nome_l)).replace("{empresa}", str(empresa_l))
+                                    
+                                    log_id = registrar_log_envio(token, email_l, assunto_final_ext, "Enviando... [EXT]")
+                                    
+                                    tracking_url = None
+                                    if log_id and TRACKING_WEBHOOK_KEY != "SUA_CHAVE_AQUI":
+                                        base_clean = DIRECTUS_URL.rstrip('/')
+                                        tracking_url = f"{base_clean}/flows/trigger/{TRACKING_WEBHOOK_KEY}?log_id={log_id}"
 
+                                    msg_final = corpo_ext.replace("{nome}", str(nome_l)).replace("{empresa}", str(empresa_l))
+                                    
+                                    res, txt = enviar_email_smtp(st.session_state['smtp'], email_l, assunto_final_ext, msg_final, file_anexo_ext, tracking_url)
+                                    
+                                    if log_id:
+                                        novo_status = "Enviado [EXT]" if res else f"Erro: {txt}"
+                                        atualizar_status_envio(token, log_id, novo_status)
 
-# LOGOUT
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect('/')
+                                    if res: log2.success(f"ENVIADO: {email_l}")
+                                    else: log2.error(f"FALHA: {email_l}")
+                                    
+                                    bar2.progress((i+1)/len(df_validos))
+                                st.balloons()
+                                time.sleep(2)
+                                st.rerun()
+                                
+                    else: 
+                        msg_wpp_ext = st.text_area("MENSAGEM WHATSAPP (Use {nome}, {empresa})", value="Opa {nome} tudo bem", height=150, key="wpp_ext")
+                        file_anexo_wpp_ext = st.file_uploader("ANEXAR IMAGEM (Opcional - WhatsApp)", type=["png", "jpg", "jpeg"], key="img_wpp_ext_up")
+                        url_video_ext = st.text_input("URL DO VÍDEO (Cloudinary ou MP4 direto)", key="vid_wpp_ext")
+                        tracking = get_tracking_data(user_id)
+                        st.caption(f"Limite WhatsApp Hoje {tracking.get('manual_limit', 30)}. Enviados {tracking['sent_today']}")
+                        
+                        if st.button("🚀 DISPARAR WHATSAPP PARA LISTA EXTERNA"):
+                            if 'telefone' not in df_ext.columns and 'whatsapp' not in df_ext.columns:
+                                st.error("O arquivo precisa ter uma coluna chamada 'telefone' ou 'whatsapp'.")
+                            else:
+                                col_tel = 'telefone' if 'telefone' in df_ext.columns else 'whatsapp'
+                                df_validos = df_ext[df_ext[col_tel].astype(str).str.strip() != '']
+                                
+                                bar3 = st.progress(0)
+                                log3 = st.empty()
+                                
+                                daily_limit = tracking.get("manual_limit", 30)
+                                today_str = str(date.today())
+                                current_hour_str = str(datetime.now().strftime("%Y-%m-%d %H"))
+                                
+                                for i, row in df_validos.iterrows():
+                                    tracking = get_tracking_data(user_id)
+                                    if tracking["last_run_date"] != today_str: tracking["sent_today"] = 0; tracking["last_run_date"] = today_str
+                                    if tracking["last_run_hour"] != current_hour_str: tracking["sent_this_hour"] = 0; tracking["last_run_hour"] = current_hour_str
+                                    
+                                    if tracking["sent_today"] >= daily_limit: st.warning("Limite diário atingido"); break
+                                    if tracking["sent_this_hour"] >= 10: st.warning("Limite de hora atingido"); break
+                                    
+                                    nome_l = row.get('nome', 'Parceiro')
+                                    empresa_l = row.get('empresa', '') if 'empresa' in row else ''
+                                    numero = extrair_whatsapp(str(row[col_tel]))
+                                    
+                                    if not numero or numero.lower() == 'nan':
+                                        continue
+                                        
+                                    try:
+                                        msg_final_wpp = msg_wpp_ext.replace("{nome}", str(nome_l)).replace("{empresa}", str(empresa_l))
+                                        payload = {"number": numero, "message": msg_final_wpp}
+                                        
+                                        if file_anexo_wpp_ext is not None:
+                                            img_base64 = base64.b64encode(file_anexo_wpp_ext.getvalue()).decode('utf-8')
+                                            payload["image"] = img_base64
+                                            
+                                        if url_video_ext:
+                                            payload["videoUrl"] = url_video_ext
+                                            
+                                        res = requests.post("http://213.199.56.207:3001/disparar", json=payload, timeout=20)
+                                        
+                                        if res.status_code == 200:
+                                            tracking["sent_today"] += 1
+                                            tracking["sent_this_hour"] += 1
+                                            save_tracking_data(user_id, tracking)
+                                            log3.success(f"WPP ENVIADO PARA {numero}")
+                                        else:
+                                            log3.error("Erro na API do Baileys")
+                                    except:
+                                        log3.error("Falha de conexão com disparador")
+                                    
+                                    espera_ext = random.randint(st.session_state.delay_min, st.session_state.delay_max)
+                                    timer_ext_wpp = st.empty()
+                                    for s in range(espera_ext, 0, -1):
+                                        timer_ext_wpp.info(f"Aguardando {s}s para o proximo envio")
+                                        time.sleep(1)
+                                    timer_ext_wpp.empty()
+                                    bar3.progress((i+1)/len(df_validos))
+                                
+                                st.success("DISPARO FINALIZADO COM SUCESSO")
+                                time.sleep(2)
+                                st.rerun()
 
-# INICIALIZAÇÃO
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+                except Exception as e:
+                    st.error(f"ERRO AO LER EXCEL: {e}")
+
+    with tab5:
+        st.markdown("### 📧 CONFIGURAÇÃO DO E-MAIL (SMTP)")
+        st.info("Salve as credenciais do seu e-mail aqui. Elas ficarão salvas no seu banco de dados (Directus) para os próximos disparos automaticamente.")
+        
+        c_smtp1, c_smtp2 = st.columns(2)
+        with c_smtp1:
+            h_val = st.text_input("SMTP HOST (Ex: smtp.gmail.com)", value=st.session_state.get('smtp_host_input', 'smtp.gmail.com'))
+            u_val = st.text_input("SMTP USER (Seu e-mail)", value=st.session_state.get('smtp_user_input', ''))
+        with c_smtp2:
+            p_val = st.number_input("SMTP PORT", value=st.session_state.get('smtp_port_input', 587))
+            pw_val = st.text_input("SMTP PASS (Senha de App)", type="password", value=st.session_state.get('smtp_pass_input', ''))
+            
+        if st.button("💾 SALVAR CONFIGURAÇÕES NO BANCO", width='stretch'):
+            st.session_state['smtp'] = {'host': h_val, 'port': p_val, 'user': u_val, 'pass': pw_val}
+            st.session_state['smtp_host_input'] = h_val
+            st.session_state['smtp_port_input'] = p_val
+            st.session_state['smtp_user_input'] = u_val
+            st.session_state['smtp_pass_input'] = pw_val
+            
+            sucesso = salvar_config_smtp(token, {'smtp_host': h_val, 'smtp_port': p_val, 'smtp_user': u_val, 'smtp_pass': pw_val})
+            if sucesso:
+                st.success("✅ Configurações SMTP salvas com sucesso na tabela config_smtp!")
+            else:
+                st.error("❌ Falha ao salvar. Verifique se a tabela existe no Directus.")
+                
+        st.divider()
+
+        st.markdown("### ⚙️ PROTEÇÃO DO WHATSAPP E LIMITES")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.session_state.delay_min = st.number_input("Tempo Minimo Segundos", min_value=10, max_value=600, value=st.session_state.get('delay_min', 60))
+        with col2:
+            st.session_state.delay_max = st.number_input("Tempo Maximo Segundos", min_value=10, max_value=800, value=st.session_state.get('delay_max', 200))
+        with col3:
+            tracking = get_tracking_data(user_id)
+            novo_limite = st.number_input("Limite Diario Manual (Max 30)", min_value=1, max_value=30, value=tracking.get("manual_limit", 30))
+            if novo_limite != tracking.get("manual_limit", 30):
+                tracking["manual_limit"] = novo_limite
+                save_tracking_data(user_id, tracking)
+                st.success("Limite atualizado")
+        
+        st.divider()
+        tracking = get_tracking_data(user_id)
+        daily_lim = tracking.get("manual_limit", 30)
+        col_a, col_b, col_c = st.columns(3)
+        col_a.metric("Limite Seguro de Hoje", daily_lim)
+        col_b.metric("Disparos Hoje", tracking["sent_today"])
+        col_c.metric("Disparos Nesta Hora", f"{tracking['sent_this_hour']} / 10")
+        
+        st.divider()
+        st.markdown("### 🧠 INSTRUÇÕES DA IA CAÇADORA")
+        st.session_state.system_prompt_padrao = st.text_area("Edite as regras de classificação da IA", value=st.session_state.system_prompt_padrao, height=150)
+        
+        if st.button("Zerar Contadores de Segurança Perigo"):
+            os.remove(get_tracking_file(user_id))
+            st.rerun()
+
+except Exception as e:
+    st.markdown("<br><br><br><h2 style='text-align: center; color: var(--red); padding: 20px;'>A TELA PRECISA SER ATUALIZADA</h2>", unsafe_allow_html=True)
+    if st.button("🔄 CLIQUE AQUI PARA REINICIAR", type="primary", use_container_width=True):
+        for key in list(st.session_state.keys()):
+            if key not in ['token', 'user']:
+                del st.session_state[key]
+        st.rerun()
