@@ -1789,7 +1789,7 @@
         <p class="text-white/60 font-montserrat uppercase tracking-widest text-sm">Gere sua estrela oficial e comprove sua presenca</p>
     </div>
     <div class="relative w-full max-w-[600px] aspect-square flex items-center justify-center" id="star-stage" style="perspective: 1200px;">
-        <div class="relative w-full h-full transform transition-all duration-1000 flex items-center justify-center" style="transform: rotateX(35deg); transform-style: preserve-3d; will-change: transform;" id="star-wrapper">
+        <div class="relative w-full h-full transform transition-all duration-1000 flex items-center justify-center" style="transform: rotateX(35deg);" id="star-wrapper">
             
             <svg viewBox="-10 -10 120 120" class="absolute w-full h-full drop-shadow-[0_0_100px_rgba(212,175,55,0.7)] z-0">
                 <defs>
@@ -1854,7 +1854,7 @@
                 </g>
             </svg>
 
-            <div id="star-name-display" class="absolute w-full text-center opacity-0 z-10 flex justify-center items-center px-4" style="top: 42%; left: 0; color: #D4AF37; font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: clamp(1rem, 5vw, 2.2rem); text-shadow: 0px 4px 15px rgba(0,0,0,1); letter-spacing: 2px;"></div>
+            <div id="star-name-display" class="absolute w-full text-center opacity-0 z-10 flex justify-center items-center px-4" style="top: 42%; left: 0; color: #D4AF37; font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: clamp(1.2rem, 5vw, 2.5rem); text-shadow: 0px 4px 10px rgba(0,0,0,1); letter-spacing: 2px;"></div>
         </div>
     </div>
 
@@ -1923,12 +1923,19 @@
         `;
 
         setTimeout(() => {
-            const starStage = document.getElementById('star-stage');
-            html2canvas(starStage, {
+            html2canvas(document.getElementById('star-wrapper'), {
                 backgroundColor: '#050505',
                 scale: 2, 
                 useCORS: true,
-                logging: false
+                logging: false,
+                onclone: function(clonedDoc) {
+                    const clonedWrapper = clonedDoc.getElementById('star-wrapper');
+                    clonedWrapper.style.transform = 'none';
+                    clonedWrapper.style.padding = '20px';
+                    const clonedDisplay = clonedDoc.getElementById('star-name-display');
+                    clonedDisplay.style.opacity = '1';
+                    clonedDisplay.textContent = nomeIn.toUpperCase();
+                }
             }).then(canvas => {
                 const imgData = canvas.toDataURL('image/jpeg', 0.9);
                 document.getElementById('download-area').innerHTML = `
