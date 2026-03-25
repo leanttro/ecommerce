@@ -255,11 +255,11 @@
                {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-60 hover:opacity-100 transition-opacity duration-300 text-[var(--text-color)] uppercase">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
                 
                 {% if not loja.ocultar_produtos %}
-                <div class="relative group py-2">
-                    <a href="#portfolio" class="opacity-60 hover:opacity-100 transition-opacity duration-300 text-[var(--text-color)] flex items-center gap-1 cursor-pointer">
+                <div class="relative group py-4 cursor-pointer">
+                    <a href="#portfolio" class="opacity-60 hover:opacity-100 transition-opacity duration-300 text-[var(--text-color)] flex items-center gap-1">
                         {{ loja.titulo_produtos or 'Nossos Cases' }} <i data-lucide="chevron-down" class="w-3 h-3"></i>
                     </a>
-                    <div class="absolute left-0 top-full mt-2 w-72 md:w-80 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[999] flex flex-col shadow-xl overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.05);">
+                    <div class="absolute left-0 top-full w-72 md:w-80 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[999] flex flex-col shadow-xl overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.05);">
                         <button onclick="filterCategory('all', this)" class="px-6 py-4 w-full text-left text-sm md:text-base transition hover:opacity-60 font-semibold cursor-pointer" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.03);">Todos os Segmentos</button>
                         {% for cat in categorias %}
                         <button onclick="filterCategory('{{ cat.id }}', this)" class="px-6 py-4 w-full text-left text-sm md:text-base transition hover:opacity-60 cursor-pointer" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.03);">{{ cat.nome }}</button>
@@ -284,12 +284,12 @@
         </div>
 
         <nav class="md:hidden flex flex-col items-center gap-4 mt-4 text-[10px] font-semibold uppercase tracking-widest opacity-90 border-t border-black/5 pt-4 w-full">
-            <div class="flex flex-wrap justify-center gap-6 w-full">
+            <div class="flex flex-nowrap items-center justify-center gap-4 w-full whitespace-nowrap overflow-x-auto hide-scroll">
                 {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] uppercase">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
                 
                 {% if not loja.ocultar_produtos %}
-                <div class="relative group flex flex-col items-center w-full">
-                    <button class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] flex items-center justify-center gap-1 uppercase tracking-widest w-full py-2" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">
+                <div class="relative group flex flex-col items-center">
+                    <button class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] flex items-center justify-center gap-1 uppercase tracking-widest py-2" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">
                         {{ loja.titulo_produtos or 'Nossos Cases' }} <i data-lucide="chevron-down" class="w-3 h-3"></i>
                     </button>
                 </div>
