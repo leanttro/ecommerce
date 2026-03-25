@@ -730,6 +730,7 @@ def admin_painel(loja_slug):
             "ocultar_busca": True if request.form.get('ocultar_busca') else False,
             "ocultar_banner": True if request.form.get('ocultar_banner') else False,
             "ocultar_banners_menores": True if request.form.get('ocultar_banners_menores') else False,
+            "titulo_menu_sobre": sanitize_input(request.form.get('titulo_menu_sobre')),
             "sobre_titulo": sanitize_input(request.form.get('sobre_titulo')),
             "sobre_texto": sanitize_input(request.form.get('sobre_texto')),
             "ocultar_sobre": True if request.form.get('ocultar_sobre') else False,
