@@ -476,6 +476,7 @@
                                 </div>
                                 <input type="text" name="titulo_produtos" value="{{ loja.titulo_produtos or 'Todos os Produtos' }}" class="w-full border rounded p-2 text-sm" placeholder="Título da seção">
                             </div>
+
                             <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-2 mt-4">
                                 <div class="flex items-center justify-between mb-2 border-b pb-2">
                                     <span class="text-sm font-bold text-gray-700">Modo Clean Cases e Header</span>
@@ -505,7 +506,7 @@
                                     <option value="ambos" {% if loja.layout_portfolio == 'ambos' %}selected{% endif %}>Ambos (Carrossel e Grade)</option>
                                 </select>
                             </div>
-                            </div>
+
                             <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-2">
                                 <div class="flex items-center justify-between">
                                     <label class="flex items-center gap-2 cursor-pointer">
