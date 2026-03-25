@@ -221,7 +221,7 @@
     header a, header button, header span.font-bold { color: var(--bg-color) !important; }
     header i[data-lucide] { stroke: var(--bg-color) !important; color: var(--bg-color) !important; }
     header .bg-\[var\(--text-color\)\] { background-color: var(--bg-color) !important; color: var(--text-color) !important; }
-    header .absolute.left-0 a, header .md\:hidden a, header .md\:hidden button, header .md\:hidden i[data-lucide] { color: var(--text-color) !important; stroke: var(--text-color) !important; }
+    header .absolute.left-0 a, header .absolute.left-0 button, header .md\:hidden a, header .md\:hidden button, header .md\:hidden i[data-lucide] { color: var(--text-color) !important; stroke: var(--text-color) !important; }
     {% endif %}
 </style>
 </head>
@@ -259,10 +259,10 @@
                     <a href="#portfolio" class="opacity-60 hover:opacity-100 transition-opacity duration-300 text-[var(--text-color)] flex items-center gap-1 cursor-pointer">
                         {{ loja.titulo_produtos or 'Nossos Cases' }} <i data-lucide="chevron-down" class="w-3 h-3"></i>
                     </a>
-                    <div class="absolute left-0 top-full mt-2 w-56 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[999] flex flex-col shadow-xl overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.05);">
-                        <a href="/{{ loja.slug_url }}/#portfolio" class="px-5 py-3 transition hover:opacity-60 font-semibold" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.03);">Todos os Segmentos</a>
+                    <div class="absolute left-0 top-full mt-2 w-72 md:w-80 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[999] flex flex-col shadow-xl overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.05);">
+                        <button onclick="filterCategory('all', this)" class="px-6 py-4 w-full text-left text-sm md:text-base transition hover:opacity-60 font-semibold cursor-pointer" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.03);">Todos os Segmentos</button>
                         {% for cat in categorias %}
-                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-5 py-3 transition hover:opacity-60" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.03);">{{ cat.nome }}</a>
+                        <button onclick="filterCategory('{{ cat.id }}', this)" class="px-6 py-4 w-full text-left text-sm md:text-base transition hover:opacity-60 cursor-pointer" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.03);">{{ cat.nome }}</button>
                         {% endfor %}
                     </div>
                 </div>
@@ -288,8 +288,8 @@
                 {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] uppercase">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
                 
                 {% if not loja.ocultar_produtos %}
-                <div class="relative group flex flex-col items-center">
-                    <button class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 uppercase tracking-widest" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">
+                <div class="relative group flex flex-col items-center w-full">
+                    <button class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] flex items-center justify-center gap-1 uppercase tracking-widest w-full py-2" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">
                         {{ loja.titulo_produtos or 'Nossos Cases' }} <i data-lucide="chevron-down" class="w-3 h-3"></i>
                     </button>
                 </div>
@@ -301,10 +301,10 @@
             </div>
             
             {% if not loja.ocultar_produtos %}
-            <div id="mobile-cat-menu" class="hidden flex-col items-center rounded mt-2 w-[80vw] text-center shadow-lg overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.05);">
-                <a href="/{{ loja.slug_url }}/#portfolio" class="px-4 py-3 w-full transition hover:opacity-60 font-semibold" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.03);">Todos</a>
+            <div id="mobile-cat-menu" class="hidden flex-col items-center rounded mt-2 w-full text-center shadow-lg overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.05);">
+                <button onclick="filterCategory('all', this)" class="px-5 py-4 w-full text-base transition hover:opacity-60 font-semibold cursor-pointer" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.03);">Todos</button>
                 {% for cat in categorias %}
-                <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}#portfolio" class="px-4 py-3 w-full transition hover:opacity-60" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.03);">{{ cat.nome }}</a>
+                <button onclick="filterCategory('{{ cat.id }}', this)" class="px-5 py-4 w-full text-base transition hover:opacity-60 cursor-pointer" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.03);">{{ cat.nome }}</button>
                 {% endfor %}
             </div>
             {% endif %}
@@ -440,7 +440,7 @@
                             {% set has_space = false %}
                         {% endif %}
 
-                        <a href="/{{ loja.slug_url }}/?categoria={{ cat.id }}" class="cat-item group flex items-center justify-center py-6 md:py-10 border-b border-[rgba(0,0,0,0.05)] transition-colors duration-500 relative w-full overflow-hidden px-4 hover:bg-[rgba(0,0,0,0.01)]">
+                        <a href="javascript:void(0)" onclick="filterCategory('{{ cat.id }}', null)" data-cat-id="{{ cat.id }}" class="cat-item group flex items-center justify-center py-6 md:py-10 border-b border-[rgba(0,0,0,0.05)] transition-colors duration-500 relative w-full overflow-hidden px-4 hover:bg-[rgba(0,0,0,0.01)]">
                             <h3 class="flex flex-wrap items-center justify-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display text-center m-0 p-0" style="color: var(--text-color);">
                                 <span>{{ p1 }}</span>
                                 {% if cat_img.url != '' %}
@@ -527,7 +527,7 @@
             </div>
 
             {% for p in produtos %}
-            <div class="case-card {% if not loja.disable_card_shadow %}shadow-xl border border-[rgba(0,0,0,0.05)]{% endif %}" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
+            <div class="case-card product-item {% if not loja.disable_card_shadow %}shadow-xl border border-[rgba(0,0,0,0.05)]{% endif %}" data-categoria="{{ p.categoria_id }}" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
                 <img src="{{ p.imagem }}" alt="{{ p.nome }}" class="{% if loja.clean_cards_mode %}!filter-none{% endif %}">
                 <div class="case-info">
                     {% if not loja.hide_card_title %}
@@ -556,13 +556,13 @@
         <div class="container mx-auto px-6 md:px-8">
             {% if layout_port == 'grade' %}
             <div class="mb-12 text-center fade-up">
-                <h2 class="text-[var(--text-color)] text-3xl md:text-5xl font-display tracking-tight">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
+                <h2 id="titulo-secao-produtos-grid" class="text-[var(--text-color)] text-3xl md:text-5xl font-display tracking-tight">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
             </div>
             {% endif %}
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 {% for p in produtos %}
-                <div class="relative group cursor-pointer aspect-square rounded-2xl overflow-hidden {% if not loja.disable_card_shadow %}shadow-xl border border-[rgba(0,0,0,0.05)]{% endif %}" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
+                <div class="relative group cursor-pointer aspect-square rounded-2xl overflow-hidden product-item {% if not loja.disable_card_shadow %}shadow-xl border border-[rgba(0,0,0,0.05)]{% endif %}" data-categoria="{{ p.categoria_id }}" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
                     <img src="{{ p.imagem }}" alt="{{ p.nome }}" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 filter brightness-75 group-hover:brightness-50 {% if loja.clean_cards_mode %}!filter-none{% endif %}">
                     <div class="absolute inset-0 flex flex-col justify-center items-center text-white text-center p-6 z-10 pointer-events-none">
                         {% if not loja.hide_card_title %}
@@ -586,42 +586,6 @@
         </div>
     </section>
     {% endif %}
-    {% endif %}
-
-    {% if secao == 'produtos' and not loja.ocultar_produtos %}
-    <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color);">
-        <div class="horizontal-container">
-            <div class="intro-slide flex-shrink-0 w-[90vw] sm:w-[60vw] md:w-[45vw] lg:w-[40vw] flex flex-col justify-start md:justify-center pr-6 md:pr-12 relative pt-4 md:pt-0 fade-up">
-                <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[2rem] sm:text-4xl md:text-5xl lg:text-6xl leading-tight font-display tracking-tight">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
-                <div class="mt-6 md:mt-8 flex items-center gap-4 opacity-50">
-                    <span class="text-[10px] uppercase tracking-[0.2em] font-semibold">Deslize</span>
-                    <i data-lucide="arrow-right" class="w-6 h-6 text-[var(--text-color)] animate-arrow"></i>
-                </div>
-            </div>
-
-            {% for p in produtos %}
-            <div class="case-card {% if not loja.disable_card_shadow %}shadow-xl border border-[rgba(0,0,0,0.05)]{% endif %}" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
-                <img src="{{ p.imagem }}" alt="{{ p.nome }}" class="{% if loja.clean_cards_mode %}!filter-none{% endif %}">
-                <div class="case-info">
-                    {% if not loja.hide_card_title %}
-                    <h3 class="case-title font-display">{{ p.nome }}</h3>
-                    {% endif %}
-                    
-                    {% if not loja.hide_explore_button %}
-                    <div class="flex items-center gap-3">
-                        <span class="text-[10px] uppercase tracking-widest font-semibold opacity-90">Explorar</span>
-                        <div class="w-8 h-[1px] bg-white opacity-80"></div>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-            {% else %}
-            <div class="flex-shrink-0 w-[50vw] h-[40vh] mr-[4vw] flex items-center justify-center border rounded-[2rem]" style="border-color: rgba(0,0,0,0.1);">
-                <p class="text-sm font-semibold uppercase tracking-[0.15em]" style="color: var(--text-color); opacity: 0.4;">Nenhum projeto cadastrado.</p>
-            </div>
-            {% endfor %}
-        </div>
-    </section>
     {% endif %}
 
     {% if secao == 'agenda' and not loja.ocultar_agenda %}
@@ -791,15 +755,52 @@
         const params = new URLSearchParams(window.location.search);
         const catId = params.get('categoria');
         if (catId) {
-            const linkCategoria = document.querySelector('.group a[href*="categoria=' + catId + '"]');
+            const linkCategoria = document.querySelector('.group button[onclick*="\'" + catId + "\'"]');
             if (linkCategoria) {
                 const tituloProdutos = document.getElementById('titulo-secao-produtos');
-                if (tituloProdutos) {
-                    tituloProdutos.innerText = linkCategoria.innerText.trim();
-                }
+                const tituloGrid = document.getElementById('titulo-secao-produtos-grid');
+                if (tituloProdutos) tituloProdutos.innerText = linkCategoria.innerText.trim();
+                if (tituloGrid) tituloGrid.innerText = linkCategoria.innerText.trim();
+                
+                // Dispara o filtro se entrar com o link direto
+                filterCategory(catId, linkCategoria);
             }
         }
     });
+
+    function filterCategory(catId, btnElement) {
+        // Rola até a sessão portfólio
+        const portfolioSec = document.getElementById('portfolio') || document.getElementById('portfolio-grid');
+        if(portfolioSec) {
+            portfolioSec.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Atualiza o título
+        if(btnElement) {
+            const newTitle = btnElement.innerText.trim();
+            const tituloProdutos = document.getElementById('titulo-secao-produtos');
+            const tituloGrid = document.getElementById('titulo-secao-produtos-grid');
+            if (tituloProdutos) tituloProdutos.innerText = newTitle;
+            if (tituloGrid) tituloGrid.innerText = newTitle;
+        }
+
+        // Filtra os produtos
+        const products = document.querySelectorAll('.product-item');
+        products.forEach(p => {
+            if (catId === 'all' || p.getAttribute('data-categoria') === String(catId)) {
+                p.style.display = '';
+                gsap.fromTo(p, {opacity: 0, scale: 0.95}, {opacity: 1, scale: 1, duration: 0.4});
+            } else {
+                p.style.display = 'none';
+            }
+        });
+
+        // Oculta o menu mobile se estiver aberto
+        const mobileMenu = document.getElementById('mobile-cat-menu');
+        if(mobileMenu && !mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+        }
+    }
 
     lucide.createIcons();
     gsap.registerPlugin(ScrollTrigger);
