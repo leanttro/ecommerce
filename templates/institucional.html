@@ -478,7 +478,7 @@
                         <div class="absolute -bottom-4 left-0 w-24 h-1 bg-[var(--primary)]"></div>
                     </h2>
                     <div class="text-base md:text-xl leading-relaxed whitespace-pre-line font-light" style="color: var(--text-color); opacity: 0.85;">
-                        {{ loja.sobre_texto or 'Adicione a história através do painel na aba "Sobre a Empresa".' }}
+                        {{ (loja.sobre_texto or 'Adicione a história através do painel na aba "Sobre a Empresa".') | safe }}
                     </div>
                 </div>
                 <div class="lg:w-1/2 w-full relative img-reveal">
