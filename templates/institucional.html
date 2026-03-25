@@ -252,7 +252,7 @@
             </a>
             
             <nav class="hidden md:flex items-center gap-10 text-[11px] font-semibold uppercase tracking-widest opacity-90">
-               {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-60 hover:opacity-100 transition-opacity duration-300 text-[var(--text-color)] uppercase">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
+               {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-60 hover:opacity-100 transition-opacity duration-300 text-[var(--text-color)] uppercase">{{ loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
                 
                 {% if not loja.ocultar_produtos %}
                 <div class="relative group py-2">
@@ -285,7 +285,7 @@
 
         <nav class="md:hidden flex flex-col items-center gap-4 mt-4 text-[10px] font-semibold uppercase tracking-widest opacity-90 border-t border-black/5 pt-4 w-full">
             <div class="flex flex-wrap justify-center gap-6 w-full">
-                {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] uppercase">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
+                {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] uppercase">{{ loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
                 
                 {% if not loja.ocultar_produtos %}
                 <div class="relative group flex flex-col items-center">
@@ -469,7 +469,7 @@
     {% endif %}
 
     {% if secao == 'sobre' and not loja.ocultar_sobre %}
-    <section class="py-24 md:py-40 w-full overflow-hidden relative border-b border-[rgba(0,0,0,0.05)]" id="sobre" style="background-color: var(--bg-color);">
+    <section class="py-12 md:py-16 w-full overflow-hidden relative border-b border-[rgba(0,0,0,0.05)]" id="sobre" style="background-color: var(--bg-color);">
         <div class="container mx-auto px-6 md:px-12">
             <div class="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
                 <div class="lg:w-1/2 w-full fade-up z-10 relative">
@@ -586,6 +586,42 @@
         </div>
     </section>
     {% endif %}
+    {% endif %}
+
+    {% if secao == 'produtos' and not loja.ocultar_produtos %}
+    <section class="horizontal-section" id="portfolio" style="background-color: var(--bg-color);">
+        <div class="horizontal-container">
+            <div class="intro-slide flex-shrink-0 w-[90vw] sm:w-[60vw] md:w-[45vw] lg:w-[40vw] flex flex-col justify-start md:justify-center pr-6 md:pr-12 relative pt-4 md:pt-0 fade-up">
+                <h2 id="titulo-secao-produtos" class="text-[var(--text-color)] text-[2rem] sm:text-4xl md:text-5xl lg:text-6xl leading-tight font-display tracking-tight">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
+                <div class="mt-6 md:mt-8 flex items-center gap-4 opacity-50">
+                    <span class="text-[10px] uppercase tracking-[0.2em] font-semibold">Deslize</span>
+                    <i data-lucide="arrow-right" class="w-6 h-6 text-[var(--text-color)] animate-arrow"></i>
+                </div>
+            </div>
+
+            {% for p in produtos %}
+            <div class="case-card {% if not loja.disable_card_shadow %}shadow-xl border border-[rgba(0,0,0,0.05)]{% endif %}" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
+                <img src="{{ p.imagem }}" alt="{{ p.nome }}" class="{% if loja.clean_cards_mode %}!filter-none{% endif %}">
+                <div class="case-info">
+                    {% if not loja.hide_card_title %}
+                    <h3 class="case-title font-display">{{ p.nome }}</h3>
+                    {% endif %}
+                    
+                    {% if not loja.hide_explore_button %}
+                    <div class="flex items-center gap-3">
+                        <span class="text-[10px] uppercase tracking-widest font-semibold opacity-90">Explorar</span>
+                        <div class="w-8 h-[1px] bg-white opacity-80"></div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div class="flex-shrink-0 w-[50vw] h-[40vh] mr-[4vw] flex items-center justify-center border rounded-[2rem]" style="border-color: rgba(0,0,0,0.1);">
+                <p class="text-sm font-semibold uppercase tracking-[0.15em]" style="color: var(--text-color); opacity: 0.4;">Nenhum projeto cadastrado.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
     {% endif %}
 
     {% if secao == 'agenda' and not loja.ocultar_agenda %}
@@ -725,6 +761,21 @@
             <a href="/{{ loja.slug_url }}/admin" class="text-[9px] font-semibold uppercase tracking-[0.2em] flex items-center justify-center gap-2 opacity-30 hover:opacity-100 transition-opacity">
                 <i data-lucide="lock" class="w-3 h-3"></i> Acesso Restrito
             </a>
+        </div>
+        
+        <div class="mt-12 pt-8 border-t border-white/10 flex flex-col items-center justify-center gap-4">
+            <p class="text-[10px] uppercase tracking-[0.2em] font-semibold opacity-50">Desenvolvido por:</p>
+            <div class="bg-white p-3 rounded-xl shadow-lg">
+                <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1773591878/presentes_180_x_50_px_720_x_200_px_1440_x_264_px_1_azuhgq.png" alt="Leanttro" class="h-6 w-auto object-contain" style="filter: brightness(0);">
+            </div>
+            <div class="flex items-center justify-center gap-4 mt-2">
+                <a href="https://www.leanttro.com" target="_blank" class="px-6 py-3 rounded-full border border-white/20 text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all flex items-center gap-2">
+                    <i data-lucide="globe" class="w-4 h-4"></i> Site
+                </a>
+                <a href="https://wa.me/5511913324827" target="_blank" class="px-6 py-3 rounded-full border border-white/20 text-[10px] font-bold uppercase tracking-widest hover:bg-[#25D366] hover:border-[#25D366] hover:text-white transition-all flex items-center gap-2">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp
+                </a>
+            </div>
         </div>
     </div>
 </footer>
