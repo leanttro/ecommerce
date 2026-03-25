@@ -71,6 +71,12 @@
                 <a href="#blog" class="flex items-center gap-2 px-4 py-3 text-gray-300 hover:bg-neutral-800 hover:text-yellow-400 rounded-lg transition-colors font-bold" onclick="selectMenuItem('blog')">
                     <i data-lucide="briefcase"></i> Serviços (Capabilities)
                 </a>
+                <a href="#inscritos" class="flex items-center gap-2 px-4 py-3 text-gray-300 hover:bg-neutral-800 hover:text-yellow-400 rounded-lg transition-colors font-bold" onclick="selectMenuItem('inscritos')">
+                    <i data-lucide="users"></i> Leads (Inscritos)
+                </a>
+                <a href="#agenda" class="flex items-center gap-2 px-4 py-3 text-gray-300 hover:bg-neutral-800 hover:text-yellow-400 rounded-lg transition-colors font-bold" onclick="selectMenuItem('agenda')">
+                    <i data-lucide="calendar"></i> Agenda / Horários
+                </a>
                 <a href="#sobre" class="flex items-center gap-2 px-4 py-3 text-gray-300 hover:bg-neutral-800 hover:text-yellow-400 rounded-lg transition-colors font-bold" onclick="selectMenuItem('sobre')">
                     <i data-lucide="users"></i> Sobre a Produtora
                 </a>
@@ -177,6 +183,83 @@
                 </div>
             </section>
 
+            <section id="inscritos" class="bg-neutral-900 rounded-lg shadow-sm border border-neutral-800 p-6 hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2"><i data-lucide="users" class="text-yellow-400"></i> Todos os Inscritos (Leads)</h2>
+                </div>
+                <div class="overflow-x-auto bg-neutral-800 rounded-lg border border-neutral-700">
+                    <table class="min-w-full divide-y divide-neutral-700">
+                        <thead class="bg-neutral-900">
+                              <tr>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Nome</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">WhatsApp</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">E-mail</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Data</th>
+                              </tr>
+                        </thead>
+                        <tbody class="bg-neutral-800 divide-y divide-neutral-700">
+                            {% for lead in inscritos %}
+                            <tr class="hover:bg-neutral-700 transition-colors">
+                                <td class="px-6 py-4"><div class="text-sm font-bold text-white">{{ lead.nome }}</div></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300 font-bold">
+                                    <a href="https://wa.me/55{{ lead.whatsapp|replace(' ', '')|replace('-', '')|replace('(', '')|replace(')', '') }}" target="_blank" class="text-green-400 hover:text-green-300 flex items-center gap-1">
+                                        <i data-lucide="message-circle" class="w-4 h-4"></i> {{ lead.whatsapp }}
+                                    </a>
+                                   </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ lead.email }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ lead.date_created[:10] if lead.date_created else '--' }}</td>
+                               </tr>
+                             {% else %}
+                              <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Nenhum lead inscrito ainda.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                      </table>
+                </div>
+            </section>
+
+            <section id="agenda" class="bg-neutral-900 rounded-lg shadow-sm border border-neutral-800 p-6 hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2"><i data-lucide="calendar" class="text-yellow-400"></i> Agenda / Horários</h2>
+                    <button onclick="novoHorario()" class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded flex items-center gap-2 text-sm">
+                        <i data-lucide="plus"></i> Novo Horário
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto bg-neutral-800 rounded-lg border border-neutral-700">
+                    <table class="min-w-full divide-y divide-neutral-700">
+                        <thead class="bg-neutral-900">
+                               <tr>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Data / Hora</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Cliente (Opcional)</th>
+                                <th class="px-6 py-3 text-right text-xs font-bold text-gray-400 uppercase tracking-wider">Ações</th>
+                               </tr>
+                        </thead>
+                        <tbody class="bg-neutral-800 divide-y divide-neutral-700">
+                            {% for horario in agenda %}
+                            <tr class="hover:bg-neutral-700 transition-colors">
+                                <td class="px-6 py-4"><div class="text-sm font-bold text-white">{{ horario.data_hora_formatada or horario.data_hora }}</div></td>
+                                <td class="px-6 py-4">
+                                    {% if horario.disponivel %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-900 text-green-300">Disponível</span>
+                                    {% else %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-900 text-red-300">Ocupado</span>
+                                    {% endif %}
+                                   </td>
+                                <td class="px-6 py-4 text-sm text-gray-400">{{ horario.cliente_nome or '--' }}</td>
+                                <td class="px-6 py-4 text-right text-sm font-medium">
+                                    <button onclick='editarHorario({{ horario | tojson }})' class="text-blue-400 hover:text-blue-300 mr-3"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                    <a href="/{{ loja.slug_url }}/admin/agenda/excluir/{{ horario.id }}" class="text-red-500 hover:text-red-400" onclick="return confirm('Excluir este horário?')"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
+                                   </td>
+                               </tr>
+                            {% else %}
+                              <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Nenhum horário cadastrado.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                      </table>
+                </div>
+            </section>
+
             <form action="/{{ loja.slug_url }}/admin/painel" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="template_ativo" value="creapes">
                 
@@ -226,6 +309,17 @@
                 <section id="visual" class="bg-neutral-900 rounded-lg shadow-sm border border-neutral-800 p-6 hidden space-y-6">
                     <h2 class="text-2xl font-bold text-white flex items-center gap-2 mb-6"><i data-lucide="palette" class="text-yellow-400"></i> Identidade Visual</h2>
                     
+                    <div class="md:col-span-2 bg-neutral-800 p-4 rounded border border-neutral-700 mb-6">
+                        <label class="block text-sm font-bold mb-2 text-gray-300">Logotipo da Produtora</label>
+                        <div class="flex items-center gap-4">
+                            {% if loja.logo_url %}
+                            <img src="{{ loja.logo_url }}" class="h-16 w-auto object-contain border border-neutral-600 rounded bg-neutral-900 p-1">
+                            {% endif %}
+                            <input type="file" name="logo" accept="image/*" class="text-sm text-gray-400 w-full">
+                        </div>
+                        <p class="text-[10px] text-gray-400 mt-1">Substituirá o nome em texto no site, dependendo do tema.</p>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-bold mb-1 text-gray-300">Cor do Fundo</label>
@@ -433,6 +527,43 @@
         </div>
     </div>
 
+    <div id="agendaModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
+        <div class="modal-overlay absolute w-full h-full bg-black opacity-80"></div>
+        <div class="modal-container bg-neutral-900 border border-neutral-700 w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
+            <div class="modal-content py-4 text-left px-6">
+                <div class="flex justify-between items-center pb-3 border-b border-neutral-800">
+                    <p class="text-2xl font-bold text-white" id="agendaModalTitle">Novo Horário</p>
+                    <div class="modal-close cursor-pointer z-50 text-gray-400 hover:text-white" onclick="toggleModal('agendaModal')">
+                        <i data-lucide="x"></i>
+                    </div>
+                </div>
+                <form id="agendaForm" action="/{{ loja.slug_url }}/admin/agenda/salvar" method="POST" class="mt-4 space-y-4">
+                    <input type="hidden" name="id" id="agendaId">
+                    
+                    <div>
+                        <label class="block text-sm font-bold mb-2 text-gray-300">Selecione o Dia e Horário</label>
+                        <input type="datetime-local" name="data_hora" id="agendaDataHora" class="w-full bg-neutral-800 border border-neutral-700 rounded p-3 text-white focus:border-yellow-500 outline-none" required>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 mt-4">
+                        <input type="checkbox" name="disponivel" id="agendaDisponivel" class="w-5 h-5 accent-yellow-500 bg-neutral-800 border-neutral-700 rounded" checked>
+                        <label for="agendaDisponivel" class="text-sm font-bold text-gray-300 cursor-pointer">Horário Disponível</label>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold mb-2 mt-4 text-gray-400">Nome do Cliente (Opcional - Uso Interno)</label>
+                        <input type="text" name="cliente_nome" id="agendaCliente" class="w-full bg-neutral-800 border border-neutral-700 rounded p-2 text-white focus:border-yellow-500 outline-none" placeholder="Ex: Cliente XPTO">
+                    </div>
+
+                    <div class="flex justify-end pt-4 mt-4 border-t border-neutral-800 gap-2">
+                        <button type="button" class="px-4 py-2 bg-transparent rounded text-gray-400 font-bold hover:text-white" onclick="toggleModal('agendaModal')">Cancelar</button>
+                        <button type="submit" class="px-4 py-2 bg-yellow-500 rounded text-black font-bold hover:bg-yellow-600">Salvar Horário</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
 
@@ -553,6 +684,30 @@
             document.querySelector('#postForm input[name="capa"]').value = '';
             document.getElementById('postModalTitle').innerText = 'Editar Serviço';
             toggleModal('postModal');
+        }
+
+        // AGENDA
+        function novoHorario() {
+            document.getElementById('agendaId').value = '';
+            document.getElementById('agendaDataHora').value = '';
+            document.getElementById('agendaDisponivel').checked = true;
+            document.getElementById('agendaCliente').value = '';
+            document.getElementById('agendaModalTitle').innerText = 'Novo Horário';
+            toggleModal('agendaModal');
+        }
+
+        function editarHorario(horario) {
+            document.getElementById('agendaId').value = horario.id;
+            if (horario.data_hora) {
+                const val = horario.data_hora.substring(0, 16).replace(' ', 'T');
+                document.getElementById('agendaDataHora').value = val;
+            } else {
+                document.getElementById('agendaDataHora').value = '';
+            }
+            document.getElementById('agendaDisponivel').checked = horario.disponivel;
+            document.getElementById('agendaCliente').value = horario.cliente_nome || '';
+            document.getElementById('agendaModalTitle').innerText = 'Editar Horário';
+            toggleModal('agendaModal');
         }
 
         new Sortable(document.getElementById('lista-categorias'), {
