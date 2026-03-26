@@ -96,6 +96,33 @@ a:hover { color: var(--accent); }
 }
 .fade-in.visible { opacity: 1; transform: translateY(0); }
 
+/* --- MENU OVERLAY CSS --- */
+.nav-overlay {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.98); z-index: 99999;
+  display: flex; justify-content: center; align-items: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.5s var(--ease);
+}
+.nav-overlay.active { opacity: 1; pointer-events: all; }
+.nav-overlay ul { list-style: none; text-align: center; }
+.nav-overlay li { margin: 2rem 0; overflow: hidden; }
+.nav-overlay a { 
+  font-family: 'Space Grotesk', sans-serif; 
+  font-size: clamp(2rem, 5vw, 4rem); 
+  text-transform: uppercase; 
+  color: #fff; 
+  display: inline-block;
+  transition: color 0.3s var(--ease), transform 0.3s var(--ease);
+}
+.nav-overlay a:hover { color: var(--accent); transform: scale(1.05); }
+.close-menu { 
+  position: absolute; top: 2rem; right: 4rem; 
+  background: none; border: none; color: #fff; 
+  font-size: 2rem; font-family: 'Inter', sans-serif; 
+  cursor: pointer; transition: color 0.3s var(--ease);
+}
+.close-menu:hover { color: var(--accent); }
+
 nav {
   position: fixed;
   top: 0; left: 0; width: 100%;
@@ -116,7 +143,12 @@ nav {
   left: 50%; 
   transform: translateX(-50%);
   color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+.brand a { display: flex; align-items: center; }
+.brand img { max-height: 35px; object-fit: contain; }
 
 .menu-btn {
   display: flex; align-items: center; gap: 0.8rem;
@@ -496,6 +528,10 @@ nav {
   will-change: transform;
 }
 
+.port-wrapper:nth-child(even) { transform: translateY(8vh); }
+.port-wrapper:nth-child(3n) { transform: translateY(-5vh); }
+.port-wrapper:nth-child(5n) { transform: translateY(3vh); }
+
 .port-item {
   position: relative;
   flex-shrink: 0;
@@ -545,10 +581,6 @@ nav {
 .align-top { align-self: flex-start; margin-top: 5vh; }
 .align-center { align-self: center; }
 .align-bottom { align-self: flex-end; margin-bottom: 8vh; }
-
-.port-item:nth-child(even) { transform: translateY(8vh); }
-.port-item:nth-child(3n) { transform: translateY(-5vh); }
-.port-item:nth-child(5n) { transform: translateY(3vh); }
 
 .port-info {
   position: absolute;
@@ -668,24 +700,6 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 .cinematic-bars::before { top: 0; }
 .cinematic-bars::after { bottom: 0; }
 
-@keyframes flicker {
-  0% { opacity: 0.3; }
-  50% { opacity: 0.4; }
-  100% { opacity: 0.3; }
-}
-@keyframes grain {
-  0%, 100% { transform: translate(0, 0); }
-  10% { transform: translate(-5%, -10%); }
-  20% { transform: translate(-15%, 5%); }
-  30% { transform: translate(7%, -25%); }
-  40% { transform: translate(-5%, 25%); }
-  50% { transform: translate(-15%, 10%); }
-  60% { transform: translate(15%, 0%); }
-  70% { transform: translate(0%, 15%); }
-  80% { transform: translate(3%, 35%); }
-  90% { transform: translate(-10%, 10%); }
-}
-
 @media (max-width: 900px) {
   nav { padding: 0.8rem 2rem; }
   .hero-titles-list { left: 2rem; bottom: 3rem; }
@@ -705,6 +719,15 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   <div class="loader-brand" id="loaderBrand"></div>
 </div>
 
+<div id="nav-menu" class="nav-overlay">
+  <button class="close-menu">✕</button>
+  <ul>
+    <li><a href="#hero">Início</a></li>
+    <li><a href="#work">Portfólio</a></li>
+    <li><a href="#contact">Contato</a></li>
+  </ul>
+</div>
+
 <nav>
   <div class="nav-left">
     <button class="menu-btn">
@@ -715,7 +738,15 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
       Menu
     </button>
   </div>
-  <div class="brand">{{ loja.nome }}</div>
+  <div class="brand">
+    <a href="/">
+      {% if loja.logo %}
+      <img src="{{ loja.logo }}" alt="{{ loja.nome }}">
+      {% else %}
+      {{ loja.nome }}
+      {% endif %}
+    </a>
+  </div>
   <div class="nav-right">
     <button class="search-btn">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -784,7 +815,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
           {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] %}
         {% endif %}
       {% endif %}
-    <h1 class="hero-title-item {% if loop.first %}active{% endif %}" onmouseenter="goToSlide({{ loop.index0 }})" onclick="openVideo('{{ modal_link }}')">{{ p.nome }} <span class="year">{{ p.estoque }}</span></h1>
+    <h1 class="hero-title-item {% if loop.first %}active{% endif %}" onmouseenter="goToSlide({{ loop.index0 }})" onclick="openVideo('{{ modal_link }}')">{{ p.nome }} <span class="year">{% if p.estoque and p.estoque != 'None' %}{{ p.estoque }}{% endif %}</span></h1>
     {% endfor %}
   </div>
 
@@ -856,32 +887,50 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
       {% endfor %}
 
       {% for p in port_videos %}
-      <div class="port-item {% if loop.index % 3 == 0 %}size-s align-top{% elif loop.index % 2 == 0 %}size-sq align-bottom{% else %}size-l align-center{% endif %}">
+      <div class="port-wrapper {% if loop.index % 3 == 0 %}align-top{% elif loop.index % 2 == 0 %}align-bottom{% else %}align-center{% endif %}" style="position: relative; flex-shrink: 0; display: flex; align-items: center;">
         
-        {% set bg_link = p.link_projeto %}
-        {% if bg_link and 'vimeo.com' in bg_link and 'player.vimeo.com' not in bg_link %}
-          {% set clean_url = bg_link.split('?')[0].strip('/') %}
-          {% set link_parts = clean_url.split('/') %}
-          {% if link_parts|length >= 5 %}
-            {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] ~ '?h=' ~ link_parts[4] %}
-          {% elif link_parts|length == 4 %}
-            {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] %}
+        {% if p.origem and p.origem != 'None' and p.origem != 'null' %}
+        <div class="floating-side-text" style="position: absolute; {% if loop.index % 2 == 0 %}right: 105%; text-align: right;{% else %}left: 105%; text-align: left;{% endif %} width: max-content; max-width: 25vw; font-family: 'Space Grotesk', sans-serif; font-size: clamp(1rem, 2vw, 2.5rem); color: rgba(255,255,255,0.7); white-space: normal; line-height: 1.1; pointer-events: none; text-transform: uppercase;">
+          {{ p.origem }}
+        </div>
+        {% endif %}
+
+        <div class="port-item {% if loop.index % 3 == 0 %}size-s{% elif loop.index % 2 == 0 %}size-sq{% else %}size-l{% endif %}">
+          
+          {% set bg_link = p.link_projeto %}
+          {% if bg_link and 'vimeo.com' in bg_link and 'player.vimeo.com' not in bg_link %}
+            {% set clean_url = bg_link.split('?')[0].strip('/') %}
+            {% set link_parts = clean_url.split('/') %}
+            {% if link_parts|length >= 5 %}
+              {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] ~ '?h=' ~ link_parts[4] %}
+            {% elif link_parts|length == 4 %}
+              {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] %}
+            {% endif %}
           {% endif %}
-        {% endif %}
 
-        {% if bg_link and 'vimeo.com' in bg_link %}
-        <div class="vimeo-port-bg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none;">
-          <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; border: none;" allow="autoplay; fullscreen"></iframe>
-        </div>
-        {% elif bg_link %}
-        <video src="{{ bg_link }}" autoplay loop muted playsinline></video>
-        {% endif %}
+          {% if bg_link and 'vimeo.com' in bg_link %}
+          <div class="vimeo-port-bg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none;">
+            <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; border: none;" allow="autoplay; fullscreen"></iframe>
+          </div>
+          {% elif bg_link %}
+          <video src="{{ bg_link }}" autoplay loop muted playsinline></video>
+          {% endif %}
 
-        <div class="port-info">
-          <h3>{{ p.nome }}</h3>
-          <p>{{ p.origem }}</p>
+          <div class="port-info">
+            <h3>{{ p.nome }}</h3>
+          </div>
+          <div class="port-item-caption">
+            {% if p.descricao and p.descricao != 'None' and p.descricao != 'null' %}
+              {{ p.descricao }}
+            {% endif %}
+            {% if p.descricao and p.descricao != 'None' and p.descricao != 'null' and p.estoque and p.estoque != 'None' and p.estoque != 'null' %}
+              | 
+            {% endif %}
+            {% if p.estoque and p.estoque != 'None' and p.estoque != 'null' %}
+              {{ p.estoque }}
+            {% endif %}
+          </div>
         </div>
-        <div class="port-item-caption">{{ p.descricao }} | {{ p.estoque }}</div>
       </div>
       {% endfor %}
     </div>
@@ -989,6 +1038,28 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   }, observerOptions);
 
   document.querySelectorAll('.fade-in').forEach(element => { observer.observe(element); });
+
+  // Menu Logic
+  const menuBtn = document.querySelector('.menu-btn');
+  const closeMenuBtn = document.querySelector('.close-menu');
+  const navMenu = document.getElementById('nav-menu');
+  const navLinks = document.querySelectorAll('.nav-overlay a');
+
+  if (menuBtn && navMenu) {
+      menuBtn.addEventListener('click', () => {
+          navMenu.classList.add('active');
+      });
+  }
+  if (closeMenuBtn && navMenu) {
+      closeMenuBtn.addEventListener('click', () => {
+          navMenu.classList.remove('active');
+      });
+  }
+  navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+          navMenu.classList.remove('active');
+      });
+  });
 
   let currentSlide = 0;
   const slides = document.querySelectorAll('.slide');
