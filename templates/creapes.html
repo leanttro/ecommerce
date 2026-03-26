@@ -336,11 +336,13 @@ nav {
   text-shadow: 0 4px 30px rgba(0,0,0,1);
   margin: 0; pointer-events: none;
 }
+.evolve-phrase.active { pointer-events: all !important; cursor: default; }
 
 .hover-move {
   display: inline-block;
   will-change: transform;
 }
+.hover-move .char { display: inline-block; will-change: transform, opacity; }
 
 .phrase-1.active { animation: flashStrikeIn 0.5s cubic-bezier(0.1, 1, 0.2, 1) forwards; color: var(--accent); }
 .phrase-1.passed { animation: flashStrikeOut 0.3s forwards; }
@@ -1176,6 +1178,50 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     evolveSticky.addEventListener('mouseenter', () => { evolveSpotlightEl.style.opacity = '1'; });
     evolveSticky.addEventListener('mouseleave', () => { evolveSpotlightEl.style.opacity = '0'; });
   }
+
+  const scatterTargets = document.querySelectorAll('.evolve-phrase');
+  scatterTargets.forEach(phrase => {
+      const hoverText = phrase.querySelector('.hover-move');
+      if (!hoverText) return;
+
+      const originalText = hoverText.innerText;
+      hoverText.innerHTML = originalText.split('').map(char => {
+          if (char === ' ') return '<span class="char">&nbsp;</span>';
+          return `<span class="char">${char}</span>`;
+      }).join('');
+
+      const chars = hoverText.querySelectorAll('.char');
+
+      phrase.addEventListener('mouseenter', () => {
+          if (!phrase.classList.contains('active')) return;
+
+          gsap.killTweensOf(chars);
+          gsap.to(chars, {
+              opacity: 0,
+              x: () => `random(-150, 150)`,
+              y: () => `random(-150, 150)`,
+              z: () => `random(-50, 150)`,
+              rotationX: () => `random(-360, 360)`,
+              rotationY: () => `random(-360, 360)`,
+              rotationZ: () => `random(-360, 360)`,
+              duration: 1.2,
+              stagger: { amount: 0.15, from: "center" },
+              ease: "power2.out"
+          });
+      });
+
+      phrase.addEventListener('mouseleave', () => {
+           gsap.killTweensOf(chars);
+           gsap.to(chars, {
+              opacity: 1,
+              x: 0, y: 0, z: 0,
+              rotationX: 0, rotationY: 0, rotationZ: 0,
+              duration: 1.5,
+              stagger: { amount: 0.15, from: "center" },
+              ease: "expo.out"
+           });
+      });
+  });
 </script>
 </body>
 </html>
