@@ -312,6 +312,21 @@ nav {
 .cinematic-bar.top { top: -1px; transform: translateY(-100%); }
 .cinematic-bar.bottom { bottom: -1px; transform: translateY(100%); }
 
+.evolve-spotlight {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10;
+  background: radial-gradient(circle, rgba(208, 255, 0, 0.25) 0%, transparent 60%);
+  mix-blend-mode: screen;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s var(--ease);
+  will-change: left, top;
+}
+
 .evolve-texts { position: relative; z-index: 4; width: 100%; height: clamp(4rem, 8vw, 8rem); display: flex; justify-content: center; align-items: center; perspective: 1000px; }
 .evolve-phrase {
   position: absolute; width: 100%; text-align: center;
@@ -811,6 +826,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     <div class="flash-bang"></div>
     <div class="cinematic-bar top"></div>
     <div class="cinematic-bar bottom"></div>
+    <div class="evolve-spotlight" id="evolve-spotlight"></div>
     <div class="evolve-texts">
       <h2 class="evolve-phrase phrase-1"><span class="hover-move">VAMOS EVOLUIR JUNTOS</span></h2>
       <h2 class="evolve-phrase phrase-2"><span class="hover-move">LET'S EVOLVE TOGETHER</span></h2>
@@ -1147,6 +1163,18 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
         });
       });
     });
+  }
+
+  const evolveSpotlightEl = document.getElementById('evolve-spotlight');
+
+  if (evolveSticky && evolveSpotlightEl) {
+    evolveSticky.addEventListener('mousemove', (e) => {
+      const rect = evolveSticky.getBoundingClientRect();
+      evolveSpotlightEl.style.left = `${e.clientX - rect.left}px`;
+      evolveSpotlightEl.style.top = `${e.clientY - rect.top}px`;
+    });
+    evolveSticky.addEventListener('mouseenter', () => { evolveSpotlightEl.style.opacity = '1'; });
+    evolveSticky.addEventListener('mouseleave', () => { evolveSpotlightEl.style.opacity = '0'; });
   }
 </script>
 </body>
