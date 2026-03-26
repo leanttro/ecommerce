@@ -519,7 +519,7 @@ nav {
 .portfolio-track {
   display: flex;
   align-items: flex-start;
-  gap: 6vw;
+  gap: 18vw; 
   padding: 0 50vw 0 10vw; 
   width: max-content;
   height: 80vh;
@@ -705,7 +705,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   .hero-titles-list { left: 2rem; bottom: 3rem; }
   section { padding: 5rem 2rem; }
   .split-screen, .footer-blocks { flex-direction: column; gap: 3rem; }
-  .portfolio-track { gap: 8vw; height: 60vh; margin-top: 15vh; padding: 0 60vw 0 10vw; }
+  .portfolio-track { gap: 20vw; height: 60vh; margin-top: 15vh; padding: 0 60vw 0 10vw; }
   .size-l, .size-sq, .size-m, .size-s, .size-xs { width: 50vw; }
   .port-text { font-size: 5vw; width: 60vw; margin: 0 5vw; }
 }
@@ -740,7 +740,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   </div>
   <div class="brand">
     <a href="/">
-      {% if loja.logo %}
+      {% if loja.logo and loja.logo != 'None' and loja.logo != 'null' %}
       <img src="{{ loja.logo }}" alt="{{ loja.nome }}">
       {% else %}
       {{ loja.nome }}
@@ -815,7 +815,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
           {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] %}
         {% endif %}
       {% endif %}
-    <h1 class="hero-title-item {% if loop.first %}active{% endif %}" onmouseenter="goToSlide({{ loop.index0 }})" onclick="openVideo('{{ modal_link }}')">{{ p.nome }} <span class="year">{% if p.estoque and p.estoque != 'None' %}{{ p.estoque }}{% endif %}</span></h1>
+    <h1 class="hero-title-item {% if loop.first %}active{% endif %}" onmouseenter="goToSlide({{ loop.index0 }})" onclick="openVideo('{{ modal_link }}')">{{ p.nome }} <span class="year">{% if p.estoque and p.estoque != 'None' and p.estoque != 'null' %}{{ p.estoque }}{% endif %}</span></h1>
     {% endfor %}
   </div>
 
@@ -889,9 +889,14 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
       {% for p in port_videos %}
       <div class="port-wrapper {% if loop.index % 3 == 0 %}align-top{% elif loop.index % 2 == 0 %}align-bottom{% else %}align-center{% endif %}" style="position: relative; flex-shrink: 0; display: flex; align-items: center;">
         
-        {% if p.origem and p.origem != 'None' and p.origem != 'null' %}
-        <div class="floating-side-text" style="position: absolute; {% if loop.index % 2 == 0 %}right: 105%; text-align: right;{% else %}left: 105%; text-align: left;{% endif %} width: max-content; max-width: 25vw; font-family: 'Space Grotesk', sans-serif; font-size: clamp(1rem, 2vw, 2.5rem); color: rgba(255,255,255,0.7); white-space: normal; line-height: 1.1; pointer-events: none; text-transform: uppercase;">
-          {{ p.origem }}
+        {% set text_exibicao = p.subtitulo %}
+        {% if text_exibicao == 'None' or text_exibicao == 'null' or not text_exibicao %}
+            {% set text_exibicao = p.origem %}
+        {% endif %}
+        
+        {% if text_exibicao and text_exibicao != 'None' and text_exibicao != 'null' %}
+        <div class="floating-side-text" style="position: absolute; {% if loop.index % 2 == 0 %}right: calc(100% + 4vw); text-align: right;{% else %}left: calc(100% + 4vw); text-align: left;{% endif %} width: max-content; max-width: 25vw; font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.2rem, 2.5vw, 3rem); color: rgba(255,255,255,0.9); white-space: normal; line-height: 1.1; pointer-events: none; text-transform: uppercase; z-index: 10;">
+          {{ text_exibicao }}
         </div>
         {% endif %}
 
