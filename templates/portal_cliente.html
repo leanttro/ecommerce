@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal do Cliente | {{ loja.nome }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .kanban-col { min-height: 300px; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col custom-scrollbar">
+
+    <nav class="glass-panel sticky top-0 z-40 px-6 py-4 flex justify-between items-center shadow-lg">
+        <div class="flex items-center gap-3">
+            {% if loja.logo %}
+                <img src="{{ loja.logo }}" class="h-10 w-auto object-contain rounded">
+            {% else %}
+                <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-xl">
+                    {{ loja.nome[:1] }}
+                </div>
+            {% endif %}
+            <div>
+                <h1 class="font-bold text-lg leading-tight">{{ loja.nome }}</h1>
+                <p class="text-xs text-slate-400">Painel de Acompanhamento</p>
+            </div>
+        </div>
+        <div class="flex gap-4">
+            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2">
+                <i data-lucide="message-square"></i> Suporte
+            </a>
+        </div>
+    </nav>
+
+    <main class="flex-1 container mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <section class="lg:col-span-2 space-y-6">
+            
+            {% set horas_total = loja.frase1 | float | default(0, true) %}
+            {% set horas_uso = loja.frase2 | float | default(0, true) %}
+            {% set porcentagem = (horas_uso / horas_total * 100) if horas_total > 0 else 0 %}
+
+            <div class="glass-panel rounded-2xl p-6">
+                <div class="flex justify-between items-end mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="clock" class="text-indigo-400"></i> Consumo de Horas</h2>
+                        <p class="text-sm text-slate-400 mt-1">{{ loja.frase3 or 'Ciclo de faturamento atual.' }}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-3xl font-bold text-indigo-400">{{ horas_uso }}h</span>
+                        <span class="text-slate-400 text-sm"> / {{ horas_total }}h</span>
+                    </div>
+                </div>
+                <div class="w-full bg-slate-800 rounded-full h-4 mb-2 overflow-hidden border border-slate-700">
+                    <div class="bg-indigo-500 h-4 rounded-full transition-all duration-1000" style="width: {{ porcentagem }}%"></div>
+                </div>
+                <div class="flex justify-between text-xs font-bold mt-3">
+                    <span class="text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded">Transparência Total</span>
+                    <span class="text-slate-400">{{ horas_total - horas_uso }}h restantes</span>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 overflow-x-auto">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="trello" class="text-indigo-400"></i> Status do Projeto</h2>
+                <div class="flex gap-4 min-w-[800px] pb-4">
+                    
+                    {% for cat in categorias %}
+                    <div class="flex-1 bg-slate-800/50 rounded-xl p-4 border border-slate-700 min-w-[250px]">
+                        <h3 class="font-bold text-slate-300 mb-4 text-sm uppercase tracking-wider">{{ cat.nome }}</h3>
+                        <div class="kanban-col space-y-3">
+                            {% for p in produtos %}
+                                {% if p.categoria_id == cat.id %}
+                                <div class="bg-slate-700 p-4 rounded-lg border border-slate-600 text-sm font-bold shadow-sm flex flex-col gap-2">
+                                    <span class="text-white">{{ p.nome }}</span>
+                                    {% if p.descricao %}
+                                        <span class="text-xs text-slate-400 font-normal line-clamp-2">{{ p.descricao }}</span>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="calendar-clock" class="text-indigo-400"></i> Cronograma e Entregas</h2>
+                <div class="space-y-4">
+                    {% for item in agenda %}
+                    <div class="flex items-center justify-between p-4 rounded-xl border bg-slate-800/50 border-slate-700">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-lg flex flex-col items-center justify-center bg-slate-700 text-slate-300">
+                                <span class="text-[10px] font-bold uppercase">{{ item.data_hora_formatada.split(' ')[0][:5] }}</span>
+                                <span class="text-sm font-bold">{{ item.data_hora_formatada.split(' ')[2] }}</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-base text-white">{{ item.cliente_nome or 'Marco de Projeto' }}</h3>
+                                <p class="text-xs mt-1 text-slate-400">
+                                    {% if item.disponivel %}Reunião Agendada{% else %}Prazo de Entrega Interna{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-slate-400 text-sm">Nenhuma data crítica mapeada no momento.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </section>
+
+        <aside class="space-y-6">
+
+            <div class="glass-panel rounded-2xl p-6">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2"><i data-lucide="activity" class="text-indigo-400"></i> Linha do Tempo</h2>
+                <div class="space-y-4 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-700 before:to-transparent">
+                    
+                    {% for post in posts %}
+                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                        <div class="flex items-center justify-center w-5 h-5 rounded-full border border-white bg-indigo-500 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2"></div>
+                        <div class="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow">
+                            <div class="flex justify-between items-start mb-1">
+                                <span class="font-bold text-sm text-indigo-300">{{ post.titulo }}</span>
+                            </div>
+                            <time class="text-xs text-slate-500 mb-2 block">{{ post.data }}</time>
+                            <div class="text-sm text-slate-300">{{ post.resumo }}</div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-slate-400 text-sm relative z-10 bg-[#0f172a] inline-block">Nenhuma atualização registrada.</p>
+                    {% endfor %}
+                    
+                </div>
+            </div>
+
+            {% if loja.sobre_texto %}
+            <div class="glass-panel rounded-2xl p-6">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2"><i data-lucide="info" class="text-indigo-400"></i> Escopo Fechado</h2>
+                <div class="text-sm text-slate-300 whitespace-pre-line leading-relaxed">
+                    {{ loja.sobre_texto }}
+                </div>
+            </div>
+            {% endif %}
+
+        </aside>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
