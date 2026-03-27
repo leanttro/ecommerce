@@ -188,7 +188,7 @@ def identificar_loja():
 
     # 1 VERIFICAÇÃO DE DOMÍNIO PRÓPRIO
     # Se não for o domínio principal do SaaS nem localhost
-    if host not in ['leanttro.com', 'www.leanttro.com', 'catalogo.leanttro.com', 'localhost', '127.0.0.1']:
+    if host not in ['leanttro.com', 'www.leanttro.com', 'catalogo.leanttro.com', 'projetos.leanttro.com', 'www.projetos.leanttro.com', 'localhost', '127.0.0.1']:
         try:
             host_clean = host.replace('www.', '')
             url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=*.*"
@@ -213,7 +213,7 @@ def identificar_loja():
             print(f"Erro Middleware Slug: {e}")
 
     # 3 FALLBACK PARA DOMÍNIO PRINCIPAL -> TECNOLOGIA (ABRE DIRETO NO DOMÍNIO)
-    if not loja_encontrada and host in ['leanttro.com', 'www.leanttro.com', 'localhost', '127.0.0.1'] and primeiro_segmento not in BLACKLIST_ROTAS:
+    if not loja_encontrada and host in ['leanttro.com', 'www.leanttro.com', 'projetos.leanttro.com', 'www.projetos.leanttro.com', 'localhost', '127.0.0.1'] and primeiro_segmento not in BLACKLIST_ROTAS:
         g.slug_atual = "tecnologia"
         try:
             url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=tecnologia&fields=*.*"
@@ -252,7 +252,7 @@ def home_saas():
     host = request.host.split(':')[0]
     
     # 1 Se for o subdomínio da Landing Page
-    if 'catalogo.leanttro.com' in host:
+    if 'catalogo.leanttro.com' in host or 'projetos.leanttro.com' in host:
         return render_template('catalogo.html')
 
     # 2 Se for domínio próprio de cliente já identificado no middleware
@@ -531,7 +531,7 @@ def index(loja_slug):
         template_name = 'oscar'
     else:
         template_name = g.loja.get('template_ativo') or 'index'
-        if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional', 'tecnologia', 'onepiece', 'oscar']:
+        if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional', 'tecnologia', 'onepiece', 'oscar', 'portal_cliente']:
             template_name = 'index'
             
         # Se for o tema de tecnologia e clicar em uma categoria específica, vai para a página exclusiva de categoria
