@@ -6,35 +6,61 @@
     <title>Portal do Cliente | {{ loja.nome }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
-        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .kanban-col { min-height: 300px; }
+        @import url('https://fonts.googleapis.com/css2?family={{ loja.font_titulo }}:wght@400;700&family={{ loja.font_corpo }}:wght@300;400;600&display=swap');
+        
+        :root { 
+            --primary: {{ loja.cor_primaria or '#ec489a' }}; 
+            --color-bg: {{ loja.cor_fundo or '#f3f4f6' }};
+            --color-title: {{ loja.cor_titulo or '#111827' }};
+            --color-text: {{ loja.cor_texto or '#374151' }};
+            --font-head: '{{ loja.font_titulo or "Inter" }}', sans-serif;
+            --font-body: '{{ loja.font_corpo or "Inter" }}', sans-serif;
+        }
+        
+        body { 
+            font-family: var(--font-body); 
+            background-color: var(--color-bg); 
+            color: var(--color-text);
+        }
+        
+        h1, h2, h3, h4, h5, h6 { 
+            font-family: var(--font-head); 
+            color: var(--color-title);
+        }
+
+        .glass-panel { 
+            background: var(--color-bg); 
+            border: 1px solid rgba(0,0,0,0.1); 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .kanban-col { min-height: 200px; }
         .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col custom-scrollbar">
 
-    <nav class="glass-panel sticky top-0 z-40 px-6 py-4 flex justify-between items-center shadow-lg">
+    <nav class="sticky top-0 z-40 px-6 py-4 flex justify-between items-center shadow-sm border-b" style="background-color: var(--color-bg); border-color: rgba(0,0,0,0.1);">
         <div class="flex items-center gap-3">
             {% if loja.logo %}
                 <img src="{{ loja.logo }}" class="h-10 w-auto object-contain rounded">
             {% else %}
-                <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-xl">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xl text-white" style="background-color: var(--primary);">
                     {{ loja.nome[:1] }}
                 </div>
             {% endif %}
             <div>
                 <h1 class="font-bold text-lg leading-tight">{{ loja.nome }}</h1>
-                <p class="text-xs text-slate-400">Painel de Acompanhamento</p>
+                <p class="text-xs opacity-70">Painel de Acompanhamento</p>
             </div>
         </div>
         <div class="flex gap-4">
-            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2">
-                <i data-lucide="message-square"></i> Suporte
+            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="text-white px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2 hover:opacity-80" style="background-color: var(--primary);">
+                <i data-lucide="message-square" class="w-4 h-4"></i> Suporte
             </a>
         </div>
     </nav>
@@ -50,37 +76,37 @@
             <div class="glass-panel rounded-2xl p-6">
                 <div class="flex justify-between items-end mb-4">
                     <div>
-                        <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="clock" class="text-indigo-400"></i> Consumo de Horas</h2>
-                        <p class="text-sm text-slate-400 mt-1">{{ loja.frase3 or 'Ciclo de faturamento atual.' }}</p>
+                        <h2 class="text-xl font-bold flex items-center gap-2" style="color: var(--primary);"><i data-lucide="clock"></i> Consumo de Horas</h2>
+                        <p class="text-sm mt-1 opacity-70">{{ loja.frase3 or 'Ciclo de faturamento atual.' }}</p>
                     </div>
                     <div class="text-right">
-                        <span class="text-3xl font-bold text-indigo-400">{{ horas_uso }}h</span>
-                        <span class="text-slate-400 text-sm"> / {{ horas_total }}h</span>
+                        <span class="text-3xl font-bold" style="color: var(--primary);">{{ horas_uso }}h</span>
+                        <span class="text-sm opacity-70"> / {{ horas_total }}h</span>
                     </div>
                 </div>
-                <div class="w-full bg-slate-800 rounded-full h-4 mb-2 overflow-hidden border border-slate-700">
-                    <div class="bg-indigo-500 h-4 rounded-full transition-all duration-1000" style="width: {{ porcentagem }}%"></div>
+                <div class="w-full rounded-full h-4 mb-2 overflow-hidden" style="background-color: rgba(0,0,0,0.1);">
+                    <div class="h-4 rounded-full transition-all duration-1000" style="background-color: var(--primary); width: {{ porcentagem }}%"></div>
                 </div>
                 <div class="flex justify-between text-xs font-bold mt-3">
-                    <span class="text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded">Transparência Total</span>
-                    <span class="text-slate-400">{{ horas_total - horas_uso }}h restantes</span>
+                    <span class="px-2 py-1 rounded" style="background-color: rgba(0,0,0,0.05);">Transparência Total</span>
+                    <span class="opacity-70">{{ horas_total - horas_uso }}h restantes</span>
                 </div>
             </div>
 
             <div class="glass-panel rounded-2xl p-6 overflow-x-auto">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="trello" class="text-indigo-400"></i> Status do Projeto</h2>
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2" style="color: var(--primary);"><i data-lucide="trello"></i> Quadro de Tarefas (Kanban)</h2>
                 <div class="flex gap-4 min-w-[800px] pb-4">
                     
                     {% for cat in categorias %}
-                    <div class="flex-1 bg-slate-800/50 rounded-xl p-4 border border-slate-700 min-w-[250px]">
-                        <h3 class="font-bold text-slate-300 mb-4 text-sm uppercase tracking-wider">{{ cat.nome }}</h3>
+                    <div class="flex-1 rounded-xl p-4 border min-w-[250px]" style="background-color: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.05);">
+                        <h3 class="font-bold mb-4 text-sm uppercase tracking-wider">{{ cat.nome }}</h3>
                         <div class="kanban-col space-y-3">
                             {% for p in produtos %}
                                 {% if p.categoria_id == cat.id %}
-                                <div class="bg-slate-700 p-4 rounded-lg border border-slate-600 text-sm font-bold shadow-sm flex flex-col gap-2">
-                                    <span class="text-white">{{ p.nome }}</span>
+                                <div class="p-4 rounded-lg border shadow-sm flex flex-col gap-2" style="background-color: var(--color-bg); border-color: rgba(0,0,0,0.1);">
+                                    <span class="font-bold text-sm">{{ p.nome }}</span>
                                     {% if p.descricao %}
-                                        <span class="text-xs text-slate-400 font-normal line-clamp-2">{{ p.descricao }}</span>
+                                        <span class="text-xs opacity-80 whitespace-pre-line">{{ p.descricao }}</span>
                                     {% endif %}
                                 </div>
                                 {% endif %}
@@ -93,25 +119,25 @@
             </div>
 
             <div class="glass-panel rounded-2xl p-6">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="calendar-clock" class="text-indigo-400"></i> Cronograma e Entregas</h2>
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2" style="color: var(--primary);"><i data-lucide="list-checks"></i> Lista de Entregáveis</h2>
                 <div class="space-y-4">
-                    {% for item in agenda %}
-                    <div class="flex items-center justify-between p-4 rounded-xl border bg-slate-800/50 border-slate-700">
-                        <div class="flex items-center gap-4">
-                            <div class="w-16 h-16 rounded-lg flex flex-col items-center justify-center bg-slate-700 text-slate-300">
-                                <span class="text-[10px] font-bold uppercase">{{ item.data_hora_formatada.split(' ')[0][:5] }}</span>
-                                <span class="text-sm font-bold">{{ item.data_hora_formatada.split(' ')[2] }}</span>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-base text-white">{{ item.cliente_nome or 'Marco de Projeto' }}</h3>
-                                <p class="text-xs mt-1 text-slate-400">
-                                    {% if item.disponivel %}Reunião Agendada{% else %}Prazo de Entrega Interna{% endif %}
-                                </p>
+                    {% for p in produtos %}
+                    <div class="p-4 rounded-xl border flex gap-4 items-start" style="background-color: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.05);">
+                        <div class="mt-1 p-2 rounded-lg" style="background-color: rgba(0,0,0,0.05);">
+                            <i data-lucide="check-circle" style="color: var(--primary); width: 20px; height: 20px;"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-base">{{ p.nome }}</h3>
+                            {% if p.descricao %}
+                            <p class="text-sm mt-2 opacity-80 whitespace-pre-line">{{ p.descricao }}</p>
+                            {% endif %}
+                            <div class="mt-3 inline-block px-3 py-1 rounded-full text-xs font-bold" style="background-color: var(--primary); color: white;">
+                                {% for cat in categorias %}{% if cat.id == p.categoria_id %}{{ cat.nome }}{% endif %}{% endfor %}
                             </div>
                         </div>
                     </div>
                     {% else %}
-                    <p class="text-slate-400 text-sm">Nenhuma data crítica mapeada no momento.</p>
+                    <p class="opacity-70 text-sm">Nenhuma tarefa mapeada.</p>
                     {% endfor %}
                 </div>
             </div>
@@ -121,22 +147,42 @@
         <aside class="space-y-6">
 
             <div class="glass-panel rounded-2xl p-6">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2"><i data-lucide="activity" class="text-indigo-400"></i> Linha do Tempo</h2>
-                <div class="space-y-4 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-700 before:to-transparent">
-                    
-                    {% for post in posts %}
-                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                        <div class="flex items-center justify-center w-5 h-5 rounded-full border border-white bg-indigo-500 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2"></div>
-                        <div class="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow">
-                            <div class="flex justify-between items-start mb-1">
-                                <span class="font-bold text-sm text-indigo-300">{{ post.titulo }}</span>
-                            </div>
-                            <time class="text-xs text-slate-500 mb-2 block">{{ post.data }}</time>
-                            <div class="text-sm text-slate-300">{{ post.resumo }}</div>
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2" style="color: var(--primary);"><i data-lucide="calendar-clock"></i> Prazos e Reuniões</h2>
+                <div class="space-y-4">
+                    {% for item in agenda %}
+                    <div class="flex items-center gap-4 p-3 rounded-xl border" style="background-color: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.05);">
+                        <div class="w-14 h-14 rounded-lg flex flex-col items-center justify-center font-bold text-white shadow-sm" style="background-color: var(--primary);">
+                            <span class="text-[10px] uppercase">{{ item.data_hora_formatada.split(' ')[0][:5] }}</span>
+                            <span class="text-sm">{{ item.data_hora_formatada.split(' ')[2] }}</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm">{{ item.cliente_nome or 'Marco do Projeto' }}</h3>
+                            <p class="text-xs mt-1 opacity-70">
+                                {% if item.disponivel %}Reunião Agendada{% else %}Prazo Interno{% endif %}
+                            </p>
                         </div>
                     </div>
                     {% else %}
-                    <p class="text-slate-400 text-sm relative z-10 bg-[#0f172a] inline-block">Nenhuma atualização registrada.</p>
+                    <p class="opacity-70 text-sm">Nenhuma data crítica mapeada no momento.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2" style="color: var(--primary);"><i data-lucide="activity"></i> Linha do Tempo</h2>
+                <div class="space-y-6 relative before:absolute before:inset-0 before:ml-2 before:h-full before:w-0.5" style="before:background-color: rgba(0,0,0,0.1);">
+                    
+                    {% for post in posts %}
+                    <div class="relative flex items-start gap-4">
+                        <div class="w-5 h-5 rounded-full z-10 border-2 mt-1" style="background-color: var(--color-bg); border-color: var(--primary);"></div>
+                        <div class="flex-1 p-4 rounded-xl border shadow-sm" style="background-color: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.05);">
+                            <span class="font-bold text-sm block mb-1" style="color: var(--primary);">{{ post.titulo }}</span>
+                            <time class="text-[10px] opacity-70 mb-2 block font-bold">{{ post.data }}</time>
+                            <div class="text-sm opacity-90 whitespace-pre-line">{{ post.resumo }}</div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="opacity-70 text-sm ml-6">Nenhuma atualização registrada.</p>
                     {% endfor %}
                     
                 </div>
@@ -144,8 +190,8 @@
 
             {% if loja.sobre_texto %}
             <div class="glass-panel rounded-2xl p-6">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2"><i data-lucide="info" class="text-indigo-400"></i> Escopo Fechado</h2>
-                <div class="text-sm text-slate-300 whitespace-pre-line leading-relaxed">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2" style="color: var(--primary);"><i data-lucide="info"></i> Escopo Fechado</h2>
+                <div class="text-sm opacity-90 whitespace-pre-line leading-relaxed">
                     {{ loja.sobre_texto }}
                 </div>
             </div>
