@@ -625,6 +625,15 @@
                                 <p class="text-[10px] text-gray-500 mt-1">Design de Agência.</p>
                             </div>
                         </label>
+
+                        <label class="border rounded-xl p-4 cursor-pointer flex flex-col gap-2 transition-colors theme-selector {% if loja.template_ativo == 'portal_cliente' %}ring-2 ring-pink-500 border-pink-500 bg-pink-50{% else %}hover:bg-gray-50{% endif %}" onclick="selectTheme(this)">
+                            <input type="radio" name="template_ativo" value="portal_cliente" class="hidden" {% if loja.template_ativo == 'portal_cliente' %}checked{% endif %}>
+                            <div class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center border border-slate-700"><i data-lucide="layout-dashboard" class="text-indigo-400"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">Portal do Cliente</h4>
+                                <p class="text-[10px] text-gray-500 mt-1">Gestão de Projetos.</p>
+                            </div>
+                        </label>
                         
                         {% if loja.slug_url == 'tecnologia' or loja.slug == 'tecnologia' or (loja.temas_exclusivos and 'tecnologia' in loja.temas_exclusivos) %}
                         <label class="border rounded-xl p-4 cursor-pointer flex flex-col gap-2 transition-colors theme-selector {% if loja.template_ativo == 'tecnologia' %}ring-2 ring-pink-500 border-pink-500 bg-pink-50{% else %}hover:bg-gray-50{% endif %}" onclick="selectTheme(this)">
