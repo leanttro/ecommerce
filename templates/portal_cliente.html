@@ -6,7 +6,6 @@
     <title>Portal do Cliente | {{ loja.nome }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family={{ loja.font_titulo }}:wght@400;700&family={{ loja.font_corpo }}:wght@300;400;600&display=swap');
         
@@ -40,6 +39,15 @@
         .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+
+        @keyframes spinAtom {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes spinAtomReverse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col custom-scrollbar">
@@ -77,7 +85,7 @@
                 <div class="flex justify-between items-end mb-4">
                     <div>
                         <h2 class="text-xl font-bold flex items-center gap-2" style="color: var(--primary);"><i data-lucide="clock"></i> Consumo de Horas</h2>
-                        <p class="text-sm mt-1 opacity-70">{{ loja.frase3 or 'Ciclo de faturamento atual.' }}</p>
+                        <p class="text-sm mt-1 opacity-70">{{ loja.frase3 or 'Ciclo atual.' }}</p>
                     </div>
                     <div class="text-right">
                         <span class="text-3xl font-bold" style="color: var(--primary);">{{ horas_uso }}h</span>
@@ -103,10 +111,13 @@
                         <div class="kanban-col space-y-3">
                             {% for p in produtos %}
                                 {% if p.categoria_id == cat.id %}
-                                <div class="p-4 rounded-lg border shadow-sm flex flex-col gap-2" style="background-color: var(--color-bg); border-color: rgba(0,0,0,0.1);">
-                                    <span class="font-bold text-sm">{{ p.nome }}</span>
+                                <div onclick="openTaskModal('{{ p.id }}')" class="p-4 rounded-lg border shadow-sm flex flex-col gap-2 cursor-pointer transition hover:shadow-md hover:-translate-y-1" style="background-color: var(--color-bg); border-color: rgba(0,0,0,0.1);">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <span class="font-bold text-sm">{{ p.nome }}</span>
+                                        <i data-lucide="external-link" class="w-4 h-4 opacity-50 shrink-0"></i>
+                                    </div>
                                     {% if p.descricao %}
-                                        <span class="text-xs opacity-80 whitespace-pre-line">{{ p.descricao }}</span>
+                                        <span class="text-xs opacity-70 line-clamp-2">{{ p.descricao }}</span>
                                     {% endif %}
                                 </div>
                                 {% endif %}
@@ -122,14 +133,17 @@
                 <h2 class="text-xl font-bold mb-6 flex items-center gap-2" style="color: var(--primary);"><i data-lucide="list-checks"></i> Lista de Entregáveis</h2>
                 <div class="space-y-4">
                     {% for p in produtos %}
-                    <div class="p-4 rounded-xl border flex gap-4 items-start" style="background-color: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.05);">
+                    <div onclick="openTaskModal('{{ p.id }}')" class="p-4 rounded-xl border flex gap-4 items-start cursor-pointer transition hover:bg-black/5" style="background-color: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.05);">
                         <div class="mt-1 p-2 rounded-lg" style="background-color: rgba(0,0,0,0.05);">
                             <i data-lucide="check-circle" style="color: var(--primary); width: 20px; height: 20px;"></i>
                         </div>
-                        <div>
-                            <h3 class="font-bold text-base">{{ p.nome }}</h3>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start">
+                                <h3 class="font-bold text-base">{{ p.nome }}</h3>
+                                <i data-lucide="external-link" class="w-4 h-4 opacity-50 shrink-0 mt-1"></i>
+                            </div>
                             {% if p.descricao %}
-                            <p class="text-sm mt-2 opacity-80 whitespace-pre-line">{{ p.descricao }}</p>
+                            <p class="text-sm mt-2 opacity-80 line-clamp-2">{{ p.descricao }}</p>
                             {% endif %}
                             <div class="mt-3 inline-block px-3 py-1 rounded-full text-xs font-bold" style="background-color: var(--primary); color: white;">
                                 {% for cat in categorias %}{% if cat.id == p.categoria_id %}{{ cat.nome }}{% endif %}{% endfor %}
@@ -201,8 +215,179 @@
 
     </main>
 
+    <footer class="mt-auto relative overflow-hidden py-16 border-t" style="background-color: var(--color-bg); border-color: rgba(0,0,0,0.1);">
+        <div class="container mx-auto px-6 text-center relative z-20 flex flex-col items-center">
+            
+            <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1773591878/presentes_180_x_50_px_720_x_200_px_1440_x_264_px_1_azuhgq.png" class="h-12 w-auto object-contain mb-8 hover:scale-110 transition-transform duration-500" style="filter: drop-shadow(0 0 10px rgba(0,0,0,0.2));">
+            
+            <div class="flex flex-col md:flex-row justify-center items-center gap-8 mb-8">
+                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="flex items-center gap-2 text-sm font-bold hover:opacity-70 transition" style="color: var(--color-text);">
+                    <i data-lucide="message-circle" class="w-5 h-5"></i> {{ loja.whatsapp_comercial }}
+                </a>
+                {% if loja.instagram_url %}
+                <a href="{{ loja.instagram_url }}" target="_blank" class="flex items-center gap-2 text-sm font-bold hover:opacity-70 transition" style="color: var(--color-text);">
+                    <i data-lucide="instagram" class="w-5 h-5"></i> Instagram
+                </a>
+                {% endif %}
+            </div>
+            
+            <p class="text-[10px] uppercase tracking-widest opacity-50">© 2026 {{ loja.nome }}. Todos os direitos reservados.</p>
+        </div>
+
+        <div class="absolute inset-0 w-full h-full z-10 pointer-events-none flex items-center justify-center opacity-[0.04]">
+            <div class="relative w-[350px] h-[350px] md:w-[450px] md:h-[450px]" style="perspective: 1000px;">
+                <div class="absolute inset-0 w-full h-full" style="transform: rotateX(65deg) rotateY(-20deg); transform-style: preserve-3d;">
+                    <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtom 15s linear infinite;">
+                        <path id="txtPath1" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
+                        <text font-size="15" fill="#000000" letter-spacing="5" font-weight="900" font-family="sans-serif">
+                            <textPath href="#txtPath1" startOffset="0%">LEANTTRO · DESIGN · DADOS ·</textPath>
+                        </text>
+                    </svg>
+                </div>
+                <div class="absolute inset-0 w-full h-full" style="transform: rotateX(65deg) rotateY(40deg); transform-style: preserve-3d;">
+                    <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtomReverse 20s linear infinite;">
+                        <path id="txtPath2" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
+                        <text font-size="15" fill="#000000" letter-spacing="5" font-weight="900" font-family="sans-serif">
+                            <textPath href="#txtPath2" startOffset="0%">LEANTTRO · DESIGN · DADOS ·</textPath>
+                        </text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="taskModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl transform scale-95 transition-transform duration-300" id="taskModalContent" style="background-color: var(--color-bg); color: var(--color-text);">
+            
+            <div class="p-6 border-b flex justify-between items-center sticky top-0 z-10" style="background-color: var(--color-bg); border-color: rgba(0,0,0,0.1);">
+                <h3 class="font-bold text-xl" id="modalTitle" style="color: var(--primary);">Nome da Tarefa</h3>
+                <button onclick="closeTaskModal()" class="p-2 rounded-full hover:bg-black/5 transition">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                
+                <div id="modalMedia" class="w-full rounded-xl overflow-hidden bg-black/5 border flex items-center justify-center relative min-h-[200px]" style="border-color: rgba(0,0,0,0.05);">
+                </div>
+                
+                <div class="flex justify-end">
+                    <a id="modalDownloadBtn" href="#" target="_blank" download class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition hover:scale-105 shadow-md" style="background-color: var(--primary);">
+                        <i data-lucide="download" class="w-4 h-4"></i> Baixar Arquivo
+                    </a>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-sm uppercase tracking-wider mb-3 opacity-70">Detalhes da Etapa</h4>
+                    <p id="modalDesc" class="text-sm leading-relaxed whitespace-pre-line"></p>
+                </div>
+
+                <div class="pt-6 border-t" style="border-color: rgba(0,0,0,0.1);">
+                    <h4 class="font-bold text-sm mb-3">Interação e Controle</h4>
+                    <textarea id="modalFeedback" rows="3" placeholder="Escreva aqui caso necessite de alguma alteração nesta etapa..." class="w-full p-4 rounded-xl border focus:outline-none transition mb-4" style="background-color: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.1); color: var(--color-text);"></textarea>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button onclick="sendFeedback(false)" class="flex-1 py-3.5 rounded-xl font-bold border-2 transition hover:bg-black/5 flex items-center justify-center gap-2" style="border-color: var(--primary); color: var(--primary);">
+                            <i data-lucide="edit-3" class="w-4 h-4"></i> Solicitar Alteração
+                        </button>
+                        <button onclick="sendFeedback(true)" class="flex-1 py-3.5 rounded-xl font-bold text-white transition hover:scale-105 shadow-md flex items-center justify-center gap-2" style="background-color: #10B981;">
+                            <i data-lucide="check-circle" class="w-5 h-5"></i> Aprovar Etapa
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
+
+        const tasksData = {
+            {% for p in produtos %}
+            "{{ p.id }}": {
+                nome: `{{ p.nome | replace('`', '\\`') }}`,
+                descricao: `{{ p.descricao | replace('`', '\\`') | replace('\n', '\\n') if p.descricao else '' }}`,
+                imagem: `{{ p.imagem }}`,
+                link_projeto: `{{ p.link_projeto or '' }}`,
+                whatsapp: `{{ loja.whatsapp_comercial }}`
+            },
+            {% endfor %}
+        };
+
+        function openTaskModal(id) {
+            const task = tasksData[id];
+            if(!task) return;
+            
+            document.getElementById('modalTitle').innerText = task.nome;
+            document.getElementById('modalDesc').innerText = task.descricao || 'Sem detalhes descritivos para esta etapa.';
+            
+            const mediaContainer = document.getElementById('modalMedia');
+            const downloadBtn = document.getElementById('modalDownloadBtn');
+            
+            mediaContainer.innerHTML = '';
+            let mediaUrl = task.imagem;
+            let isVideo = false;
+            
+            if (task.link_projeto && (task.link_projeto.includes('cloudinary.com/video') || task.link_projeto.endsWith('.mp4'))) {
+                mediaUrl = task.link_projeto;
+                isVideo = true;
+                mediaContainer.innerHTML = `<video src="${mediaUrl}" controls class="w-full h-auto max-h-[450px] object-contain rounded-xl"></video>`;
+            } else if (task.link_projeto && (task.link_projeto.includes('cloudinary.com/image') || task.link_projeto.endsWith('.jpg') || task.link_projeto.endsWith('.png'))) {
+                 mediaUrl = task.link_projeto;
+                 mediaContainer.innerHTML = `<img src="${mediaUrl}" class="w-full h-auto max-h-[450px] object-contain rounded-xl">`;
+            } else {
+                mediaContainer.innerHTML = `<img src="${mediaUrl}" class="w-full h-auto max-h-[450px] object-contain rounded-xl">`;
+            }
+            
+            let downloadUrl = mediaUrl;
+            if(downloadUrl.includes('upload/')) {
+                 downloadUrl = downloadUrl.replace('upload/', 'upload/fl_attachment/');
+            }
+            downloadBtn.href = downloadUrl;
+            
+            document.getElementById('taskModal').setAttribute('data-current-id', id);
+            document.getElementById('modalFeedback').value = '';
+            
+            const modal = document.getElementById('taskModal');
+            modal.classList.remove('hidden');
+            void modal.offsetWidth; 
+            modal.classList.remove('opacity-0');
+            document.getElementById('taskModalContent').classList.remove('scale-95');
+        }
+
+        function closeTaskModal() {
+            const modal = document.getElementById('taskModal');
+            modal.classList.add('opacity-0');
+            document.getElementById('taskModalContent').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.getElementById('modalMedia').innerHTML = ''; 
+            }, 300);
+        }
+
+        function sendFeedback(isApproved) {
+            const id = document.getElementById('taskModal').getAttribute('data-current-id');
+            const task = tasksData[id];
+            const feedbackText = document.getElementById('modalFeedback').value.trim();
+            
+            let message = "";
+            if(isApproved) {
+                message = `✅ *ETAPA APROVADA*\n\n*Tarefa:* ${task.nome}`;
+                if(feedbackText) message += `\n*Observação:* ${feedbackText}`;
+            } else {
+                if(!feedbackText) {
+                    alert("Por favor, descreva qual alteração você deseja antes de solicitar.");
+                    document.getElementById('modalFeedback').focus();
+                    return;
+                }
+                message = `🔄 *SOLICITAÇÃO DE ALTERAÇÃO*\n\n*Tarefa:* ${task.nome}\n*Ajuste Necessário:* ${feedbackText}`;
+            }
+            
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappLink = `https://wa.me/55${task.whatsapp}?text=${encodedMessage}`;
+            window.open(whatsappLink, '_blank');
+            closeTaskModal();
+        }
     </script>
 </body>
 </html>
