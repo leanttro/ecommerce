@@ -460,7 +460,8 @@ def index(loja_slug):
                     "a_partir_de": p.get('a_partir_de', False),
                     "layout_case": p.get('layout_case', False),
                     "link_projeto": p.get('link_projeto'),
-                    "whatsapp_projeto": p.get('whatsapp_projeto')
+                    "whatsapp_projeto": p.get('whatsapp_projeto'),
+                    "descricao": p.get('descricao')
                 }
                 produtos.append(prod_obj)
                 
