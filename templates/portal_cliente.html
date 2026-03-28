@@ -104,241 +104,262 @@
 </head>
 <body class="min-h-screen flex flex-col custom-scrollbar">
 
-    <nav class="glass-nav sticky top-0 z-40 px-6 md:px-12 py-5 flex justify-between items-center">
-        <div class="flex items-center gap-4">
-            {% if loja.logo %}
-                <img src="{{ loja.logo }}" class="h-12 w-auto object-contain drop-shadow-xl hover:scale-105 transition-transform">
-            {% else %}
-                <div class="w-12 h-12 rounded-xl flex items-center justify-center font-extrabold text-2xl text-white shadow-lg" style="background-color: var(--primary);">
-                    {{ loja.nome[:1] }}
-                </div>
-            {% endif %}
-            <div class="hidden md:block">
-                <h1 class="font-extrabold text-xl tracking-tight leading-none">{{ loja.nome }}</h1>
-                <p class="text-xs font-semibold tracking-widest uppercase mt-1 opacity-50">Portal do Cliente</p>
+    <div id="lock-overlay" class="fixed inset-0 z-[100] flex items-center justify-center transition-all duration-1000" style="background-color: color-mix(in srgb, var(--color-bg) 80%, transparent); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);">
+        <div class="glass-panel-premium p-10 rounded-3xl text-center max-w-md w-11/12 scale-100 transition-transform duration-500" id="lock-modal">
+            <div class="w-24 h-24 mx-auto mb-8 rounded-full flex items-center justify-center shadow-lg border" style="background-color: color-mix(in srgb, var(--primary) 15%, transparent); border-color: color-mix(in srgb, var(--primary) 30%, transparent);">
+                <i data-lucide="lock" class="w-10 h-10" style="color: var(--primary);"></i>
             </div>
-        </div>
-        <div class="flex items-center gap-6">
-            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wider text-white transition hover:scale-105 shadow-xl flex items-center gap-2" style="background-color: var(--primary); box-shadow: 0 10px 25px -5px color-mix(in srgb, var(--primary) 50%, transparent);">
-                <i data-lucide="message-square" class="w-4 h-4"></i> Suporte
-            </a>
-        </div>
-    </nav>
-
-    <main class="flex-1 container mx-auto px-4 md:px-8 py-12 grid grid-cols-1 lg:grid-cols-12 gap-8">
-
-        <section class="lg:col-span-8 space-y-8">
+            <h2 class="text-3xl font-extrabold mb-3 tracking-tight" style="color: var(--color-title);">Acesso Restrito</h2>
+            <p class="text-sm mb-10 opacity-70 font-medium" style="color: var(--color-text);">Digite a senha do projeto para desbloquear a visualização e downloads.</p>
             
-            {% set horas_total = loja.frase1 | float | default(0, true) %}
-            {% set horas_uso = loja.frase2 | float | default(0, true) %}
-            {% set porcentagem = (horas_uso / horas_total * 100) if horas_total > 0 else 0 %}
+            <form id="unlock-form" class="space-y-5">
+                <input type="password" id="portal-senha" placeholder="Senha do Projeto" class="w-full p-5 rounded-2xl text-center text-lg font-bold tracking-widest outline-none border transition-all" style="background-color: color-mix(in srgb, var(--color-bg) 50%, #000); border-color: color-mix(in srgb, var(--color-text) 20%, transparent); color: var(--color-title);" required>
+                <button type="submit" class="w-full py-5 rounded-2xl font-bold uppercase tracking-widest text-white shadow-xl hover:scale-105 transition-transform flex items-center justify-center gap-3" style="background-color: var(--primary);">
+                    <span id="unlock-btn-text">Desbloquear</span>
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+                <p id="unlock-error" class="text-red-500 text-xs font-bold mt-3 hidden">Senha incorreta. Tente novamente.</p>
+            </form>
+        </div>
+    </div>
 
-            <div class="glass-panel-premium rounded-3xl p-8 md:p-10 reveal-element relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-64 h-64 rounded-full blur-[80px] -mr-20 -mt-20 opacity-20 pointer-events-none" style="background-color: var(--primary);"></div>
-                
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 relative z-10">
-                    <div>
-                        <h2 class="text-3xl font-extrabold flex items-center gap-3 tracking-tight">
-                            <i data-lucide="activity" class="w-8 h-8" style="color: var(--primary);"></i> Consumo do Projeto
-                        </h2>
-                        <p class="text-sm mt-2 opacity-60 font-medium tracking-wide uppercase">{{ loja.frase3 or 'Ciclo de faturamento atual' }}</p>
+    <div id="portal-wrapper" class="blur-2xl pointer-events-none select-none transition-all duration-1000 h-screen overflow-hidden flex flex-col flex-1">
+        
+        <nav class="glass-nav sticky top-0 z-40 px-6 md:px-12 py-5 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                {% if loja.logo %}
+                    <img src="{{ loja.logo }}" class="h-12 w-auto object-contain drop-shadow-xl hover:scale-105 transition-transform">
+                {% else %}
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center font-extrabold text-2xl text-white shadow-lg" style="background-color: var(--primary);">
+                        {{ loja.nome[:1] }}
                     </div>
-                    <div class="text-left md:text-right mt-4 md:mt-0">
-                        <span class="text-5xl font-black tracking-tighter drop-shadow-md" style="color: var(--primary);">{{ horas_uso }}<span class="text-2xl">h</span></span>
-                        <span class="text-lg opacity-50 font-bold"> / {{ horas_total }}h</span>
-                    </div>
-                </div>
-                
-                <div class="w-full rounded-full h-3 mb-4 overflow-hidden relative z-10" style="background-color: color-mix(in srgb, var(--color-text) 15%, transparent);">
-                    <div class="glowing-bar h-full rounded-full transition-all duration-1500 ease-out" style="width: {{ porcentagem }}%"></div>
-                </div>
-                
-                <div class="flex justify-between items-center text-sm font-bold mt-4 relative z-10">
-                    <span class="px-4 py-1.5 rounded-full text-xs tracking-widest uppercase border" style="background-color: color-mix(in srgb, var(--primary) 10%, transparent); color: var(--primary); border-color: color-mix(in srgb, var(--primary) 20%, transparent);">Transparência Total</span>
-                    <span class="opacity-60">{{ horas_total - horas_uso }}h restantes</span>
+                {% endif %}
+                <div class="hidden md:block">
+                    <h1 class="font-extrabold text-xl tracking-tight leading-none">{{ loja.nome }}</h1>
+                    <p class="text-xs font-semibold tracking-widest uppercase mt-1 opacity-50">Portal do Cliente</p>
                 </div>
             </div>
+            <div class="flex items-center gap-6">
+                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wider text-white transition hover:scale-105 shadow-xl flex items-center gap-2" style="background-color: var(--primary); box-shadow: 0 10px 25px -5px color-mix(in srgb, var(--primary) 50%, transparent);">
+                    <i data-lucide="message-square" class="w-4 h-4"></i> Suporte
+                </a>
+            </div>
+        </nav>
 
-            <div class="glass-panel-premium rounded-3xl p-8 overflow-x-auto reveal-element">
-                <h2 class="text-2xl font-extrabold mb-8 flex items-center gap-3 tracking-tight">
-                    <i data-lucide="kanban-square" class="w-6 h-6" style="color: var(--primary);"></i> Esteira de Produção
-                </h2>
+        <main class="flex-1 container mx-auto px-4 md:px-8 py-12 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <section class="lg:col-span-8 space-y-8">
                 
-                <div class="flex gap-6 min-w-[800px] pb-4">
-                    {% for cat in categorias %}
-                    <div class="flex-1 rounded-2xl p-5 border" style="background-color: color-mix(in srgb, var(--color-bg) 40%, transparent); border-color: color-mix(in srgb, var(--color-text) 10%, transparent);">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="font-bold text-sm uppercase tracking-widest opacity-80">{{ cat.nome }}</h3>
-                            <span class="w-2 h-2 rounded-full" style="background-color: var(--primary); box-shadow: 0 0 8px var(--primary);"></span>
+                {% set horas_total = loja.frase1 | float | default(0, true) %}
+                {% set horas_uso = loja.frase2 | float | default(0, true) %}
+                {% set porcentagem = (horas_uso / horas_total * 100) if horas_total > 0 else 0 %}
+
+                <div class="glass-panel-premium rounded-3xl p-8 md:p-10 reveal-element relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-64 h-64 rounded-full blur-[80px] -mr-20 -mt-20 opacity-20 pointer-events-none" style="background-color: var(--primary);"></div>
+                    
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 relative z-10">
+                        <div>
+                            <h2 class="text-3xl font-extrabold flex items-center gap-3 tracking-tight">
+                                <i data-lucide="activity" class="w-8 h-8" style="color: var(--primary);"></i> Consumo do Projeto
+                            </h2>
+                            <p class="text-sm mt-2 opacity-60 font-medium tracking-wide uppercase">{{ loja.frase3 or 'Ciclo de faturamento atual' }}</p>
                         </div>
-                        
-                        <div class="space-y-4">
-                            {% for p in produtos %}
-                                {% if p.categoria_id == cat.id %}
-                                <div onclick="openTaskModal('{{ p.id }}')" class="p-5 rounded-xl border card-3d-hover cursor-pointer" style="background-color: var(--color-bg); border-color: color-mix(in srgb, var(--color-text) 10%, transparent);">
-                                    <div class="flex items-start justify-between gap-3">
-                                        <span class="font-bold text-base leading-tight">{{ p.nome }}</span>
-                                        <div class="p-1.5 rounded-full" style="background-color: color-mix(in srgb, var(--primary) 10%, transparent);">
-                                            <i data-lucide="arrow-up-right" class="w-3 h-3" style="color: var(--primary);"></i>
+                        <div class="text-left md:text-right mt-4 md:mt-0">
+                            <span class="text-5xl font-black tracking-tighter drop-shadow-md" style="color: var(--primary);">{{ horas_uso }}<span class="text-2xl">h</span></span>
+                            <span class="text-lg opacity-50 font-bold"> / {{ horas_total }}h</span>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full rounded-full h-3 mb-4 overflow-hidden relative z-10" style="background-color: color-mix(in srgb, var(--color-text) 15%, transparent);">
+                        <div class="glowing-bar h-full rounded-full transition-all duration-1500 ease-out" style="width: {{ porcentagem }}%"></div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center text-sm font-bold mt-4 relative z-10">
+                        <span class="px-4 py-1.5 rounded-full text-xs tracking-widest uppercase border" style="background-color: color-mix(in srgb, var(--primary) 10%, transparent); color: var(--primary); border-color: color-mix(in srgb, var(--primary) 20%, transparent);">Transparência Total</span>
+                        <span class="opacity-60">{{ horas_total - horas_uso }}h restantes</span>
+                    </div>
+                </div>
+
+                <div class="glass-panel-premium rounded-3xl p-8 overflow-x-auto reveal-element">
+                    <h2 class="text-2xl font-extrabold mb-8 flex items-center gap-3 tracking-tight">
+                        <i data-lucide="kanban-square" class="w-6 h-6" style="color: var(--primary);"></i> Esteira de Produção
+                    </h2>
+                    
+                    <div class="flex gap-6 min-w-[800px] pb-4">
+                        {% for cat in categorias %}
+                        <div class="flex-1 rounded-2xl p-5 border" style="background-color: color-mix(in srgb, var(--color-bg) 40%, transparent); border-color: color-mix(in srgb, var(--color-text) 10%, transparent);">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="font-bold text-sm uppercase tracking-widest opacity-80">{{ cat.nome }}</h3>
+                                <span class="w-2 h-2 rounded-full" style="background-color: var(--primary); box-shadow: 0 0 8px var(--primary);"></span>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                {% for p in produtos %}
+                                    {% if p.categoria_id == cat.id %}
+                                    <div onclick="openTaskModal('{{ p.id }}')" class="p-5 rounded-xl border card-3d-hover cursor-pointer" style="background-color: var(--color-bg); border-color: color-mix(in srgb, var(--color-text) 10%, transparent);">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <span class="font-bold text-base leading-tight">{{ p.nome }}</span>
+                                            <div class="p-1.5 rounded-full" style="background-color: color-mix(in srgb, var(--primary) 10%, transparent);">
+                                                <i data-lucide="arrow-up-right" class="w-3 h-3" style="color: var(--primary);"></i>
+                                            </div>
                                         </div>
+                                        {% if p.descricao %}
+                                            <p class="text-xs mt-3 opacity-60 line-clamp-2 leading-relaxed">{{ p.descricao }}</p>
+                                        {% endif %}
                                     </div>
-                                    {% if p.descricao %}
-                                        <p class="text-xs mt-3 opacity-60 line-clamp-2 leading-relaxed">{{ p.descricao }}</p>
                                     {% endif %}
-                                </div>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <div class="glass-panel-premium rounded-3xl p-8 reveal-element">
-                <h2 class="text-2xl font-extrabold mb-8 flex items-center gap-3 tracking-tight">
-                    <i data-lucide="check-square" class="w-6 h-6" style="color: var(--primary);"></i> Entregáveis Detalhados
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {% for p in produtos %}
-                    <div onclick="openTaskModal('{{ p.id }}')" class="p-5 rounded-2xl border flex flex-col justify-between card-3d-hover cursor-pointer" style="background-color: color-mix(in srgb, var(--color-bg) 40%, transparent); border-color: color-mix(in srgb, var(--color-text) 10%, transparent);">
-                        <div>
-                            <div class="flex justify-between items-start mb-3">
-                                <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: color-mix(in srgb, var(--primary) 15%, transparent);">
-                                    <i data-lucide="layers" class="w-5 h-5" style="color: var(--primary);"></i>
-                                </div>
-                                <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border" style="color: var(--color-title); border-color: color-mix(in srgb, var(--color-text) 20%, transparent);">
-                                    {% for cat in categorias %}{% if cat.id == p.categoria_id %}{{ cat.nome }}{% endif %}{% endfor %}
-                                </span>
-                            </div>
-                            <h3 class="font-bold text-lg leading-tight mb-2">{{ p.nome }}</h3>
-                            {% if p.descricao %}
-                            <p class="text-sm opacity-60 line-clamp-2">{{ p.descricao }}</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% else %}
-                    <p class="opacity-50 text-sm italic col-span-2 text-center py-8">Nenhuma tarefa mapeada ainda.</p>
-                    {% endfor %}
-                </div>
-            </div>
-
-        </section>
-
-        <aside class="lg:col-span-4 space-y-8">
-
-            <div class="glass-panel-premium rounded-3xl p-8 reveal-element">
-                <h2 class="text-xl font-extrabold mb-6 flex items-center gap-3 tracking-tight">
-                    <i data-lucide="calendar" class="w-6 h-6" style="color: var(--primary);"></i> Cronograma
-                </h2>
-                <div class="space-y-4">
-                    {% for item in agenda %}
-                    <div class="flex items-center gap-5 p-4 rounded-2xl border transition-colors hover:bg-black/5" style="border-color: color-mix(in srgb, var(--color-text) 10%, transparent);">
-                        <div class="w-16 h-16 rounded-xl flex flex-col items-center justify-center font-bold shadow-lg relative overflow-hidden" style="background-color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);">
-                            <div class="absolute top-0 left-0 w-full h-1" style="background-color: var(--primary);"></div>
-                            <span class="text-xs uppercase opacity-70 mt-1">{{ item.data_hora_formatada.split(' ')[0][:5] }}</span>
-                            <span class="text-base tracking-tighter" style="color: var(--primary);">{{ item.data_hora_formatada.split(' ')[2] }}</span>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-base leading-tight">{{ item.cliente_nome or 'Marco do Projeto' }}</h3>
-                            <div class="flex items-center gap-1.5 mt-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full" style="background-color: {% if item.disponivel %}#10B981{% else %}var(--primary){% endif %};"></span>
-                                <p class="text-xs opacity-60 uppercase tracking-wider font-semibold">
-                                    {% if item.disponivel %}Reunião{% else %}Prazo Interno{% endif %}
-                                </p>
+                                {% endfor %}
                             </div>
                         </div>
-                    </div>
-                    {% else %}
-                    <div class="text-center py-6 border rounded-2xl border-dashed" style="border-color: color-mix(in srgb, var(--color-text) 20%, transparent);">
-                        <i data-lucide="calendar-x" class="w-8 h-8 mx-auto opacity-30 mb-2"></i>
-                        <p class="opacity-50 text-sm">Sem datas críticas.</p>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <div class="glass-panel-premium rounded-3xl p-8 reveal-element">
-                <h2 class="text-xl font-extrabold mb-8 flex items-center gap-3 tracking-tight">
-                    <i data-lucide="git-commit" class="w-6 h-6" style="color: var(--primary);"></i> Histórico
-                </h2>
-                <div class="relative before:absolute before:inset-0 before:ml-3.5 before:h-full before:w-[2px]" style="before:background-color: color-mix(in srgb, var(--color-text) 15%, transparent);">
-                    <div class="space-y-8">
-                        {% for post in posts %}
-                        <div class="relative flex items-start gap-6 group">
-                            <div class="w-7 h-7 rounded-full z-10 border-4 timeline-dot flex-shrink-0 mt-0.5 transition-transform group-hover:scale-125" style="background-color: var(--primary); border-color: var(--color-bg);"></div>
-                            <div class="flex-1">
-                                <time class="text-xs uppercase tracking-widest font-bold opacity-50 mb-1 block">{{ post.data }}</time>
-                                <span class="font-bold text-lg block mb-2 leading-tight">{{ post.titulo }}</span>
-                                <div class="text-sm opacity-70 whitespace-pre-line leading-relaxed">{{ post.resumo }}</div>
-                            </div>
-                        </div>
-                        {% else %}
-                        <p class="opacity-50 text-sm ml-10">Nenhuma atualização registrada.</p>
                         {% endfor %}
                     </div>
                 </div>
-            </div>
 
-            {% if loja.sobre_texto %}
-            <div class="glass-panel-premium rounded-3xl p-8 reveal-element">
-                <h2 class="text-xl font-extrabold mb-6 flex items-center gap-3 tracking-tight">
-                    <i data-lucide="file-signature" class="w-6 h-6" style="color: var(--primary);"></i> Escopo
-                </h2>
-                <div class="text-sm opacity-70 whitespace-pre-line leading-relaxed p-4 rounded-xl" style="background-color: color-mix(in srgb, var(--color-text) 5%, transparent);">
-                    {{ loja.sobre_texto }}
+                <div class="glass-panel-premium rounded-3xl p-8 reveal-element">
+                    <h2 class="text-2xl font-extrabold mb-8 flex items-center gap-3 tracking-tight">
+                        <i data-lucide="check-square" class="w-6 h-6" style="color: var(--primary);"></i> Entregáveis Detalhados
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for p in produtos %}
+                        <div onclick="openTaskModal('{{ p.id }}')" class="p-5 rounded-2xl border flex flex-col justify-between card-3d-hover cursor-pointer" style="background-color: color-mix(in srgb, var(--color-bg) 40%, transparent); border-color: color-mix(in srgb, var(--color-text) 10%, transparent);">
+                            <div>
+                                <div class="flex justify-between items-start mb-3">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: color-mix(in srgb, var(--primary) 15%, transparent);">
+                                        <i data-lucide="layers" class="w-5 h-5" style="color: var(--primary);"></i>
+                                    </div>
+                                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border" style="color: var(--color-title); border-color: color-mix(in srgb, var(--color-text) 20%, transparent);">
+                                        {% for cat in categorias %}{% if cat.id == p.categoria_id %}{{ cat.nome }}{% endif %}{% endfor %}
+                                    </span>
+                                </div>
+                                <h3 class="font-bold text-lg leading-tight mb-2">{{ p.nome }}</h3>
+                                {% if p.descricao %}
+                                <p class="text-sm opacity-60 line-clamp-2">{{ p.descricao }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% else %}
+                        <p class="opacity-50 text-sm italic col-span-2 text-center py-8">Nenhuma tarefa mapeada ainda.</p>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
-            {% endif %}
 
-        </aside>
+            </section>
 
-    </main>
+            <aside class="lg:col-span-4 space-y-8">
 
-    <footer class="mt-auto relative overflow-hidden py-24 border-t" style="background-color: var(--color-bg); border-color: color-mix(in srgb, var(--color-text) 10%, transparent);">
-        <div class="container mx-auto px-6 text-center relative z-20 flex flex-col items-center">
-            
-            <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1773591878/presentes_180_x_50_px_720_x_200_px_1440_x_264_px_1_azuhgq.png" class="h-16 w-auto object-contain mb-10 hover:scale-110 transition-transform duration-500" style="filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));">
-            
-            <div class="flex flex-col md:flex-row justify-center items-center gap-8 mb-10">
-                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="flex items-center gap-3 text-sm font-bold tracking-widest uppercase hover:opacity-70 transition">
-                    <i data-lucide="message-circle" class="w-5 h-5"></i> Contato
-                </a>
-                {% if loja.instagram_url %}
-                <a href="{{ loja.instagram_url }}" target="_blank" class="flex items-center gap-3 text-sm font-bold tracking-widest uppercase hover:opacity-70 transition">
-                    <i data-lucide="instagram" class="w-5 h-5"></i> Instagram
-                </a>
+                <div class="glass-panel-premium rounded-3xl p-8 reveal-element">
+                    <h2 class="text-xl font-extrabold mb-6 flex items-center gap-3 tracking-tight">
+                        <i data-lucide="calendar" class="w-6 h-6" style="color: var(--primary);"></i> Cronograma
+                    </h2>
+                    <div class="space-y-4">
+                        {% for item in agenda %}
+                        <div class="flex items-center gap-5 p-4 rounded-2xl border transition-colors hover:bg-black/5" style="border-color: color-mix(in srgb, var(--color-text) 10%, transparent);">
+                            <div class="w-16 h-16 rounded-xl flex flex-col items-center justify-center font-bold shadow-lg relative overflow-hidden" style="background-color: var(--color-bg); border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);">
+                                <div class="absolute top-0 left-0 w-full h-1" style="background-color: var(--primary);"></div>
+                                <span class="text-xs uppercase opacity-70 mt-1">{{ item.data_hora_formatada.split(' ')[0][:5] }}</span>
+                                <span class="text-base tracking-tighter" style="color: var(--primary);">{{ item.data_hora_formatada.split(' ')[2] }}</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-base leading-tight">{{ item.cliente_nome or 'Marco do Projeto' }}</h3>
+                                <div class="flex items-center gap-1.5 mt-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full" style="background-color: {% if item.disponivel %}#10B981{% else %}var(--primary){% endif %};"></span>
+                                    <p class="text-xs opacity-60 uppercase tracking-wider font-semibold">
+                                        {% if item.disponivel %}Reunião{% else %}Prazo Interno{% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-6 border rounded-2xl border-dashed" style="border-color: color-mix(in srgb, var(--color-text) 20%, transparent);">
+                            <i data-lucide="calendar-x" class="w-8 h-8 mx-auto opacity-30 mb-2"></i>
+                            <p class="opacity-50 text-sm">Sem datas críticas.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="glass-panel-premium rounded-3xl p-8 reveal-element">
+                    <h2 class="text-xl font-extrabold mb-8 flex items-center gap-3 tracking-tight">
+                        <i data-lucide="git-commit" class="w-6 h-6" style="color: var(--primary);"></i> Histórico
+                    </h2>
+                    <div class="relative before:absolute before:inset-0 before:ml-3.5 before:h-full before:w-[2px]" style="before:background-color: color-mix(in srgb, var(--color-text) 15%, transparent);">
+                        <div class="space-y-8">
+                            {% for post in posts %}
+                            <div class="relative flex items-start gap-6 group">
+                                <div class="w-7 h-7 rounded-full z-10 border-4 timeline-dot flex-shrink-0 mt-0.5 transition-transform group-hover:scale-125" style="background-color: var(--primary); border-color: var(--color-bg);"></div>
+                                <div class="flex-1">
+                                    <time class="text-xs uppercase tracking-widest font-bold opacity-50 mb-1 block">{{ post.data }}</time>
+                                    <span class="font-bold text-lg block mb-2 leading-tight">{{ post.titulo }}</span>
+                                    <div class="text-sm opacity-70 whitespace-pre-line leading-relaxed">{{ post.resumo }}</div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <p class="opacity-50 text-sm ml-10">Nenhuma atualização registrada.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                {% if loja.sobre_texto %}
+                <div class="glass-panel-premium rounded-3xl p-8 reveal-element">
+                    <h2 class="text-xl font-extrabold mb-6 flex items-center gap-3 tracking-tight">
+                        <i data-lucide="file-signature" class="w-6 h-6" style="color: var(--primary);"></i> Escopo
+                    </h2>
+                    <div class="text-sm opacity-70 whitespace-pre-line leading-relaxed p-4 rounded-xl" style="background-color: color-mix(in srgb, var(--color-text) 5%, transparent);">
+                        {{ loja.sobre_texto }}
+                    </div>
+                </div>
                 {% endif %}
-            </div>
-            
-            <p class="text-[10px] uppercase tracking-widest opacity-40 font-bold">© 2026 {{ loja.nome }}. All rights reserved.</p>
-        </div>
 
-        <div class="absolute inset-0 w-full h-full z-10 pointer-events-none flex items-center justify-center opacity-[0.03]">
-            <div class="relative w-[400px] h-[400px] md:w-[600px] md:h-[600px]" style="perspective: 1200px;">
-                <div class="absolute inset-0 w-full h-full" style="transform: rotateX(65deg) rotateY(-20deg); transform-style: preserve-3d;">
-                    <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtom 20s linear infinite;">
-                        <path id="txtPath1" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
-                        <text font-size="14" fill="var(--color-title)" letter-spacing="6" font-weight="900" font-family="sans-serif">
-                            <textPath href="#txtPath1" startOffset="0%">LEANTTRO · DESIGN · DADOS ·</textPath>
-                        </text>
-                    </svg>
+            </aside>
+
+        </main>
+
+        <footer class="mt-auto relative overflow-hidden py-24 border-t" style="background-color: var(--color-bg); border-color: color-mix(in srgb, var(--color-text) 10%, transparent);">
+            <div class="container mx-auto px-6 text-center relative z-20 flex flex-col items-center">
+                
+                <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1773591878/presentes_180_x_50_px_720_x_200_px_1440_x_264_px_1_azuhgq.png" class="h-16 w-auto object-contain mb-10 hover:scale-110 transition-transform duration-500" style="filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));">
+                
+                <div class="flex flex-col md:flex-row justify-center items-center gap-8 mb-10">
+                    <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="flex items-center gap-3 text-sm font-bold tracking-widest uppercase hover:opacity-70 transition">
+                        <i data-lucide="message-circle" class="w-5 h-5"></i> Contato
+                    </a>
+                    {% if loja.instagram_url %}
+                    <a href="{{ loja.instagram_url }}" target="_blank" class="flex items-center gap-3 text-sm font-bold tracking-widest uppercase hover:opacity-70 transition">
+                        <i data-lucide="instagram" class="w-5 h-5"></i> Instagram
+                    </a>
+                    {% endif %}
                 </div>
-                <div class="absolute inset-0 w-full h-full" style="transform: rotateX(65deg) rotateY(40deg); transform-style: preserve-3d;">
-                    <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtomReverse 25s linear infinite;">
-                        <path id="txtPath2" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
-                        <text font-size="14" fill="var(--color-title)" letter-spacing="6" font-weight="900" font-family="sans-serif">
-                            <textPath href="#txtPath2" startOffset="0%">LEANTTRO · DESIGN · DADOS ·</textPath>
-                        </text>
-                    </svg>
+                
+                <p class="text-[10px] uppercase tracking-widest opacity-40 font-bold">© 2026 {{ loja.nome }}. All rights reserved.</p>
+            </div>
+
+            <div class="absolute inset-0 w-full h-full z-10 pointer-events-none flex items-center justify-center opacity-[0.03]">
+                <div class="relative w-[400px] h-[400px] md:w-[600px] md:h-[600px]" style="perspective: 1200px;">
+                    <div class="absolute inset-0 w-full h-full" style="transform: rotateX(65deg) rotateY(-20deg); transform-style: preserve-3d;">
+                        <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtom 20s linear infinite;">
+                            <path id="txtPath1" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
+                            <text font-size="14" fill="var(--color-title)" letter-spacing="6" font-weight="900" font-family="sans-serif">
+                                <textPath href="#txtPath1" startOffset="0%">LEANTTRO · DESIGN · DADOS ·</textPath>
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="absolute inset-0 w-full h-full" style="transform: rotateX(65deg) rotateY(40deg); transform-style: preserve-3d;">
+                        <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtomReverse 25s linear infinite;">
+                            <path id="txtPath2" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
+                            <text font-size="14" fill="var(--color-title)" letter-spacing="6" font-weight="900" font-family="sans-serif">
+                                <textPath href="#txtPath2" startOffset="0%">LEANTTRO · DESIGN · DADOS ·</textPath>
+                            </text>
+                        </svg>
+                    </div>
                 </div>
             </div>
-        </div>
-    </footer>
+        </footer>
 
-    <div id="taskModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-500">
+    </div> <div id="taskModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-500">
         <div class="absolute inset-0 bg-black/90 backdrop-blur-xl" onclick="closeTaskModal()"></div>
         
-        <div class="rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl transform scale-95 transition-transform duration-500 relative z-10 border custom-scrollbar" id="taskModalContent" style="background-color: var(--color-bg); border-color: color-mix(in srgb, var(--color-text) 15%, transparent);">
+        <div class="rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl transform scale-95 transition-transform duration-500 relative z-10 border custom-scrollbar flex flex-col" id="taskModalContent" style="background-color: var(--color-bg); border-color: color-mix(in srgb, var(--color-text) 15%, transparent);">
             
             <div class="sticky top-0 z-20 px-8 py-6 border-b flex justify-between items-center backdrop-blur-xl" style="background-color: color-mix(in srgb, var(--color-bg) 80%, transparent); border-color: color-mix(in srgb, var(--color-text) 10%, transparent);">
                 <div>
@@ -350,14 +371,16 @@
                 </button>
             </div>
             
-            <div class="p-8">
+            <div class="p-8 flex-1">
                 <div id="modalMedia" class="w-full rounded-2xl overflow-hidden border flex items-center justify-center relative min-h-[300px] mb-8 shadow-2xl" style="background-color: color-mix(in srgb, var(--color-bg) 50%, #000); border-color: color-mix(in srgb, var(--color-text) 10%, transparent);">
                 </div>
                 
                 <div class="flex justify-between items-start gap-8 flex-col md:flex-row mb-10">
-                    <div class="flex-1">
+                    <div class="flex-1 w-full">
                         <h4 class="font-bold text-sm uppercase tracking-widest mb-4 opacity-50">Descrição do Escopo</h4>
                         <p id="modalDesc" class="text-base leading-relaxed opacity-80 whitespace-pre-line"></p>
+                        
+                        <div id="modalHistory" class="mt-8"></div>
                     </div>
                     <div class="shrink-0 w-full md:w-auto">
                         <a id="modalDownloadBtn" href="#" target="_blank" download class="flex items-center justify-center gap-3 px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-wider text-white transition hover:scale-105 shadow-xl w-full" style="background-color: var(--color-title); color: var(--color-bg);">
@@ -389,7 +412,7 @@
         // GSAP Animations
         gsap.registerPlugin(ScrollTrigger);
         
-        document.addEventListener("DOMContentLoaded", () => {
+        function initPortalAnimations() {
             gsap.utils.toArray('.reveal-element').forEach((elem, i) => {
                 gsap.to(elem, {
                     scrollTrigger: {
@@ -403,8 +426,63 @@
                     delay: i * 0.1
                 });
             });
+        }
+
+        // LÓGICA DE BLOQUEIO DE TELA
+        document.addEventListener('DOMContentLoaded', () => {
+            const isUnlocked = sessionStorage.getItem('portal_unlocked_{{ loja.id }}');
+            const wrapper = document.getElementById('portal-wrapper');
+            const overlay = document.getElementById('lock-overlay');
+            
+            if (isUnlocked === 'true') {
+                wrapper.classList.remove('blur-2xl', 'pointer-events-none', 'select-none', 'h-screen', 'overflow-hidden');
+                overlay.style.display = 'none';
+                initPortalAnimations();
+            }
         });
 
+        document.getElementById('unlock-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const senha = document.getElementById('portal-senha').value;
+            const btnText = document.getElementById('unlock-btn-text');
+            const error = document.getElementById('unlock-error');
+            
+            btnText.innerText = 'Verificando...';
+            error.classList.add('hidden');
+            
+            try {
+                const res = await fetch('/{{ loja.slug_url }}/verificar-senha-portal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ senha })
+                });
+                const data = await res.json();
+                
+                if (data.sucesso) {
+                    sessionStorage.setItem('portal_unlocked_{{ loja.id }}', 'true');
+                    
+                    document.getElementById('lock-modal').classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => {
+                        document.getElementById('lock-overlay').classList.add('opacity-0', 'pointer-events-none');
+                        const wrapper = document.getElementById('portal-wrapper');
+                        wrapper.classList.remove('blur-2xl', 'pointer-events-none', 'select-none', 'h-screen', 'overflow-hidden');
+                        setTimeout(() => {
+                            document.getElementById('lock-overlay').style.display = 'none';
+                            initPortalAnimations();
+                        }, 1000);
+                    }, 300);
+                } else {
+                    error.classList.remove('hidden');
+                    btnText.innerText = 'Desbloquear';
+                }
+            } catch (err) {
+                error.innerText = 'Erro de conexão.';
+                error.classList.remove('hidden');
+                btnText.innerText = 'Desbloquear';
+            }
+        });
+
+        // DADOS PARA OS MODAIS (AGORA COM HISTÓRICO INCLUSO)
         const tasksData = {
             {% for p in produtos %}
             "{{ p.id }}": {
@@ -412,7 +490,16 @@
                 descricao: `{{ p.descricao | replace('`', '\\`') | replace('\n', '\\n') if p.descricao else '' }}`,
                 imagem: `{{ p.imagem }}`,
                 link_projeto: `{{ p.link_projeto or '' }}`,
-                whatsapp: `{{ loja.whatsapp_comercial }}`
+                whatsapp: `{{ loja.whatsapp_comercial }}`,
+                feedbacks: [
+                    {% for v in p.variantes %}
+                        {% if v.grupo == 'Feedback do Cliente' %}
+                            {% for op in v.opcoes %}
+                                `{{ op.nome | replace('`', '\\`') }}`,
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                ]
             },
             {% endfor %}
         };
@@ -424,6 +511,25 @@
             document.getElementById('modalTitle').innerText = task.nome;
             document.getElementById('modalDesc').innerText = task.descricao || 'Sem detalhes descritivos para esta etapa.';
             
+            // INSERÇÃO DO HISTÓRICO NO MODAL
+            const historyContainer = document.getElementById('modalHistory');
+            if (task.feedbacks && task.feedbacks.length > 0) {
+                let histHtml = '<div class="space-y-3 mt-4">';
+                task.feedbacks.forEach(f => {
+                    let statusClass = f.includes('[APROVADA]') ? 'text-green-500' : 'text-yellow-500';
+                    histHtml += `
+                        <div class="p-4 rounded-xl border flex gap-3 items-start" style="background-color: color-mix(in srgb, var(--color-bg) 50%, #000); border-color: color-mix(in srgb, var(--color-text) 10%, transparent);">
+                            <i data-lucide="message-square" class="w-5 h-5 mt-0.5 ${statusClass} shrink-0"></i>
+                            <span class="text-sm opacity-90 leading-relaxed font-medium">${f}</span>
+                        </div>
+                    `;
+                });
+                histHtml += '</div>';
+                historyContainer.innerHTML = `<h4 class="font-bold text-sm uppercase tracking-widest mb-4 opacity-50 mt-8 pt-8 border-t" style="border-color: color-mix(in srgb, var(--color-text) 10%, transparent);">Histórico de Interações</h4>` + histHtml;
+            } else {
+                historyContainer.innerHTML = '';
+            }
+
             const mediaContainer = document.getElementById('modalMedia');
             const downloadBtn = document.getElementById('modalDownloadBtn');
             
@@ -453,12 +559,12 @@
             const content = document.getElementById('taskModalContent');
             
             modal.classList.remove('hidden');
-            // Trigger reflow
             void modal.offsetWidth; 
             
             modal.classList.remove('opacity-0');
             content.classList.remove('scale-95');
             document.body.style.overflow = 'hidden';
+            lucide.createIcons();
         }
 
         function closeTaskModal() {
@@ -510,7 +616,12 @@
                 const result = await response.json();
                 
                 if(result.sucesso) {
-                    alert('Feedback enviado e gravado com sucesso!');
+                    alert('Feedback enviado e gravado no histórico!');
+                    // Atualiza dado visual sem recarregar pra fluidez
+                    if(!task.feedbacks) task.feedbacks = [];
+                    const dataFormatada = new Date().toLocaleString('pt-BR', {day: '2-digit', month: '2-digit', hour: '2-digit', minute:'2-digit'});
+                    task.feedbacks.push(`[${statusText}] ${dataFormatada} - ${feedbackText || 'Aprovado sem ressalvas.'}`);
+                    
                     closeTaskModal();
                 } else {
                     alert('Erro ao salvar no sistema. Tente novamente.');
