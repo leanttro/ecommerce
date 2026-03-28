@@ -475,10 +475,13 @@
             }, 500);
         }
 
-        function sendFeedback(isApproved) {
+        async function sendFeedback(isApproved) {
             const id = document.getElementById('taskModal').getAttribute('data-current-id');
             const task = tasksData[id];
             const feedbackText = document.getElementById('modalFeedback').value.trim();
+            const lojaSlug = '{{ loja.slug_url }}';
+            
+            let statusText = isApproved ? 'APROVADA' : 'ALTERAÇÃO';
             
             let message = "";
             if(isApproved) {
@@ -493,10 +496,44 @@
                 message = `🔄 *SOLICITAÇÃO DE ALTERAÇÃO*\n\n*Tarefa:* ${task.nome}\n*Ajuste Necessário:* ${feedbackText}`;
             }
             
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappLink = `https://wa.me/55${task.whatsapp}?text=${encodedMessage}`;
-            window.open(whatsappLink, '_blank');
-            closeTaskModal();
+            const btns = document.querySelectorAll('#taskModalContent button');
+            const originalTexts = [];
+            btns.forEach((btn, i) => { 
+                originalTexts[i] = btn.innerHTML; 
+                btn.disabled = true; 
+                btn.style.opacity = '0.5';
+            });
+            
+            try {
+                const response = await fetch(`/${lojaSlug}/feedback-tarefa/${id}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        status: statusText,
+                        mensagem: feedbackText || 'Aprovado sem ressalvas.'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if(result.sucesso) {
+                    const encodedMessage = encodeURIComponent(message);
+                    const whatsappLink = `https://wa.me/55${task.whatsapp}?text=${encodedMessage}`;
+                    window.open(whatsappLink, '_blank');
+                    closeTaskModal();
+                } else {
+                    alert('Erro ao salvar no sistema. Tente novamente.');
+                }
+            } catch(e) {
+                alert('Erro de conexão. Verifique sua internet.');
+                console.error(e);
+            } finally {
+                btns.forEach((btn, i) => { 
+                    btn.innerHTML = originalTexts[i]; 
+                    btn.disabled = false; 
+                    btn.style.opacity = '1';
+                });
+            }
         }
     </script>
 </body>
