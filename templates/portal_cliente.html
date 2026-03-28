@@ -483,17 +483,10 @@
             
             let statusText = isApproved ? 'APROVADA' : 'ALTERAÇÃO';
             
-            let message = "";
-            if(isApproved) {
-                message = `✅ *ETAPA APROVADA*\n\n*Tarefa:* ${task.nome}`;
-                if(feedbackText) message += `\n*Observação:* ${feedbackText}`;
-            } else {
-                if(!feedbackText) {
-                    alert("Por favor, descreva qual alteração você deseja antes de solicitar.");
-                    document.getElementById('modalFeedback').focus();
-                    return;
-                }
-                message = `🔄 *SOLICITAÇÃO DE ALTERAÇÃO*\n\n*Tarefa:* ${task.nome}\n*Ajuste Necessário:* ${feedbackText}`;
+            if(!isApproved && !feedbackText) {
+                alert("Por favor, descreva qual alteração você deseja antes de solicitar.");
+                document.getElementById('modalFeedback').focus();
+                return;
             }
             
             const btns = document.querySelectorAll('#taskModalContent button');
@@ -517,9 +510,7 @@
                 const result = await response.json();
                 
                 if(result.sucesso) {
-                    const encodedMessage = encodeURIComponent(message);
-                    const whatsappLink = `https://wa.me/55${task.whatsapp}?text=${encodedMessage}`;
-                    window.open(whatsappLink, '_blank');
+                    alert('Feedback enviado e gravado com sucesso!');
                     closeTaskModal();
                 } else {
                     alert('Erro ao salvar no sistema. Tente novamente.');
