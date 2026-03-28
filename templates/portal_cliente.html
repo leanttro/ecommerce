@@ -3,298 +3,1073 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal do Cliente | {{ loja.nome }}</title>
+    <title>Painel Admin | {{ loja.nome }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family={{ loja.font_titulo }}:wght@400;700&family={{ loja.font_corpo }}:wght@300;400;600&display=swap');
-        
-        :root { 
-            --primary: {{ loja.cor_primaria or '#ec489a' }}; 
-            --color-bg: {{ loja.cor_fundo or '#f3f4f6' }};
-            --color-title: {{ loja.cor_titulo or '#111827' }};
-            --color-text: {{ loja.cor_texto or '#374151' }};
-            --font-head: '{{ loja.font_titulo or "Inter" }}', sans-serif;
-            --font-body: '{{ loja.font_corpo or "Inter" }}', sans-serif;
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.dots.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '{{ loja.cor_primaria or "#ec489a" }}',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
         }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
         body { 
-            font-family: var(--font-body); 
-            background-color: var(--color-bg); 
-            color: var(--color-text);
-        }
-        
-        h1, h2, h3, h4, h5, h6 { 
-            font-family: var(--font-head); 
-            color: var(--color-title);
+            background-color: #0a0a0a; 
+            color: #e5e5e5; 
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
-        .glass-panel { 
-            background: var(--color-bg); 
-            border: 1px solid rgba(0,0,0,0.1); 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        /* Glassmorphism Premium */
+        .glass-nav {
+            background: rgba(15, 15, 15, 0.8) !important;
+            backdrop-filter: blur(20px) saturate(180%) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
         }
         
-        .kanban-col { min-height: 200px; }
-        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+        .glass-sidebar {
+            background: rgba(10, 10, 10, 0.7) !important;
+            backdrop-filter: blur(15px) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.03) !important;
+        }
 
+        .glass-card {
+            background: rgba(23, 23, 23, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Netflix style inputs */
+        .admin-input {
+            background-color: #1a1a1a !important;
+            border: 1px solid #333 !important;
+            color: #fff !important;
+            transition: all 0.2s;
+        }
+        .admin-input:focus {
+            border-color: {{ loja.cor_primaria or "#ec489a" }} !important;
+            ring: 1px solid {{ loja.cor_primaria or "#ec489a" }} !important;
+            background-color: #222 !important;
+        }
+
+        /* Premium Modal */
+        .modal { transition: opacity 0.4s, visibility 0.4s; }
+        .modal.opacity-0 { visibility: hidden; }
+        .modal-active { overflow: hidden; }
+        .modal-container {
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Sortable styles */
+        .sortable-ghost { opacity: 0.1; background-color: {{ loja.cor_primaria or "#ec489a" }}20; }
+        .sortable-chosen { cursor: grabbing; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; rounded: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #444; }
+
+        /* Vanta container */
+        #vanta-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; hright: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* 3D Particle animation for Atom footer */
         @keyframes spinAtom {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes spinAtomReverse {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(-360deg); }
+            0% { transform: rotateY(0deg) rotateX(65deg); }
+            100% { transform: rotateY(360deg) rotateX(65deg); }
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col custom-scrollbar">
+<body>
 
-    <nav class="sticky top-0 z-40 px-6 py-4 flex justify-between items-center shadow-sm border-b" style="background-color: var(--color-bg); border-color: rgba(0,0,0,0.1);">
-        <div class="flex items-center gap-3">
-            {% if loja.logo %}
-                <img src="{{ loja.logo }}" class="h-10 w-auto object-contain rounded">
-            {% else %}
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xl text-white" style="background-color: var(--primary);">
-                    {{ loja.nome[:1] }}
+    <div id="vanta-bg"></div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="fixed top-24 right-6 z-50 flex flex-col gap-3" id="flash-messages-container">
+            {% for category, message in messages %}
+                <div class="{% if category == 'error' %}bg-red-950 border-red-500 text-red-200{% else %}bg-green-950 border-green-500 text-green-200{% endif %} border px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 animate-fade-in-down flash-message-item backdrop-blur-md">
+                    <i data-lucide="{% if category == 'error' %}alert-circle{% else %}check-circle{% endif %}" class="w-5 h-5"></i>
+                    <span class="font-medium text-sm">{{ message }}</span>
                 </div>
-            {% endif %}
-            <div>
-                <h1 class="font-bold text-lg leading-tight">{{ loja.nome }}</h1>
-                <p class="text-xs opacity-70">Painel de Acompanhamento</p>
+            {% endfor %}
             </div>
-        </div>
-        <div class="flex gap-4">
-            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="text-white px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2 hover:opacity-80" style="background-color: var(--primary);">
-                <i data-lucide="message-square" class="w-4 h-4"></i> Suporte
-            </a>
+        {% endif %}
+    {% endwith %}
+
+    <nav class="glass-nav fixed w-full z-40 top-0 border-b">
+        <div class="w-full container mx-auto flex items-center justify-between py-4 px-6">
+            <div class="flex items-center gap-3">
+                 {% if loja.logo_url %}
+                    <img src="{{ loja.logo_url }}" class="h-9 w-auto object-contain">
+                {% endif %}
+                <span class="text-white text-xl font-extrabold tracking-tighter">
+                    Dashboard <span class="font-light opacity-60">| {{ loja.nome }}</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="https://catalogo.leanttro.com/{{ loja.slug_url }}/" target="_blank" class="text-neutral-400 hover:text-white transition flex items-center gap-2 text-sm font-medium">
+                    <i data-lucide="external-link" class="w-4 h-4"></i> Visualizar Loja
+                </a>
+                <a href="/logout" class="bg-neutral-800 hover:bg-red-950 text-neutral-300 hover:text-red-300 px-4 py-2 rounded-full transition flex items-center gap-2 text-sm font-bold">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> Sair
+                </a>
+            </div>
         </div>
     </nav>
 
-    <main class="flex-1 container mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="container mx-auto mt-24 px-6 md:px-0 flex flex-col md:flex-row gap-8 pb-32">
+        
+        <aside class="w-full md:w-72 fixed md:sticky top-28 h-fit z-30">
+            <div class="glass-sidebar rounded-3xl p-5 border">
+                <button onclick="toggleMobileMenu()" class="md:hidden w-full flex items-center justify-between bg-neutral-900 p-4 rounded-xl border border-neutral-800 text-white font-bold mb-3">
+                    <span class="flex items-center gap-3"><i data-lucide="menu"></i> Navegação</span>
+                    <i data-lucide="chevron-down" id="menuChevron" class="transition-transform duration-300"></i>
+                </button>
 
-        <section class="lg:col-span-2 space-y-6">
-            
-            {% set horas_total = loja.frase1 | float | default(0, true) %}
-            {% set horas_uso = loja.frase2 | float | default(0, true) %}
-            {% set porcentagem = (horas_uso / horas_total * 100) if horas_total > 0 else 0 %}
-
-            <div class="glass-panel rounded-2xl p-6">
-                <div class="flex justify-between items-end mb-4">
-                    <div>
-                        <h2 class="text-xl font-bold flex items-center gap-2" style="color: var(--primary);"><i data-lucide="clock"></i> Consumo de Horas</h2>
-                        <p class="text-sm mt-1 opacity-70">{{ loja.frase3 or 'Ciclo atual.' }}</p>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-3xl font-bold" style="color: var(--primary);">{{ horas_uso }}h</span>
-                        <span class="text-sm opacity-70"> / {{ horas_total }}h</span>
-                    </div>
-                </div>
-                <div class="w-full rounded-full h-4 mb-2 overflow-hidden" style="background-color: rgba(0,0,0,0.1);">
-                    <div class="h-4 rounded-full transition-all duration-1000" style="background-color: var(--primary); width: {{ porcentagem }}%"></div>
-                </div>
-                <div class="flex justify-between text-xs font-bold mt-3">
-                    <span class="px-2 py-1 rounded" style="background-color: rgba(0,0,0,0.05);">Transparência Total</span>
-                    <span class="opacity-70">{{ horas_total - horas_uso }}h restantes</span>
-                </div>
+                <nav id="sidebarNav" class="space-y-1.5 hidden md:block">
+                    {% set menus = [
+                        ('categorias', 'layers', 'Categorias'),
+                        ('produtos', 'shopping-bag', 'Produtos'),
+                        ('blog', 'file-text', 'Blog'),
+                        ('inscritos', 'users', 'Leads'),
+                        ('agenda', 'calendar', 'Agenda'),
+                        ('sobre', 'user', 'Empresa'),
+                        ('layout', 'layout-template', 'Layout'),
+                        ('visual', 'palette', 'Design'),
+                        ('config', 'settings', 'Config')
+                    ] %}
+                    {% for id, icon, label in menus %}
+                    <a href="#{{ id }}" id="link-{{ id }}" class="flex items-center gap-3.5 px-5 py-3.5 text-neutral-400 hover:bg-neutral-800/50 hover:text-white rounded-xl transition-all duration-300 font-semibold group sidebar-link" onclick="selectMenuItem('{{ id }}')">
+                        <i data-lucide="{{ icon }}" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                        {{ label }}
+                    </a>
+                    {% endfor %}
+                </nav>
             </div>
+        </aside>
 
-            <div class="glass-panel rounded-2xl p-6 overflow-x-auto">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2" style="color: var(--primary);"><i data-lucide="trello"></i> Quadro de Tarefas (Kanban)</h2>
-                <div class="flex gap-4 min-w-[800px] pb-4">
-                    
-                    {% for cat in categorias %}
-                    <div class="flex-1 rounded-xl p-4 border min-w-[250px]" style="background-color: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.05);">
-                        <h3 class="font-bold mb-4 text-sm uppercase tracking-wider">{{ cat.nome }}</h3>
-                        <div class="kanban-col space-y-3">
-                            {% for p in produtos %}
-                                {% if p.categoria_id == cat.id %}
-                                <div onclick="openTaskModal('{{ p.id }}')" class="p-4 rounded-lg border shadow-sm flex flex-col gap-2 cursor-pointer transition hover:shadow-md hover:-translate-y-1" style="background-color: var(--color-bg); border-color: rgba(0,0,0,0.1);">
-                                    <div class="flex items-start justify-between gap-2">
-                                        <span class="font-bold text-sm">{{ p.nome }}</span>
-                                        <i data-lucide="external-link" class="w-4 h-4 opacity-50 shrink-0"></i>
-                                    </div>
-                                    {% if p.descricao %}
-                                        <span class="text-xs opacity-70 line-clamp-2">{{ p.descricao }}</span>
+        <main class="flex-1 space-y-8 z-10">
+
+            <section id="categorias" class="glass-card rounded-3xl p-8 transition-all opacity-0">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tighter flex items-center gap-3"><i data-lucide="layers" class="text-primary"></i> Categorias</h2>
+                        <p class="text-neutral-400 mt-1">Gerencie a organização dos seus produtos.</p>
+                    </div>
+                    <button onclick="novaCategoria()" class="bg-primary hover:opacity-90 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2.5 shadow-lg shadow-primary/20 transition-all text-sm active:scale-95">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Nova Categoria
+                    </button>
+                </div>
+                
+                <div class="bg-neutral-900/50 rounded-2xl border border-neutral-800">
+                    <ul id="lista-categorias" class="divide-y divide-neutral-800">
+                        {% for cat in categorias %}
+                        <li class="list-group-item flex items-center justify-between p-5 hover:bg-neutral-800/30 transition-colors group" data-id="{{ cat.id }}">
+                             <div class="flex items-center gap-4">
+                                <i data-lucide="grip-vertical" class="text-neutral-600 cursor-move group-hover:text-neutral-400 transition"></i>
+                                <span class="font-bold text-neutral-100 text-lg tracking-tight">{{ cat.nome }}</span>
+                            </div>
+                            <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick='editarCategoria({{ cat | tojson }})' class="text-blue-400 hover:text-blue-300 p-2.5 hover:bg-blue-950 rounded-lg"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                <a href="/{{ loja.slug_url }}/admin/categoria/excluir/{{ cat.id }}" class="text-red-400 hover:text-red-300 p-2.5 hover:bg-red-950 rounded-lg" onclick="return confirm('Tem certeza que deseja excluir esta categoria?')"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
+                            </div>
+                        </li>
+                        {% else %}
+                        <li class="p-12 text-center text-neutral-500 italic flex flex-col items-center gap-3">
+                            <i data-lucide="layers-3" class="w-10 h-10 opacity-30"></i>
+                            Nenhuma categoria cadastrada.
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                 <p class="text-xs text-neutral-600 mt-3 flex items-center gap-2"><i data-lucide="info" class="w-3.5 h-3.5"></i> Arraste os itens para reordenar a exibição na loja.</p>
+            </section>
+
+            <section id="produtos" class="glass-card rounded-3xl p-8 hidden transition-all">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tighter flex items-center gap-3"><i data-lucide="shopping-bag" class="text-primary"></i> Produtos</h2>
+                        <p class="text-neutral-400 mt-1">Seu catálogo completo de itens.</p>
+                    </div>
+                    <button onclick="novoProduto()" class="bg-primary hover:opacity-90 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2.5 shadow-lg shadow-primary/20 transition-all text-sm active:scale-95">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Novo Produto
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto bg-neutral-900/50 rounded-2xl border border-neutral-800">
+                    <table class="min-w-full divide-y divide-neutral-800">
+                        <thead class="bg-neutral-900">
+                              <tr>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neutral-400 uppercase tracking-wider">Mídia</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neutral-400 uppercase tracking-wider">Nome</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neutral-400 uppercase tracking-wider">Preço</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neutral-400 uppercase tracking-wider">Estoque</th>
+                                <th class="px-6 py-4 text-right text-xs font-bold text-neutral-400 uppercase tracking-wider">Ações</th>
+                               </tr>
+                        </thead>
+                        <tbody class="divide-y divide-neutral-800">
+                            {% for prod in produtos %}
+                            <tr class="hover:bg-neutral-800/30 transition-colors group">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <img src="{{ prod.imagem_destaque }}" class="h-14 w-14 object-cover rounded-xl border border-neutral-700 bg-neutral-800 shadow-inner">
+                                   </td>
+                                <td class="px-6 py-4"><div class="text-base font-semibold text-neutral-100 line-clamp-1 tracking-tight">{{ prod.nome }}</div></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-base text-neutral-200 font-mono font-medium">
+                                    {% if prod.consulte %}Customizado{% else %}R$ {{ "%.2f"|format(prod.preco) }}{% endif %}
+                                   </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-300">{{ prod.estoque }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onclick='clonarProduto({{ prod | tojson }})' class="text-green-400 hover:text-green-300 p-2 hover:bg-green-950 rounded-lg mr-1" title="Clonar para outra categoria"><i data-lucide="copy" class="w-4 h-4"></i></button>
+                                    <button onclick='editarProduto({{ prod | tojson }})'
+                                     class="text-blue-400 hover:text-blue-300 p-2 hover:bg-blue-950 rounded-lg mr-1"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                    <a href="/{{ loja.slug_url }}/admin/produto/excluir/{{ prod.id }}" class="text-red-400 hover:text-red-300 p-2 hover:bg-red-950 rounded-lg" onclick="return confirm('Excluir este produto?')"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
+                                   </td>
+                               </tr>
+                             {% else %}
+                              <tr><td colspan="5" class="px-6 py-16 text-center text-neutral-500 italic">Nenhum produto cadastrado ainda.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                      </table>
+                </div>
+            </section>
+
+            <section id="blog" class="glass-card rounded-3xl p-8 hidden transition-all">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tighter flex items-center gap-3"><i data-lucide="file-text" class="text-primary"></i> Blog (Posts)</h2>
+                        <p class="text-neutral-400 mt-1">Conteúdo para atrair e engajar clientes.</p>
+                    </div>
+                    <button onclick="novoPost()" class="bg-primary hover:opacity-90 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2.5 shadow-lg shadow-primary/20 transition-all text-sm active:scale-95">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Novo Post
+                    </button>
+                </div>
+                <div class="bg-neutral-900/50 rounded-2xl border border-neutral-800 divide-y divide-neutral-800 overflow-hidden">
+                    {% for post in posts %}
+                    <div class="p-6 flex justify-between items-center hover:bg-neutral-800/30 transition-colors group">
+                        <div>
+                             <h3 class="font-bold text-neutral-100 text-lg tracking-tight">{{ post.titulo }}</h3>
+                             <p class="text-xs text-neutral-500 font-mono mt-0.5">{{ post.date_created[:10] }}</p>
+                        </div>
+                        <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                             <button onclick='editarPost({{ post | tojson }})' class="text-blue-400 hover:text-blue-300 p-2.5 hover:bg-blue-950 rounded-lg"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                            <a href="/{{ loja.slug_url }}/admin/post/excluir/{{ post.id }}" class="text-red-400 hover:text-red-300 p-2.5 hover:bg-red-950 rounded-lg" onclick="return confirm('Excluir este post?')"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="p-16 text-center text-neutral-500 italic flex flex-col items-center gap-3">
+                         <i data-lucide="book-open-text" class="w-10 h-10 opacity-30"></i>
+                         Nenhum post publicado.
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section id="inscritos" class="glass-card rounded-3xl p-8 hidden transition-all">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tighter flex items-center gap-3"><i data-lucide="users" class="text-primary"></i> Todos os Inscritos (Leads)</h2>
+                        <p class="text-neutral-400 mt-1">Sua base de contatos capturados.</p>
+                    </div>
+                </div>
+                <div class="overflow-x-auto bg-neutral-900/50 rounded-2xl border border-neutral-800">
+                    <table class="min-w-full divide-y divide-neutral-800">
+                        <thead class="bg-neutral-900">
+                              <tr>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neutral-400 uppercase tracking-wider">Nome</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neutral-400 uppercase tracking-wider">WhatsApp</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neutral-400 uppercase tracking-wider">E-mail</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neutral-400 uppercase tracking-wider">Data</th>
+                              </tr>
+                        </thead>
+                        <tbody class="divide-y divide-neutral-800">
+                            {% for lead in inscritos %}
+                            <tr class="hover:bg-neutral-800/30 transition-colors">
+                                <td class="px-6 py-4"><div class="text-base font-semibold text-neutral-100 tracking-tight">{{ lead.nome }}</div></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-300">
+                                    <a href="https://wa.me/55{{ lead.whatsapp|replace(' ', '')|replace('-', '')|replace('(', '')|replace(')', '') }}" target="_blank" class="text-green-400 hover:text-green-300 flex items-center gap-2 font-medium">
+                                        <i data-lucide="message-circle" class="w-4 h-4 text-green-500"></i> {{ lead.whatsapp }}
+                                    </a>
+                                   </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-300 font-mono">{{ lead.email }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 font-mono">{{ lead.date_created[:10] if lead.date_created else '--' }}</td>
+                               </tr>
+                             {% else %}
+                              <tr><td colspan="4" class="px-6 py-16 text-center text-neutral-500 italic">Nenhum lead inscrito ainda.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                      </table>
+                </div>
+            </section>
+
+            <section id="agenda" class="glass-card rounded-3xl p-8 hidden transition-all">
+                <div class="flex justify-between items-center mb-8 gap-4">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tighter flex items-center gap-3"><i data-lucide="calendar" class="text-primary"></i> Agenda / Horários</h2>
+                        <p class="text-neutral-400 mt-1">Organize seus compromissos e marcos de projetos.</p>
+                    </div>
+                    <button onclick="novoHorario()" class="bg-primary hover:opacity-90 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2.5 shadow-lg shadow-primary/20 transition-all text-sm active:scale-95 shrink-0">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Novo Horário
+                    </button>
+                </div>
+
+                <div class="flex gap-1.5 mb-8 bg-neutral-900 p-1.5 rounded-full border border-neutral-800 w-fit">
+                    <button id="toggleListViewBtn" class="agenda-toggle-btn px-6 py-2.5 rounded-full text-sm font-bold transition-all text-neutral-400 hover:text-white active">
+                        <i data-lucide="list" class="w-4 h-4 inline mr-1.5"></i> Lista Tradicional
+                    </button>
+                    <button id="toggleBoardViewBtn" class="agenda-toggle-btn px-6 py-2.5 rounded-full text-sm font-bold transition-all text-neutral-400 hover:text-white">
+                        <i data-lucide="kanban" class="w-4 h-4 inline mr-1.5"></i> Quadro Kanban
+                    </button>
+                </div>
+
+                <div id="traditionalListView" class="overflow-x-auto bg-neutral-900/50 rounded-2xl border border-neutral-800 transition-all">
+                    <table class="min-w-full divide-y divide-neutral-800">
+                        <thead class="bg-neutral-900">
+                               <tr>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neutral-400 uppercase tracking-wider">Data / Hora</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neutral-400 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-neutral-400 uppercase tracking-wider">Cliente (Opcional)</th>
+                                <th class="px-6 py-4 text-right text-xs font-bold text-neutral-400 uppercase tracking-wider">Ações</th>
+                               </tr>
+                        </thead>
+                        <tbody class="divide-y divide-neutral-800">
+                            {% for horario in agenda %}
+                            <tr class="hover:bg-neutral-800/30 transition-colors group">
+                                <td class="px-6 py-4 whitespace-nowrap"><div class="text-base font-semibold text-neutral-100 tracking-tight font-mono">{{ horario.data_hora_formatada or horario.data_hora }}</div></td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if horario.disponivel %}
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-green-950 text-green-300 border border-green-800">Disponível</span>
+                                    {% else %}
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-red-950 text-red-300 border border-red-800">Ocupado</span>
                                     {% endif %}
-                                </div>
+                                   </td>
+                                <td class="px-6 py-4 text-base text-neutral-300">{{ horario.cliente_nome or '--' }}</td>
+                                <td class="px-6 py-4 text-right text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onclick='editarHorario({{ horario | tojson }})' class="text-blue-400 hover:text-blue-300 p-2 hover:bg-blue-950 rounded-lg mr-1"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                    <a href="/{{ loja.slug_url }}/admin/agenda/excluir/{{ horario.id }}" class="text-red-400 hover:text-red-300 p-2 hover:bg-red-950 rounded-lg" onclick="return confirm('Excluir este horário?')"><i data-lucide="trash-2" class="w-4 h-4"></i></a>
+                                   </td>
+                               </tr>
+                            {% else %}
+                              <tr><td colspan="4" class="px-6 py-16 text-center text-neutral-500 italic">Nenhum horário cadastrado na agenda.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                      </table>
+                </div>
+
+                <div id="kanbanBoardView" class="hidden transition-all">
+                    <div class="board-container overflow-x-auto flex gap-5 pb-6">
+                        </div>
+                    <div class="fixed bottom-10 right-10 bg-primary p-5 rounded-full text-white shadow-2xl shadow-primary/40 cursor-pointer transition hover:scale-110 active:scale-95 z-40 animate-bounce" id="floatingAddTaskBtn">
+                        <i data-lucide="plus" class="w-7 h-7"></i>
+                    </div>
+                </div>
+            </section>
+
+            <form action="/{{ loja.slug_url }}/admin/painel" method="POST" enctype="multipart/form-data">
+                
+                <section id="sobre" class="glass-card rounded-3xl p-8 hidden space-y-8 transition-all">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tighter flex items-center gap-3 mb-1"><i data-lucide="user" class="text-primary"></i> Sobre a Empresa</h2>
+                        <p class="text-neutral-400">Conte sua história e defina como os clientes te veem.</p>
+                    </div>
+                    
+                    <div class="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl mb-8 flex items-center justify-between shadow-inner">
+                        <label class="flex flex-col gap-1 cursor-pointer">
+                            <span class="text-lg font-bold text-white tracking-tight">Ocultar Seção "Sobre" na loja</span>
+                            <span class="text-sm text-neutral-400">Se ativado, esta seção não aparecerá na vitrine pública.</span>
+                        </label>
+                        <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="ocultar_sobre" id="ocultar_sobre" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" {% if loja.ocultar_sobre %}checked{% endif %}/>
+                            <label for="ocultar_sobre" class="toggle-label block overflow-hidden h-6 rounded-full bg-neutral-700 cursor-pointer"></label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block text-sm font-semibold mb-2 text-neutral-300">Título do Menu Sobre (Cabeçalho)</label>
+                                <input type="text" name="titulo_menu_sobre" value="{{ loja.titulo_menu_sobre or '' }}" class="w-full admin-input rounded-xl p-3.5 text-sm" placeholder="Ex: Quem Somos">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-2 text-neutral-300">Título da Seção (Ex: Sobre Mim, Nossa História)</label>
+                                <input type="text" name="sobre_titulo" value="{{ loja.sobre_titulo or '' }}" class="w-full admin-input rounded-xl p-3.5 text-sm">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-3 text-neutral-300">Imagem de Perfil / Empresa</label>
+                            <div class="flex items-center gap-5 bg-neutral-900 p-5 rounded-2xl border border-neutral-800 shadow-inner">
+                                {% if loja.sobre_imagem_url %}
+                                <img src="{{ loja.sobre_imagem_url }}" class="h-20 w-20 object-cover border-4 border-neutral-700 rounded-full shadow-lg bg-neutral-800">
                                 {% endif %}
+                                <input type="file" name="sobre_imagem" accept="image/*" class="text-sm text-neutral-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-neutral-800 file:text-neutral-200 hover:file:bg-neutral-700 cursor-pointer">
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold mb-2 text-neutral-300">Texto / Biografia / Missão</label>
+                            <textarea name="sobre_texto" rows="8" class="w-full admin-input rounded-2xl p-4 text-sm resize-y" placeholder="Conte detalhes sobre seu negócio...">{{ loja.sobre_texto or '' }}</textarea>
+                            <p class="text-xs text-neutral-600 mt-2 flex items-center gap-1.5"><i data-lucide="info" class="w-3.5 h-3.5"></i> Dica: Use quebras de linha para separar parágrafos.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="layout" class="glass-card rounded-3xl p-8 hidden space-y-8 transition-all relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h2 class="text-3xl font-extrabold text-white tracking-tighter flex items-center gap-3 mb-1"><i data-lucide="layout-template" class="text-primary"></i> Layout & Ordem</h2>
+                        <p class="text-neutral-400">Defina a estrutura e visibilidade das seções na Home.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-5 gap-10 relative z-10">
+                        <div class="lg:col-span-2">
+                            <h3 class="font-bold text-xl text-white tracking-tight mb-3 flex items-center gap-2.5"><i data-lucide="grip-vertical" class="text-neutral-600"></i> Ordem das Seções</h3>
+                            <p class="text-sm text-neutral-500 mb-5">Arraste para reordenar a sequência vertical na vitrine.</p>
+                            <input type="hidden" name="layout_order" id="layoutOrderInput" value="{{ loja.layout_order }}">
+                            <ul id="layout-sortable" class="bg-neutral-900/50 border border-neutral-800 rounded-2xl divide-y divide-neutral-800 shadow-inner">
+                                {% for secao in loja.layout_order.split(',') %}
+                                <li class="list-group-item p-4.5 flex items-center gap-4 hover:bg-neutral-800/40 cursor-grab group" data-id="{{ secao }}">
+                                    <i data-lucide="grip-vertical" class="text-neutral-600 group-hover:text-neutral-400 transition"></i>
+                                    <span class="font-bold text-neutral-100 capitalize flex-1 tracking-tight text-base">{{ secao.replace('_', ' ') }}</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                        <div class="lg:col-span-3 space-y-6">
+                             <h3 class="font-bold text-xl text-white tracking-tight mb-5">Visibilidade & Títulos das Seções</h3>
+                            
+                            {% set switches = [
+                                ('ocultar_banner', 'image', 'Banner Principal'),
+                                ('ocultar_banners_menores', 'images', 'Banners Menores'),
+                                ('ocultar_busca', 'search', 'Barra de Busca')
+                            ] %}
+                            {% for name, icon, label in switches %}
+                            <div class="bg-neutral-900/60 p-5 rounded-xl border border-neutral-800 flex items-center justify-between group hover:border-neutral-700 transition">
+                                <div class="flex items-center gap-3.5">
+                                    <i data-lucide="{{ icon }}" class="text-neutral-600 w-5 h-5 group-hover:text-primary transition"></i>
+                                    <span class="text-base font-semibold text-neutral-100 tracking-tight">{{ label }}</span>
+                                </div>
+                                <div class="relative inline-block w-12 align-middle select-none transition duration-200 ease-in">
+                                    <input type="checkbox" name="{{ name }}" id="{{ name }}" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" {% if loja[name] %}checked{% endif %}/>
+                                    <label for="{{ name }}" class="toggle-label block overflow-hidden h-6 rounded-full bg-neutral-700 cursor-pointer"></label>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                            {% set input_sections = [
+                                ('categorias', 'layers', 'Categorias', 'Nossas Categorias'),
+                                ('produtos', 'shopping-bag', 'Produtos (Todos)', 'Todos os Produtos'),
+                                ('novidades', 'star', 'Novidades/Lançamentos', 'Novidades & Lançamentos'),
+                                ('blog', 'file-text', 'Blog (Últimos Posts)', 'Últimas do Blog'),
+                                ('agenda', 'calendar', 'Agenda de Horários', 'Agende seu Horário'),
+                                ('formulario', 'mail', 'Formulário de Contato', 'Fale com um Especialista')
+                            ] %}
+                            {% for key, icon, label, default_title in input_sections %}
+                            <div class="bg-neutral-900 p-5 rounded-2xl border border-neutral-800 space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3.5">
+                                        <i data-lucide="{{ icon }}" class="text-neutral-600 w-5 h-5"></i>
+                                        <span class="text-base font-semibold text-neutral-100 tracking-tight">{{ label }}</span>
+                                    </div>
+                                    <div class="relative inline-block w-12 align-middle select-none transition duration-200 ease-in">
+                                        <input type="checkbox" name="ocultar_{{ key }}" id="ocultar_{{ key }}" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" {% if loja['ocultar_' ~ key] %}checked{% endif %}/>
+                                        <label for="ocultar_{{ key }}" class="toggle-label block overflow-hidden h-6 rounded-full bg-neutral-700 cursor-pointer"></label>
+                                    </div>
+                                </div>
+                                <input type="text" name="titulo_{{ key }}" value="{{ loja['titulo_' ~ key] or default_title }}" class="w-full admin-input rounded-lg p-3 text-sm focus:ring-1" placeholder="Título da seção">
+                            </div>
+                            {% endfor %}
+
+                            <div class="bg-neutral-950/50 p-6 rounded-2xl border-2 border-dashed border-neutral-800 space-y-5 mt-8">
+                                <div class="flex items-center justify-between mb-3 pb-3 border-b border-neutral-800">
+                                    <div class="flex flex-col gap-0.5">
+                                        <span class="text-base font-bold text-white tracking-tight">Modo Clean Cases/Portfolio (Globais)</span>
+                                        <span class="text-xs text-neutral-500">Aplica visual minimalista em todos os cards de produtos.</span>
+                                    </div>
+                                    <div class="relative inline-block w-12 align-middle select-none transition duration-200 ease-in">
+                                        <input type="checkbox" name="clean_cards_mode" id="clean_cards_mode" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" {% if loja.clean_cards_mode %}checked{% endif %}/>
+                                        <label for="clean_cards_mode" class="toggle-label block overflow-hidden h-6 rounded-full bg-neutral-700 cursor-pointer"></label>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                    {% set cleans = [('hide_card_title', 'Ocultar Titulo'), ('hide_explore_button', 'Ocultar Explore'), ('disable_card_shadow', 'Remover Sombra')] %}
+                                    {% for name, label in cleans %}
+                                    <label class="flex items-center justify-between bg-neutral-900 p-4 rounded-xl border border-neutral-800 cursor-pointer hover:border-neutral-700">
+                                        <span class="text-xs text-neutral-300 font-medium">{{ label }}</span>
+                                        <input type="checkbox" name="{{ name }}" class="form-checkbox text-primary rounded border-neutral-700 bg-neutral-800" {% if loja[name] %}checked{% endif %}>
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                                
+                                <div class="pt-4 mt-2">
+                                    <label class="block text-sm font-semibold text-neutral-300 mb-2.5">Layout da Seção de Cases/Produtos na Home</label>
+                                    <select name="layout_portfolio" class="w-full admin-input rounded-xl p-3.5 text-sm bg-neutral-900 focus:ring-1 cursor-pointer">
+                                        <option value="carrossel" {% if loja.layout_portfolio == 'carrossel' or not loja.layout_portfolio %}selected{% endif %}>Apenas Carrossel (Rolagem Horizontal - Estilo Streaming)</option>
+                                        <option value="grade" {% if loja.layout_portfolio == 'grade' %}selected{% endif %}>Apenas Grade (Grid Normal)</option>
+                                        <option value="ambos" {% if loja.layout_portfolio == 'ambos' %}selected{% endif %}>Ambos (Carrossel e Grade)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="bg-neutral-900 p-5 rounded-2xl border border-neutral-800 space-y-2.5">
+                                <label class="flex items-center gap-3.5 mb-1.5">
+                                    <i data-lucide="message-square" class="text-neutral-600 w-5 h-5"></i>
+                                    <span class="text-base font-semibold text-neutral-100 tracking-tight">Chamada do Rodapé (Contato)</span>
+                                </label>
+                                <textarea name="chamada_rodape" rows="3" class="w-full admin-input rounded-xl p-3.5 text-sm resize-y" placeholder='Ex: VAMOS CRIAR ALGO JUNTOS?'>{{ loja.chamada_rodape or '' }}</textarea>
+                                <p class="text-[10px] text-neutral-600">Pule a linha para adicionar várias frases com transição automática. Deixe em branco para o padrão.</p>
+                            </div>
+
+                            <div class="bg-neutral-900 p-5 rounded-2xl border border-neutral-800 space-y-2.5">
+                                <label class="flex items-center gap-3.5 mb-1.5">
+                                    <i data-lucide="instagram" class="text-neutral-600 w-5 h-5"></i>
+                                    <span class="text-base font-semibold text-neutral-100 tracking-tight">Feed/Logos de Clientes (URLs das Imagens)</span>
+                                </label>
+                                <textarea name="logos_clientes" rows="5" class="w-full admin-input rounded-xl p-3.5 text-sm font-mono resize-y" placeholder="Cole os links diretos das imagens aqui (um por linha)...">{{ loja.logos_clientes or '' }}</textarea>
+                                <p class="text-[10px] text-neutral-600">Aparecerão num carrossel infinito. Se vazio, tentará embedar o feed do Instagram configurado.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            
+                <section id="visual" class="glass-card rounded-3xl p-8 hidden space-y-10 transition-all">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tighter flex items-center gap-3 mb-1"><i data-lucide="palette" class="text-primary"></i> Identidade Visual & Design</h2>
+                        <p class="text-neutral-400">Defina as cores, fontes e banners que dão a "cara" da sua marca.</p>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-xl text-white tracking-tight border-b border-neutral-800 pb-3 mb-6 flex items-center gap-2.5"><i data-lucide="layout" class="text-neutral-500 w-5 h-5"></i> Template & Tema Base</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+                            {% set themes = [
+                                ('index', 'shopping-cart', 'Padrão E-com', 'Com Carrinho/Dark'),
+                                ('direto_index', 'layout', 'Catálogo Simples', 'Sem Carrinho/Venda Direta'),
+                                ('pascoa', 'rabbit', 'Edição Páscoa', 'Sazonal/Temático'),
+                                ('institucional', 'briefcase', 'Agência/Tech', 'Foco em Portfolio/Cases'),
+                                ('tecnologia', 'cpu', 'SaaS/Digital', 'Visual Tech/Moderno'),
+                                ('portal_cliente', 'layout-dashboard', 'Portal Cliente', 'Área Restrita/Projetos')
+                            ] %}
+                            {% for val, icon, title, desc in themes %}
+                            {% if val not in ['tecnologia', 'onepiece', 'oscar'] or (loja.temas_exclusivos and val in loja.temas_exclusivos) or loja.slug == val %}
+                            <label class="group relative border-2 rounded-2xl p-5 cursor-pointer flex flex-col gap-3 transition-all duration-300 theme-selector {% if (not loja.template_ativo and val == 'index') or loja.template_ativo == val %}border-primary bg-neutral-900 shadow-xl shadow-primary/5 active-theme{% else %}border-neutral-800 bg-neutral-900/40 hover:border-neutral-700 hover:bg-neutral-900/80{% endif %}" onclick="selectTheme(this)">
+                                <input type="radio" name="template_ativo" value="{{ val }}" class="hidden" {% if (not loja.template_ativo and val == 'index') or loja.template_ativo == val %}checked{% endif %}>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div class="w-11 h-11 bg-neutral-800 rounded-xl flex items-center justify-center border border-neutral-700 group-hover:scale-110 transition-transform">
+                                        <i data-lucide="{{ icon }}" class="text-primary w-5 h-5"></i>
+                                    </div>
+                                    <div class="w-5 h-5 rounded-full border-2 border-neutral-600 flex items-center justify-center group-hover:border-primary transition-colors radio-mark {% if (not loja.template_ativo and val == 'index') or loja.template_ativo == val %}border-primary bg-primary{% endif %}">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-white opacity-0 {% if (not loja.template_ativo and val == 'index') or loja.template_ativo == val %}opacity-100{% endif %}"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-1">
+                                    <h4 class="font-bold text-white text-base tracking-tight">{{ title }}</h4>
+                                    <p class="text-[11px] text-neutral-400 mt-0.5 leading-relaxed">{{ desc }}</p>
+                                </div>
+                                
+                                {% if (not loja.template_ativo and val == 'index') or loja.template_ativo == val %}
+                                <span class="absolute -top-2.5 -right-2.5 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg pulse-slow">ATIVO</span>
+                                {% endif %}
+                            </label>
+                            {% endif %}
                             {% endfor %}
                         </div>
                     </div>
-                    {% endfor %}
 
-                </div>
-            </div>
-
-            <div class="glass-panel rounded-2xl p-6">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2" style="color: var(--primary);"><i data-lucide="list-checks"></i> Lista de Entregáveis</h2>
-                <div class="space-y-4">
-                    {% for p in produtos %}
-                    <div onclick="openTaskModal('{{ p.id }}')" class="p-4 rounded-xl border flex gap-4 items-start cursor-pointer transition hover:bg-black/5" style="background-color: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.05);">
-                        <div class="mt-1 p-2 rounded-lg" style="background-color: rgba(0,0,0,0.05);">
-                            <i data-lucide="check-circle" style="color: var(--primary); width: 20px; height: 20px;"></i>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex justify-between items-start">
-                                <h3 class="font-bold text-base">{{ p.nome }}</h3>
-                                <i data-lucide="external-link" class="w-4 h-4 opacity-50 shrink-0 mt-1"></i>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        
+                        <div class="space-y-8">
+                            <h3 class="font-bold text-xl text-white tracking-tight border-b border-neutral-800 pb-3 mb-6 flex items-center gap-2.5"><i data-lucide="image" class="text-neutral-500 w-5 h-5"></i> Logotipo & Branding</h3>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold mb-3 text-neutral-300">Logotipo Principal da Loja</label>
+                                <div class="flex items-center gap-6 bg-neutral-900 p-6 rounded-2xl border border-neutral-800 shadow-inner">
+                                    {% if loja.logo_url %}
+                                    <img src="{{ loja.logo_url }}" class="h-16 max-w-[200px] object-contain border-2 border-neutral-700 rounded-xl bg-neutral-800 p-2 shadow-xl">
+                                    {% endif %}
+                                    <input type="file" name="logo" accept="image/*" class="text-sm text-neutral-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-neutral-800 file:text-neutral-200 hover:file:bg-neutral-700 cursor-pointer">
+                                </div>
                             </div>
-                            {% if p.descricao %}
-                            <p class="text-sm mt-2 opacity-80 line-clamp-2">{{ p.descricao }}</p>
-                            {% endif %}
-                            <div class="mt-3 inline-block px-3 py-1 rounded-full text-xs font-bold" style="background-color: var(--primary); color: white;">
-                                {% for cat in categorias %}{% if cat.id == p.categoria_id %}{{ cat.nome }}{% endif %}{% endfor %}
+
+                             <div class="grid grid-cols-2 gap-6 bg-neutral-900/60 p-6 rounded-2xl border border-neutral-800 mt-8">
+                                <div>
+                                    <label class="block text-sm font-semibold mb-1.5 text-neutral-300">Cor Primária (Sotaque)</label>
+                                    <p class="text-xs text-neutral-500 mb-2.5">Botões, links ativos e detalhes.</p>
+                                    <div class="flex items-center gap-2.5 bg-neutral-900 border border-neutral-800 rounded-xl p-1.5 shadow-inner">
+                                        <input type="color" name="cor_primaria" value="{{ loja.cor_primaria }}" class="h-11 w-16 p-0 border-0 rounded-lg cursor-pointer bg-transparent">
+                                        <input type="text" value="{{ loja.cor_primaria }}" class="w-full bg-transparent border-0 text-white font-mono text-sm uppercase p-0 focus:ring-0" onchange="this.previousElementSibling.value = this.value" maxlength="7">
+                                    </div>
+                                </div>
+                                <div class="opacity-50 pointer-events-none"> <label class="block text-sm font-semibold mb-1.5 text-neutral-400">Cor do Fundo (Body)</label>
+                                    <p class="text-xs text-neutral-600 mb-2.5">Indisponível neste tema (Forçado Dark).</p>
+                                    <div class="flex items-center gap-2.5 bg-neutral-900/50 border border-neutral-800 rounded-xl p-1.5 shadow-inner">
+                                        <div class="h-11 w-16 rounded-lg bg-[#0a0a0a] border border-neutral-700"></div>
+                                        <input type="text" value="#0a0a0a" class="w-full bg-transparent border-0 text-neutral-600 font-mono text-sm p-0 focus:ring-0" readonly>
+                                        <input type="hidden" name="cor_fundo" value="#0a0a0a">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-1.5 text-neutral-300">Cor dos Títulos (H1-H6)</label>
+                                    <div class="flex items-center gap-2.5 bg-neutral-900 border border-neutral-800 rounded-xl p-1.5 shadow-inner">
+                                        <input type="color" name="cor_titulo" value="{{ loja.cor_titulo }}" class="h-11 w-16 p-0 border-0 rounded-lg cursor-pointer bg-transparent">
+                                        <input type="text" value="{{ loja.cor_titulo }}" class="w-full bg-transparent border-0 text-white font-mono text-sm uppercase p-0 focus:ring-0" onchange="this.previousElementSibling.value = this.value" maxlength="7">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-1.5 text-neutral-300">Cor do Texto Geral</label>
+                                    <div class="flex items-center gap-2.5 bg-neutral-900 border border-neutral-800 rounded-xl p-1.5 shadow-inner">
+                                        <input type="color" name="cor_texto" value="{{ loja.cor_texto }}" class="h-11 w-16 p-0 border-0 rounded-lg cursor-pointer bg-transparent">
+                                        <input type="text" value="{{ loja.cor_texto }}" class="w-full bg-transparent border-0 text-white font-mono text-sm uppercase p-0 focus:ring-0" onchange="this.previousElementSibling.value = this.value" maxlength="7">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="space-y-8 md:mt-2">
+                            <h3 class="font-bold text-xl text-white tracking-tight border-b border-neutral-800 pb-3 mb-6 flex items-center gap-2.5"><i data-lucide="type" class="text-neutral-500 w-5 h-5"></i> Tipografia (Fontes Apple Style)</h3>
+                            <div class="grid grid-cols-1 gap-5 bg-neutral-900 p-6 rounded-2xl border border-neutral-800 shadow-inner">
+                                 <div>
+                                    <label class="block text-sm font-semibold mb-2 text-neutral-300">Fonte dos Títulos (Google Fonts)</label>
+                                    <select name="font_titulo" class="w-full admin-input rounded-xl p-3.5 text-sm bg-neutral-900 focus:ring-1 cursor-pointer font-bold tracking-tight">
+                                        <option value="Inter" {% if loja.font_titulo == 'Inter' or not loja.font_titulo %}selected{% endif %}>Inter (Apple Like - Padrão Chique)</option>
+                                        <option value="Poppins" {% if loja.font_titulo == 'Poppins' %}selected{% endif %}>Poppins (Geométrica Moderna)</option>
+                                        <option value="Montserrat" {% if loja.font_titulo == 'Montserrat' %}selected{% endif %}>Montserrat (Premium & Impactante)</option>
+                                        <option value="Playfair Display" {% if loja.font_titulo == 'Playfair Display' %}selected{% endif %}>Playfair Display (Serifada Elegante)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2 text-neutral-300">Fonte do Corpo (Google Fonts)</label>
+                                    <select name="font_corpo" class="w-full admin-input rounded-xl p-3.5 text-sm bg-neutral-900 focus:ring-1 cursor-pointer">
+                                        <option value="Inter" {% if loja.font_corpo == 'Inter' or not loja.font_corpo %}selected{% endif %}>Inter (Leitura Perfeita - Padrão)</option>
+                                        <option value="Roboto" {% if loja.font_corpo == 'Roboto' %}selected{% endif %}>Roboto (Funcional)</option>
+                                        <option value="Open Sans" {% if loja.font_corpo == 'Open Sans' %}selected{% endif %}>Open Sans (Clean)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2 text-neutral-300">Tamanho Base da Fonte (px)</label>
+                                    <div class="flex items-center gap-3 bg-neutral-900/50 p-2 rounded-xl border border-neutral-800">
+                                        <input type="range" name="font_tamanho_base" value="{{ loja.font_tamanho_base or 16 }}" min="14" max="20" step="1" class="w-full h-1.5 bg-neutral-700 rounded-full appearance-none cursor-pointer accent-primary" oninput="this.nextElementSibling.value = this.value + 'px'">
+                                        <output class="text-sm font-mono font-bold text-white w-12 text-center bg-neutral-800 py-1 rounded-md">{{ loja.font_tamanho_base or 16 }}px</output>
+                                    </div>
+                                    <p class="text-xs text-neutral-600 mt-2 flex items-center gap-1.5"><i data-lucide="info" class="w-3.5 h-3.5"></i> Recomendado: 16px. Afeta todo o site proporcionalmente.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    {% else %}
-                    <p class="opacity-70 text-sm">Nenhuma tarefa mapeada.</p>
-                    {% endfor %}
-                </div>
-            </div>
 
-        </section>
+                    <div class="pt-6 mt-4">
+                        <h3 class="font-bold text-xl text-white tracking-tight border-b border-neutral-800 pb-3 mb-8 flex items-center gap-2.5"><i data-lucide="images" class="text-neutral-500 w-5 h-5"></i> Gestão de Banners (Estilo Carrossel Netflix)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            
+                            {% set banner_fields = [
+                                ('1', 'bannerprincipal1', 'link1', 'Banner Principal 1 (Desktop)', 'banner1_titulo', 'banner1_subtitulo', 'banner1_botao'),
+                                ('2', 'bannerprincipal2', 'link2', 'Banner Principal 2 (Desktop)', 'banner2_titulo', 'banner2_subtitulo', 'banner2_botao')
+                            ] %}
+                            
+                            {% for num, file_name, link_name, label, tit_name, sub_name, btn_name in banner_fields %}
+                            <div class="glass-card p-6 rounded-2xl border hover:border-neutral-700 transition-all space-y-5">
+                                <label class="block text-base font-bold text-neutral-100 tracking-tight">{{ label }}</label>
+                                {% if loja[file_name + '_url'] %}
+                                <div class="relative group rounded-xl overflow-hidden border border-neutral-800 shadow-inner bg-neutral-900">
+                                    <img src="{{ loja[file_name + '_url'] }}" class="w-full h-40 md:h-48 object-cover group-hover:scale-105 transition-transform duration-500">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+                                        <span class="text-white font-bold text-lg tracking-tight line-clamp-1">{{ loja[tit_name] or 'Título Exemplo ' ~ num }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                <input type="file" name="{{ file_name }}" accept="image/*" class="block w-full text-xs text-neutral-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-neutral-800 file:text-neutral-200 hover:file:bg-neutral-700 cursor-pointer">
+                                
+                                <div class="relative">
+                                    <i data-lucide="link" class="absolute left-3.5 top-3.5 text-neutral-600 w-4 h-4"></i>
+                                    <input type="text" name="{{ link_name }}" value="{{ loja['linkbannerprincipal' ~ num] }}" placeholder="Link de destino (Ex: /produtos)" class="w-full admin-input rounded-lg p-3 pl-10 text-xs">
+                                </div>
+                                
+                                <div class="bg-neutral-950/50 p-5 rounded-xl border border-neutral-800 space-y-3.5 mt-4">
+                                    <label class="block text-xs font-bold text-neutral-500 uppercase flex items-center gap-1.5"><i data-lucide="pencil" class="w-3 h-3"></i> Textos Sobrepostos (Institucional/Tech)</label>
+                                    <input type="text" name="{{ tit_name }}" value="{{ loja[tit_name] or '' }}" placeholder="Título Principal Impactante" class="w-full admin-input rounded-lg p-3 text-xs">
+                                    <input type="text" name="{{ sub_name }}" value="{{ loja[sub_name] or '' }}" placeholder="Subtítulo Descritivo" class="w-full admin-input rounded-lg p-3 text-xs">
+                                    <input type="text" name="{{ btn_name }}" value="{{ loja[btn_name] or '' }}" placeholder="Texto do Botão CTA (Ex: Saiba Mais)" class="w-full admin-input rounded-lg p-3 text-xs">
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
 
-        <aside class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+                            {% set small_banners = [
+                                ('1', 'bannermenor1', 'linkbannermenor1', 'Banner Menor 1 (Quadrado/Auxiliar)'),
+                                ('2', 'bannermenor2', 'linkbannermenor2', 'Banner Menor 2 (Quadrado/Auxiliar)')
+                            ] %}
+                            {% for num, file_name, link_name, label in small_banners %}
+                            <div class="glass-card p-6 rounded-2xl border hover:border-neutral-700 transition-all space-y-5">
+                                <label class="block text-base font-bold text-neutral-100 tracking-tight">{{ label }}</label>
+                                {% if loja[file_name + '_url'] %}
+                                <div class="rounded-xl overflow-hidden border border-neutral-800 shadow-inner bg-neutral-900 w-full h-32 md:h-36">
+                                    <img src="{{ loja[file_name + '_url'] }}" class="w-full h-full object-cover">
+                                </div>
+                                {% endif %}
+                                <input type="file" name="{{ file_name }}" accept="image/*" class="block w-full text-xs text-neutral-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-neutral-800 file:text-neutral-200 hover:file:bg-neutral-700 cursor-pointer">
+                                <div class="relative">
+                                    <i data-lucide="link" class="absolute left-3.5 top-3.5 text-neutral-600 w-4 h-4"></i>
+                                    <input type="text" name="{{ link_name }}" value="{{ loja[link_name] }}" placeholder="Link de destino" class="w-full admin-input rounded-lg p-3 pl-10 text-xs">
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-            <div class="glass-panel rounded-2xl p-6">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2" style="color: var(--primary);"><i data-lucide="calendar-clock"></i> Prazos e Reuniões</h2>
-                <div class="space-y-4">
-                    {% for item in agenda %}
-                    <div class="flex items-center gap-4 p-3 rounded-xl border" style="background-color: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.05);">
-                        <div class="w-14 h-14 rounded-lg flex flex-col items-center justify-center font-bold text-white shadow-sm" style="background-color: var(--primary);">
-                            <span class="text-[10px] uppercase">{{ item.data_hora_formatada.split(' ')[0][:5] }}</span>
-                            <span class="text-sm">{{ item.data_hora_formatada.split(' ')[2] }}</span>
+                    <div class="pt-6 mt-4 bg-neutral-900 p-6 rounded-2xl border border-neutral-800 shadow-inner space-y-5">
+                        <label class="block text-lg font-bold text-white tracking-tight mb-2 flex items-center gap-2.5"><i data-lucide="text-cursor-input" class="text-primary w-5 h-5 pulse-slow"></i> Frases do Ticker Rotativo (Faixa Superior)</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <input type="text" name="frase1" value="{{ loja.frase1 }}" placeholder="Frase 1 (Ex: 10% OFF no Pix)" class="admin-input rounded-xl p-3.5 text-sm">
+                            <input type="text" name="frase2" value="{{ loja.frase2 }}" placeholder="Frase 2 (Ex: Projetos em 10 dias)" class="admin-input rounded-xl p-3.5 text-sm">
+                            <input type="text" name="frase3" value="{{ loja.frase3 }}" placeholder="Frase 3 (Ex: Suporte VIP)" class="admin-input rounded-xl p-3.5 text-sm">
+                        </div>
+                        <p class="text-xs text-neutral-600 mt-1 flex items-center gap-1.5"><i data-lucide="info" class="w-3.5 h-3.5"></i> Deixe em branco para não exibir. As frases ficarão rodando no topo do site.</p>
+                    </div>
+                </section>
+
+                <section id="config" class="glass-card rounded-3xl p-8 hidden space-y-10 transition-all">
+                     <div class="flex justify-between items-center gap-4">
+                        <div>
+                            <h2 class="text-3xl font-extrabold text-white tracking-tighter flex items-center gap-3 mb-1"><i data-lucide="settings" class="text-primary"></i> Configurações Gerais & Acesso</h2>
+                            <p class="text-neutral-400">Dados da empresa, integrações e segurança.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 bg-neutral-900 p-8 rounded-2xl border border-neutral-800 shadow-inner">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-neutral-300">Nome da Loja / Empresa</label>
+                            <input type="text" name="nome" value="{{ loja.nome }}" class="w-full admin-input rounded-xl p-3.5 text-base font-bold tracking-tight" required>
                         </div>
                         <div>
-                            <h3 class="font-bold text-sm">{{ item.cliente_nome or 'Marco do Projeto' }}</h3>
-                            <p class="text-xs mt-1 opacity-70">
-                                {% if item.disponivel %}Reunião Agendada{% else %}Prazo Interno{% endif %}
-                            </p>
+                            <label class="block text-sm font-semibold mb-2 text-neutral-300">WhatsApp Comercial (Só números, com DDD)</label>
+                            <div class="relative">
+                                <i data-lucide="message-circle" class="absolute left-4 top-4 text-green-500 w-5 h-5"></i>
+                                <input type="text" name="whatsapp" value="{{ loja.whatsapp_comercial }}" class="w-full admin-input rounded-xl p-3.5 pl-12 text-base font-medium tracking-tight" placeholder="Ex: 11999999999" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-neutral-300">E-mail de Contato / Admin</label>
+                            <input type="email" name="email" value="{{ loja.email }}" class="w-full admin-input rounded-xl p-3.5 text-sm font-mono" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-neutral-300">Link do Instagram (URL Completa)</label>
+                            <div class="relative">
+                                <i data-lucide="instagram" class="absolute left-4 top-4 text-neutral-500 w-5 h-5"></i>
+                                <input type="text" name="instagram_url" value="{{ loja.instagram_url or '' }}" placeholder="https://instagram.com/suaempresa" class="w-full admin-input rounded-xl p-3.5 pl-12 text-sm font-mono">
+                            </div>
+                        </div>
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-sm font-semibold mb-2 text-neutral-300">Endereço Físico (Mapa/Rodapé)</label>
+                            <input type="text" name="endereco_fisico" value="{{ loja.endereco_fisico or '' }}" placeholder="Ex: Av Paulista, 1000 - São Paulo, SP" class="w-full admin-input rounded-xl p-3.5 text-sm">
+                        </div>
+                        
+                        <div class="col-span-1 md:col-span-2 flex flex-col md:flex-row gap-6 mt-4 pt-6 border-t border-neutral-800">
+                             {% set flags = [
+                                ('mostrar_mapa', 'map-pin', 'Exibir Mapa da Localização'),
+                                ('mostrar_whatsapp_flutuante', 'phone-forwarded', 'Ativar WhatsApp Flutuante'),
+                                ('superfrete_ativo', 'truck', 'Ativar Cálculo de Frete (Via API)')
+                            ] %}
+                            {% for name, icon, label in flags %}
+                            <label class="flex items-center gap-3 cursor-pointer group bg-neutral-950/60 px-5 py-3 rounded-xl border border-neutral-800 hover:border-neutral-700">
+                                <input type="checkbox" name="{{ name }}" class="form-checkbox text-primary rounded border-neutral-700 bg-neutral-800 w-5 h-5 cursor-pointer" {% if loja[name] %}checked{% endif %}>
+                                <i data-lucide="{{ icon }}" class="text-neutral-600 w-4 h-4 group-hover:text-primary transition"></i>
+                                <span class="text-sm font-semibold text-neutral-100 transition group-hover:text-white">{{ label }}</span>
+                            </label>
+                            {% endfor %}
                         </div>
                     </div>
-                    {% else %}
-                    <p class="opacity-70 text-sm">Nenhuma data crítica mapeada no momento.</p>
-                    {% endfor %}
-                </div>
-            </div>
 
-            <div class="glass-panel rounded-2xl p-6">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2" style="color: var(--primary);"><i data-lucide="activity"></i> Linha do Tempo</h2>
-                <div class="space-y-6 relative before:absolute before:inset-0 before:ml-2 before:h-full before:w-0.5" style="before:background-color: rgba(0,0,0,0.1);">
-                    
-                    {% for post in posts %}
-                    <div class="relative flex items-start gap-4">
-                        <div class="w-5 h-5 rounded-full z-10 border-2 mt-1" style="background-color: var(--color-bg); border-color: var(--primary);"></div>
-                        <div class="flex-1 p-4 rounded-xl border shadow-sm" style="background-color: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.05);">
-                            <span class="font-bold text-sm block mb-1" style="color: var(--primary);">{{ post.titulo }}</span>
-                            <time class="text-[10px] opacity-70 mb-2 block font-bold">{{ post.data }}</time>
-                            <div class="text-sm opacity-90 whitespace-pre-line">{{ post.resumo }}</div>
+                    <div class="pt-8 border-t border-neutral-800">
+                        <h3 class="font-bold text-xl text-white tracking-tight border-b border-neutral-800 pb-3 mb-6 flex items-center gap-2.5"><i data-lucide="shield-lock" class="text-red-500 w-5 h-5"></i> Segurança & Nova Senha</h3>
+                        <div class="bg-neutral-900 p-6 rounded-2xl border border-neutral-800 space-y-4">
+                            <label class="block text-sm font-semibold mb-1 text-neutral-300">Redefinir Senha do Painel</label>
+                            <p class="text-xs text-neutral-500 mb-3">Preencha apenas se desejar alterar a senha de acesso atual.</p>
+                            <div class="relative">
+                                <i data-lucide="lock" class="absolute left-4 top-4 text-neutral-600 w-5 h-5"></i>
+                                <input type="password" name="nova_senha" placeholder="Mínimo 6 caracteres" class="w-full md:w-1/2 admin-input rounded-xl p-3.5 pl-12 text-sm">
+                            </div>
                         </div>
                     </div>
-                    {% else %}
-                    <p class="opacity-70 text-sm ml-6">Nenhuma atualização registrada.</p>
-                    {% endfor %}
-                    
-                </div>
-            </div>
 
-            {% if loja.sobre_texto %}
-            <div class="glass-panel rounded-2xl p-6">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2" style="color: var(--primary);"><i data-lucide="info"></i> Escopo Fechado</h2>
-                <div class="text-sm opacity-90 whitespace-pre-line leading-relaxed">
-                    {{ loja.sobre_texto }}
-                </div>
-            </div>
-            {% endif %}
+                     <div class="bg-primary/5 p-6 rounded-2xl border-2 border-dashed border-primary/20 text-sm text-primary flex items-start gap-4 shadow-xl shadow-primary/5 mt-10">
+                        <i data-lucide="link-2" class="w-8 h-8 flex-shrink-0 mt-1 animate-pulse-slow"></i>
+                        <div>
+                            <p class="font-bold text-lg tracking-tight mb-1 text-white">Domínio da sua loja Leanttro:</p>
+                            <p class="text-neutral-400 mb-2">Use este link para divulgar ou acessar sua vitrine rápida.</p>
+                            <code class="bg-neutral-900 border border-neutral-800 text-white px-4 py-2 rounded-lg select-all text-sm font-mono block w-fit shadow-inner">https://catalogo.leanttro.com/{{ loja.slug_url }}</code>
+                        </div>
+                    </div>
+                </section>
 
-        </aside>
-
-    </main>
-
-    <footer class="mt-auto relative overflow-hidden py-16 border-t" style="background-color: var(--color-bg); border-color: rgba(0,0,0,0.1);">
-        <div class="container mx-auto px-6 text-center relative z-20 flex flex-col items-center">
-            
-            <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1773591878/presentes_180_x_50_px_720_x_200_px_1440_x_264_px_1_azuhgq.png" class="h-12 w-auto object-contain mb-8 hover:scale-110 transition-transform duration-500" style="filter: drop-shadow(0 0 10px rgba(0,0,0,0.2));">
-            
-            <div class="flex flex-col md:flex-row justify-center items-center gap-8 mb-8">
-                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="flex items-center gap-2 text-sm font-bold hover:opacity-70 transition" style="color: var(--color-text);">
-                    <i data-lucide="message-circle" class="w-5 h-5"></i> {{ loja.whatsapp_comercial }}
-                </a>
-                {% if loja.instagram_url %}
-                <a href="{{ loja.instagram_url }}" target="_blank" class="flex items-center gap-2 text-sm font-bold hover:opacity-70 transition" style="color: var(--color-text);">
-                    <i data-lucide="instagram" class="w-5 h-5"></i> Instagram
-                </a>
-                {% endif %}
-            </div>
-            
-            <p class="text-[10px] uppercase tracking-widest opacity-50">© 2026 {{ loja.nome }}. Todos os direitos reservados.</p>
-        </div>
-
-        <div class="absolute inset-0 w-full h-full z-10 pointer-events-none flex items-center justify-center opacity-[0.04]">
-            <div class="relative w-[350px] h-[350px] md:w-[450px] md:h-[450px]" style="perspective: 1000px;">
-                <div class="absolute inset-0 w-full h-full" style="transform: rotateX(65deg) rotateY(-20deg); transform-style: preserve-3d;">
-                    <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtom 15s linear infinite;">
-                        <path id="txtPath1" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
-                        <text font-size="15" fill="#000000" letter-spacing="5" font-weight="900" font-family="sans-serif">
-                            <textPath href="#txtPath1" startOffset="0%">LEANTTRO · DESIGN · DADOS ·</textPath>
-                        </text>
-                    </svg>
-                </div>
-                <div class="absolute inset-0 w-full h-full" style="transform: rotateX(65deg) rotateY(40deg); transform-style: preserve-3d;">
-                    <svg viewBox="0 0 200 200" class="w-full h-full" style="animation: spinAtomReverse 20s linear infinite;">
-                        <path id="txtPath2" fill="none" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
-                        <text font-size="15" fill="#000000" letter-spacing="5" font-weight="900" font-family="sans-serif">
-                            <textPath href="#txtPath2" startOffset="0%">LEANTTRO · DESIGN · DADOS ·</textPath>
-                        </text>
-                    </svg>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <div id="taskModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div class="rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl transform scale-95 transition-transform duration-300" id="taskModalContent" style="background-color: var(--color-bg); color: var(--color-text);">
-            
-            <div class="p-6 border-b flex justify-between items-center sticky top-0 z-10" style="background-color: var(--color-bg); border-color: rgba(0,0,0,0.1);">
-                <h3 class="font-bold text-xl" id="modalTitle" style="color: var(--primary);">Nome da Tarefa</h3>
-                <button onclick="closeTaskModal()" class="p-2 rounded-full hover:bg-black/5 transition">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
-            </div>
-            
-            <div class="p-6 space-y-6">
-                
-                <div id="modalMedia" class="w-full rounded-xl overflow-hidden bg-black/5 border flex items-center justify-center relative min-h-[200px]" style="border-color: rgba(0,0,0,0.05);">
-                </div>
-                
-                <div class="flex justify-end">
-                    <a id="modalDownloadBtn" href="#" target="_blank" download class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition hover:scale-105 shadow-md" style="background-color: var(--primary);">
-                        <i data-lucide="download" class="w-4 h-4"></i> Baixar Arquivo
-                    </a>
+                <div class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-neutral-900/90 backdrop-blur-lg border border-neutral-700/50 p-4 rounded-full flex items-center gap-6 shadow-2xl z-40 transition-all duration-300 translate-y-20 opacity-0" id="floatingSaveBar">
+                    <p class="text-white text-sm font-semibold pl-4 flex items-center gap-2">
+                        <i data-lucide="save" class="text-primary w-5 h-5"></i>
+                        Você possui alterações não salvas.
+                    </p>
+                    <button type="submit" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-8 rounded-full shadow-lg flex items-center gap-2.5 transition active:scale-95 text-sm">
+                         SALVAR ALTERAÇÕES
+                    </button>
+                    <button type="button" onclick="resetForm()" class="text-neutral-500 hover:text-white transition p-2 mr-2">
+                        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                    </button>
                 </div>
 
-                <div>
-                    <h4 class="font-bold text-sm uppercase tracking-wider mb-3 opacity-70">Detalhes da Etapa</h4>
-                    <p id="modalDesc" class="text-sm leading-relaxed whitespace-pre-line"></p>
-                </div>
+            </form>
 
-                <div class="pt-6 border-t" style="border-color: rgba(0,0,0,0.1);">
-                    <h4 class="font-bold text-sm mb-3">Interação e Controle</h4>
-                    <textarea id="modalFeedback" rows="3" placeholder="Escreva aqui caso necessite de alguma alteração nesta etapa..." class="w-full p-4 rounded-xl border focus:outline-none transition mb-4" style="background-color: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.1); color: var(--color-text);"></textarea>
-                    
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <button onclick="sendFeedback(false)" class="flex-1 py-3.5 rounded-xl font-bold border-2 transition hover:bg-black/5 flex items-center justify-center gap-2" style="border-color: var(--primary); color: var(--primary);">
-                            <i data-lucide="edit-3" class="w-4 h-4"></i> Solicitar Alteração
-                        </button>
-                        <button onclick="sendFeedback(true)" class="flex-1 py-3.5 rounded-xl font-bold text-white transition hover:scale-105 shadow-md flex items-center justify-center gap-2" style="background-color: #10B981;">
-                            <i data-lucide="check-circle" class="w-5 h-5"></i> Aprovar Etapa
-                        </button>
+        </main>
+    </div>
+
+    <div id="categoriaModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
+        <div class="modal-overlay absolute w-full h-full bg-black/80 backdrop-blur-sm"></div>
+        <div class="modal-container rounded-3xl shadow-2xl z-50 overflow-y-auto max-h-[90vh] w-11/12 md:max-w-xl translate-y-10 transition-all duration-300">
+            <div class="modal-content py-8 text-left px-10 space-y-6">
+                <div class="flex justify-between items-center pb-4 border-b border-neutral-800">
+                    <p class="text-2xl font-extrabold text-white tracking-tighter" id="catModalTitle">Nova Categoria</p>
+                    <div class="modal-close cursor-pointer z-50 p-2 hover:bg-neutral-800 rounded-full transition" onclick="toggleModal('categoriaModal')">
+                        <i data-lucide="x" class="text-neutral-500 w-6 h-6"></i>
                     </div>
                 </div>
+                <form id="categoriaForm" action="/{{ loja.slug_url }}/admin/categoria/salvar" method="POST" class="space-y-6">
+                    <input type="hidden" name="id" id="catId">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2.5 text-neutral-300">Nome da Categoria</label>
+                        <input type="text" name="nome" id="catNome" class="w-full admin-input rounded-xl p-4 text-base font-bold tracking-tight" placeholder="Ex: Serviços Digitais" required>
+                    </div>
+                    <div class="flex justify-end pt-6 border-t border-neutral-800 gap-3">
+                         <button type="button" class="px-6 py-3.5 rounded-xl text-neutral-400 font-bold hover:bg-neutral-800 transition" onclick="toggleModal('categoriaModal')">Cancelar</button>
+                        <button type="submit" class="px-8 py-3.5 rounded-xl text-white bg-primary font-bold hover:opacity-90 active:scale-95 shadow-lg shadow-primary/20 transition-all">Salvar Categoria</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="produtoModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 py-10">
+        <div class="modal-overlay absolute w-full h-full bg-black/80 backdrop-blur-sm"></div>
+        <div class="modal-container rounded-3xl shadow-2xl z-50 overflow-y-auto max-h-full w-full h-full md:h-auto md:w-11/12 md:max-w-6xl mx-auto translate-y-10 transition-all duration-300">
+            <div class="modal-content py-10 text-left px-10 md:px-12 space-y-8">
+                <div class="flex justify-between items-center pb-5 border-b border-neutral-800">
+                    <p class="text-3xl font-extrabold text-white tracking-tighter" id="prodModalTitle">Novo Produto</p>
+                    <div class="modal-close cursor-pointer z-50 p-2 hover:bg-neutral-800 rounded-full transition" onclick="toggleModal('produtoModal')">
+                        <i data-lucide="x" class="text-neutral-500 w-7 h-7"></i>
+                    </div>
+                </div>
+                <form id="produtoForm" action="/{{ loja.slug_url }}/admin/produto/salvar" method="POST" enctype="multipart/form-data" class="space-y-8 pb-10">
+                    <input type="hidden" name="id" id="prodId">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-6">
+                        <div class="col-span-1 md:col-span-3">
+                            <label class="block text-sm font-semibold mb-2 text-neutral-300">Nome do Produto / Case / Serviço *</label>
+                            <input type="text" name="nome" id="prodNome" class="w-full admin-input rounded-xl p-4 text-lg font-bold tracking-tight" required placeholder="Ex: Desenvolvimento Landing Page Premium">
+                        </div>
+                        <div class="col-span-1 md:col-span-1">
+                            <label class="block text-sm font-semibold mb-2 text-neutral-300">Categoria</label>
+                            <select name="categoria_id" id="prodCategoria" onchange="document.getElementById('hiddenCategoria').value = this.value;" class="w-full admin-input rounded-xl p-4 text-sm bg-neutral-900 focus:ring-1 cursor-pointer">
+                                <option value="">Sem Categoria (Geral)</option>
+                                {% for cat in categorias %}
+                                <option value="{{ cat.id }}">{{ cat.nome }}</option>
+                                {% endfor %}
+                            </select>
+                            <input type="hidden" name="categoria" id="hiddenCategoria">
+                        </div>
+                        <div class="col-span-1 md:col-span-2">
+                             <label class="block text-sm font-semibold mb-2 text-neutral-300">Preço (R$)</label>
+                             <div class="relative">
+                                <span class="absolute left-4 top-4 text-neutral-500 font-bold font-mono">R$</span>
+                                <input type="number" name="preco" id="prodPreco" step="0.01" class="w-full admin-input rounded-xl p-4 pl-12 text-lg font-mono font-medium tracking-tight" placeholder="0,00">
+                            </div>
+                        </div>
+                         <div class="col-span-1">
+                            <label class="block text-sm font-semibold mb-2 text-neutral-300">Estoque Atual</label>
+                            <input type="number" name="estoque" id="prodEstoque" class="w-full admin-input rounded-xl p-4 text-lg font-mono font-medium tracking-tight" placeholder="Ex: 99">
+                        </div>
+                        <div class="col-span-1">
+                            <label class="block text-sm font-semibold mb-2 text-neutral-300">Posição (Ordem Manual)</label>
+                            <input type="number" name="sort" id="prodSort" class="w-full admin-input rounded-xl p-4 text-lg font-mono font-medium tracking-tight" placeholder="Ex: 1">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-neutral-900 border border-neutral-800 p-6 rounded-2xl shadow-inner">
+                        {% set p_switches = [
+                            ('consulte', 'Sob Consulta / Portfolio (Ocultar preço/carrinho)'),
+                            ('layout_case', 'Usar layout de Case (Estilo Portfolio chique)'),
+                            ('a_partir_de', 'Mostrar "A partir de" no preço')
+                        ] %}
+                        {% for name, label in p_switches %}
+                        <div class="flex items-center gap-3.5 bg-neutral-950 p-4 rounded-xl border border-neutral-800 hover:border-neutral-700 transition cursor-pointer group">
+                            <input type="checkbox" name="{{ name }}" id="prod{{ name|title }}" class="form-checkbox text-primary rounded border-neutral-700 bg-neutral-800 w-5 h-5 cursor-pointer">
+                            <label for="prod{{ name|title }}" class="text-sm font-semibold text-neutral-200 cursor-pointer group-hover:text-white">{{ label }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="bg-neutral-950/60 p-6 rounded-2xl border border-neutral-800">
+                        <div class="flex items-center justify-between mb-5">
+                            <h4 class="font-bold text-white text-lg tracking-tight flex items-center gap-2.5"><i data-lucide="tags" class="text-primary"></i> Grupos de Variantes e Adicionais</h4>
+                            <button type="button" onclick="addGrupo()" class="text-sm bg-neutral-800 hover:bg-neutral-700 text-white font-semibold py-2.5 px-5 rounded-lg flex items-center gap-2 transition active:scale-95">
+                                <i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar Grupo
+                            </button>
+                        </div>
+                        <input type="hidden" name="variantes" id="prodVariantes">
+                        <div id="variantes-container" class="space-y-5"></div>
+                    </div>
+
+                    <div class="bg-blue-950/20 p-6 rounded-2xl border border-blue-900 shadow-inner">
+                        <h4 class="font-bold text-blue-200 text-lg tracking-tight mb-4 flex items-center gap-2.5"><i data-lucide="link" class="text-blue-500"></i> Links e Integração do Case (Opcional)</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1.5 text-blue-300">Link Externo do Projeto / Site (CTA)</label>
+                                <input type="text" name="link_projeto" id="prodLinkProjeto" class="w-full admin-input rounded-xl p-3 text-sm bg-blue-950/50 border-blue-900 focus:ring-blue-500" placeholder="https://exemplo.com">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1.5 text-blue-300">WhatsApp Específico para este item (Só números)</label>
+                                <input type="text" name="whatsapp_projeto" id="prodWhatsappProjeto" class="w-full admin-input rounded-xl p-3 text-sm bg-blue-950/50 border-blue-900 focus:ring-blue-500" placeholder="Ex: 5511999999999">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-neutral-900 p-8 rounded-2xl border border-neutral-800 shadow-inner">
+                        <div class="col-span-1 md:col-span-3 mb-2">
+                            <h4 class="font-bold text-white text-lg tracking-tight flex items-center gap-2.5"><i data-lucide="image" class="text-primary pulse-slow"></i> Galeria de Mídia do Produto</h4>
+                            <p class="text-sm text-neutral-400 mt-1">Formatos sugeridos: JPG, PNG, WEBP (Quadrado 1:1 para e-com, 16:9 para cases).</p>
+                        </div>
+                        
+                        {% set images = [
+                            ('imagem', 'Imagem Principal (Capa)*', 'file-up'),
+                            ('imagem1', 'Imagem Adicional 1', 'file-plus'),
+                            ('imagem2', 'Imagem Adicional 2', 'file-plus')
+                        ] %}
+                        {% for input_name, label, icon in images %}
+                        <div class="bg-neutral-950 p-5 rounded-xl border border-neutral-800 space-y-3">
+                            <label class="block text-sm font-semibold mb-2 text-neutral-300 flex items-center gap-2"><i data-lucide="{{ icon }}" class="w-4 h-4 text-neutral-500"></i> {{ label }}</label>
+                            <input type="file" name="{{ input_name }}" accept="image/*" class="block w-full text-xs text-neutral-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-neutral-800 file:text-neutral-200 hover:file:bg-neutral-700 cursor-pointer">
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-2.5 text-neutral-300">Descrição Detalhada do Produto / Case</label>
+                        <textarea name="descricao" id="prodDescricao" rows="10" class="w-full admin-input rounded-2xl p-5 text-sm resize-y leading-relaxed placeholder:opacity-50" placeholder="Escreva as características, especificações técnicos ou a história do projeto..."></textarea>
+                    </div>
+
+                    <div class="flex justify-end pt-8 border-t border-neutral-800 gap-3 pb-6 md:pb-0">
+                        <button type="button" class="px-6 py-3.5 rounded-xl text-neutral-400 font-bold hover:bg-neutral-800 transition" onclick="toggleModal('produtoModal')">Cancelar</button>
+                        <button type="submit" class="px-8 py-3.5 rounded-xl text-white bg-primary font-bold hover:opacity-90 active:scale-95 shadow-lg shadow-primary/20 transition-all flex items-center gap-2.5"><i data-lucide="check" class="w-5 h-5"></i> Salvar Produto</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="postModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 py-10">
+        <div class="modal-overlay absolute w-full h-full bg-black/80 backdrop-blur-sm"></div>
+        <div class="modal-container rounded-3xl shadow-2xl z-50 overflow-y-auto max-h-full w-11/12 md:max-w-4xl translate-y-10 transition-all duration-300">
+            <div class="modal-content py-10 text-left px-10 md:px-12 space-y-8">
+                <div class="flex justify-between items-center pb-5 border-b border-neutral-800">
+                    <p class="text-3xl font-extrabold text-white tracking-tighter" id="postModalTitle">Novo Post</p>
+                    <div class="modal-close cursor-pointer z-50 p-2 hover:bg-neutral-800 rounded-full transition" onclick="toggleModal('postModal')">
+                        <i data-lucide="x" class="text-neutral-500 w-7 h-7"></i>
+                    </div>
+                </div>
+                <form id="postForm" action="/{{ loja.slug_url }}/admin/post/salvar" method="POST" enctype="multipart/form-data" class="mt-6 space-y-6">
+                    <input type="hidden" name="id" id="postId">
+                    
+                    <div>
+                        <label class="block text-sm font-semibold mb-2.5 text-neutral-300">Título do Post *</label>
+                        <input type="text" name="titulo" id="postTitulo" class="w-full admin-input rounded-xl p-4 text-lg font-bold tracking-tight" required placeholder="Ex: Tendências de Design para 2026">
+                    </div>
+
+                    <div class="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl">
+                        <label class="block text-sm font-semibold mb-3 text-neutral-300">Capa do Post (Imagem Horizontal Suggestion)</label>
+                        <input type="file" name="capa" accept="image/*" class="w-full text-sm text-neutral-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-neutral-800 file:text-neutral-200 hover:file:bg-neutral-700 cursor-pointer border border-neutral-700 rounded-full p-1.5 bg-neutral-950shadow-inner">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-2.5 text-neutral-300">Resumo Curto (Aparece na listagem)</label>
+                        <textarea name="resumo" id="postResumo" rows="3" class="w-full admin-input rounded-xl p-4 text-sm resize-y" placeholder="Uma breve introdução para despertar interesse..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-2.5 text-neutral-300">Conteúdo Completo (Aceita HTML básico)</label>
+                        <textarea name="conteudo" id="postConteudo" rows="15" class="w-full admin-input rounded-2xl p-5 text-sm resize-y leading-relaxed" placeholder="Escreva seu artigo completo aqui..."></textarea>
+                         <p class="text-xs text-neutral-600 mt-2 flex items-center gap-1.5"><i data-lucide="info" class="w-3.5 h-3.5"></i> Dica: Use quebras de linha para separar parágrafos.</p>
+                    </div>
+
+                    <div class="flex justify-end pt-8 border-t border-neutral-800 gap-3">
+                        <button type="button" class="px-6 py-3.5 rounded-xl text-neutral-400 font-bold hover:bg-neutral-800 transition" onclick="toggleModal('postModal')">Cancelar</button>
+                        <button type="submit" class="px-8 py-3.5 rounded-xl text-white bg-primary font-bold hover:opacity-90 active:scale-95 shadow-lg shadow-primary/20 transition-all flex items-center gap-2.5"><i data-lucide="check" class="w-5 h-5"></i> Salvar Post</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="agendaModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 p-4">
+        <div class="modal-overlay absolute w-full h-full bg-black/80 backdrop-blur-sm"></div>
+        <div class="modal-container rounded-3xl shadow-2xl z-50 overflow-y-auto max-h-[90vh] w-11/12 md:max-w-xl translate-y-10 transition-all duration-300">
+            <div class="modal-content py-8 text-left px-10 space-y-6">
+                <div class="flex justify-between items-center pb-4 border-b border-neutral-800">
+                    <p class="text-2xl font-extrabold text-white tracking-tighter" id="agendaModalTitle">Novo Horário</p>
+                    <div class="modal-close cursor-pointer z-50 p-2 hover:bg-neutral-800 rounded-full transition" onclick="toggleModal('agendaModal')">
+                        <i data-lucide="x" class="text-neutral-500 w-6 h-6"></i>
+                    </div>
+                </div>
+                <form id="agendaForm" action="/{{ loja.slug_url }}/admin/agenda/salvar" method="POST" class="mt-4 space-y-6">
+                    <input type="hidden" name="id" id="agendaId">
+                    
+                    <div>
+                        <label class="block text-sm font-semibold mb-2.5 text-neutral-300 flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4 text-neutral-500"></i> Selecione o Dia e Horário *</label>
+                        <input type="datetime-local" name="data_hora" id="agendaDataHora" class="w-full admin-input rounded-xl p-4 text-base font-bold font-mono cursor-pointer" style="color-scheme: dark;" required>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 bg-neutral-900 p-4 rounded-xl border border-neutral-800 hover:border-neutral-700 transition cursor-pointer group">
+                        <input type="checkbox" name="disponivel" id="agendaDisponivel" class="form-checkbox text-primary rounded border-neutral-700 bg-neutral-800 w-5 h-5 cursor-pointer" checked>
+                        <label for="agendaDisponivel" class="text-sm font-semibold text-neutral-200 cursor-pointer group-hover:text-white">Horário Disponível para Agendamento Público</label>
+                    </div>
+
+                    <div class="pt-2">
+                        <label class="block text-sm font-semibold mb-2.5 text-neutral-300">Nome do Cliente / Projeto (Opcional - Uso Interno)</label>
+                        <input type="text" name="cliente_nome" id="agendaCliente" class="w-full admin-input rounded-xl p-4 text-base font-medium tracking-tight" placeholder="Ex: João Silva - Projeto Landing Page">
+                    </div>
+
+                    <div class="flex justify-end pt-6 mt-4 border-t border-neutral-800 gap-3">
+                        <button type="button" class="px-6 py-3.5 rounded-xl text-neutral-400 font-bold hover:bg-neutral-800 transition" onclick="toggleModal('agendaModal')">Cancelar</button>
+                        <button type="submit" class="px-8 py-3.5 rounded-xl text-white bg-primary font-bold hover:opacity-90 active:scale-95 shadow-lg shadow-primary/20 transition-all flex items-center gap-2.5"><i data-lucide="check" class="w-5 h-5"></i> Salvar Horário</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -302,92 +1077,841 @@
     <script>
         lucide.createIcons();
 
-        const tasksData = {
-            {% for p in produtos %}
-            "{{ p.id }}": {
-                nome: `{{ p.nome | replace('`', '\\`') }}`,
-                descricao: `{{ p.descricao | replace('`', '\\`') | replace('\n', '\\n') if p.descricao else '' }}`,
-                imagem: `{{ p.imagem }}`,
-                link_projeto: `{{ p.link_projeto or '' }}`,
-                whatsapp: `{{ loja.whatsapp_comercial }}`
-            },
-            {% endfor %}
-        };
+        // Inicializa GSAP para transições suaves
+        gsap.registerPlugin(ScrollToPlugin);
 
-        function openTaskModal(id) {
-            const task = tasksData[id];
-            if(!task) return;
-            
-            document.getElementById('modalTitle').innerText = task.nome;
-            document.getElementById('modalDesc').innerText = task.descricao || 'Sem detalhes descritivos para esta etapa.';
-            
-            const mediaContainer = document.getElementById('modalMedia');
-            const downloadBtn = document.getElementById('modalDownloadBtn');
-            
-            mediaContainer.innerHTML = '';
-            let mediaUrl = task.imagem;
-            let isVideo = false;
-            
-            if (task.link_projeto && (task.link_projeto.includes('cloudinary.com/video') || task.link_projeto.endsWith('.mp4'))) {
-                mediaUrl = task.link_projeto;
-                isVideo = true;
-                mediaContainer.innerHTML = `<video src="${mediaUrl}" controls class="w-full h-auto max-h-[450px] object-contain rounded-xl"></video>`;
-            } else if (task.link_projeto && (task.link_projeto.includes('cloudinary.com/image') || task.link_projeto.endsWith('.jpg') || task.link_projeto.endsWith('.png'))) {
-                 mediaUrl = task.link_projeto;
-                 mediaContainer.innerHTML = `<img src="${mediaUrl}" class="w-full h-auto max-h-[450px] object-contain rounded-xl">`;
-            } else {
-                mediaContainer.innerHTML = `<img src="${mediaUrl}" class="w-full h-auto max-h-[450px] object-contain rounded-xl">`;
+        // Barra de salvar flutuante (Apple Like)
+        const form = document.querySelector('form[action$="/admin/painel"]');
+        const saveBar = document.getElementById('floatingSaveBar');
+        let formChanged = false;
+
+        form.addEventListener('change', () => {
+            if (!formChanged) {
+                formChanged = true;
+                gsap.to(saveBar, { y: 0, opacity: 1, duration: 0.5, ease: "back.out(1.7)" });
             }
-            
-            let downloadUrl = mediaUrl;
-            if(downloadUrl.includes('upload/')) {
-                 downloadUrl = downloadUrl.replace('upload/', 'upload/fl_attachment/');
-            }
-            downloadBtn.href = downloadUrl;
-            
-            document.getElementById('taskModal').setAttribute('data-current-id', id);
-            document.getElementById('modalFeedback').value = '';
-            
-            const modal = document.getElementById('taskModal');
-            modal.classList.remove('hidden');
-            void modal.offsetWidth; 
-            modal.classList.remove('opacity-0');
-            document.getElementById('taskModalContent').classList.remove('scale-95');
+        });
+
+        function resetForm() {
+            form.reset();
+            formChanged = false;
+            gsap.to(saveBar, { y: 100, opacity: 0, duration: 0.4, ease: "power2.in" });
         }
 
-        function closeTaskModal() {
-            const modal = document.getElementById('taskModal');
-            modal.classList.add('opacity-0');
-            document.getElementById('taskModalContent').classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                document.getElementById('modalMedia').innerHTML = ''; 
-            }, 300);
-        }
+        // Sistema de abas com animação GSAP premium
+        function showSection(sectionId, immediate = false) {
+            const sections = document.querySelectorAll('main > section, main > form > section');
+            const links = document.querySelectorAll('.sidebar-link');
+            const targetSection = document.getElementById(sectionId);
 
-        function sendFeedback(isApproved) {
-            const id = document.getElementById('taskModal').getAttribute('data-current-id');
-            const task = tasksData[id];
-            const feedbackText = document.getElementById('modalFeedback').value.trim();
-            
-            let message = "";
-            if(isApproved) {
-                message = `✅ *ETAPA APROVADA*\n\n*Tarefa:* ${task.nome}`;
-                if(feedbackText) message += `\n*Observação:* ${feedbackText}`;
+            if (!targetSection) return;
+
+            // Encontra a seção visível atualmente
+            let currentSection = null;
+            sections.forEach(s => { if (!s.classList.contains('hidden')) currentSection = s; });
+
+            // Se for a mesma seção, não faz nada
+            if (currentSection === targetSection && !immediate) return;
+
+            if (immediate) {
+                // Configuração inicial rápida
+                sections.forEach(s => s.classList.add('hidden', 'opacity-0'));
+                targetSection.classList.remove('hidden');
+                gsap.set(targetSection, { opacity: 1, y: 0 });
             } else {
-                if(!feedbackText) {
-                    alert("Por favor, descreva qual alteração você deseja antes de solicitar.");
-                    document.getElementById('modalFeedback').focus();
-                    return;
+                // Animação de troca premium
+                const timeline = gsap.timeline();
+
+                // 1. Esconde seção atual (se houver)
+                if (currentSection) {
+                    timeline.to(currentSection, { 
+                        opacity: 0, 
+                        y: -20, 
+                        duration: 0.3, 
+                        ease: "power2.in",
+                        onComplete: () => currentSection.classList.add('hidden')
+                    });
                 }
-                message = `🔄 *SOLICITAÇÃO DE ALTERAÇÃO*\n\n*Tarefa:* ${task.nome}\n*Ajuste Necessário:* ${feedbackText}`;
+
+                // 2. Prepara e mostra nova seção
+                timeline.call(() => targetSection.classList.remove('hidden'));
+                timeline.fromTo(targetSection, 
+                    { opacity: 0, y: 30 },
+                    { opacity: 1, y: 0, duration: 0.6, ease: "expo.out", delay: 0.1 }
+                );
+                
+                // Rola para o topo suavemente
+                gsap.to(window, {duration: 0.5, scrollTo: {y: 0, offsetTop: 100}, ease: "power2.inOut"});
+            }
+
+            // Atualiza sidebar links visualmente
+            links.forEach(el => {
+                el.classList.remove('bg-neutral-800/80', 'text-white', 'shadow-lg');
+                el.classList.add('text-neutral-400');
+                if(el.getAttribute('id') === 'link-' + sectionId) {
+                    el.classList.add('bg-neutral-800/80', 'text-white', 'shadow-lg');
+                    el.classList.remove('text-neutral-400');
+                }
+            });
+
+            // Salva estado e URL
+            localStorage.setItem('activePainelTab_v2', sectionId);
+            window.history.replaceState(null, null, '#' + sectionId);
+        }
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const nav = document.getElementById('sidebarNav');
+            const chevron = document.getElementById('menuChevron');
+            
+            if (nav.classList.contains('hidden')) {
+                nav.classList.remove('hidden');
+                gsap.fromTo(nav, {opacity: 0, y: -10}, {opacity: 1, y: 0, duration: 0.3});
+                chevron.style.transform = 'rotate(180deg)';
+            } else {
+                gsap.to(nav, {opacity: 0, y: -10, duration: 0.2, onComplete: () => nav.classList.add('hidden')});
+                chevron.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Premium Modal Toggle logic
+        function toggleModal(modalID) {
+            const modal = document.getElementById(modalID);
+            const container = modal.querySelector('.modal-container');
+            
+            if (modal.classList.contains('opacity-0')) {
+                // Abre modal
+                document.body.classList.add('modal-active');
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                
+                // GSAP animação de entrada Apple style
+                gsap.fromTo(container, 
+                    { scale: 0.8, y: 50, opacity: 0 },
+                    { scale: 1, y: 0, opacity: 1, duration: 0.5, ease: "expo.out", delay: 0.1 }
+                );
+            } else {
+                // Fecha modal
+                // GSAP animação de saída
+                gsap.to(container, { 
+                    scale: 0.9, y: 30, opacity: 0, 
+                    duration: 0.3, ease: "power2.in",
+                    onComplete: () => {
+                        modal.classList.add('opacity-0', 'pointer-events-none');
+                        document.body.classList.remove('modal-active');
+                        // Limpa mídias de modais específicos (como Variantes) se necessário
+                        const mediaCont = modal.querySelector('#modalMedia');
+                        if(mediaCont) mediaCont.innerHTML = '';
+                    }
+                });
+            }
+        }
+
+        // Fecha modal ao clicar no overlay
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', () => {
+                const modal = overlay.closest('.modal');
+                toggleModal(modal.getAttribute('id'));
+            });
+        });
+
+        // Inicialização: Restaurar aba ativa
+        document.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.replace('#', '');
+            const savedTab = localStorage.getItem('activePainelTab_v2');
+            showSection(hash || savedTab || 'categorias', true);
+
+            // Flash messages auto-hide premium
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.flash-message-item');
+                if(alerts.length > 0) {
+                    gsap.to(alerts, {
+                        opacity: 0, x: 50, duration: 0.5, stagger: 0.1, ease: "power2.in",
+                        onComplete: () => alerts.forEach(alert => alert.remove())
+                    });
+                }
+            }, 5000); 
+
+            // Inicializa Vanta 3D Background (Apple/SaaS vibe)
+            VANTA.DOTS({
+              el: "#vanta-bg",
+              mouseControls: true,
+              touchControls: true,
+              gyroControls: false,
+              minHeight: 200.00,
+              minWidth: 200.00,
+              scale: 1.00,
+              scaleMobile: 1.00,
+              color: '{{ loja.cor_primaria or "#ec489a" }}',
+              color2: '#333333',
+              backgroundColor: '#0a0a0a',
+              size: 1.50,
+              spacing: 35.00,
+              showLines: false
+            });
+        });
+        
+        // Theme selector logic restyled
+        function selectTheme(el) {
+            document.querySelectorAll('.theme-selector').forEach(label => {
+                label.classList.remove('border-primary', 'bg-neutral-900', 'shadow-xl', 'shadow-primary/5', 'active-theme');
+                label.classList.add('border-neutral-800', 'bg-neutral-900/40');
+                label.querySelector('.radio-mark').classList.remove('border-primary', 'bg-primary');
+                label.querySelector('.radio-mark div').classList.add('opacity-0');
+            });
+            el.classList.remove('border-neutral-800', 'bg-neutral-900/40');
+            el.classList.add('border-primary', 'bg-neutral-900', 'shadow-xl', 'shadow-primary/5', 'active-theme');
+            el.querySelector('.radio-mark').classList.add('border-primary', 'bg-primary');
+            el.querySelector('.radio-mark div').classList.remove('opacity-0');
+            el.querySelector('input').checked = true;
+            
+            gsap.fromTo(el, {scale: 0.95}, {scale: 1, duration: 0.4, ease: "back.out(2)"});
+        }
+
+        // Funções Originais de lógica mantidas intactas, apenas restilizadas internamente
+
+        function selectMenuItem(sectionId) {
+            showSection(sectionId);
+            if(window.innerWidth < 768) { 
+                toggleMobileMenu();
+            }
+        }
+
+        function novaCategoria() {
+            document.getElementById('catId').value = '';
+            document.getElementById('catNome').value = '';
+            document.getElementById('catModalTitle').innerText = 'Nova Categoria';
+            toggleModal('categoriaModal');
+        }
+        function editarCategoria(cat) {
+            document.getElementById('catId').value = cat.id;
+            document.getElementById('catNome').value = cat.nome;
+            document.getElementById('catModalTitle').innerText = 'Editar Categoria';
+            toggleModal('categoriaModal');
+        }
+
+        function novoHorario() {
+            document.getElementById('agendaId').value = '';
+            document.getElementById('agendaDataHora').value = '';
+            document.getElementById('agendaDisponivel').checked = true;
+            document.getElementById('agendaCliente').value = '';
+            document.getElementById('agendaModalTitle').innerText = 'Novo Horário';
+            toggleModal('agendaModal');
+        }
+
+        function editarHorario(horario) {
+            document.getElementById('agendaId').value = horario.id;
+            // O campo datetime-local espera o formato ISO sem segundos (YYYY-MM-DDTHH:MM)
+            if (horario.data_hora) {
+                const val = horario.data_hora.substring(0, 16).replace(' ', 'T');
+                document.getElementById('agendaDataHora').value = val;
+            } else {
+                document.getElementById('agendaDataHora').value = '';
+            }
+            document.getElementById('agendaDisponivel').checked = horario.disponivel;
+            document.getElementById('agendaCliente').value = horario.cliente_nome || '';
+            document.getElementById('agendaModalTitle').innerText = 'Editar Horário';
+            toggleModal('agendaModal');
+        }
+
+        let currentVariantes = [];
+
+        function renderVariantes() {
+            const container = document.getElementById('variantes-container');
+            container.innerHTML = '';
+            
+            currentVariantes.forEach((grupo, gIdx) => {
+                let opcoesHTML = '';
+                if(!grupo.opcoes) grupo.opcoes = [];
+                
+                grupo.opcoes.forEach((op, oIdx) => {
+                    opcoesHTML += `
+                        <div class="flex flex-wrap gap-2.5 items-center mt-3 pl-4 border-l-2 border-neutral-700 bg-neutral-950/40 p-2 rounded-r-lg group/option">
+                            <input type="text" placeholder="Opção (Ex: Chocolate)" value="${op.nome || ''}" onchange="updateOpcao(${gIdx}, ${oIdx}, 'nome', this.value)" class="flex-1 min-w-[150px] admin-input rounded-lg p-2.5 text-xs">
+                            
+                            <select onchange="updateOpcao(${gIdx}, ${oIdx}, 'tipo_preco', this.value)" class="admin-input rounded-lg p-2.5 text-xs bg-neutral-900 cursor-pointer">
+                                <option value="adicional" ${op.tipo_preco !== 'final' ? 'selected' : ''}>+ Somar (Adicional)</option>
+                                <option value="final" ${op.tipo_preco === 'final' ? 'selected' : ''}>= Preço Final</option>
+                            </select>
+
+                            <div class="relative w-28">
+                                <span class="absolute left-3 top-2.5 text-neutral-600 text-xs font-mono">R$</span>
+                                <input type="number" step="0.01" placeholder="0,00" value="${op.preco || 0}" onchange="updateOpcao(${gIdx}, ${oIdx}, 'preco', this.value)" class="w-full admin-input rounded-lg p-2.5 pl-9 text-xs font-mono text-right">
+                            </div>
+                            <button type="button" onclick="removeOpcao(${gIdx}, ${oIdx})" class="text-neutral-600 hover:text-red-400 p-2 hover:bg-red-950/50 rounded-lg transition" title="Remover Opção"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML += `
+                    <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 relative group/group shadow-inner">
+                        <button type="button" onclick="removeGrupo(${gIdx})" class="absolute top-5 right-5 text-neutral-600 hover:text-red-400 p-1.5 hover:bg-red-950/50 rounded-full transition opacity-0 group-hover/group:opacity-100" title="Remover Grupo inteiro"><i data-lucide="x" class="w-5 h-5"></i></button>
+                        <div class="mb-4 w-5/6">
+                            <label class="block text-xs font-bold text-neutral-500 uppercase mb-1.5 tracking-wider">Nome do Grupo (Ex: Tamanho, Sabor, Material)</label>
+                            <input type="text" placeholder="Ex: Escolha o Sabor" value="${grupo.grupo || ''}" onchange="updateGrupo(${gIdx}, this.value)" class="font-bold border-b-2 border-neutral-700 focus:border-primary outline-none px-1 py-1 w-full text-white text-lg bg-transparent tracking-tight">
+                        </div>
+                        <div class="space-y-2">
+                            ${opcoesHTML}
+                        </div>
+                        <button type="button" onclick="addOpcao(${gIdx})" class="text-xs text-primary font-bold flex items-center gap-1.5 mt-5 hover:opacity-80 transition pl-4"><i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar nova opção neste grupo</button>
+                    </div>
+                `;
+            });
+            document.getElementById('prodVariantes').value = JSON.stringify(currentVariantes);
+            lucide.createIcons();
+        }
+
+        function addGrupo() {
+            currentVariantes.push({ grupo: '', opcoes: [{ nome: '', preco: 0, tipo_preco: 'adicional' }] });
+            renderVariantes();
+        }
+
+        function removeGrupo(gIdx) { currentVariantes.splice(gIdx, 1); renderVariantes(); }
+        function updateGrupo(gIdx, val) { currentVariantes[gIdx].grupo = val; updateVariantesInput(); }
+        function addOpcao(gIdx) { currentVariantes[gIdx].opcoes.push({ nome: '', preco: 0, tipo_preco: 'adicional' }); renderVariantes(); }
+        function removeOpcao(gIdx, oIdx) { currentVariantes[gIdx].opcoes.splice(oIdx, 1); renderVariantes(); }
+        
+        function updateOpcao(gIdx, oIdx, field, val) {
+            if (field === 'preco') {
+                currentVariantes[gIdx].opcoes[oIdx][field] = parseFloat(val) || 0;
+            } else {
+                currentVariantes[gIdx].opcoes[oIdx][field] = val;
+            }
+            updateVariantesInput();
+        }
+        
+        function updateVariantesInput() {
+            document.getElementById('prodVariantes').value = JSON.stringify(currentVariantes);
+        }
+
+        function novoProduto() {
+            document.getElementById('prodId').value = '';
+            document.getElementById('prodNome').value = '';
+            document.getElementById('prodPreco').value = '';
+            document.getElementById('prodEstoque').value = '';
+            document.getElementById('prodCategoria').value = '';
+            document.getElementById('hiddenCategoria').value = '';
+            document.getElementById('prodSort').value = '';
+            document.getElementById('prodDescricao').value = '';
+            document.getElementById('prodConsulte').checked = false;
+            document.getElementById('prodLayoutCase').checked = false;
+            document.getElementById('prodAPartirDe').checked = false;
+            document.getElementById('prodLinkProjeto').value = '';
+            document.getElementById('prodWhatsappProjeto').value = '';
+            document.querySelector('#produtoForm input[name="imagem"]').value = '';
+            document.querySelector('#produtoForm input[name="imagem1"]').value = '';
+            document.querySelector('#produtoForm input[name="imagem2"]').value = '';
+
+            currentVariantes = [];
+            renderVariantes();
+
+            document.getElementById('prodModalTitle').innerText = 'Novo Produto';
+            toggleModal('produtoModal');
+        }
+        
+        function editarProduto(prod) {
+            document.getElementById('prodId').value = prod.id;
+            document.getElementById('prodNome').value = prod.nome;
+            document.getElementById('prodPreco').value = prod.preco;
+            document.getElementById('prodEstoque').value = prod.estoque;
+            
+            let catVal = ('categoria_id' in prod && prod.categoria_id !== null) ? prod.categoria_id : (prod.categoria || '');
+            let catSelect = document.getElementById('prodCategoria');
+            catSelect.value = catVal;
+            if (!catSelect.value && catVal !== '') {
+                catSelect.value = String(catVal);
+            }
+            document.getElementById('hiddenCategoria').value = catSelect.value;
+            
+            document.getElementById('prodSort').value = prod.sort !== null && prod.sort !== undefined ? prod.sort : '';
+            document.getElementById('prodDescricao').value = prod.descricao || '';
+            document.getElementById('prodConsulte').checked = prod.consulte;
+            document.getElementById('prodLayoutCase').checked = prod.layout_case || false;
+            document.getElementById('prodAPartirDe').checked = prod.a_partir_de || false;
+            document.getElementById('prodLinkProjeto').value = prod.link_projeto || '';
+            document.getElementById('prodWhatsappProjeto').value = prod.whatsapp_projeto || '';
+            document.querySelector('#produtoForm input[name="imagem"]').value = '';
+            document.querySelector('#produtoForm input[name="imagem1"]').value = '';
+            document.querySelector('#produtoForm input[name="imagem2"]').value = '';
+
+            currentVariantes = prod.variantes || [];
+            
+            // Tratamento retrocompatibilidade
+            if (currentVariantes.length > 0 && !currentVariantes[0].grupo) {
+                currentVariantes = [{
+                    grupo: "Opções Adicionais",
+                    opcoes: currentVariantes.map(v => ({ nome: v.nome, preco: v.preco || 0, tipo_preco: 'adicional' }))
+                }];
+            } else {
+                currentVariantes.forEach(g => {
+                    if(g.opcoes) {
+                        g.opcoes.forEach(o => {
+                            if(!o.tipo_preco) o.tipo_preco = 'adicional';
+                        });
+                    }
+                });
             }
             
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappLink = `https://wa.me/55${task.whatsapp}?text=${encodedMessage}`;
-            window.open(whatsappLink, '_blank');
-            closeTaskModal();
+            renderVariantes();
+
+            document.getElementById('prodModalTitle').innerText = 'Editar Produto';
+            toggleModal('produtoModal');
         }
+        function clonarProduto(prod) {
+            editarProduto(prod); 
+            document.getElementById('prodId').value = ''; 
+            document.getElementById('prodModalTitle').innerText = 'Clonar Item (Novo)';
+            gsap.to(document.getElementById('prodModalTitle'), {color: "#10B981", duration: 0.5, yoyo: true, repeat: 1});
+            document.getElementById('prodCategoria').focus();
+        }
+        
+        function novoPost() {
+            document.getElementById('postId').value = '';
+            document.getElementById('postTitulo').value = '';
+            document.getElementById('postResumo').value = '';
+            document.getElementById('postConteudo').value = '';
+            document.querySelector('#postForm input[name="capa"]').value = '';
+            document.getElementById('postModalTitle').innerText = 'Novo Post';
+            toggleModal('postModal');
+        }
+        function editarPost(post) {
+            document.getElementById('postId').value = post.id;
+            document.getElementById('postTitulo').value = post.titulo;
+            document.getElementById('postResumo').value = post.resumo || '';
+            document.getElementById('postConteudo').value = post.conteudo || '';
+            document.querySelector('#postForm input[name="capa"]').value = '';
+            document.getElementById('postModalTitle').innerText = 'Editar Post';
+            toggleModal('postModal');
+        }
+
+        // Sortable Inicialização restilizada
+        new Sortable(document.getElementById('layout-sortable'), {
+            animation: 350,
+            easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            forceFallback: true, // Melhor visual no drag
+            onEnd: function () {
+                const order = [];
+                document.querySelectorAll('#layout-sortable li').forEach(li => order.push(li.getAttribute('data-id')));
+                document.getElementById('layoutOrderInput').value = order.join(',');
+                
+                // Dispara evento change para mostrar barra de salvar
+                form.dispatchEvent(new Event('change'));
+                gsap.fromTo("#layoutOrderInput", {backgroundColor: "#fff2"}, {backgroundColor: "transparent", duration: 1});
+            }
+        });
+
+         new Sortable(document.getElementById('lista-categorias'), {
+            animation: 300,
+            easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            handle: '.cursor-move', // Apenas arrasta pelo ícone
+            forceFallback: true,
+            onEnd: function () {
+                 const orderMap = {};
+                document.querySelectorAll('#lista-categorias li').forEach((li, index) => {
+                    orderMap[li.getAttribute('data-id')] = index + 1;
+                });
+                // Lógica de salvar ordem das categorias via API viria aqui se implementado no backend
+                console.log("Nova ordem categorias:", orderMap);
+                gsap.to("#lista-categorias", {borderColor: "{{ loja.cor_primaria }}", duration: 0.3, yoyo: true, repeat: 1});
+            }
+        });
+
+        // ========== NOVA LÓGICA PARA O QUADRO KANBAN (CORRIGIDA PARA HORÁRIO LOCAL) ==========
+        let sortableInstances = [];
+
+        // Obtém os dados da agenda do template (já disponível em agendaData)
+        // Nota: Assumindo que a variável agenda está disponível no contexto global do Jinja
+        // Se houver erro aqui, certifique-se de que g.loja e agenda estão sendo passados corretamente no render_template.
+        try {
+            var agendaData = {{ agenda | tojson }};
+        } catch (e) {
+            console.error("Erro ao carregar dados da agenda para o Kanban:", e);
+            var agendaData = [];
+        }
+
+        // Definir os horários do dia (08:00 até 20:00, intervalos de 1 hora)
+        const HORARIOS = Array.from({ length: 13 }, (_, i) => {
+            const hour = i + 8;
+            return `${hour.toString().padStart(2,'0')}:00`;
+        });
+
+        // Função para obter a data no formato YYYY-MM-DD usando horário local (sem UTC)
+        function formatDateKeyLocal(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Cria um mapa dos compromissos existentes: key = "YYYY-MM-DD|HH:MM"
+        function buildAppointmentMap(agenda) {
+            const map = new Map();
+            agenda.forEach(item => {
+                let dataHoraStr = item.data_hora;
+                if (!dataHoraStr) return;
+                // Directus envia ISO, convertemos para objeto Date local
+                let date = new Date(dataHoraStr);
+                if (isNaN(date.getTime())) return;
+                
+                const dateKey = formatDateKeyLocal(date);
+                const hour = date.getHours().toString().padStart(2,'0');
+                const timeKey = `${hour}:00`;
+                const fullKey = `${dateKey}|${timeKey}`;
+                
+                map.set(fullKey, {
+                    id: item.id,
+                    cliente_nome: item.cliente_nome || 'Tarefa/Compromisso',
+                    disponivel: item.disponivel,
+                });
+            });
+            return map;
+        }
+
+        function editarHorarioKanban(id) {
+            const horario = agendaData.find(h => h.id == id);
+            if (horario) {
+                editarHorario(horario);
+            }
+        }
+
+        // Gera os próximos N dias a partir de hoje (incluindo hoje)
+        function getNextDays(count = 7) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // zera horas para comparação local
+            const days = [];
+            for (let i = 0; i < count; i++) {
+                const d = new Date(today);
+                d.setDate(today.getDate() + i);
+                days.push(d);
+            }
+            return days;
+        }
+
+        // Cria o HTML de uma coluna de dia
+        function createDayColumn(date, appointmentMap) {
+            const dateKey = formatDateKeyLocal(date);
+            const dayName = date.toLocaleDateString('pt-BR', { weekday: 'short' });
+            const dayNumber = date.getDate();
+            const month = date.toLocaleDateString('pt-BR', { month: 'short' });
+            const label = `${dayName} ${dayNumber} ${month}`;
+            const todayKey = formatDateKeyLocal(new Date());
+            const isToday = todayKey === dateKey;
+            
+            // Estilo Premium Netflix/Apple para coluna
+            const headerClass = isToday ? 'bg-primary text-white' : 'bg-neutral-900 text-neutral-300 border-b border-neutral-800';
+            const colClass = isToday ? 'border-primary shadow-2xl shadow-primary/10' : 'border-neutral-800';
+
+            let cardsHtml = '';
+            for (const hour of HORARIOS) {
+                const fullKey = `${dateKey}|${hour}`;
+                const appointment = appointmentMap.get(fullKey);
+                
+                let cardClass = 'time-card ';
+                let content = '';
+                let draggableAttr = '';
+                let dataId = '';
+                
+                if (appointment) {
+                    // Tem agendamento
+                    cardClass += 'appointment-card cursor-grab group ';
+                    draggableAttr = 'draggable="true"';
+                    dataId = `data-id="${appointment.id}"`;
+                    
+                    const statusBg = appointment.disponivel ? 'bg-green-950/50' : 'bg-neutral-800';
+                    const statusText = appointment.disponivel ? 'text-green-300' : 'text-neutral-400';
+                    const borderLeft = appointment.disponivel ? 'border-l-green-500' : 'border-l-neutral-600';
+
+                    content = `
+                        <div class="p-3 rounded-lg border border-neutral-800 bg-neutral-900 group-hover:border-neutral-700 transition relative ${borderLeft} border-l-4">
+                            <div class="flex justify-between items-start gap-2 mb-1.5">
+                                <div class="font-bold text-base text-white font-mono tracking-tight">${hour}</div>
+                                <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <i data-lucide="move" class="w-3.5 h-3.5 text-neutral-600 cursor-move"></i>
+                                    <button type="button" onmousedown="event.stopPropagation()" onclick="editarHorarioKanban('${appointment.id}')" class="text-blue-400 hover:text-blue-300 p-1 hover:bg-blue-950 rounded" title="Editar">
+                                        <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="text-sm text-neutral-100 font-semibold line-clamp-2 tracking-tight">${appointment.cliente_nome}</div>
+                            ${!appointment.disponivel ? `<div class="text-[11px] mt-1.5 font-bold uppercase ${statusText}">● Ocupado</div>` : `<div class="text-[11px] mt-1.5 font-bold uppercase ${statusText}">● Disponível</div>`}
+                        </div>
+                    `;
+                } else {
+                    // Slot vazio
+                    cardClass += 'empty-slot opacity-60 hover:opacity-100';
+                    content = `
+                        <div class="flex justify-between items-center p-3 rounded-lg border border-neutral-800 border-dashed text-neutral-600 hover:border-neutral-700 hover:text-neutral-400 transition hover:bg-neutral-900/30">
+                            <span class="text-sm font-bold font-mono">${hour}</span>
+                            <i data-lucide="plus" class="w-3.5 h-3.5 opacity-40"></i>
+                        </div>
+                    `;
+                }
+                cardsHtml += `
+                    <div class="${cardClass}" ${draggableAttr} ${dataId} data-time="${hour}">
+                        ${content}
+                    </div>
+                `;
+            }
+
+            // Botão chique para adicionar rápido no dia
+            cardsHtml += `
+                <div class="time-card add-task-card cursor-pointer group mt-2" onclick="openQuickAddTask('${dateKey}')">
+                    <div class="flex justify-center items-center gap-2.5 text-primary bg-primary/10 hover:bg-primary/20 p-3 rounded-xl border border-primary/20 transition-all active:scale-95">
+                        <i data-lucide="plus-circle" class="w-5 h-5 group-hover:rotate-90 transition-transform"></i>
+                        <span class="text-sm font-bold">Adicionar neste dia</span>
+                    </div>
+                </div>
+            `;
+
+            return `
+                <div class="day-column flex-shrink-0 w-[300px] bg-neutral-950 rounded-2xl border ${colClass} overflow-hidden shadow-xl" data-date="${dateKey}">
+                    <div class="day-header ${headerClass} p-4.5 font-bold text-center tracking-tight border-b border-neutral-800 flex items-center justify-center gap-2">
+                        <span class="text-lg font-extrabold">${dayNumber}</span>
+                        <span class="text-sm font-medium uppercase opacity-80">${dayName} ${month}</span>
+                        ${isToday ? '<span class="ml-1 text-[10px] font-bold bg-white/20 text-white px-2.5 py-1 rounded-full pulse-slow">HOJE</span>' : ''}
+                    </div>
+                    <div class="cards-list p-4 space-y-3" data-date="${dateKey}">
+                        ${cardsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Atualiza o quadro Kanban com os dados atuais
+        function refreshKanbanBoard() {
+            const container = document.querySelector('#kanbanBoardView .board-container');
+            if (!container) return;
+            const days = getNextDays(7);
+            const appointmentMap = buildAppointmentMap(agendaData);
+            container.innerHTML = '';
+            days.forEach(day => {
+                const colHtml = createDayColumn(day, appointmentMap);
+                container.insertAdjacentHTML('beforeend', colHtml);
+            });
+            lucide.createIcons();
+            setupDragAndDrop();
+            
+            // Animação de entrada dos dias
+            gsap.from(".day-column", { opacity: 0, y: 30, duration: 0.5, stagger: 0.1, ease: "expo.out" });
+        }
+
+        function setupDragAndDrop() {
+            const draggables = document.querySelectorAll('#kanbanBoardView .time-card.appointment-card');
+            const dropZones = document.querySelectorAll('#kanbanBoardView .cards-list');
+
+            draggables.forEach(el => {
+                el.removeEventListener('dragstart', handleDragStart);
+                el.removeEventListener('dragend', handleDragEnd);
+                el.setAttribute('draggable', 'true');
+                el.addEventListener('dragstart', handleDragStart);
+                el.addEventListener('dragend', handleDragEnd);
+            });
+            dropZones.forEach(zone => {
+                zone.removeEventListener('dragover', handleDragOver);
+                zone.removeEventListener('drop', handleDrop);
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('drop', handleDrop);
+            });
+        }
+
+        let draggedItem = null;
+        let draggedItemId = null;
+
+        function handleDragStart(e) {
+            draggedItem = this;
+            draggedItemId = this.getAttribute('data-id');
+            e.dataTransfer.setData('text/plain', draggedItemId);
+            e.dataTransfer.effectAllowed = 'move';
+            
+            // Visual premium no arrasto
+            setTimeout(() => this.classList.add('opacity-10'), 0);
+            this.querySelector('div').classList.add('border-primary', 'shadow-2xl', 'scale-105');
+        }
+
+        function handleDragEnd(e) {
+            if (draggedItem) {
+                draggedItem.classList.remove('opacity-10');
+                draggedItem.querySelector('div').classList.remove('border-primary', 'shadow-2xl', 'scale-105');
+            }
+            draggedItem = null;
+            draggedItemId = null;
+            
+            // Remove destaques de dropzone
+            document.querySelectorAll('.cards-list').forEach(el => el.classList.remove('bg-neutral-900/40', 'border-primary/20', 'border-2', 'border-dashed'));
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            // Destaque visual da dropzone (Apple Like)
+            const list = e.target.closest('.cards-list');
+            if(list && !list.classList.contains('bg-neutral-900/40')) {
+                document.querySelectorAll('.cards-list').forEach(el => el.classList.remove('bg-neutral-900/40', 'border-primary/20', 'border-2', 'border-dashed'));
+                list.classList.add('bg-neutral-900/40', 'border-primary/20', 'border-2', 'border-dashed', 'rounded-xl');
+                gsap.to(list, {scale: 1.02, duration: 0.2});
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const targetCard = e.target.closest('.time-card');
+            const targetList = e.target.closest('.cards-list');
+            
+            // Remove destaques
+            if(targetList) {
+                targetList.classList.remove('bg-neutral-900/40', 'border-primary/20', 'border-2', 'border-dashed');
+                gsap.to(targetList, {scale: 1, duration: 0.2});
+            }
+
+            if (!targetList) return;
+
+            const sourceId = draggedItemId;
+            if (!sourceId) return;
+
+            const targetDate = targetList.getAttribute('data-date');
+            let targetHour = null;
+            
+            // Tenta pegar o horário do card onde soltou, ou o primeiro card da lista se soltou no vazio
+            if (targetCard && targetCard.classList.contains('time-card')) {
+                targetHour = targetCard.getAttribute('data-time');
+            } else {
+                const cards = Array.from(targetList.querySelectorAll('.time-card:not(.add-task-card)'));
+                if (cards.length === 0) return; // Lista vazia de horários
+                targetHour = cards[0].getAttribute('data-time');
+            }
+            if (!targetHour) return;
+
+            // Formata nova data_hora: YYYY-MM-DDTHH:MM:00
+            const targetDateTime = `${targetDate}T${targetHour}:00`;
+
+            // Envia para API REST do Directus
+            // Nota: Rota /admin/agenda/update/<id> deve estar implementada no app.py para receber POST JSON
+            fetch(`/{{ loja.slug_url }}/admin/agenda/update/${sourceId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    data_hora: targetDateTime
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Atualiza dados locais e re-renderiza
+                    const agendaItem = agendaData.find(a => a.id == sourceId);
+                    if (agendaItem) {
+                        agendaItem.data_hora = targetDateTime;
+                        agendaItem.data_hora_formatada = targetDateTime; // Fallback temporário
+                    }
+                    refreshKanbanBoard();
+                    
+                    // Feedback chique
+                    gsap.fromTo(`[data-id="${sourceId}"] div`, {borderColor: "#10B981", borderWidth: 4}, {borderColor: "#10B981", borderWidth: 4, duration: 0.3, yoyo: true, repeat: 1});
+                    
+                    // Mostra flash message de sucesso dinamicamente
+                    const container = document.getElementById('flash-messages-container') || document.body.insertAdjacentHTML('beforeend', '<div id="flash-messages-container" class="fixed top-24 right-6 z-50 flex flex-col gap-3"></div>');
+                    const msg = `<div class="bg-green-950 border border-green-500 text-green-200 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 animate-fade-in-down flash-message-item backdrop-blur-md">
+                                    <i data-lucide="check-circle" class="w-5 h-5"></i>
+                                    <span class="font-medium text-sm">Horário atualizado com sucesso no Kanban!</span>
+                                </div>`;
+                    document.getElementById('flash-messages-container').insertAdjacentHTML('beforeend', msg);
+                    lucide.createIcons();
+                    setTimeout(() => {
+                        const newAlert = document.getElementById('flash-messages-container').lastChild;
+                        gsap.to(newAlert, {opacity: 0, x: 50, duration: 0.5, onComplete: () => newAlert.remove()});
+                    }, 4000);
+
+                } else {
+                    alert('Erro ao mover o compromisso: ' + (data.message || 'Erro desconhecido'));
+                    refreshKanbanBoard(); // Reseta visual
+                }
+            })
+            .catch(err => {
+                console.error("Erro na requisição de update via Kanban:", err);
+                alert('Erro de comunicação com o servidor ao tentar mover o compromisso.');
+                refreshKanbanBoard(); // Reseta visual
+            });
+        }
+
+        function openQuickAddTask(dateKey) {
+            const modal = document.getElementById('agendaModal');
+            const dataInput = document.getElementById('agendaDataHora');
+            
+            // Preenche data padrão, horário 09:00
+            dataInput.value = `${dateKey}T09:00`;
+            
+            document.getElementById('agendaId').value = '';
+            document.getElementById('agendaDisponivel').checked = true;
+            document.getElementById('agendaCliente').value = '';
+            document.getElementById('agendaModalTitle').innerText = 'Adicionar Compromisso Rápido';
+            
+            toggleModal('agendaModal');
+        }
+
+        // Persistência da visualização (lista ou quadro) e restauração após reload
+        const viewKey = 'agendaViewPreference_v2';
+        const toggleListView = document.getElementById('toggleListViewBtn');
+        const toggleBoardView = document.getElementById('toggleBoardViewBtn');
+        const traditionalView = document.getElementById('traditionalListView');
+        const boardView = document.getElementById('kanbanBoardView');
+
+        function setActiveView(view, immediate = false) {
+            if (view === 'board') {
+                if(immediate) {
+                    traditionalView.classList.add('hidden');
+                    boardView.classList.remove('hidden');
+                } else {
+                    gsap.to(traditionalView, {opacity: 0, x: -20, duration: 0.3, onComplete: () => {
+                        traditionalView.classList.add('hidden');
+                        boardView.classList.remove('hidden');
+                        gsap.fromTo(boardView, {opacity: 0, x: 20}, {opacity: 1, x: 0, duration: 0.5});
+                        refreshKanbanBoard(); // Renderiza quadro ao mostrar
+                    }});
+                }
+                toggleBoardView.classList.add('bg-primary', 'text-white', 'shadow-md');
+                toggleBoardView.classList.remove('text-neutral-400', 'hover:text-white');
+                toggleListView.classList.remove('bg-primary', 'text-white', 'shadow-md');
+                toggleListView.classList.add('text-neutral-400', 'hover:text-white');
+                if(immediate) refreshKanbanBoard();
+            } else {
+                if(immediate) {
+                    boardView.classList.add('hidden');
+                    traditionalView.classList.remove('hidden');
+                } else {
+                    gsap.to(boardView, {opacity: 0, x: 20, duration: 0.3, onComplete: () => {
+                        boardView.classList.add('hidden');
+                        traditionalView.classList.remove('hidden');
+                        gsap.fromTo(traditionalView, {opacity: 0, x: -20}, {opacity: 1, x: 0, duration: 0.5});
+                    }});
+                }
+                toggleListView.classList.add('bg-primary', 'text-white', 'shadow-md');
+                toggleListView.classList.remove('text-neutral-400', 'hover:text-white');
+                toggleBoardView.classList.remove('bg-primary', 'text-white', 'shadow-md');
+                toggleBoardView.classList.add('text-neutral-400', 'hover:text-white');
+            }
+            localStorage.setItem(viewKey, view);
+        }
+
+        // Vincula eventos de clique
+        toggleListView.addEventListener('click', () => setActiveView('list'));
+        toggleBoardView.addEventListener('click', () => setActiveView('board'));
+
+        // Floating btn no Kanban
+        const floatingBtn = document.getElementById('floatingAddTaskBtn');
+        if(floatingBtn) {
+            floatingBtn.addEventListener('click', () => {
+                const todayKey = formatDateKeyLocal(new Date());
+                openQuickAddTask(todayKey);
+            });
+        }
+        
+        // Expondo função globalmente
+        window.openQuickAddTask = openQuickAddTask;
     </script>
 </body>
 </html>
