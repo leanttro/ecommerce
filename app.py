@@ -188,7 +188,7 @@ def identificar_loja():
 
     # 1 VERIFICAÇÃO DE DOMÍNIO PRÓPRIO
     # Se não for o domínio principal do SaaS nem localhost
-    if host not in ['leanttro.com', 'www.leanttro.com', 'catalogo.leanttro.com', 'projetos.leanttro.com', 'www.projetos.leanttro.com', 'localhost', '127.0.0.1']:
+    if host not in ['leanttro.com', 'www.leanttro.com', 'catalogo.leanttro.com', 'localhost', '127.0.0.1']:
         try:
             host_clean = host.replace('www.', '')
             url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=*.*"
@@ -213,7 +213,7 @@ def identificar_loja():
             print(f"Erro Middleware Slug: {e}")
 
     # 3 FALLBACK PARA DOMÍNIO PRINCIPAL -> TECNOLOGIA (ABRE DIRETO NO DOMÍNIO)
-    if not loja_encontrada and host in ['leanttro.com', 'www.leanttro.com', 'projetos.leanttro.com', 'www.projetos.leanttro.com', 'localhost', '127.0.0.1'] and primeiro_segmento not in BLACKLIST_ROTAS:
+    if not loja_encontrada and host in ['leanttro.com', 'www.leanttro.com', 'localhost', '127.0.0.1'] and primeiro_segmento not in BLACKLIST_ROTAS:
         g.slug_atual = "tecnologia"
         try:
             url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=tecnologia&fields=*.*"
@@ -252,7 +252,7 @@ def home_saas():
     host = request.host.split(':')[0]
     
     # 1 Se for o subdomínio da Landing Page
-    if 'catalogo.leanttro.com' in host or 'projetos.leanttro.com' in host:
+    if 'catalogo.leanttro.com' in host:
         return render_template('catalogo.html')
 
     # 2 Se for domínio próprio de cliente já identificado no middleware
@@ -1185,36 +1185,51 @@ def esqueci_senha(loja_slug):
     loja_visual = {**g.loja, "logo": get_img_url(g.loja.get('logo')), "slug_url": loja_slug}
     return render_template('esqueci_senha.html', loja=loja_visual, error=error, success=success)
 
-@app.route('/reset-senha/<token>', methods=['GET', 'POST'])
-def reset_senha(token):
+# ROTA FEEDBACK TAREFA (PORTAL DO CLIENTE)
+@app.route('/<loja_slug>/feedback-tarefa/<produto_id>', methods=['POST'])
+def feedback_tarefa(loja_slug, produto_id):
+    if not g.loja:
+        return jsonify({"sucesso": False, "mensagem": "Loja não encontrada"}), 404
+
+    dados = request.json
+    status = dados.get('status', 'Feedback')
+    mensagem = dados.get('mensagem', '')
+    data_atual = datetime.now().strftime("%d/%m %H:%M")
+
+    headers = get_headers()
+    
     try:
-        email = serializer.loads(token, salt='email-reset-salt', max_age=1800)
-    except Exception:
-        return render_template('reset_senha.html', error="O link de recuperação é inválido ou expirou.")
+        r_prod = requests.get(f"{DIRECTUS_URL}/items/produtos/{produto_id}?fields=variantes,loja_id", headers=headers)
+        if r_prod.status_code != 200:
+            return jsonify({"sucesso": False, "mensagem": "Produto não encontrado"}), 404
+            
+        prod_data = r_prod.json().get('data', {})
+        if str(prod_data.get('loja_id')) != str(g.loja_id):
+            return jsonify({"sucesso": False, "mensagem": "Acesso negado"}), 403
+            
+        variantes = prod_data.get('variantes') or []
+        
+        # Procura se o grupo 'Feedback do Cliente' já existe
+        feedback_group = next((g for g in variantes if isinstance(g, dict) and g.get('grupo') == 'Feedback do Cliente'), None)
+        
+        if not feedback_group:
+            feedback_group = {"grupo": "Feedback do Cliente", "opcoes": []}
+            variantes.append(feedback_group)
+            
+        # Adiciona a resposta do cliente como uma nova 'opção' da variante (preço 0)
+        feedback_group["opcoes"].append({
+            "nome": f"[{status}] {data_atual} - {mensagem}",
+            "preco": 0,
+            "tipo_preco": "adicional"
+        })
+        
+        requests.patch(f"{DIRECTUS_URL}/items/produtos/{produto_id}", headers=headers, json={"variantes": variantes})
+        
+        return jsonify({"sucesso": True})
+    except Exception as e:
+        print(f"Erro ao salvar feedback: {e}")
+        return jsonify({"sucesso": False, "mensagem": str(e)}), 500
 
-    error = None
-    success = None
-    
-    r = requests.get(f"{DIRECTUS_URL}/items/lojas?filter[email][_eq]={email}", headers=get_headers())
-    data = r.json().get('data')
-    
-    if not data: 
-        return render_template('reset_senha.html', error="Loja não encontrada para este e-mail.")
-    
-    loja_alvo = data[0]
-
-    if request.method == 'POST':
-        new_password = request.form.get('password')
-        if new_password:
-            hash_senha = generate_password_hash(new_password)
-            requests.patch(f"{DIRECTUS_URL}/items/lojas/{loja_alvo['id']}", 
-                         headers=get_headers(),
-                         json={'senha_admin': hash_senha})
-            success = "Sua senha foi atualizada com sucesso! Você já pode fazer login."
-        else:
-            error = "A senha não pode ficar em branco."
-
-    return render_template('reset_senha.html', error=error, success=success, token=token, loja=loja_alvo)
 
 # ROTA CAPTURA DE LEADS (TECNOLOGIA)
 @app.route('/<loja_slug>/captura-lead', methods=['POST'])
