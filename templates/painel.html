@@ -1388,45 +1388,24 @@
             }
         });
 
-        // ========== NOVA LÓGICA PARA O QUADRO KANBAN (CORRIGIDA PARA HORÁRIO LOCAL) ==========
+        // ========== NOVA LÓGICA PARA O QUADRO KANBAN ==========
         let sortableInstances = [];
-
-        // Obtém os dados da agenda do template (já disponível em agendaData)
         const agendaData = {{ agenda | tojson }};
 
-        // Definir os horários do dia (08:00 até 20:00, intervalos de 1 hora)
-        const HORARIOS = Array.from({ length: 13 }, (_, i) => {
-            const hour = i + 8;
-            return `${hour.toString().padStart(2,'0')}:00`;
-        });
-
-        // Função para obter a data no formato YYYY-MM-DD usando horário local (sem UTC)
-        function formatDateKeyLocal(date) {
-            const year = date.getFullYear();
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            const day = date.getDate().toString().padStart(2, '0');
-            return `${year}-${month}-${day}`;
+        function formatDateKeyLocal(dateStr) {
+            if (!dateStr) return null;
+            const parts = dateStr.split(/[T ]/);
+            return parts[0];
         }
 
-        // Cria um mapa dos compromissos existentes: key = "YYYY-MM-DD|HH:MM"
-        function buildAppointmentMap(agenda) {
-            const map = new Map();
-            agenda.forEach(item => {
-                let dataHoraStr = item.data_hora;
-                if (!dataHoraStr) return;
-                let date = new Date(dataHoraStr);
-                if (isNaN(date.getTime())) return;
-                const dateKey = formatDateKeyLocal(date);
-                const hour = date.getHours().toString().padStart(2,'0');
-                const timeKey = `${hour}:00`;
-                const fullKey = `${dateKey}|${timeKey}`;
-                map.set(fullKey, {
-                    id: item.id,
-                    cliente_nome: item.cliente_nome || 'Cliente',
-                    disponivel: item.disponivel,
-                });
-            });
-            return map;
+        function formatTimeLocal(dateStr) {
+            if (!dateStr) return null;
+            const parts = dateStr.split(/[T ]/);
+            if (parts.length > 1) {
+                const timeParts = parts[1].split(':');
+                return `${timeParts[0]}:${timeParts[1]}`;
+            }
+            return "00:00";
         }
 
         function editarHorarioKanban(id) {
@@ -1436,105 +1415,91 @@
             }
         }
 
-        // Gera os próximos N dias a partir de hoje (incluindo hoje)
-        function getNextDays(count = 7) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // zera horas para comparação local
-            const days = [];
-            for (let i = 0; i < count; i++) {
-                const d = new Date(today);
-                d.setDate(today.getDate() + i);
-                days.push(d);
-            }
-            return days;
-        }
-
-        // Cria o HTML de uma coluna de dia
-        function createDayColumn(date, appointmentMap) {
-            const dateKey = formatDateKeyLocal(date);
-            const dayName = date.toLocaleDateString('pt-BR', { weekday: 'short' });
-            const dayNumber = date.getDate();
-            const month = date.toLocaleDateString('pt-BR', { month: 'short' });
-            const label = `${dayName} ${dayNumber} ${month}`;
-            const todayKey = formatDateKeyLocal(new Date());
-            const isToday = todayKey === dateKey;
-            const headerClass = isToday ? 'bg-pink-50 text-pink-700' : 'bg-gray-50 text-gray-700';
-
-            let cardsHtml = '';
-            for (const hour of HORARIOS) {
-                const fullKey = `${dateKey}|${hour}`;
-                const appointment = appointmentMap.get(fullKey);
-                let cardClass = 'time-card ';
-                let content = '';
-                let draggableAttr = '';
-                let dataId = '';
-                if (appointment) {
-                    cardClass += 'appointment-card cursor-grab';
-                    draggableAttr = 'draggable="true"';
-                    dataId = `data-id="${appointment.id}"`;
-                    content = `
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="font-bold text-sm">${hour}</div>
-                                <div class="text-xs text-gray-600 mt-1">${appointment.cliente_nome}</div>
-                                ${!appointment.disponivel ? '<span class="text-xs text-red-500">(Ocupado)</span>' : ''}
-                            </div>
-                            <div class="flex flex-col items-end gap-2">
-                                <i data-lucide="move" class="w-4 h-4 text-gray-400"></i>
-                                <button type="button" onmousedown="event.stopPropagation()" onclick="editarHorarioKanban('${appointment.id}')" class="text-blue-500 hover:text-blue-700 p-1 hover:bg-blue-50 rounded" title="Editar horário">
-                                    <i data-lucide="edit-2" class="w-4 h-4"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    cardClass += 'empty-slot';
-                    content = `
-                        <div class="flex justify-between items-center text-gray-500">
-                            <span class="text-sm font-medium">${hour}</span>
-                            <span class="text-xs">Disponível</span>
-                        </div>
-                    `;
-                }
-                cardsHtml += `
-                    <div class="${cardClass}" ${draggableAttr} ${dataId} data-time="${hour}">
-                        ${content}
-                    </div>
-                `;
-            }
-
-            cardsHtml += `
-                <div class="time-card add-task-card cursor-pointer" onclick="openQuickAddTask('${dateKey}')">
-                    <div class="flex justify-center items-center gap-2 text-pink-600">
-                        <i data-lucide="plus" class="w-4 h-4"></i>
-                        <span class="text-sm font-medium">Adicionar tarefa</span>
-                    </div>
-                </div>
-            `;
-
-            return `
-                <div class="day-column flex-shrink-0 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden" data-date="${dateKey}">
-                    <div class="day-header ${headerClass} p-3 font-bold text-center">
-                        ${label} ${isToday ? '<span class="ml-2 text-xs bg-pink-200 px-2 py-0.5 rounded-full">Hoje</span>' : ''}
-                    </div>
-                    <div class="cards-list" data-date="${dateKey}">
-                        ${cardsHtml}
-                    </div>
-                </div>
-            `;
-        }
-
-        // Atualiza o quadro Kanban com os dados atuais
         function refreshKanbanBoard() {
             const container = document.querySelector('#kanbanBoardView .board-container');
             if (!container) return;
-            const days = getNextDays(7);
-            const appointmentMap = buildAppointmentMap(agendaData);
             container.innerHTML = '';
-            days.forEach(day => {
-                const colHtml = createDayColumn(day, appointmentMap);
+
+            const mapDias = {};
+            const hoje = new Date();
+            
+            for(let i=0; i<7; i++) {
+                const d = new Date(hoje);
+                d.setDate(hoje.getDate() + i);
+                const ano = d.getFullYear();
+                const mes = String(d.getMonth() + 1).padStart(2, '0');
+                const dia = String(d.getDate()).padStart(2, '0');
+                mapDias[`${ano}-${mes}-${dia}`] = [];
+            }
+
+            agendaData.forEach(item => {
+                const dateKey = formatDateKeyLocal(item.data_hora);
+                if (dateKey) {
+                    if (!mapDias[dateKey]) {
+                        mapDias[dateKey] = [];
+                    }
+                    mapDias[dateKey].push(item);
+                }
+            });
+
+            const datasOrdenadas = Object.keys(mapDias).sort();
+
+            datasOrdenadas.forEach(dateKey => {
+                const [ano, mes, dia] = dateKey.split('-');
+                const dataObj = new Date(ano, mes - 1, dia);
+                const nomeDia = dataObj.toLocaleDateString('pt-BR', { weekday: 'short' });
+                const label = `${nomeDia} ${dia}/${mes}`;
+                
+                const dataHojeStr = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}-${String(hoje.getDate()).padStart(2,'0')}`;
+                const isToday = dateKey === dataHojeStr;
+                const headerClass = isToday ? 'bg-pink-50 text-pink-700' : 'bg-gray-50 text-gray-700';
+
+                mapDias[dateKey].sort((a, b) => (a.data_hora > b.data_hora) ? 1 : -1);
+
+                let cardsHtml = '';
+                mapDias[dateKey].forEach(appointment => {
+                    const timeStr = formatTimeLocal(appointment.data_hora);
+                    cardsHtml += `
+                        <div class="time-card appointment-card cursor-grab" draggable="true" data-id="${appointment.id}" data-time="${timeStr}">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <div class="font-bold text-sm text-gray-800">${timeStr}</div>
+                                    <div class="text-xs text-gray-600 mt-1">${appointment.cliente_nome || 'Sem cliente'}</div>
+                                    ${!appointment.disponivel ? '<span class="text-xs text-red-500 font-bold">Ocupado</span>' : '<span class="text-xs text-green-500 font-bold">Disponível</span>'}
+                                </div>
+                                <div class="flex flex-col items-end gap-2">
+                                    <i data-lucide="move" class="w-4 h-4 text-gray-400"></i>
+                                    <button type="button" onmousedown="event.stopPropagation()" onclick="editarHorarioKanban('${appointment.id}')" class="text-blue-500 hover:text-blue-700 p-1 hover:bg-blue-50 rounded">
+                                        <i data-lucide="edit-2" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                cardsHtml += `
+                    <div class="time-card add-task-card cursor-pointer mt-2" onclick="openQuickAddTask('${dateKey}')">
+                        <div class="flex justify-center items-center gap-2 text-pink-600">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span class="text-sm font-medium">Adicionar</span>
+                        </div>
+                    </div>
+                `;
+
+                const colHtml = `
+                    <div class="day-column flex-shrink-0 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden" data-date="${dateKey}">
+                        <div class="day-header ${headerClass} p-3 font-bold text-center">
+                            ${label} ${isToday ? '<span class="ml-2 text-xs bg-pink-200 px-2 py-0.5 rounded-full">Hoje</span>' : ''}
+                        </div>
+                        <div class="cards-list min-h-[100px] flex flex-col gap-2 p-2" data-date="${dateKey}">
+                            ${cardsHtml}
+                        </div>
+                    </div>
+                `;
                 container.insertAdjacentHTML('beforeend', colHtml);
             });
+
             lucide.createIcons();
             setupDragAndDrop();
         }
@@ -1582,7 +1547,6 @@
 
         function handleDrop(e) {
             e.preventDefault();
-            const targetCard = e.target.closest('.time-card');
             const targetList = e.target.closest('.cards-list');
             if (!targetList) return;
 
@@ -1590,41 +1554,33 @@
             if (!sourceId) return;
 
             const targetDate = targetList.getAttribute('data-date');
-            let targetHour = null;
-            if (targetCard && targetCard.classList.contains('time-card')) {
-                targetHour = targetCard.getAttribute('data-time');
-            } else {
-                const cards = Array.from(targetList.querySelectorAll('.time-card:not(.add-task-card)'));
-                if (cards.length === 0) return;
-                targetHour = cards[0].getAttribute('data-time');
+            let targetHour = draggedItem.getAttribute('data-time') || "09:00";
+
+            const targetDateTime = `${targetDate}T${targetHour}`;
+            const itemOriginal = agendaData.find(a => a.id == sourceId);
+
+            const formData = new FormData();
+            formData.append('id', sourceId);
+            formData.append('data_hora', targetDateTime);
+            formData.append('cliente_nome', itemOriginal.cliente_nome || '');
+            if (itemOriginal.disponivel) {
+                formData.append('disponivel', 'on');
             }
-            if (!targetHour) return;
 
-            const targetDateTime = `${targetDate}T${targetHour}:00`;
-
-            fetch(`/{{ loja.slug_url }}/admin/agenda/update/${sourceId}`, {
+            fetch(`/{{ loja.slug_url }}/admin/agenda/salvar`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ data_hora: targetDateTime })
+                body: formData
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const agendaItem = agendaData.find(a => a.id == sourceId);
-                    if (agendaItem) {
-                        agendaItem.data_hora = targetDateTime;
-                        agendaItem.data_hora_formatada = targetDateTime;
+            .then(response => {
+                if (response.ok) {
+                    if (itemOriginal) {
+                        itemOriginal.data_hora = targetDateTime + ":00";
+                        itemOriginal.data_hora_formatada = targetDateTime;
                     }
                     refreshKanbanBoard();
-                    alert('Compromisso movido com sucesso!');
-                } else {
-                    alert('Erro ao mover o compromisso.');
                 }
             })
-            .catch(err => {
-                console.error(err);
-                alert('Erro de comunicação com o servidor.');
-            });
+            .catch(err => console.error(err));
         }
 
         function openQuickAddTask(dateKey) {
@@ -1634,12 +1590,10 @@
             document.getElementById('agendaId').value = '';
             document.getElementById('agendaDisponivel').checked = true;
             document.getElementById('agendaCliente').value = '';
-            document.getElementById('agendaModalTitle').innerText = 'Adicionar Compromisso';
+            document.getElementById('agendaModalTitle').innerText = 'Novo Horário';
             toggleModal('agendaModal');
-            // Após o envio do formulário, a página recarrega e o quadro será restaurado pela persistência da view
         }
 
-        // Persistência da visualização (lista ou quadro) e restauração após reload
         const viewKey = 'agendaViewPreference';
         const toggleListView = document.getElementById('toggleListViewBtn');
         const toggleBoardView = document.getElementById('toggleBoardViewBtn');
@@ -1663,15 +1617,12 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Restaurar a visualização salva
             const savedView = localStorage.getItem(viewKey);
             if (savedView === 'board') {
                 setActiveView('board');
             } else {
                 setActiveView('list');
             }
-
-            // Eventos dos botões
             toggleListView.addEventListener('click', () => setActiveView('list'));
             toggleBoardView.addEventListener('click', () => setActiveView('board'));
         });
@@ -1679,7 +1630,8 @@
         const floatingBtn = document.getElementById('floatingAddTaskBtn');
         if (floatingBtn) {
             floatingBtn.addEventListener('click', () => {
-                const todayKey = formatDateKeyLocal(new Date());
+                const hoje = new Date();
+                const todayKey = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}-${String(hoje.getDate()).padStart(2,'0')}`;
                 openQuickAddTask(todayKey);
             });
         }
