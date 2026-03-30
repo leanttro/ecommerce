@@ -14,11 +14,15 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+from flask_caching import Cache
 
 # Carrega variáveis de ambiente
 load_dotenv()
 
 app = Flask(__name__)
+app.config['CACHE_TYPE'] = 'SimpleCache'
+app.config['CACHE_DEFAULT_TIMEOUT'] = 300
+cache = Cache(app)
 
 # Configuração para extrair o IP real por trás de proxies/load balancers
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
@@ -183,45 +187,51 @@ def identificar_loja():
     path_parts = request.path.strip('/').split('/')
     primeiro_segmento = path_parts[0] if path_parts else ""
 
-    headers = get_headers()
-    loja_encontrada = None
+    cache_key = f"loja_identidade_{host}_{primeiro_segmento}"
+    loja_encontrada = cache.get(cache_key)
 
-    # 1 VERIFICAÇÃO DE DOMÍNIO PRÓPRIO
-    # Se não for o domínio principal do SaaS nem localhost
-    if host not in ['leanttro.com', 'www.leanttro.com', 'catalogo.leanttro.com', 'localhost', '127.0.0.1']:
-        try:
-            host_clean = host.replace('www.', '')
-            url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=*.*"
-            resp = requests.get(url, headers=headers, timeout=7)
-            if resp.status_code == 200 and len(resp.json()['data']) > 0:
-                loja_encontrada = resp.json()['data'][0]
-                g.slug_atual = loja_encontrada.get('slug') # Define o slug mesmo estando em domínio próprio
-        except Exception as e:
-            print(f"Erro Middleware Domínio: {e}")
+    if not loja_encontrada:
+        headers = get_headers()
 
-    # 2 VERIFICAÇÃO DE PATH SLUG
-    # Se não achou por domínio tenta pelo primeiro segmento da URL
-    # Verifica se o primeiro segmento NÃO é uma palavra reservada
-    if not loja_encontrada and primeiro_segmento and primeiro_segmento not in BLACKLIST_ROTAS:
-        g.slug_atual = primeiro_segmento
-        try:
-            url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]={g.slug_atual}&fields=*.*"
-            resp = requests.get(url, headers=headers, timeout=7)
-            if resp.status_code == 200 and len(resp.json()['data']) > 0:
-                loja_encontrada = resp.json()['data'][0]
-        except Exception as e:
-            print(f"Erro Middleware Slug: {e}")
+        # 1 VERIFICAÇÃO DE DOMÍNIO PRÓPRIO
+        # Se não for o domínio principal do SaaS nem localhost
+        if host not in ['leanttro.com', 'www.leanttro.com', 'catalogo.leanttro.com', 'localhost', '127.0.0.1']:
+            try:
+                host_clean = host.replace('www.', '')
+                url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=*.*"
+                resp = requests.get(url, headers=headers, timeout=7)
+                if resp.status_code == 200 and len(resp.json()['data']) > 0:
+                    loja_encontrada = resp.json()['data'][0]
+                    g.slug_atual = loja_encontrada.get('slug') # Define o slug mesmo estando em domínio próprio
+            except Exception as e:
+                print(f"Erro Middleware Domínio: {e}")
 
-    # 3 FALLBACK PARA DOMÍNIO PRINCIPAL -> TECNOLOGIA (ABRE DIRETO NO DOMÍNIO)
-    if not loja_encontrada and host in ['leanttro.com', 'www.leanttro.com', 'localhost', '127.0.0.1'] and primeiro_segmento not in BLACKLIST_ROTAS:
-        g.slug_atual = "tecnologia"
-        try:
-            url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=tecnologia&fields=*.*"
-            resp = requests.get(url, headers=headers, timeout=7)
-            if resp.status_code == 200 and len(resp.json()['data']) > 0:
-                loja_encontrada = resp.json()['data'][0]
-        except Exception as e:
-            print(f"Erro Middleware Tecnologia Fallback: {e}")
+        # 2 VERIFICAÇÃO DE PATH SLUG
+        # Se não achou por domínio tenta pelo primeiro segmento da URL
+        # Verifica se o primeiro segmento NÃO é uma palavra reservada
+        if not loja_encontrada and primeiro_segmento and primeiro_segmento not in BLACKLIST_ROTAS:
+            g.slug_atual = primeiro_segmento
+            try:
+                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]={g.slug_atual}&fields=*.*"
+                resp = requests.get(url, headers=headers, timeout=7)
+                if resp.status_code == 200 and len(resp.json()['data']) > 0:
+                    loja_encontrada = resp.json()['data'][0]
+            except Exception as e:
+                print(f"Erro Middleware Slug: {e}")
+
+        # 3 FALLBACK PARA DOMÍNIO PRINCIPAL -> TECNOLOGIA (ABRE DIRETO NO DOMÍNIO)
+        if not loja_encontrada and host in ['leanttro.com', 'www.leanttro.com', 'localhost', '127.0.0.1'] and primeiro_segmento not in BLACKLIST_ROTAS:
+            g.slug_atual = "tecnologia"
+            try:
+                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=tecnologia&fields=*.*"
+                resp = requests.get(url, headers=headers, timeout=7)
+                if resp.status_code == 200 and len(resp.json()['data']) > 0:
+                    loja_encontrada = resp.json()['data'][0]
+            except Exception as e:
+                print(f"Erro Middleware Tecnologia Fallback: {e}")
+        
+        if loja_encontrada:
+            cache.set(cache_key, loja_encontrada, timeout=300)
 
     # SE A LOJA FOI IDENTIFICADA Por Domínio ou Slug configura o ambiente
     if loja_encontrada:
@@ -379,6 +389,7 @@ def cadastro():
 # ROTA INDEX A VITRINE DA LOJA
 # Atualizado removeu prefixo loja
 @app.route('/<loja_slug>/')
+@cache.cached(timeout=300, query_string=True)
 def index(loja_slug):
     if not g.loja: 
         return "Loja não encontrada", 404
