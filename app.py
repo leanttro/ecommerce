@@ -121,7 +121,7 @@ def upload_file_to_directus(file_storage):
         filename = secure_filename(file_storage.filename)
         files = {'file': (filename, file_storage, file_storage.mimetype)}
         
-        response = requests.post(url, headers=get_upload_headers(), files=files)
+        response = requests.post(url, headers=get_upload_headers(), files=files, timeout=15)
         
         if response.status_code in [200, 201]:
             return response.json()['data']['id']
@@ -192,7 +192,7 @@ def identificar_loja():
         try:
             host_clean = host.replace('www.', '')
             url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=*.*"
-            resp = requests.get(url, headers=headers)
+            resp = requests.get(url, headers=headers, timeout=7)
             if resp.status_code == 200 and len(resp.json()['data']) > 0:
                 loja_encontrada = resp.json()['data'][0]
                 g.slug_atual = loja_encontrada.get('slug') # Define o slug mesmo estando em domínio próprio
@@ -206,7 +206,7 @@ def identificar_loja():
         g.slug_atual = primeiro_segmento
         try:
             url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]={g.slug_atual}&fields=*.*"
-            resp = requests.get(url, headers=headers)
+            resp = requests.get(url, headers=headers, timeout=7)
             if resp.status_code == 200 and len(resp.json()['data']) > 0:
                 loja_encontrada = resp.json()['data'][0]
         except Exception as e:
@@ -217,7 +217,7 @@ def identificar_loja():
         g.slug_atual = "tecnologia"
         try:
             url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=tecnologia&fields=*.*"
-            resp = requests.get(url, headers=headers)
+            resp = requests.get(url, headers=headers, timeout=7)
             if resp.status_code == 200 and len(resp.json()['data']) > 0:
                 loja_encontrada = resp.json()['data'][0]
         except Exception as e:
@@ -307,7 +307,7 @@ def cadastro():
         headers = get_headers()
         filtro = f"?filter[_or][0][slug][_eq]={slug}&filter[_or][1][email][_eq]={email}"
         try:
-            check = requests.get(f"{DIRECTUS_URL}/items/lojas{filtro}", headers=headers)
+            check = requests.get(f"{DIRECTUS_URL}/items/lojas{filtro}", headers=headers, timeout=7)
             if check.status_code == 200 and len(check.json()['data']) > 0:
                 existing = check.json()['data'][0]
                 if existing.get('slug') == slug:
@@ -348,7 +348,7 @@ def cadastro():
         }
 
         try:
-            r = requests.post(f"{DIRECTUS_URL}/items/lojas", headers=headers, json=payload)
+            r = requests.post(f"{DIRECTUS_URL}/items/lojas", headers=headers, json=payload, timeout=7)
             
             if r.status_code in [200, 201]:
                 data = r.json().get('data')
@@ -389,7 +389,7 @@ def index(loja_slug):
     categorias = []
     try:
         url_cat = f"{DIRECTUS_URL}/items/categorias?filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published&sort=sort"
-        r_cat = requests.get(url_cat, headers=headers)
+        r_cat = requests.get(url_cat, headers=headers, timeout=7)
         if r_cat.status_code == 200: categorias = r_cat.json()['data']
     except: pass
 
@@ -407,7 +407,7 @@ def index(loja_slug):
 
     try:
         url_prod = f"{DIRECTUS_URL}/items/produtos?{filter_str}&fields=*.*"
-        r_prod = requests.get(url_prod, headers=headers)
+        r_prod = requests.get(url_prod, headers=headers, timeout=7)
         
         if r_prod.status_code == 200:
             raw_prods = r_prod.json()['data']
@@ -475,7 +475,7 @@ def index(loja_slug):
     posts = []
     try:
         url_blog = f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published&limit=3&sort=-date_created"
-        r_blog = requests.get(url_blog, headers=headers)
+        r_blog = requests.get(url_blog, headers=headers, timeout=7)
         if r_blog.status_code == 200:
             for post in r_blog.json()['data']:
                 posts.append({
@@ -490,7 +490,7 @@ def index(loja_slug):
     agenda = []
     try:
         url_agenda = f"{DIRECTUS_URL}/items/agenda?filter[loja_id][_eq]={g.loja_id}&sort=data_hora"
-        r_agenda = requests.get(url_agenda, headers=headers)
+        r_agenda = requests.get(url_agenda, headers=headers, timeout=7)
         if r_agenda.status_code == 200:
             for item in r_agenda.json()['data']:
                 try:
@@ -559,7 +559,7 @@ def produto(loja_slug, slug):
 
     headers = get_headers()
     url = f"{DIRECTUS_URL}/items/produtos?filter[slug][_eq]={slug}&filter[loja_id][_eq]={g.loja_id}&fields=*.*"
-    r = requests.get(url, headers=headers)
+    r = requests.get(url, headers=headers, timeout=7)
     
     if r.status_code == 200 and r.json()['data']:
         p = r.json()['data'][0]
@@ -620,7 +620,7 @@ def personagem_wanted(loja_slug, slug):
     headers = get_headers()
     # Busca o personagem específico
     url = f"{DIRECTUS_URL}/items/produtos?filter[slug][_eq]={slug}&filter[loja_id][_eq]={g.loja_id}&fields=*.*"
-    r = requests.get(url, headers=headers)
+    r = requests.get(url, headers=headers, timeout=7)
     
     if r.status_code == 200 and r.json()['data']:
         p = r.json()['data'][0]
@@ -758,7 +758,7 @@ def admin_painel(loja_slug):
         payload.update(files_map)
 
         try:
-            requests.patch(f"{DIRECTUS_URL}/items/lojas/{g.loja_id}", headers=headers, json=payload)
+            requests.patch(f"{DIRECTUS_URL}/items/lojas/{g.loja_id}", headers=headers, json=payload, timeout=7)
             flash('Loja atualizada com sucesso!', 'success')
         except Exception as e:
             flash(f'Erro ao salvar: {e}', 'error')
@@ -772,10 +772,10 @@ def admin_painel(loja_slug):
     agenda = []
 
     try:
-        r_cat = requests.get(f"{DIRECTUS_URL}/items/categorias?filter[loja_id][_eq]={g.loja_id}&sort=sort", headers=headers)
+        r_cat = requests.get(f"{DIRECTUS_URL}/items/categorias?filter[loja_id][_eq]={g.loja_id}&sort=sort", headers=headers, timeout=7)
         if r_cat.status_code == 200: categorias = r_cat.json()['data']
 
-        r_prod = requests.get(f"{DIRECTUS_URL}/items/produtos?filter[loja_id][_eq]={g.loja_id}&limit=100&fields=*.*", headers=headers)
+        r_prod = requests.get(f"{DIRECTUS_URL}/items/produtos?filter[loja_id][_eq]={g.loja_id}&limit=100&fields=*.*", headers=headers, timeout=7)
         if r_prod.status_code == 200: 
             raw_prods = r_prod.json()['data']
             
@@ -799,13 +799,13 @@ def admin_painel(loja_slug):
                 
                 produtos.append(p)
 
-        r_post = requests.get(f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&limit=20&sort=-date_created&fields=id,titulo,date_created", headers=headers)
+        r_post = requests.get(f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&limit=20&sort=-date_created&fields=id,titulo,date_created", headers=headers, timeout=7)
         if r_post.status_code == 200: posts = r_post.json()['data']
         
-        r_leads = requests.get(f"{DIRECTUS_URL}/items/clientes_loja?filter[loja_id][_eq]={g.loja_id}&sort=-date_created", headers=headers)
+        r_leads = requests.get(f"{DIRECTUS_URL}/items/clientes_loja?filter[loja_id][_eq]={g.loja_id}&sort=-date_created", headers=headers, timeout=7)
         if r_leads.status_code == 200: inscritos = r_leads.json()['data']
 
-        r_agenda = requests.get(f"{DIRECTUS_URL}/items/agenda?filter[loja_id][_eq]={g.loja_id}&sort=data_hora", headers=headers)
+        r_agenda = requests.get(f"{DIRECTUS_URL}/items/agenda?filter[loja_id][_eq]={g.loja_id}&sort=data_hora", headers=headers, timeout=7)
         if r_agenda.status_code == 200:
             for item in r_agenda.json()['data']:
                 try:
@@ -879,15 +879,15 @@ def admin_salvar_categoria(loja_slug):
     try:
         if cat_id:
             # PROTEÇÃO IDOR
-            check = requests.get(f"{DIRECTUS_URL}/items/categorias/{cat_id}?fields=loja_id", headers=headers)
+            check = requests.get(f"{DIRECTUS_URL}/items/categorias/{cat_id}?fields=loja_id", headers=headers, timeout=7)
             if check.status_code != 200 or check.json().get('data', {}).get('loja_id') != g.loja_id:
                 flash('Acesso negado. Tentativa de alteração inválida.', 'error')
                 return redirect(f'/{loja_slug}/admin/painel#categorias')
                 
-            requests.patch(f"{DIRECTUS_URL}/items/categorias/{cat_id}", headers=headers, json=payload)
+            requests.patch(f"{DIRECTUS_URL}/items/categorias/{cat_id}", headers=headers, json=payload, timeout=7)
             flash('Categoria atualizada!', 'success')
         else:
-            requests.post(f"{DIRECTUS_URL}/items/categorias", headers=headers, json=payload)
+            requests.post(f"{DIRECTUS_URL}/items/categorias", headers=headers, json=payload, timeout=7)
             flash('Categoria criada!', 'success')
     except Exception as e:
         flash(f'Erro ao salvar categoria: {e}', 'error')
@@ -902,10 +902,10 @@ def admin_excluir_categoria(loja_slug, id):
     
     # PROTEÇÃO IDOR INÍCIO
     headers = get_headers()
-    check = requests.get(f"{DIRECTUS_URL}/items/categorias/{id}?fields=loja_id", headers=headers)
+    check = requests.get(f"{DIRECTUS_URL}/items/categorias/{id}?fields=loja_id", headers=headers, timeout=7)
     
     if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
-        requests.delete(f"{DIRECTUS_URL}/items/categorias/{id}", headers=headers)
+        requests.delete(f"{DIRECTUS_URL}/items/categorias/{id}", headers=headers, timeout=7)
         flash('Categoria removida!', 'success')
     else:
         flash('Acesso negado ou item não encontrado.', 'error')
@@ -1004,15 +1004,15 @@ def admin_salvar_produto(loja_slug):
     try:
         if prod_id:
             # PROTEÇÃO IDOR
-            check = requests.get(f"{DIRECTUS_URL}/items/produtos/{prod_id}?fields=loja_id", headers=headers)
+            check = requests.get(f"{DIRECTUS_URL}/items/produtos/{prod_id}?fields=loja_id", headers=headers, timeout=7)
             if check.status_code != 200 or check.json().get('data', {}).get('loja_id') != g.loja_id:
                 flash('Acesso negado. Tentativa de alteração inválida.', 'error')
                 return redirect(f'/{loja_slug}/admin/painel#produtos')
                 
-            requests.patch(f"{DIRECTUS_URL}/items/produtos/{prod_id}", headers=headers, json=payload)
+            requests.patch(f"{DIRECTUS_URL}/items/produtos/{prod_id}", headers=headers, json=payload, timeout=7)
             flash('Produto atualizado!', 'success')
         else:
-            requests.post(f"{DIRECTUS_URL}/items/produtos", headers=headers, json=payload)
+            requests.post(f"{DIRECTUS_URL}/items/produtos", headers=headers, json=payload, timeout=7)
             flash('Produto criado!', 'success')
     except Exception as e:
         flash(f'Erro interno ao salvar produto: {e}', 'error')
@@ -1028,10 +1028,10 @@ def admin_excluir_produto(loja_slug, id):
     
     # PROTEÇÃO IDOR INÍCIO
     headers = get_headers()
-    check = requests.get(f"{DIRECTUS_URL}/items/produtos/{id}?fields=loja_id", headers=headers)
+    check = requests.get(f"{DIRECTUS_URL}/items/produtos/{id}?fields=loja_id", headers=headers, timeout=7)
     
     if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
-        requests.delete(f"{DIRECTUS_URL}/items/produtos/{id}", headers=headers)
+        requests.delete(f"{DIRECTUS_URL}/items/produtos/{id}", headers=headers, timeout=7)
         flash('Produto removido!', 'success')
     else:
         flash('Acesso negado ou item não encontrado.', 'error')
@@ -1069,15 +1069,15 @@ def admin_salvar_post(loja_slug):
     try:
         if post_id:
             # PROTEÇÃO IDOR
-            check = requests.get(f"{DIRECTUS_URL}/items/posts/{post_id}?fields=loja_id", headers=headers)
+            check = requests.get(f"{DIRECTUS_URL}/items/posts/{post_id}?fields=loja_id", headers=headers, timeout=7)
             if check.status_code != 200 or check.json().get('data', {}).get('loja_id') != g.loja_id:
                 flash('Acesso negado. Tentativa de alteração inválida.', 'error')
                 return redirect(f'/{loja_slug}/admin/painel#blog')
                 
-            requests.patch(f"{DIRECTUS_URL}/items/posts/{post_id}", headers=headers, json=payload)
+            requests.patch(f"{DIRECTUS_URL}/items/posts/{post_id}", headers=headers, json=payload, timeout=7)
             flash('Post atualizado!', 'success')
         else:
-            requests.post(f"{DIRECTUS_URL}/items/posts", headers=headers, json=payload)
+            requests.post(f"{DIRECTUS_URL}/items/posts", headers=headers, json=payload, timeout=7)
             flash('Post criado!', 'success')
     except Exception as e:
         flash(f'Erro ao salvar post: {e}', 'error')
@@ -1092,10 +1092,10 @@ def admin_excluir_post(loja_slug, id):
     
     # PROTEÇÃO IDOR INÍCIO
     headers = get_headers()
-    check = requests.get(f"{DIRECTUS_URL}/items/posts/{id}?fields=loja_id", headers=headers)
+    check = requests.get(f"{DIRECTUS_URL}/items/posts/{id}?fields=loja_id", headers=headers, timeout=7)
     
     if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
-        requests.delete(f"{DIRECTUS_URL}/items/posts/{id}", headers=headers)
+        requests.delete(f"{DIRECTUS_URL}/items/posts/{id}", headers=headers, timeout=7)
         flash('Post removido!', 'success')
     else:
         flash('Acesso negado ou item não encontrado.', 'error')
@@ -1129,15 +1129,15 @@ def admin_salvar_agenda(loja_slug):
     try:
         if agenda_id:
             # PROTEÇÃO IDOR
-            check = requests.get(f"{DIRECTUS_URL}/items/agenda/{agenda_id}?fields=loja_id", headers=headers)
+            check = requests.get(f"{DIRECTUS_URL}/items/agenda/{agenda_id}?fields=loja_id", headers=headers, timeout=7)
             if check.status_code != 200 or check.json().get('data', {}).get('loja_id') != g.loja_id:
                 flash('Acesso negado.', 'error')
                 return redirect(f'/{loja_slug}/admin/painel#agenda')
                 
-            requests.patch(f"{DIRECTUS_URL}/items/agenda/{agenda_id}", headers=headers, json=payload)
+            requests.patch(f"{DIRECTUS_URL}/items/agenda/{agenda_id}", headers=headers, json=payload, timeout=7)
             flash('Horário atualizado!', 'success')
         else:
-            requests.post(f"{DIRECTUS_URL}/items/agenda", headers=headers, json=payload)
+            requests.post(f"{DIRECTUS_URL}/items/agenda", headers=headers, json=payload, timeout=7)
             flash('Horário criado!', 'success')
     except Exception as e:
         flash(f'Erro ao salvar agenda: {e}', 'error')
@@ -1149,10 +1149,10 @@ def admin_excluir_agenda(loja_slug, id):
     if session.get('loja_admin_id') != g.loja_id: return redirect('/')
     
     headers = get_headers()
-    check = requests.get(f"{DIRECTUS_URL}/items/agenda/{id}?fields=loja_id", headers=headers)
+    check = requests.get(f"{DIRECTUS_URL}/items/agenda/{id}?fields=loja_id", headers=headers, timeout=7)
     
     if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
-        requests.delete(f"{DIRECTUS_URL}/items/agenda/{id}", headers=headers)
+        requests.delete(f"{DIRECTUS_URL}/items/agenda/{id}", headers=headers, timeout=7)
         flash('Horário removido!', 'success')
     else:
         flash('Acesso negado.', 'error')
@@ -1196,7 +1196,7 @@ def reset_senha(token):
     error = None
     success = None
     
-    r = requests.get(f"{DIRECTUS_URL}/items/lojas?filter[email][_eq]={email}", headers=get_headers())
+    r = requests.get(f"{DIRECTUS_URL}/items/lojas?filter[email][_eq]={email}", headers=get_headers(), timeout=7)
     data = r.json().get('data')
     
     if not data: 
@@ -1210,7 +1210,7 @@ def reset_senha(token):
             hash_senha = generate_password_hash(new_password)
             requests.patch(f"{DIRECTUS_URL}/items/lojas/{loja_alvo['id']}", 
                          headers=get_headers(),
-                         json={'senha_admin': hash_senha})
+                         json={'senha_admin': hash_senha}, timeout=7)
             success = "Sua senha foi atualizada com sucesso! Você já pode fazer login."
         else:
             error = "A senha não pode ficar em branco."
@@ -1246,7 +1246,7 @@ def captura_lead(loja_slug):
     }
 
     try:
-        r = requests.post(f"{DIRECTUS_URL}/items/clientes_loja", headers=get_headers(), json=payload)
+        r = requests.post(f"{DIRECTUS_URL}/items/clientes_loja", headers=get_headers(), json=payload, timeout=7)
         if r.status_code in [200, 201]:
             return jsonify({"sucesso": True, "mensagem": "Cadastrado com sucesso!"})
         return jsonify({"erro": "Erro ao salvar no banco de dados."}), 500
@@ -1278,7 +1278,7 @@ def feedback_tarefa(loja_slug, produto_id):
     headers = get_headers()
     
     try:
-        r_prod = requests.get(f"{DIRECTUS_URL}/items/produtos/{produto_id}?fields=variantes,loja_id", headers=headers)
+        r_prod = requests.get(f"{DIRECTUS_URL}/items/produtos/{produto_id}?fields=variantes,loja_id", headers=headers, timeout=7)
         if r_prod.status_code != 200:
             return jsonify({"sucesso": False, "mensagem": "Produto não encontrado"}), 404
             
@@ -1300,7 +1300,7 @@ def feedback_tarefa(loja_slug, produto_id):
             "tipo_preco": "adicional"
         })
         
-        requests.patch(f"{DIRECTUS_URL}/items/produtos/{produto_id}", headers=headers, json={"variantes": variantes})
+        requests.patch(f"{DIRECTUS_URL}/items/produtos/{produto_id}", headers=headers, json={"variantes": variantes}, timeout=7)
         
         return jsonify({"sucesso": True})
     except Exception as e:
