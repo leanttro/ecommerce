@@ -315,7 +315,7 @@
 {% for secao in layout %}
 
     {% if secao == 'banner' and not loja.ocultar_banner %}
-    <section class="w-full relative overflow-hidden group" id="hero">
+    <section class="w-full relative overflow-hidden group pt-[140px] md:pt-0" id="hero">
         <div id="banner-slider" class="flex transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] w-full">
             
             {% if loja.banner1 %}
