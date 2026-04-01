@@ -810,7 +810,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 
 <header class="hero" id="hero">
   {% set hero_videos = [] %}
-  {% for p in produtos %}
+  {% for p in produtos|sort(attribute='preco') %}
     {% set p_cat = p.categoria_id.id if p.categoria_id is mapping else p.categoria_id %}
     {% for c in categorias %}
       {% if p_cat|string == c.id|string and ('hero' in c.slug|lower or 'hero' in c.nome|lower) %}
@@ -938,7 +938,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     
     <div class="portfolio-track">
       {% set port_videos = [] %}
-      {% for p in produtos %}
+      {% for p in produtos|sort(attribute='preco') %}
         {% set p_cat = p.categoria_id.id if p.categoria_id is mapping else p.categoria_id %}
         {% for c in categorias %}
           {% if p_cat|string == c.id|string and ('portfolio' in c.slug|lower or 'portfólio' in c.nome|lower or 'portfolio' in c.nome|lower) %}
