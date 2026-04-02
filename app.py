@@ -389,7 +389,6 @@ def cadastro():
 # ROTA INDEX A VITRINE DA LOJA
 # Atualizado removeu prefixo loja
 @app.route('/<loja_slug>/')
-@cache.cached(timeout=300, query_string=True)
 def index(loja_slug):
     if not g.loja: 
         return "Loja não encontrada", 404
@@ -771,6 +770,7 @@ def admin_painel(loja_slug):
         try:
             requests.patch(f"{DIRECTUS_URL}/items/lojas/{g.loja_id}", headers=headers, json=payload, timeout=7)
             flash('Loja atualizada com sucesso!', 'success')
+            cache.clear()
         except Exception as e:
             flash(f'Erro ao salvar: {e}', 'error')
         
@@ -897,9 +897,11 @@ def admin_salvar_categoria(loja_slug):
                 
             requests.patch(f"{DIRECTUS_URL}/items/categorias/{cat_id}", headers=headers, json=payload, timeout=7)
             flash('Categoria atualizada!', 'success')
+            cache.clear()
         else:
             requests.post(f"{DIRECTUS_URL}/items/categorias", headers=headers, json=payload, timeout=7)
             flash('Categoria criada!', 'success')
+            cache.clear()
     except Exception as e:
         flash(f'Erro ao salvar categoria: {e}', 'error')
 
@@ -918,6 +920,7 @@ def admin_excluir_categoria(loja_slug, id):
     if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
         requests.delete(f"{DIRECTUS_URL}/items/categorias/{id}", headers=headers, timeout=7)
         flash('Categoria removida!', 'success')
+        cache.clear()
     else:
         flash('Acesso negado ou item não encontrado.', 'error')
     # PROTEÇÃO IDOR FIM
@@ -1022,9 +1025,11 @@ def admin_salvar_produto(loja_slug):
                 
             requests.patch(f"{DIRECTUS_URL}/items/produtos/{prod_id}", headers=headers, json=payload, timeout=7)
             flash('Produto atualizado!', 'success')
+            cache.clear()
         else:
             requests.post(f"{DIRECTUS_URL}/items/produtos", headers=headers, json=payload, timeout=7)
             flash('Produto criado!', 'success')
+            cache.clear()
     except Exception as e:
         flash(f'Erro interno ao salvar produto: {e}', 'error')
         
@@ -1044,6 +1049,7 @@ def admin_excluir_produto(loja_slug, id):
     if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
         requests.delete(f"{DIRECTUS_URL}/items/produtos/{id}", headers=headers, timeout=7)
         flash('Produto removido!', 'success')
+        cache.clear()
     else:
         flash('Acesso negado ou item não encontrado.', 'error')
     # PROTEÇÃO IDOR FIM
@@ -1087,9 +1093,11 @@ def admin_salvar_post(loja_slug):
                 
             requests.patch(f"{DIRECTUS_URL}/items/posts/{post_id}", headers=headers, json=payload, timeout=7)
             flash('Post atualizado!', 'success')
+            cache.clear()
         else:
             requests.post(f"{DIRECTUS_URL}/items/posts", headers=headers, json=payload, timeout=7)
             flash('Post criado!', 'success')
+            cache.clear()
     except Exception as e:
         flash(f'Erro ao salvar post: {e}', 'error')
 
@@ -1108,6 +1116,7 @@ def admin_excluir_post(loja_slug, id):
     if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
         requests.delete(f"{DIRECTUS_URL}/items/posts/{id}", headers=headers, timeout=7)
         flash('Post removido!', 'success')
+        cache.clear()
     else:
         flash('Acesso negado ou item não encontrado.', 'error')
     # PROTEÇÃO IDOR FIM
@@ -1147,9 +1156,11 @@ def admin_salvar_agenda(loja_slug):
                 
             requests.patch(f"{DIRECTUS_URL}/items/agenda/{agenda_id}", headers=headers, json=payload, timeout=7)
             flash('Horário atualizado!', 'success')
+            cache.clear()
         else:
             requests.post(f"{DIRECTUS_URL}/items/agenda", headers=headers, json=payload, timeout=7)
             flash('Horário criado!', 'success')
+            cache.clear()
     except Exception as e:
         flash(f'Erro ao salvar agenda: {e}', 'error')
 
@@ -1165,6 +1176,7 @@ def admin_excluir_agenda(loja_slug, id):
     if check.status_code == 200 and check.json().get('data', {}).get('loja_id') == g.loja_id:
         requests.delete(f"{DIRECTUS_URL}/items/agenda/{id}", headers=headers, timeout=7)
         flash('Horário removido!', 'success')
+        cache.clear()
     else:
         flash('Acesso negado.', 'error')
         
