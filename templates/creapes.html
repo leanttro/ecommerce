@@ -999,7 +999,160 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     </div>
   </div>
 </section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
+<section id="nav-3d-trailer-creapes" style="position:relative;width:100%;height:350vh;background:var(--bg);" class="creapes-3d-section">
+    <div style="position:sticky;top:0;width:100%;height:100vh;overflow:hidden;">
+        <canvas id="canvas-creapes-3d" style="width:100%;height:100%;display:block;position:absolute;top:0;left:0;z-index:1;"></canvas>
+        
+        <div id="content-container-creapes" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+            
+            <div id="creapes-step-1-trailer" style="position:absolute;opacity:1;transition:opacity 0.3s, transform 0.3s;pointer-events:auto;text-align:center;width:90%;max-width:1000px;transform:translateY(0);">
+                <h2 style="color:var(--text);font-size:clamp(1.5rem, 3vw, 2.5rem);margin-bottom:20px;text-transform:uppercase;letter-spacing:2px;font-family:'Space Grotesk', sans-serif;">Nosso Showreel</h2>
+                <div style="padding:10px;aspect-ratio:16/9;width:100%;background:rgba(5,5,5,0.8);backdrop-filter:blur(10px);border:1px solid var(--accent);box-shadow:0 0 30px rgba(208, 255, 0, 0.1);border-radius:4px;">
+                    <iframe src="https://player.vimeo.com/video/1176338391?h=9316747c6c&autoplay=1&loop=1&muted=1&title=0&byline=0&portrait=0" style="width:100%;height:100%;border:none;border-radius:2px;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <div id="creapes-step-2-button" style="position:absolute;opacity:0;transition:opacity 0.3s, transform 0.3s;pointer-events:none;text-align:center;width:90%;max-width:800px;transform:translateY(50px);">
+                <h3 style="color:var(--text);font-size:clamp(1.5rem, 4vw, 3rem);margin-bottom:40px;text-shadow:0 0 20px rgba(0,0,0,0.8);line-height:1.2;font-family:'Space Grotesk', sans-serif;text-transform:uppercase;">Elevando o padrão audiovisual</h3>
+                <a href="#contact" style="display:inline-block;padding:15px 35px;background:var(--accent);color:var(--bg);text-decoration:none;font-family:'Space Grotesk', sans-serif;font-weight:700;font-size:1.2rem;border-radius:50px;text-transform:uppercase;transition:all 0.3s;">Start a Project</a>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const secCreapes = document.getElementById('nav-3d-trailer-creapes');
+        const canvasCreapes = document.getElementById('canvas-creapes-3d');
+        if(!secCreapes || !canvasCreapes) return;
+
+        const sceneC = new THREE.Scene();
+        sceneC.fog = new THREE.FogExp2(0x050505, 0.012);
+
+        const cameraC = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        cameraC.position.z = 40;
+
+        const rendererC = new THREE.WebGLRenderer({ canvas: canvasCreapes, alpha: true, antialias: true });
+        rendererC.setSize(window.innerWidth, window.innerHeight);
+        rendererC.setPixelRatio(window.devicePixelRatio);
+
+        const cubesGroupC = new THREE.Group();
+        const geometryC = new THREE.BoxGeometry(1, 1, 1);
+        
+        for (let i = 0; i < 500; i++) {
+            const isAccent = Math.random() > 0.85;
+            let cubeColor;
+            
+            if (isAccent) {
+                // Pegar a cor de destaque do CSS nativamente seria complexo aqui, fixando o tom de amarelo da Creapes
+                cubeColor = 0xd0ff00; 
+            } else {
+                cubeColor = Math.random() > 0.5 ? 0x222222 : 0x111111;
+            }
+
+            const mat = new THREE.MeshStandardMaterial({
+                color: cubeColor,
+                roughness: 0.2,
+                metalness: 0.8,
+                transparent: true,
+                opacity: isAccent ? 0.8 : 0.6
+            });
+            
+            const mesh = new THREE.Mesh(geometryC, mat);
+            mesh.position.set(
+                (Math.random() - 0.5) * 120,
+                (Math.random() - 0.5) * 120,
+                (Math.random() - 0.5) * 150 
+            );
+            mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+            const scale = Math.random() * 2.5 + 0.5;
+            mesh.scale.set(scale, scale, scale);
+            
+            cubesGroupC.add(mesh);
+        }
+        sceneC.add(cubesGroupC);
+
+        const ambientLightC = new THREE.AmbientLight(0xffffff, 0.4);
+        sceneC.add(ambientLightC);
+        
+        const dirLightC = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLightC.position.set(20, 20, 10);
+        sceneC.add(dirLightC);
+
+        const accentLight = new THREE.PointLight(0xd0ff00, 3, 150);
+        accentLight.position.set(0, 0, 20);
+        sceneC.add(accentLight);
+
+        let scrollPercentC = 0;
+        let clockC = new THREE.Clock();
+
+        window.addEventListener('scroll', () => {
+            if(!secCreapes) return;
+            const rect = secCreapes.getBoundingClientRect();
+            const sectionTop = rect.top;
+            const sectionHeight = rect.height - window.innerHeight;
+            
+            if (sectionTop <= 0 && sectionTop >= -sectionHeight) {
+                scrollPercentC = Math.abs(sectionTop) / sectionHeight;
+            } else if (sectionTop > 0) {
+                scrollPercentC = 0;
+            } else {
+                scrollPercentC = 1;
+            }
+
+            cameraC.position.z = 40 - (scrollPercentC * 100); 
+            cubesGroupC.rotation.y = scrollPercentC * Math.PI;
+            cubesGroupC.rotation.z = scrollPercentC * 0.5;
+
+            const step1C = document.getElementById('creapes-step-1-trailer');
+            const step2C = document.getElementById('creapes-step-2-button');
+
+            if (scrollPercentC < 0.5) {
+                step1C.style.opacity = 1 - (scrollPercentC * 2.5);
+                step1C.style.transform = `translateY(${scrollPercentC * 150}px) scale(${1 + scrollPercentC})`;
+                step1C.style.pointerEvents = scrollPercentC < 0.2 ? 'auto' : 'none';
+                
+                step2C.style.opacity = 0;
+                step2C.style.pointerEvents = 'none';
+            } else {
+                step1C.style.opacity = 0;
+                step1C.style.pointerEvents = 'none';
+                
+                let p = (scrollPercentC - 0.5) * 2.5;
+                if (p > 1) p = 1;
+                
+                step2C.style.opacity = p;
+                step2C.style.transform = `translateY(${50 - (p * 50)}px)`;
+                step2C.style.pointerEvents = p > 0.5 ? 'auto' : 'none';
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            cameraC.aspect = window.innerWidth / window.innerHeight;
+            cameraC.updateProjectionMatrix();
+            rendererC.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        function animateC() {
+            requestAnimationFrame(animateC);
+            const time = clockC.getElapsedTime();
+            
+            cubesGroupC.children.forEach((cube, i) => {
+                cube.rotation.x += 0.001 * (i % 3 + 1);
+                cube.rotation.y += 0.002 * (i % 2 + 1);
+                cube.position.y += Math.sin(time + i) * 0.02;
+            });
+            
+            accentLight.intensity = 1.5 + Math.sin(time * 2) * 1;
+            rendererC.render(sceneC, cameraC);
+        }
+        
+        animateC();
+    });
+</script>
 <footer id="contact">
   <div class="footer-blocks fade-in">
     <div class="footer-block">
