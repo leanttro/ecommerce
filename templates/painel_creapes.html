@@ -142,9 +142,9 @@
                             </tr>
                         </thead>
                         <tbody class="bg-neutral-800 divide-y divide-neutral-700">
-                            {% for prod in produtos|sort(attribute='preco') %}
+                            {% for prod in produtos|sort(attribute='sort') %}
                             <tr class="hover:bg-neutral-700 transition-colors">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400 font-bold">{{ prod.preco|int if prod.preco else '0' }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400 font-bold">{{ prod.sort|int if prod.sort else '0' }}</td>
                                 <td class="px-6 py-4"><div class="text-sm font-bold text-white line-clamp-1">{{ prod.nome }}</div></td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ prod.descricao }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ prod.estoque }}</td>
@@ -464,7 +464,7 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-bold mb-2 text-gray-300">Ordem de Exibição</label>
-                                <input type="number" step="1" name="preco" id="prodOrdem" value="0" class="w-full bg-neutral-800 border border-neutral-700 rounded p-3 text-white focus:border-yellow-500 outline-none" placeholder="Ex: 1, 2, 3...">
+                                <input type="number" step="1" name="sort" id="prodOrdem" value="0" class="w-full bg-neutral-800 border border-neutral-700 rounded p-3 text-white focus:border-yellow-500 outline-none" placeholder="Ex: 1, 2, 3...">
                             </div>
                         </div>
 
@@ -669,7 +669,7 @@
             document.getElementById('prodCategoria').value = catId;
             
             document.getElementById('prodEstoque').value = prod.estoque || '';
-            document.getElementById('prodOrdem').value = prod.preco ? parseInt(prod.preco) : 0;
+            document.getElementById('prodOrdem').value = prod.sort ? parseInt(prod.sort) : 0;
             document.getElementById('prodDescricao').value = prod.descricao || '';
             document.getElementById('prodLinkProjeto').value = prod.link_projeto || '';
             document.getElementById('prodWhatsappProjeto').value = prod.whatsapp_projeto || '';
