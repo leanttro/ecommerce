@@ -999,6 +999,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     </div>
   </div>
 </section>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <section id="nav-3d-trailer-creapes" style="position:relative;width:100%;height:350vh;background:var(--bg);" class="creapes-3d-section">
@@ -1047,7 +1048,6 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
             let cubeColor;
             
             if (isAccent) {
-                // Pegar a cor de destaque do CSS nativamente seria complexo aqui, fixando o tom de amarelo da Creapes
                 cubeColor = 0xd0ff00; 
             } else {
                 cubeColor = Math.random() > 0.5 ? 0x222222 : 0x111111;
@@ -1153,6 +1153,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
         animateC();
     });
 </script>
+
 <footer id="contact">
   <div class="footer-blocks fade-in">
     <div class="footer-block">
@@ -1256,7 +1257,6 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   let currentSlide = 0;
   const slides = document.querySelectorAll('.slide');
   const titleItems = document.querySelectorAll('.hero-title-item');
-  let slideInterval;
 
   function goToSlide(index) {
     if(slides.length === 0) return;
@@ -1264,30 +1264,11 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 
     if(slides[currentSlide]) slides[currentSlide].classList.remove('active');
     if(titleItems[currentSlide]) titleItems[currentSlide].classList.remove('active');
-    
+
     currentSlide = index;
-    
+
     if(slides[currentSlide]) slides[currentSlide].classList.add('active');
     if(titleItems[currentSlide]) titleItems[currentSlide].classList.add('active');
-    
-    resetInterval();
-  }
-
-  function nextSlide() {
-    if(slides.length <= 1) return;
-    let next = (currentSlide + 1) % slides.length;
-    goToSlide(next);
-  }
-
-  function resetInterval() {
-    if(slideInterval) clearInterval(slideInterval);
-    if(slides.length > 1) {
-        slideInterval = setInterval(nextSlide, 5000);
-    }
-  }
-
-  if(slides.length > 1) {
-    slideInterval = setInterval(nextSlide, 5000);
   }
 
   const videoModal = document.getElementById('videoModal');
@@ -1301,13 +1282,11 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     }
     vimeoPlayer.src = finalUrl;
     videoModal.classList.add('active');
-    if(slideInterval) clearInterval(slideInterval);
   }
 
   function closeVideo() {
     videoModal.classList.remove('active');
     vimeoPlayer.src = ''; 
-    resetInterval();
   }
 
   const evolveSection = document.querySelector('.evolve-wrapper');
