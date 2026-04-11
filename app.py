@@ -695,7 +695,7 @@ def case_page(loja_slug, produto_id):
         template_name = 'case_creapes.html' if loja_slug == 'creapes' else 'case.html'
 
         # Adicionado produtos=[] e categorias=[] para evitar o Erro 500 caso o HTML tenha loops de listagem
-        return render_template(template_name, p=p, loja=loja_visual, directus_url=DIRECTUS_URL, produtos=[], categorias=[])
+        return render_template(template_name, prod=p, loja=loja_visual, directus_url=DIRECTUS_URL, produtos=[], categorias=[])
 
     return "Projeto não encontrado", 404
 
