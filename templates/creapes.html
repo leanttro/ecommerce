@@ -18,6 +18,9 @@
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* ── FIX RESPONSIVIDADE: bordas pretas em telas largas ── */
+html { overflow-x: hidden; }
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
@@ -475,11 +478,11 @@ nav {
 .clients-left h2 { font-size: clamp(1.2rem, 1.8vw, 1.8rem); line-height: 1.1; margin-bottom: 0.3rem; color: var(--text); white-space: nowrap; }
 .clients-left .accent-dot { color: var(--accent); }
 .clients-link { font-family: 'Inter', sans-serif; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.5rem; opacity: 0.7; }
-.clients-right { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 3rem; position: relative;}
+.clients-right { flex: 1; overflow: hidden; position: relative; }
 .clients-right::before, .clients-right::after { content: ''; position: absolute; top: 0; width: 100px; height: 100%; z-index: 2; pointer-events: none; }
 .clients-right::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
-.clients-right::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
-.clients-track { display: flex; align-items: center; gap: 6rem; width: max-content; animation: marquee-clients 160s linear infinite; }
+.clients-right::after  { right: 0; background: linear-gradient(to left,  var(--bg), transparent); }
+.clients-track { display: flex; gap: 4rem; align-items: center; animation: marquee-clients 30s linear infinite; width: max-content; }
 .clients-track.reverse { animation-direction: reverse; animation-duration: 50s;}
 .clients-track img { height: 140px; object-fit: contain; max-width: 300px; filter: grayscale(100%) brightness(0.6); transition: all 0.4s var(--ease); }
 .clients-track img:hover { filter: grayscale(0%) brightness(1); transform: scale(1.1) !important; animation-play-state: paused; }
@@ -686,6 +689,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 .footer-block { flex: 1; min-width: 300px; }
 .footer-block h2 { font-size: 2rem; margin-bottom: 2rem; }
 
+/* ── FORMULÁRIO ANTIGO (mantido para não quebrar nada) ── */
 .contact-form { display: flex; flex-direction: column; gap: 2rem; }
 .input-group input {
   width: 100%; padding: 1rem 0; background: transparent; border: none;
@@ -746,6 +750,156 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 .cinematic-bars::before { top: 0; }
 .cinematic-bars::after { bottom: 0; }
 
+/* ── NOVO FORMULÁRIO DE CONTATO ─────────────────────── */
+.cf-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.cf-field {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 1.4rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+  transition: border-color 0.4s;
+}
+.cf-field:focus-within {
+  border-color: var(--accent);
+}
+.cf-number {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  padding-top: 0.25rem;
+  min-width: 26px;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+.cf-field:focus-within .cf-number { opacity: 1; }
+.cf-input-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.cf-label {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(240,240,240,0.3);
+  transition: color 0.3s;
+  font-family: 'Inter', sans-serif;
+}
+.cf-field:focus-within .cf-label { color: var(--accent); }
+.cf-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  padding: 0.15rem 0;
+  width: 100%;
+  caret-color: var(--accent);
+}
+.cf-input::placeholder { color: rgba(240,240,240,0.18); }
+.cf-textarea {
+  resize: none;
+  line-height: 1.6;
+}
+.cf-row {
+  display: flex;
+  gap: 0;
+}
+.cf-row .cf-field {
+  flex: 1;
+}
+.cf-row .cf-field:first-child {
+  padding-right: 2rem;
+  border-right: 1px solid rgba(255,255,255,0.06);
+}
+.cf-row .cf-field:last-child {
+  padding-left: 2rem;
+}
+.cf-submit-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.cf-disclaimer {
+  font-size: 0.72rem;
+  color: rgba(240,240,240,0.25);
+  letter-spacing: 0.04em;
+  max-width: 220px;
+  line-height: 1.5;
+}
+.cf-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  transition: color 0.3s;
+}
+.cf-submit-btn:hover { color: var(--accent); }
+.cf-submit-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s var(--ease);
+  flex-shrink: 0;
+}
+.cf-submit-circle svg {
+  width: 20px; height: 20px;
+  stroke: var(--text); fill: none; stroke-width: 1.5;
+  transition: stroke 0.3s, transform 0.4s var(--ease);
+}
+.cf-submit-btn:hover .cf-submit-circle {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.cf-submit-btn:hover .cf-submit-circle svg {
+  stroke: #000;
+  transform: translateX(3px) rotate(-45deg);
+}
+/* sucesso */
+.cf-success {
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 2rem 0;
+}
+.cf-success-icon {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+}
+.cf-success-icon svg { width: 22px; height: 22px; stroke: #000; fill: none; stroke-width: 2.5; }
+.cf-success h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.4rem; text-transform: uppercase;
+}
+.cf-success p { font-size: 0.85rem; color: rgba(240,240,240,0.5); line-height: 1.6; }
+
 @media (max-width: 900px) {
   nav { padding: 0.8rem 2rem; }
   .hero-titles-list { left: 2rem; bottom: 3rem; }
@@ -754,6 +908,9 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   .portfolio-track { gap: 20vw; height: 60vh; margin-top: 15vh; padding: 0 60vw 0 10vw; }
   .size-l, .size-sq, .size-m, .size-s, .size-xs { width: 50vw; }
   .port-text { font-size: 5vw; width: 60vw; margin: 0 5vw; }
+  .cf-row { flex-direction: column; }
+  .cf-row .cf-field:first-child { border-right: none; padding-right: 0; }
+  .cf-row .cf-field:last-child { padding-left: 0; }
 }
 </style>
 </head>
@@ -831,45 +988,26 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
       {% endif %}
     {% endif %}
 
-    {% set modal_link = p.whatsapp_projeto %}
-    {% if modal_link and 'vimeo.com' in modal_link and 'player.vimeo.com' not in modal_link %}
-      {% set m_clean_url = modal_link.split('?')[0].strip('/') %}
-      {% set m_link_parts = m_clean_url.split('/') %}
-      {% if m_link_parts|length >= 5 %}
-        {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] ~ '?h=' ~ m_link_parts[4] %}
-      {% elif m_link_parts|length == 4 %}
-        {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] %}
-      {% endif %}
-    {% endif %}
-
   <div class="slide {% if loop.first %}active{% endif %}">
     
     {% if bg_link and 'vimeo.com' in bg_link %}
     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1; pointer-events: none;">
-      <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1&autopause=0" style="width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) translateZ(0); backface-visibility: hidden; border: none; filter: brightness(0.6);" allow="autoplay; fullscreen; picture-in-picture"></iframe>
+      <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1&autopause=0" style="width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) translateZ(0); backface-visibility: hidden; border: none; filter: brightness(0.6); pointer-events: none;" allow="autoplay; fullscreen; picture-in-picture"></iframe>
     </div>
     {% elif bg_link %}
     <video src="{{ bg_link }}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: -1; filter: brightness(0.6); pointer-events: none;"></video>
     {% endif %}
 
-    <div class="play-link" onclick="openVideo('{{ modal_link }}')">
+    <!-- ── ALTERADO: abre a case page ao invés do modal de vídeo ── -->
+    <div class="play-link" onclick="window.location.href='/{{ loja.slug_url }}/case/{{ p.id }}'">
     </div>
   </div>
   {% endfor %}
 
   <div class="hero-titles-list">
     {% for p in hero_videos %}
-      {% set modal_link = p.whatsapp_projeto %}
-      {% if modal_link and 'vimeo.com' in modal_link and 'player.vimeo.com' not in modal_link %}
-        {% set m_clean_url = modal_link.split('?')[0].strip('/') %}
-        {% set m_link_parts = m_clean_url.split('/') %}
-        {% if m_link_parts|length >= 5 %}
-          {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] ~ '?h=' ~ m_link_parts[4] %}
-        {% elif m_link_parts|length == 4 %}
-          {% set modal_link = 'https://player.vimeo.com/video/' ~ m_link_parts[3] %}
-        {% endif %}
-      {% endif %}
-    <h1 class="hero-title-item {% if loop.first %}active{% endif %}" onmouseenter="goToSlide({{ loop.index0 }})" onclick="openVideo('{{ modal_link }}')">{{ p.nome }} <span class="year">{% if p.estoque and p.estoque != 'None' and p.estoque != 'null' %}{{ p.estoque }}{% endif %}</span></h1>
+    <!-- ── ALTERADO: abre a case page ao invés do modal de vídeo ── -->
+    <h1 class="hero-title-item {% if loop.first %}active{% endif %}" onmouseenter="goToSlide({{ loop.index0 }})" onclick="window.location.href='/{{ loja.slug_url }}/case/{{ p.id }}'">{{ p.nome }} <span class="year">{% if p.estoque and p.estoque != 'None' and p.estoque != 'null' %}{{ p.estoque }}{% endif %}</span></h1>
     {% endfor %}
   </div>
 
@@ -958,7 +1096,8 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
         </div>
         {% endif %}
 
-        <div class="port-item {% if loop.index % 3 == 0 %}size-s{% elif loop.index % 2 == 0 %}size-sq{% else %}size-l{% endif %}">
+        <!-- ── ALTERADO: onclick abre a case page ── -->
+        <div class="port-item {% if loop.index % 3 == 0 %}size-s{% elif loop.index % 2 == 0 %}size-sq{% else %}size-l{% endif %}" onclick="window.location.href='/{{ loja.slug_url }}/case/{{ p.id }}'">
           
           {% set bg_link = p.link_projeto %}
           {% if bg_link and 'vimeo.com' in bg_link and 'player.vimeo.com' not in bg_link %}
@@ -973,10 +1112,10 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 
           {% if bg_link and 'vimeo.com' in bg_link %}
           <div class="vimeo-port-bg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none;">
-            <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1&autopause=0" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; border: none;" allow="autoplay; fullscreen; picture-in-picture"></iframe>
+            <iframe src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1&autopause=0" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; border: none; pointer-events: none;" allow="autoplay; fullscreen; picture-in-picture"></iframe>
           </div>
           {% elif bg_link %}
-          <video src="{{ bg_link }}" autoplay loop muted playsinline></video>
+          <video src="{{ bg_link }}" autoplay loop muted playsinline style="pointer-events: none;"></video>
           {% endif %}
 
           <div class="port-info">
@@ -1266,17 +1405,68 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
         if(track) track.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
     }
 </script>
+
 <footer id="contact">
   <div class="footer-blocks fade-in">
+
+    <!-- ── FORMULÁRIO NOVO E BONITO ──────────────────── -->
     <div class="footer-block">
       <h2>Start a Project</h2>
-      <form class="contact-form">
-        <div class="input-group"><input type="text" placeholder="Seu Nome"></div>
-        <div class="input-group"><input type="email" placeholder="Seu E-mail"></div>
-        <div class="input-group"><input type="text" placeholder="Sobre o que vamos criar?"></div>
-        <button type="button" class="btn-submit">Enviar Briefing</button>
+
+      <!-- ── Formulário salva como lead no painel ── -->
+      <form class="cf-form" id="cfForm" action="/{{ loja.slug_url }}/inscricao" method="POST">
+        <div class="cf-row">
+          <div class="cf-field">
+            <span class="cf-number">01</span>
+            <div class="cf-input-wrap">
+              <label class="cf-label">Seu Nome</label>
+              <input type="text" name="nome" class="cf-input" placeholder="Como você se chama?" required autocomplete="off">
+            </div>
+          </div>
+          <div class="cf-field">
+            <span class="cf-number">02</span>
+            <div class="cf-input-wrap">
+              <label class="cf-label">WhatsApp</label>
+              <input type="tel" name="whatsapp" class="cf-input" placeholder="(00) 00000-0000" required autocomplete="off">
+            </div>
+          </div>
+        </div>
+        <div class="cf-field">
+          <span class="cf-number">03</span>
+          <div class="cf-input-wrap">
+            <label class="cf-label">E-mail</label>
+            <input type="email" name="email" class="cf-input" placeholder="seu@email.com" autocomplete="off">
+          </div>
+        </div>
+        <div class="cf-field">
+          <span class="cf-number">04</span>
+          <div class="cf-input-wrap">
+            <label class="cf-label">Sobre o Projeto</label>
+            <textarea name="mensagem" class="cf-input cf-textarea" placeholder="Me conte sobre o que vamos criar juntos..." rows="3"></textarea>
+          </div>
+        </div>
+        <div class="cf-submit-wrap">
+          <p class="cf-disclaimer">Seus dados ficam seguros e não são compartilhados.</p>
+          <button type="submit" class="cf-submit-btn">
+            Enviar Briefing
+            <div class="cf-submit-circle">
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </button>
+        </div>
       </form>
+
+      <!-- Estado de sucesso (mostrado por JS se o form enviar via fetch) -->
+      <div class="cf-success" id="cfSuccess">
+        <div class="cf-success-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h4>Briefing Recebido!</h4>
+        <p>Entraremos em contato em breve.<br>Obrigado pelo interesse!</p>
+      </div>
     </div>
+    <!-- ── FIM DO FORMULÁRIO ──────────────────────────── -->
+
     <div class="footer-block">
       <h2>Join the Crew</h2>
       <p class="work-with-us">Buscamos mentes inquietas. Editores de vídeo, motion designers e coloristas que respiram arte e tecnologia. Se você quer ultrapassar os limites do audiovisual, seu lugar é aqui.</p>
@@ -1294,6 +1484,34 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
     </div>
   </div>
 </footer>
+
+<script>
+  /* ── Submit do formulário via fetch para não recarregar a página ── */
+  const cfForm = document.getElementById('cfForm');
+  const cfSuccess = document.getElementById('cfSuccess');
+  if (cfForm) {
+    cfForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = cfForm.querySelector('.cf-submit-btn');
+      btn.style.opacity = '0.5';
+      btn.style.pointerEvents = 'none';
+      try {
+        const res = await fetch(cfForm.action, {
+          method: 'POST',
+          body: new FormData(cfForm)
+        });
+        if (res.ok || res.redirected) {
+          cfForm.style.display = 'none';
+          cfSuccess.style.display = 'flex';
+        } else {
+          cfForm.submit(); // fallback: submete normal
+        }
+      } catch(err) {
+        cfForm.submit(); // fallback: submete normal
+      }
+    });
+  }
+</script>
 
 <script>
   gsap.registerPlugin(ScrollTrigger);
