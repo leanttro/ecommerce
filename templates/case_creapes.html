@@ -598,9 +598,19 @@ footer {
 <section class="hero">
   <div class="hero-media" id="heroMedia">
     {% if prod.link_projeto and 'vimeo' in prod.link_projeto %}
-      {# Extract Vimeo ID for background embed #}
+      {# Extract Vimeo ID for background embed - same logic as index #}
+      {% set bg_link = prod.link_projeto %}
+      {% if 'player.vimeo.com' not in bg_link %}
+        {% set clean_url = bg_link.split('?')[0].strip('/') %}
+        {% set link_parts = clean_url.split('/') %}
+        {% if link_parts|length >= 5 %}
+          {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] ~ '?h=' ~ link_parts[4] %}
+        {% elif link_parts|length == 4 %}
+          {% set bg_link = 'https://player.vimeo.com/video/' ~ link_parts[3] %}
+        {% endif %}
+      {% endif %}
       <iframe
-        src="{{ prod.link_projeto | replace('vimeo.com/', 'player.vimeo.com/video/') }}?background=1&autoplay=1&loop=1&muted=1&quality=1080p"
+        src="{{ bg_link }}{% if '?' in bg_link %}&{% else %}?{% endif %}background=1&autoplay=1&loop=1&muted=1&quality=1080p"
         frameborder="0"
         allow="autoplay; fullscreen"
         allowfullscreen>
@@ -1002,8 +1012,14 @@ gsap.to('.hero-content', {
 function openVideo(url) {
   if(!url) return;
   let final = url;
-  if(final.includes('vimeo.com') && !final.includes('player.vimeo')) {
-    final = final.replace('vimeo.com/', 'player.vimeo.com/video/');
+  if(final.includes('vimeo.com') && !final.includes('player.vimeo.com')) {
+    const cleanUrl = final.split('?')[0].replace(/\/$/, '');
+    const parts = cleanUrl.split('/');
+    if(parts.length >= 5) {
+      final = 'https://player.vimeo.com/video/' + parts[3] + '?h=' + parts[4];
+    } else if(parts.length === 4) {
+      final = 'https://player.vimeo.com/video/' + parts[3];
+    }
   }
   if(!final.includes('autoplay')) final += (final.includes('?') ? '&' : '?') + 'autoplay=1';
   document.getElementById('videoIframe').src = final;
