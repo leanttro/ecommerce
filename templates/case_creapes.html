@@ -735,40 +735,6 @@ footer {
   </div>
 </div>
 
-<!-- ═══ GALLERY ══════════════════════════════════════ -->
-<section class="section bts-section">
-  <div class="bts-heading fade-in">
-    <div>
-      <div class="section-label" style="margin-bottom:.6rem">Galeria</div>
-      <h2 class="bts-title">Por Trás das<br>Câmeras</h2>
-    </div>
-    <span class="bts-count">{{ prod.galeria | length if prod.galeria else '0' }} imagens</span>
-  </div>
-
-  {% if prod.galeria and prod.galeria | length > 0 %}
-  <div class="bts-scroll" id="btsScroll">
-    {% for img in prod.galeria %}
-    <div class="bts-card fade-in">
-      <img src="{{ img.url }}" alt="Behind the scenes {{ loop.index }}" loading="lazy">
-      <div class="bts-card-label">Frame {{ '%02d'|format(loop.index) }}</div>
-    </div>
-    {% endfor %}
-  </div>
-  {% else %}
-  <!-- Placeholder cards para quando não há galeria -->
-  <div class="gallery-grid fade-in">
-    {% for i in range(5) %}
-    <div class="g-item">
-      <div style="width:100%;height:100%;background:linear-gradient(135deg,#111 0%,#1a1a1a {{ loop.index * 20 }}%,#0d0d0d 100%);display:flex;align-items:center;justify-content:center;">
-        <span style="color:rgba(255,255,255,.08);font-family:'Space Grotesk',sans-serif;font-size:3rem;font-weight:700;">{{ '%02d'|format(loop.index) }}</span>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-  {% endif %}
-</section>
-
-<div class="divider" id="div2"></div>
 
 <!-- ═══ QUOTE ═══════════════════════════════════════ -->
 <section class="quote-section section">
