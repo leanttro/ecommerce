@@ -653,7 +653,35 @@ def personagem_wanted(loja_slug, slug):
     
     return "Produto não encontrado nesta loja", 404
 
+@app.route('/<loja_slug>/case/<produto_id>')
+def case_page(loja_slug, produto_id):
+    if not g.loja: return "Loja não encontrada", 404
 
+    headers = get_headers()
+    url = f"{DIRECTUS_URL}/items/produtos?filter[id][_eq]={produto_id}&filter[loja_id][_eq]={g.loja_id}&fields=*.*"
+    r = requests.get(url, headers=headers, timeout=7)
+    
+    if r.status_code == 200 and r.json()['data']:
+        p = r.json()['data'][0]
+        
+        p['imagem_destaque'] = get_img_url(p.get('imagem_destaque'))
+        p['imagem1'] = get_img_url(p.get('imagem1'))
+        p['imagem2'] = get_img_url(p.get('imagem2'))
+        
+        try: p['preco'] = float(p.get('preco', 0))
+        except: p['preco'] = 0.0
+
+        loja_visual = {
+            **g.loja,
+            "logo": get_img_url(g.loja.get('logo')),
+            "slug_url": loja_slug
+        }
+
+        template_name = 'case_creapes.html' if loja_slug == 'creapes' else 'case.html'
+
+        return render_template(template_name, p=p, loja=loja_visual, directus_url=DIRECTUS_URL)
+
+    return "Projeto não encontrado", 404
 # ROTA ADMIN LOGIN
 # Atualizado removeu prefixo loja
 @app.route('/<loja_slug>/admin', methods=['GET', 'POST'])
