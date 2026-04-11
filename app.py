@@ -410,7 +410,7 @@ def index(loja_slug):
     filter_str = f"filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published"
         
     if busca_query:
-        filter_str += f"&filter[nome][_icontains]={busca_query}"
+        filter_str += f"filter[nome][_icontains]={busca_query}"
 
     produtos = []
     novidades = []
@@ -653,6 +653,7 @@ def personagem_wanted(loja_slug, slug):
     
     return "Produto não encontrado nesta loja", 404
 
+
 @app.route('/<loja_slug>/case/<produto_id>')
 def case_page(loja_slug, produto_id):
     if not g.loja: return "Loja não encontrada", 404
@@ -697,6 +698,8 @@ def case_page(loja_slug, produto_id):
         return render_template(template_name, p=p, loja=loja_visual, directus_url=DIRECTUS_URL, produtos=[], categorias=[])
 
     return "Projeto não encontrado", 404
+
+
 # ROTA ADMIN LOGIN
 # Atualizado removeu prefixo loja
 @app.route('/<loja_slug>/admin', methods=['GET', 'POST'])
