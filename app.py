@@ -658,6 +658,8 @@ def case_page(loja_slug, produto_id):
     if not g.loja: return "Loja não encontrada", 404
 
     headers = get_headers()
+    
+    # Busca o projeto/produto específico
     url = f"{DIRECTUS_URL}/items/produtos?filter[id][_eq]={produto_id}&filter[loja_id][_eq]={g.loja_id}&fields=*.*"
     r = requests.get(url, headers=headers, timeout=7)
     
@@ -668,8 +670,20 @@ def case_page(loja_slug, produto_id):
         p['imagem1'] = get_img_url(p.get('imagem1'))
         p['imagem2'] = get_img_url(p.get('imagem2'))
         
+        # Tratamento de galeria exigido em algumas partes do seu layout
+        galeria = []
+        if p.get('imagem_destaque'): galeria.append(p['imagem_destaque'])
+        if p.get('imagem1'): galeria.append(p['imagem1'])
+        if p.get('imagem2'): galeria.append(p['imagem2'])
+        if not galeria:
+            galeria = ["https://placehold.co/600x600?text=Sem+Imagem"]
+        p['galeria'] = galeria
+
         try: p['preco'] = float(p.get('preco', 0))
         except: p['preco'] = 0.0
+            
+        try: p['estoque'] = int(p.get('estoque')) if p.get('estoque') is not None else 0
+        except: p['estoque'] = 0
 
         loja_visual = {
             **g.loja,
@@ -679,7 +693,8 @@ def case_page(loja_slug, produto_id):
 
         template_name = 'case_creapes.html' if loja_slug == 'creapes' else 'case.html'
 
-        return render_template(template_name, p=p, loja=loja_visual, directus_url=DIRECTUS_URL)
+        # Adicionado produtos=[] e categorias=[] para evitar o Erro 500 caso o HTML tenha loops de listagem
+        return render_template(template_name, p=p, loja=loja_visual, directus_url=DIRECTUS_URL, produtos=[], categorias=[])
 
     return "Projeto não encontrado", 404
 # ROTA ADMIN LOGIN
