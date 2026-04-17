@@ -10,7 +10,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family={{ (loja.font_titulo or "Archivo Black") | replace(" ", "+") }}:wght@300;400;500;600;700;800;900&family={{ (loja.font_corpo or "Inter") | replace(" ", "+") }}:wght@300;400;500;600;700&display=swap');
     
     :root { 
         --primary: {{ loja.cor_primaria or '#7C3AED' }}; 
@@ -19,7 +19,7 @@
     }
     
     html, body { 
-        font-family: 'Inter', sans-serif; 
+        font-family: '{{ loja.font_corpo or "Inter" }}', sans-serif; 
         background-color: var(--bg-color);
         color: var(--text-color);
         overflow-x: hidden !important;
@@ -30,7 +30,7 @@
     }
 
     h1, h2, h3, .font-display { 
-        font-family: 'Archivo Black', sans-serif; 
+        font-family: '{{ loja.font_titulo or "Archivo Black" }}', sans-serif; 
         text-transform: uppercase;
         word-break: normal !important;
         overflow-wrap: normal !important;
@@ -629,25 +629,25 @@
 {% if not loja.ocultar_formulario %}
 <section class="py-24 border-t border-[rgba(0,0,0,0.05)] relative" style="background-color: var(--bg-color);">
     <div class="container mx-auto px-6 md:px-12 max-w-5xl fade-up">
-        <div class="p-10 md:p-16 rounded-[2.5rem] shadow-2xl relative overflow-hidden" style="background-color: var(--text-color); color: var(--bg-color);">
-            <div class="absolute top-0 right-0 w-72 h-72 rounded-full opacity-5 translate-x-1/3 -translate-y-1/3 blur-2xl" style="background-color: var(--bg-color);"></div>
-            <div class="absolute bottom-0 left-0 w-56 h-56 rounded-full opacity-5 -translate-x-1/4 translate-y-1/4 blur-xl" style="background-color: var(--primary);"></div>
+        <div class="p-10 md:p-16 rounded-[2.5rem] shadow-2xl relative overflow-hidden" style="background-color: var(--primary); color: #ffffff;">
+            <div class="absolute top-0 right-0 w-72 h-72 rounded-full opacity-10 translate-x-1/3 -translate-y-1/3 blur-2xl" style="background-color: #ffffff;"></div>
+            <div class="absolute bottom-0 left-0 w-56 h-56 rounded-full opacity-20 -translate-x-1/4 translate-y-1/4 blur-xl" style="background-color: #000000;"></div>
             
             <div class="text-center mb-14 relative z-10">
                 <h2 class="text-3xl md:text-5xl font-display uppercase tracking-tight mb-4">{{ loja.titulo_formulario or 'Fale com um Especialista' }}</h2>
-                <p class="opacity-70 font-light text-lg">Deixe seus dados e entraremos em contato rapidamente.</p>
+                <p class="opacity-80 font-light text-lg">Deixe seus dados e entraremos em contato rapidamente.</p>
             </div>
             
             <form id="leadForm" class="space-y-8 relative z-10">
                 <div>
-                    <input type="text" name="nome" placeholder="Seu Nome Completo" required class="w-full border-b pb-4 pt-2 transition outline-none bg-transparent placeholder-white/50 text-lg" style="border-color: rgba(255,255,255,0.2); color: var(--bg-color);">
+                    <input type="text" name="nome" placeholder="Seu Nome Completo" required class="w-full border-b pb-4 pt-2 transition outline-none bg-transparent placeholder-white/80 text-lg" style="border-color: rgba(255,255,255,0.4); color: #ffffff;">
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <input type="text" name="whatsapp" placeholder="WhatsApp (DDD+Número)" required class="w-full border-b pb-4 pt-2 transition outline-none bg-transparent placeholder-white/50 text-lg" style="border-color: rgba(255,255,255,0.2); color: var(--bg-color);">
-                    <input type="email" name="email" placeholder="Seu Melhor E-mail" required class="w-full border-b pb-4 pt-2 transition outline-none bg-transparent placeholder-white/50 text-lg" style="border-color: rgba(255,255,255,0.2); color: var(--bg-color);">
+                    <input type="text" name="whatsapp" placeholder="WhatsApp (DDD+Número)" required class="w-full border-b pb-4 pt-2 transition outline-none bg-transparent placeholder-white/80 text-lg" style="border-color: rgba(255,255,255,0.4); color: #ffffff;">
+                    <input type="email" name="email" placeholder="Seu Melhor E-mail" required class="w-full border-b pb-4 pt-2 transition outline-none bg-transparent placeholder-white/80 text-lg" style="border-color: rgba(255,255,255,0.4); color: #ffffff;">
                 </div>
                 <div class="pt-8 text-center">
-                    <button type="submit" class="font-bold text-xs uppercase tracking-[0.2em] py-5 px-12 rounded-full shadow-xl hover:scale-[1.02] transition-transform inline-flex items-center justify-center gap-3 border border-transparent hover:border-white/20" style="background-color: var(--primary); color: #fff;">
+                    <button type="submit" class="font-bold text-xs uppercase tracking-[0.2em] py-5 px-12 rounded-full shadow-xl hover:scale-[1.02] transition-transform inline-flex items-center justify-center gap-3 border border-transparent hover:border-white/20" style="background-color: var(--bg-color); color: var(--text-color);">
                         <span class="btn-text-wrapper">Solicitar Atendimento</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </button>
                 </div>
