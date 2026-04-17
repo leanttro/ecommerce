@@ -598,7 +598,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
                 {% for horario in agenda %}
                     {% if horario.disponivel %}
-                    <a href="https://wa.me/55{{ loja.whatsapp_comercial }}?text=Olá! Gostaria de reservar o horário de {{ horario.data_hora_formatada or horario.data_hora }}" target="_blank" class="block p-6 rounded-2xl border border-[rgba(0,0,0,0.05)] shadow-sm hover:shadow-xl transition-all duration-300 group bg-white">
+                    <a href="https://wa.me/55{{ loja.whatsapp_comercial }}?text=Olá! Gostaria de reservar o horário de {{ horario.data_hora_formatada or horario.data_hora }}" target="_blank" class="block p-6 rounded-2xl border border-[rgba(0,0,0,0.05)] shadow-sm hover:shadow-xl transition-all duration-300 group" style="background-color: {{ loja.cor_texto or '#FFFFFF' }};">
                         <div class="flex items-center gap-4 mb-2">
                             <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: var(--primary); color: white;">
                                 <i data-lucide="calendar-clock" class="w-6 h-6"></i>
