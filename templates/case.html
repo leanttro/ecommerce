@@ -49,21 +49,6 @@
         .clip-reveal {
             clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0% 100%);
         }
-        
-        .img-parallax-container {
-            overflow: hidden;
-            border-radius: 2rem;
-            position: relative;
-        }
-
-        .img-parallax {
-            height: 120%;
-            width: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: -10%;
-            will-change: transform;
-        }
 
         /* Estilo da descrição (Prose elegante) */
         .prose-custom {
@@ -75,6 +60,19 @@
         .prose-custom p { margin-bottom: 2rem; }
         .prose-custom strong { font-weight: 600; color: var(--color-title); }
         .prose-custom h1, .prose-custom h2, .prose-custom h3 { margin-top: 3rem; margin-bottom: 1rem; font-weight: 800; letter-spacing: -0.02em; }
+
+        /* Imagem sem corte: exibe no formato original */
+        .img-natural-container {
+            border-radius: 2rem;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .img-natural-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
 
         /* Esconde scrollbar mas mantém o scroll */
         ::-webkit-scrollbar { width: 8px; }
@@ -175,29 +173,53 @@
         </div>
     </main>
 
-    {% if p.imagem1 or p.imagem2 or p.imagem_secundaria %}
+    {% if p.imagem1 or p.imagem2 or p.imagem_secundaria or p.imagem3 or p.imagem4 or p.imagem5 %}
     <section class="container mx-auto px-6 md:px-10 pb-32 space-y-8 md:space-y-12">
         
         {% if p.imagem1 %}
-        <div class="img-parallax-container w-full h-[60vh] md:h-[90vh] clip-reveal-box">
-            <img src="{{ p.imagem1 }}" class="img-parallax" alt="Detalhe do Projeto 1">
+        <div class="img-natural-container clip-reveal-box">
+            <img src="{{ p.imagem1 }}" alt="Detalhe do Projeto 1">
         </div>
         {% endif %}
 
-        {% if p.imagem2 %}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-            <div class="img-parallax-container w-full h-[50vh] md:h-[70vh] clip-reveal-box">
-                <img src="{{ p.imagem2 }}" class="img-parallax" alt="Detalhe do Projeto 2">
+        {% if p.imagem2 or p.imagem_secundaria %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+            {% if p.imagem2 %}
+            <div class="img-natural-container clip-reveal-box">
+                <img src="{{ p.imagem2 }}" alt="Detalhe do Projeto 2">
             </div>
+            {% endif %}
             
             {% if p.imagem_secundaria %}
-            <div class="img-parallax-container w-full h-[50vh] md:h-[70vh] clip-reveal-box mt-0 md:mt-24">
-                <img src="{{ p.imagem_secundaria }}" class="img-parallax" alt="Detalhe do Projeto 3">
+            <div class="img-natural-container clip-reveal-box md:mt-24">
+                <img src="{{ p.imagem_secundaria }}" alt="Detalhe do Projeto 3">
             </div>
             {% else %}
             <div class="hidden md:flex flex-col justify-center px-12 block-reveal opacity-0 translate-y-10">
                 <i data-lucide="quote" class="w-12 h-12 mb-6" style="color: var(--primary); opacity: 0.3;"></i>
                 <p class="text-2xl font-light italic" style="color: var(--color-title);">"Atenção aos detalhes é o que transforma o comum em algo extraordinário."</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if p.imagem3 or p.imagem4 or p.imagem5 %}
+        <div class="grid grid-cols-1 md:grid-cols-{% if p.imagem3 and p.imagem4 and p.imagem5 %}3{% elif p.imagem3 and p.imagem4 %}2{% else %}1{% endif %} gap-8 md:gap-12 items-start">
+            {% if p.imagem3 %}
+            <div class="img-natural-container clip-reveal-box">
+                <img src="{{ p.imagem3 }}" alt="Detalhe do Projeto 4">
+            </div>
+            {% endif %}
+
+            {% if p.imagem4 %}
+            <div class="img-natural-container clip-reveal-box md:mt-12">
+                <img src="{{ p.imagem4 }}" alt="Detalhe do Projeto 5">
+            </div>
+            {% endif %}
+
+            {% if p.imagem5 %}
+            <div class="img-natural-container clip-reveal-box">
+                <img src="{{ p.imagem5 }}" alt="Detalhe do Projeto 6">
             </div>
             {% endif %}
         </div>
@@ -274,37 +296,20 @@
             });
         });
 
-        // 5. O Grande Reveal das Imagens (Clip-Path "Cortina" + Parallax Interno)
+        // 5. O Grande Reveal das Imagens (Clip-Path "Cortina")
         gsap.utils.toArray('.clip-reveal-box').forEach(box => {
-            const img = box.querySelector('.img-parallax');
-            
             // Prepara a caixa para ser revelada cortando de baixo para cima
             gsap.set(box, { clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0% 100%)" });
 
-            const tlImg = gsap.timeline({
+            gsap.timeline({
                 scrollTrigger: {
                     trigger: box,
-                    start: "top 80%", // Começa quando o topo da imagem atinge 80% da tela
+                    start: "top 80%",
                 }
-            });
-
-            // Animação da "Cortina" abrindo
-            tlImg.to(box, {
+            }).to(box, {
                 clipPath: "polygon(0 0%, 100% 0%, 100% 100%, 0% 100%)",
                 duration: 1.5,
                 ease: "power4.inOut"
-            });
-
-            // Efeito Parallax suave na imagem de dentro enquanto scrolla
-            gsap.to(img, {
-                yPercent: 20, // Move a imagem interna suavemente
-                ease: "none",
-                scrollTrigger: {
-                    trigger: box,
-                    start: "top bottom",
-                    end: "bottom top",
-                    scrub: true
-                }
             });
         });
 
