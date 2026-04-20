@@ -993,6 +993,30 @@
                                 <p class="text-xs text-gray-500 mt-1">Opcional.</p>
                             </div>
                         </div>
+
+                        <div class="col-span-1 md:col-span-3 border-t border-gray-200 pt-4 mt-2">
+                            <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Imagens Extras (Case Expandido)</p>
+                        </div>
+
+                        <div class="space-y-8 md:space-y-0 md:contents">
+                            <div class="w-full">
+                                <label class="block text-sm font-bold mb-2 text-gray-700">Imagem Adicional 3</label>
+                                <input type="file" name="imagem3" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
+                                <p class="text-xs text-gray-500 mt-1">Opcional.</p>
+                            </div>
+
+                            <div class="w-full">
+                                <label class="block text-sm font-bold mb-2 text-gray-700">Imagem Adicional 4</label>
+                                <input type="file" name="imagem4" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
+                                <p class="text-xs text-gray-500 mt-1">Opcional.</p>
+                            </div>
+
+                            <div class="w-full">
+                                <label class="block text-sm font-bold mb-2 text-gray-700">Imagem Adicional 5</label>
+                                <input type="file" name="imagem5" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
+                                <p class="text-xs text-gray-500 mt-1">Opcional.</p>
+                            </div>
+                        </div>
                     </div>
 
                     <div>
@@ -1285,6 +1309,9 @@
             document.querySelector('#produtoForm input[name="imagem"]').value = '';
             document.querySelector('#produtoForm input[name="imagem1"]').value = '';
             document.querySelector('#produtoForm input[name="imagem2"]').value = '';
+            document.querySelector('#produtoForm input[name="imagem3"]').value = '';
+            document.querySelector('#produtoForm input[name="imagem4"]').value = '';
+            document.querySelector('#produtoForm input[name="imagem5"]').value = '';
 
             currentVariantes = [];
             renderVariantes();
@@ -1317,6 +1344,9 @@
             document.querySelector('#produtoForm input[name="imagem"]').value = '';
             document.querySelector('#produtoForm input[name="imagem1"]').value = '';
             document.querySelector('#produtoForm input[name="imagem2"]').value = '';
+            document.querySelector('#produtoForm input[name="imagem3"]').value = '';
+            document.querySelector('#produtoForm input[name="imagem4"]').value = '';
+            document.querySelector('#produtoForm input[name="imagem5"]').value = '';
 
             currentVariantes = prod.variantes || [];
             
