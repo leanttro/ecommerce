@@ -463,6 +463,9 @@ def index(loja_slug):
                     "imagem1": get_img_url(p.get('imagem1')),
                     "imagem2": get_img_url(p.get('imagem2')),
                     "imagem_secundaria": get_img_url(p.get('imagem_secundaria')),
+                    "imagem3": get_img_url(p.get('imagem3')),
+                    "imagem4": get_img_url(p.get('imagem4')),
+                    "imagem5": get_img_url(p.get('imagem5')),
                     "categoria_id": cat_val,
                     "variantes": variantes, "origem": p.get('origem'),
                     "urgencia": p.get('status_urgencia'), "classe_frete": p.get('classe_frete'),
@@ -580,6 +583,9 @@ def produto(loja_slug, slug):
         p['imagem_destaque'] = get_img_url(p.get('imagem_destaque'))
         p['imagem1'] = get_img_url(p.get('imagem1'))
         p['imagem2'] = get_img_url(p.get('imagem2'))
+        p['imagem3'] = get_img_url(p.get('imagem3'))
+        p['imagem4'] = get_img_url(p.get('imagem4'))
+        p['imagem5'] = get_img_url(p.get('imagem5'))
         
         galeria = []
         if p.get('imagem_destaque'): galeria.append(p['imagem_destaque'])
@@ -670,6 +676,9 @@ def case_page(loja_slug, produto_id):
         p['imagem_destaque'] = get_img_url(p.get('imagem_destaque'))
         p['imagem1'] = get_img_url(p.get('imagem1'))
         p['imagem2'] = get_img_url(p.get('imagem2'))
+        p['imagem3'] = get_img_url(p.get('imagem3'))
+        p['imagem4'] = get_img_url(p.get('imagem4'))
+        p['imagem5'] = get_img_url(p.get('imagem5'))
         
         # Tratamento de galeria exigido em algumas partes do seu layout
         galeria = []
@@ -1059,6 +1068,24 @@ def admin_salvar_produto(loja_slug):
     if f2 and f2.filename:
         fid2 = upload_file_to_directus(f2)
         if fid2: payload['imagem2'] = fid2
+
+    # Upload da Imagem 3
+    f3 = request.files.get('imagem3')
+    if f3 and f3.filename:
+        fid3 = upload_file_to_directus(f3)
+        if fid3: payload['imagem3'] = fid3
+
+    # Upload da Imagem 4
+    f4 = request.files.get('imagem4')
+    if f4 and f4.filename:
+        fid4 = upload_file_to_directus(f4)
+        if fid4: payload['imagem4'] = fid4
+
+    # Upload da Imagem 5
+    f5 = request.files.get('imagem5')
+    if f5 and f5.filename:
+        fid5 = upload_file_to_directus(f5)
+        if fid5: payload['imagem5'] = fid5
 
     headers = get_headers()
     try:
