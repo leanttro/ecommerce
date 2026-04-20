@@ -89,8 +89,8 @@
         </a>
     </nav>
 
-    <section class="relative w-full h-[85vh] md:h-[95vh] overflow-hidden" id="hero-section">
-        <img src="{{ p.imagem_destaque or p.imagem1 }}" alt="{{ p.nome }}" id="hero-img" class="absolute inset-0 w-full h-full object-cover scale-110">
+    <section class="relative w-full overflow-hidden" id="hero-section">
+        <img src="{{ p.imagem_destaque or p.imagem1 }}" alt="{{ p.nome }}" id="hero-img" class="w-full h-auto block">
         
         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
         
@@ -257,17 +257,7 @@
         }, "-=1.5");
 
 
-        // 2. Parallax no Scroll do Hero (Imagem sobe mais devagar que a página)
-        gsap.to("#hero-img", {
-            yPercent: 30,
-            ease: "none",
-            scrollTrigger: {
-                trigger: "#hero-section",
-                start: "top top",
-                end: "bottom top",
-                scrub: true
-            }
-        });
+        // 2. Parallax no Scroll do Hero removido para preservar proporção da imagem
 
 
         // 3. Reveal dos Títulos da Seção (Visão Geral)
