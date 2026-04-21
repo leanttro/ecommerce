@@ -142,7 +142,7 @@
                             </tr>
                         </thead>
                         <tbody class="bg-neutral-800 divide-y divide-neutral-700">
-                            {% for prod in produtos|sort(attribute='sort') %}
+                            {% for prod in produtos %}
                             <tr class="hover:bg-neutral-700 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400 font-bold">{{ prod.sort|int if prod.sort else '0' }}</td>
                                 <td class="px-6 py-4"><div class="text-sm font-bold text-white line-clamp-1">{{ prod.nome }}</div></td>
