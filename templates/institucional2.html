@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<title>{{ loja.nome }} | Excelência & Expertise</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family={{ (loja.font_titulo or 'Cormorant Garamond') | replace(' ', '+') }}:wght@300;400;600;700&family={{ (loja.font_corpo or 'DM Sans') | replace(' ', '+') }}:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary:  {{ loja.cor_primaria or '#C9A96E' }};
+        --bg:       {{ loja.cor_fundo or '#0A0A0A' }};
+        --bg-card:  {{ loja.cor_fundo or '#0A0A0A' }}; /* será escurecido via filter no card */
+        --text:     {{ loja.cor_titulo or '#E8E4DC' }};
+        --text-muted: color-mix(in srgb, {{ loja.cor_titulo or '#E8E4DC' }} 40%, transparent);
+        --gold:     {{ loja.cor_primaria or '#C9A96E' }};
+        --border:   color-mix(in srgb, {{ loja.cor_primaria or '#C9A96E' }} 15%, transparent);
+    }
+
+    /* Cards ligeiramente mais escuros/claros que o fundo */
+    .portfolio-card, .agenda-card, #contato, .cliente-logo {
+        background: color-mix(in srgb, var(--bg) 85%, #000 15%);
+    }
+    #contato {
+        background: color-mix(in srgb, var(--bg) 80%, #000 20%);
+    }
+    footer {
+        background: color-mix(in srgb, var(--bg) 70%, #000 30%);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+        scroll-behavior: smooth;
+        overflow-x: hidden;
+    }
+
+    body {
+        font-family: 'DM Sans', '{{ loja.font_corpo or "DM Sans" }}', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100vw;
+        -webkit-text-size-adjust: 100%;
+        cursor: none;
+    }
+
+    /* ─── CURSOR PERSONALIZADO ─── */
+    .cursor-dot {
+        width: 8px; height: 8px;
+        background: var(--gold);
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        z-index: 99999;
+        transform: translate(-50%, -50%);
+        transition: width 0.2s, height 0.2s, background 0.2s;
+    }
+    .cursor-outline {
+        width: 36px; height: 36px;
+        border: 1px solid rgba(201,169,110,0.5);
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        z-index: 99998;
+        transform: translate(-50%, -50%);
+        transition: all 0.12s ease-out;
+    }
+    body:hover .cursor-dot { opacity: 1; }
+    a:hover ~ .cursor-dot, button:hover ~ .cursor-dot { width: 12px; height: 12px; }
+
+    @media (max-width: 768px) {
+        body { cursor: auto; }
+        .cursor-dot, .cursor-outline { display: none; }
+    }
+
+    /* ─── FONTES ─── */
+    h1, h2, h3, .serif {
+        font-family: 'Cormorant Garamond', '{{ loja.font_titulo or "Cormorant Garamond" }}', serif;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+    }
+
+    /* ─── PRELOADER ─── */
+    #preloader {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 99997;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 32px;
+    }
+    .preloader-logo {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    .preloader-line {
+        width: 120px;
+        height: 1px;
+        background: rgba(201,169,110,0.2);
+        position: relative;
+        overflow: hidden;
+    }
+    .preloader-progress {
+        position: absolute;
+        inset: 0;
+        background: var(--gold);
+        transform: scaleX(0);
+        transform-origin: left;
+    }
+    .preloader-number {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(3rem, 8vw, 5rem);
+        color: var(--gold);
+        opacity: 0;
+        font-weight: 300;
+    }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 9997;
+        opacity: 0.4;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 9000;
+        padding: 24px 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: padding 0.5s ease, background 0.5s ease, border-bottom 0.5s ease;
+        border-bottom: 1px solid transparent;
+    }
+    header.scrolled {
+        padding: 16px 48px;
+        background: color-mix(in srgb, var(--bg) 92%, transparent);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 768px) {
+        header { padding: 20px 24px; }
+        header.scrolled { padding: 14px 24px; }
+    }
+
+    .header-logo img { height: 48px; width: auto; object-fit: contain; }
+    .header-logo span {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.5rem;
+        font-weight: 400;
+        color: var(--text);
+        letter-spacing: 0.05em;
+    }
+
+    .nav-link {
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--text) 50%, transparent);
+        text-decoration: none;
+        transition: color 0.3s ease;
+        position: relative;
+        cursor: none;
+    }
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: var(--gold);
+        transition: width 0.3s ease;
+    }
+    .nav-link:hover { color: var(--gold); }
+    .nav-link:hover::after { width: 100%; }
+
+    .header-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 24px;
+        border: 1px solid var(--border);
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--gold);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: none;
+    }
+    .header-cta:hover {
+        background: var(--gold);
+        color: var(--bg);
+        border-color: var(--gold);
+    }
+
+    /* ─── MOBILE MENU TOGGLE ─── */
+    .menu-toggle {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        cursor: none;
+        padding: 8px;
+        background: none;
+        border: none;
+    }
+    .menu-toggle span {
+        display: block;
+        width: 22px;
+        height: 1px;
+        background: var(--text);
+        transition: all 0.3s ease;
+    }
+    .menu-toggle.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .menu-toggle.active span:nth-child(2) { opacity: 0; }
+    .menu-toggle.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+    #mobile-nav {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: color-mix(in srgb, var(--bg) 98%, transparent);
+        z-index: 8999;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 40px;
+        padding: 80px 32px;
+    }
+    #mobile-nav a {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(2.5rem, 8vw, 4rem);
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 300;
+        letter-spacing: 0.02em;
+        transition: color 0.3s;
+    }
+    #mobile-nav a:hover { color: var(--gold); }
+
+    @media (max-width: 768px) {
+        .menu-toggle { display: flex; }
+        .desktop-nav { display: none !important; }
+    }
+
+    /* ─── SEÇÃO HERO ─── */
+    #hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 0;
+        position: relative;
+        overflow: hidden;
+    }
+    .hero-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+    }
+    .hero-bg img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.3) grayscale(0.2);
+        transform: scale(1.06);
+        transform-origin: center;
+    }
+    .hero-bg-gradient {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, var(--bg) 0%, color-mix(in srgb, var(--bg) 50%, transparent) 50%, color-mix(in srgb, var(--bg) 20%, transparent) 100%);
+    }
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        padding: 0 48px 80px;
+        max-width: 1400px;
+    }
+    @media (max-width: 768px) {
+        .hero-content { padding: 0 24px 60px; }
+    }
+
+    .hero-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 9px;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: var(--gold);
+        font-weight: 500;
+        margin-bottom: 32px;
+        opacity: 0;
+    }
+    .hero-label::before {
+        content: '';
+        display: block;
+        width: 32px;
+        height: 1px;
+        background: var(--gold);
+    }
+
+    .hero-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(3.5rem, 8vw, 8rem);
+        line-height: 0.95;
+        font-weight: 300;
+        color: var(--text);
+        margin-bottom: 48px;
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    .hero-title em { font-style: italic; color: var(--gold); }
+
+    .hero-subtitle {
+        font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+        color: color-mix(in srgb, var(--text) 50%, transparent);
+        font-weight: 300;
+        max-width: 500px;
+        line-height: 1.7;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    .hero-bottom-bar {
+        position: relative;
+        z-index: 2;
+        padding: 24px 48px;
+        display: flex;
+        align-items: center;
+        gap: 48px;
+        border-top: 1px solid var(--border);
+        background: color-mix(in srgb, var(--bg) 60%, transparent);
+        backdrop-filter: blur(12px);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .hero-bottom-bar::-webkit-scrollbar { display: none; }
+
+    @media (max-width: 768px) {
+        .hero-bottom-bar { padding: 20px 24px; gap: 32px; }
+    }
+
+    .hero-stat {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        opacity: 0;
+    }
+    .hero-stat-number {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+        color: var(--gold);
+        font-weight: 300;
+        line-height: 1;
+    }
+    .hero-stat-label {
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--text) 40%, transparent);
+        font-weight: 500;
+    }
+    .hero-stat-divider {
+        width: 1px;
+        height: 48px;
+        background: var(--border);
+        flex-shrink: 0;
+    }
+
+    /* ─── LINHA DOURADA DIVISÓRIA ─── */
+    .gold-line {
+        width: 80px;
+        height: 1px;
+        background: var(--gold);
+        margin: 32px 0;
+    }
+
+    /* ─── SEÇÃO SOBRE ─── */
+    #sobre {
+        padding: 140px 48px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    @media (max-width: 768px) { #sobre { padding: 80px 24px; } }
+
+    .sobre-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 100px;
+        align-items: center;
+    }
+    @media (max-width: 900px) {
+        .sobre-grid { grid-template-columns: 1fr; gap: 60px; }
+    }
+
+    .sobre-label {
+        font-size: 9px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--gold);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 32px;
+    }
+    .sobre-label::before {
+        content: '';
+        display: block;
+        width: 32px;
+        height: 1px;
+        background: var(--gold);
+    }
+
+    .sobre-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(2.5rem, 5vw, 4.5rem);
+        line-height: 1.05;
+        font-weight: 300;
+        color: var(--text);
+        margin-bottom: 40px;
+    }
+    .sobre-title em { font-style: italic; color: var(--gold); }
+
+    .sobre-text {
+        color: color-mix(in srgb, var(--text) 55%, transparent);
+        font-weight: 300;
+        line-height: 1.85;
+        font-size: clamp(0.9rem, 1.2vw, 1rem);
+        margin-bottom: 48px;
+    }
+
+    .sobre-img-wrapper {
+        position: relative;
+        aspect-ratio: 3/4;
+    }
+    .sobre-img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(0.3);
+    }
+    .sobre-img-frame {
+        position: absolute;
+        top: 24px;
+        right: -24px;
+        bottom: -24px;
+        left: 24px;
+        border: 1px solid var(--border);
+        pointer-events: none;
+        z-index: -1;
+        transition: transform 0.6s ease;
+    }
+    .sobre-img-wrapper:hover .sobre-img-frame {
+        transform: translate(8px, 8px);
+    }
+    .sobre-img-badge {
+        position: absolute;
+        bottom: -20px;
+        left: -20px;
+        padding: 20px 28px;
+        background: var(--gold);
+        color: var(--bg);
+    }
+    .sobre-img-badge .badge-num {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.5rem;
+        font-weight: 300;
+        line-height: 1;
+        display: block;
+    }
+    .sobre-img-badge .badge-label {
+        font-size: 9px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        font-weight: 500;
+    }
+
+    /* ─── COUNTER / NÚMEROS ─── */
+    .counters-section {
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        padding: 80px 48px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0;
+        overflow: hidden;
+    }
+    @media (max-width: 768px) { .counters-section { padding: 60px 24px; gap: 40px; } }
+
+    .counter-item {
+        padding: 40px;
+        text-align: center;
+        border-right: 1px solid var(--border);
+        position: relative;
+    }
+    .counter-item:last-child { border-right: none; }
+    @media (max-width: 768px) { .counter-item { border-right: none; } }
+
+    .counter-number {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(3rem, 6vw, 5rem);
+        font-weight: 300;
+        color: var(--gold);
+        line-height: 1;
+        display: block;
+    }
+    .counter-label {
+        font-size: 9px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--text) 40%, transparent);
+        font-weight: 500;
+        margin-top: 8px;
+    }
+
+    /* ─── SEÇÃO PORTFÓLIO ─── */
+    #portfolio-section {
+        padding: 140px 48px;
+        position: relative;
+        overflow: hidden;
+    }
+    @media (max-width: 768px) { #portfolio-section { padding: 80px 24px; } }
+
+    .portfolio-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 80px;
+        gap: 40px;
+    }
+    @media (max-width: 768px) { .portfolio-header { flex-direction: column; align-items: flex-start; margin-bottom: 48px; } }
+
+    .portfolio-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(3rem, 6vw, 5.5rem);
+        font-weight: 300;
+        line-height: 1;
+        color: var(--text);
+    }
+    .portfolio-title em { font-style: italic; color: var(--gold); }
+
+    .portfolio-desc {
+        max-width: 300px;
+        color: color-mix(in srgb, var(--text) 45%, transparent);
+        font-weight: 300;
+        line-height: 1.7;
+        font-size: 0.9rem;
+    }
+
+    /* ─── HORIZONTAL DRAG SCROLL (IGUAL AO ORIGINAL, MAS REFORMULADO) ─── */
+    .drag-scroll-wrapper {
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        cursor: none;
+    }
+    .drag-scroll-inner {
+        display: flex;
+        gap: 2px;
+        overflow-x: auto;
+        padding-bottom: 0;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        user-select: none;
+        cursor: grab;
+    }
+    .drag-scroll-inner:active { cursor: grabbing; }
+    .drag-scroll-inner::-webkit-scrollbar { display: none; }
+
+    .portfolio-card {
+        flex-shrink: 0;
+        position: relative;
+        overflow: hidden;
+        width: clamp(280px, 35vw, 500px);
+        aspect-ratio: 3/4;
+        background: var(--bg-card);
+        transition: flex 0.5s ease;
+    }
+    .portfolio-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(0.4) brightness(0.6);
+        transition: filter 1.2s ease, transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .portfolio-card:hover img {
+        filter: grayscale(0) brightness(0.5);
+        transform: scale(1.06);
+    }
+
+    .portfolio-card-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, color-mix(in srgb, var(--bg) 95%, transparent) 0%, color-mix(in srgb, var(--bg) 20%, transparent) 60%, transparent 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 40px 32px;
+        transition: background 0.5s ease;
+    }
+
+    .portfolio-card-num {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 0.85rem;
+        color: var(--gold);
+        font-weight: 300;
+        letter-spacing: 0.1em;
+        margin-bottom: 12px;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.4s ease 0.05s;
+    }
+    .portfolio-card-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(1.4rem, 2.5vw, 2rem);
+        font-weight: 400;
+        color: var(--text);
+        line-height: 1.15;
+        margin-bottom: 20px;
+        transform: translateY(20px);
+        transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    .portfolio-card-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--gold);
+        font-weight: 500;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.4s ease 0.1s;
+        text-decoration: none;
+        cursor: none;
+    }
+    .portfolio-card-cta .cta-line {
+        display: block;
+        width: 24px;
+        height: 1px;
+        background: var(--gold);
+        transition: width 0.3s ease;
+    }
+    .portfolio-card:hover .cta-line { width: 40px; }
+
+    .portfolio-card:hover .portfolio-card-num,
+    .portfolio-card:hover .portfolio-card-cta {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .portfolio-card:hover .portfolio-card-title {
+        transform: translateY(0);
+    }
+
+    /* ─── FILTROS DE CATEGORIA ─── */
+    .cat-filters {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 48px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+    }
+    .cat-filters::-webkit-scrollbar { display: none; }
+
+    .cat-filter-btn {
+        flex-shrink: 0;
+        padding: 10px 20px;
+        border: 1px solid var(--border);
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        font-weight: 500;
+        color: color-mix(in srgb, var(--text) 40%, transparent);
+        background: transparent;
+        cursor: none;
+        transition: all 0.3s ease;
+    }
+    .cat-filter-btn:hover, .cat-filter-btn.active {
+        background: var(--gold);
+        border-color: var(--gold);
+        color: var(--bg);
+    }
+
+    /* ─── SEÇÃO AGENDA ─── */
+    #agenda {
+        padding: 140px 48px;
+        border-top: 1px solid var(--border);
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    @media (max-width: 768px) { #agenda { padding: 80px 24px; } }
+
+    .agenda-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2px;
+        margin-top: 64px;
+    }
+
+    .agenda-card {
+        padding: 40px 32px;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        text-decoration: none;
+        display: block;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .agenda-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: var(--gold);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+        z-index: 0;
+    }
+    .agenda-card:hover::before { transform: scaleX(1); }
+    .agenda-card > * { position: relative; z-index: 1; }
+    .agenda-card:hover .agenda-time,
+    .agenda-card:hover .agenda-label,
+    .agenda-card:hover .agenda-status { color: var(--bg) !important; }
+
+    .agenda-time {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.5rem;
+        font-weight: 300;
+        color: var(--gold);
+        line-height: 1;
+        margin-bottom: 16px;
+        transition: color 0.3s;
+    }
+    .agenda-label {
+        font-size: 9px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--text) 40%, transparent);
+        font-weight: 500;
+        margin-bottom: 24px;
+        transition: color 0.3s;
+    }
+    .agenda-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 9px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--text) 60%, transparent);
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+    .agenda-status .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #4ADE80;
+        display: block;
+    }
+
+    /* ─── FORMULÁRIO DE CONTATO ─── */
+    #contato {
+        padding: 140px 48px;
+        background: var(--bg-card);
+        border-top: 1px solid var(--border);
+    }
+    @media (max-width: 768px) { #contato { padding: 80px 24px; } }
+
+    .contato-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 120px;
+        align-items: start;
+    }
+    @media (max-width: 900px) { .contato-inner { grid-template-columns: 1fr; gap: 64px; } }
+
+    .contato-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(3rem, 5vw, 5rem);
+        font-weight: 300;
+        line-height: 1;
+        color: var(--text);
+        margin-bottom: 32px;
+    }
+    .contato-title em { font-style: italic; color: var(--gold); }
+
+    .contato-info {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        margin-top: 48px;
+    }
+    .contato-info-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    .contato-info-icon {
+        width: 40px;
+        height: 40px;
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .contato-info-icon i { color: var(--gold); }
+
+    .contato-info-text .label {
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--text) 35%, transparent);
+        font-weight: 500;
+        margin-bottom: 4px;
+    }
+    .contato-info-text .value {
+        font-size: 0.95rem;
+        color: var(--text);
+        font-weight: 300;
+    }
+    .contato-info-text a { color: inherit; text-decoration: none; }
+    .contato-info-text a:hover { color: var(--gold); }
+
+    /* Form */
+    .form-field {
+        position: relative;
+        margin-bottom: 48px;
+    }
+    .form-field input,
+    .form-field textarea {
+        width: 100%;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid color-mix(in srgb, var(--text) 15%, transparent);
+        padding: 16px 0;
+        font-size: 1rem;
+        color: var(--text);
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 300;
+        outline: none;
+        transition: border-color 0.3s ease;
+        caret-color: var(--gold);
+    }
+    .form-field input:focus,
+    .form-field textarea:focus { border-bottom-color: var(--gold); }
+    .form-field label {
+        position: absolute;
+        top: 16px;
+        left: 0;
+        font-size: 9px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--text) 35%, transparent);
+        font-weight: 500;
+        pointer-events: none;
+        transition: all 0.3s ease;
+    }
+    .form-field input:focus ~ label,
+    .form-field input:not(:placeholder-shown) ~ label,
+    .form-field textarea:focus ~ label,
+    .form-field textarea:not(:placeholder-shown) ~ label {
+        top: -8px;
+        font-size: 8px;
+        color: var(--gold);
+    }
+    .form-field input::placeholder,
+    .form-field textarea::placeholder { color: transparent; }
+    .form-field textarea { resize: none; min-height: 100px; }
+
+    .form-bottom-line {
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: var(--gold);
+        transition: width 0.5s ease;
+    }
+    .form-field input:focus ~ .form-bottom-line,
+    .form-field textarea:focus ~ .form-bottom-line { width: 100%; }
+
+    .submit-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 16px;
+        padding: 20px 48px;
+        background: var(--gold);
+        color: var(--bg);
+        font-size: 10px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        font-weight: 600;
+        border: none;
+        cursor: none;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .submit-btn::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: color-mix(in srgb, var(--bg) 10%, transparent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease;
+    }
+    .submit-btn:hover::after { transform: scaleX(1); }
+    .submit-btn:hover { transform: translateY(-2px); }
+
+    /* ─── SOCIAL PROOF ─── */
+    #clientes {
+        padding: 120px 48px;
+        border-top: 1px solid var(--border);
+        overflow: hidden;
+    }
+    @media (max-width: 768px) { #clientes { padding: 80px 24px; } }
+
+    .clientes-marquee-wrapper {
+        overflow: hidden;
+        margin-top: 64px;
+        position: relative;
+    }
+    .clientes-marquee-wrapper::before,
+    .clientes-marquee-wrapper::after {
+        content: '';
+        position: absolute;
+        top: 0; bottom: 0;
+        width: 120px;
+        z-index: 2;
+    }
+    .clientes-marquee-wrapper::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
+    .clientes-marquee-wrapper::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
+
+    .clientes-marquee {
+        display: flex;
+        gap: 64px;
+        animation: marquee-scroll 25s linear infinite;
+        width: max-content;
+    }
+    .clientes-marquee:hover { animation-play-state: paused; }
+
+    @keyframes marquee-scroll {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+    }
+
+    .cliente-logo {
+        flex-shrink: 0;
+        padding: 24px 40px;
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 200px;
+        height: 80px;
+        transition: border-color 0.3s;
+    }
+    .cliente-logo:hover { border-color: var(--gold); }
+    .cliente-logo img { height: 32px; width: auto; object-fit: contain; filter: brightness(0) invert(0.6); transition: filter 0.3s; }
+    .cliente-logo:hover img { filter: brightness(0) invert(0.8); }
+    .cliente-logo span {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.2rem;
+        color: color-mix(in srgb, var(--text) 30%, transparent);
+        letter-spacing: 0.1em;
+    }
+
+    /* ─── MAPA ─── */
+    #mapa-section {
+        padding: 120px 48px;
+        border-top: 1px solid var(--border);
+    }
+    @media (max-width: 768px) { #mapa-section { padding: 80px 24px; } }
+
+    .mapa-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 80px;
+        align-items: center;
+    }
+    @media (max-width: 900px) { .mapa-inner { grid-template-columns: 1fr; gap: 48px; } }
+
+    .mapa-frame {
+        height: 480px;
+        overflow: hidden;
+        position: relative;
+    }
+    .mapa-frame::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border: 1px solid var(--border);
+        z-index: 2;
+        pointer-events: none;
+    }
+    .mapa-frame iframe { filter: grayscale(1) invert(1) contrast(0.8); transition: filter 0.6s; }
+    .mapa-frame:hover iframe { filter: grayscale(0.6) invert(0) contrast(1) brightness(0.6); }
+
+    /* ─── FOOTER ─── */
+    footer {
+        padding: 80px 48px 48px;
+        border-top: 1px solid var(--border);
+        background: color-mix(in srgb, var(--bg) 70%, #000 30%);
+    }
+    @media (max-width: 768px) { footer { padding: 60px 24px 40px; } }
+
+    .footer-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding-bottom: 64px;
+        border-bottom: 1px solid var(--border);
+        gap: 48px;
+    }
+    @media (max-width: 768px) { .footer-top { flex-direction: column; } }
+
+    .footer-brand {
+        max-width: 400px;
+    }
+    .footer-brand img { height: 48px; width: auto; object-fit: contain; margin-bottom: 24px; display: block; }
+    .footer-tagline {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: color-mix(in srgb, var(--text) 40%, transparent);
+        line-height: 1.4;
+    }
+    .footer-tagline em { font-style: italic; color: var(--gold); }
+
+    .footer-links {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px 64px;
+    }
+    .footer-link {
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--text) 35%, transparent);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+        padding: 6px 0;
+    }
+    .footer-link:hover { color: var(--gold); }
+
+    .footer-bottom {
+        padding-top: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+    .footer-copy {
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--text) 20%, transparent);
+        font-weight: 500;
+    }
+    .footer-admin {
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--text) 15%, transparent);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: color 0.3s;
+    }
+    .footer-admin:hover { color: color-mix(in srgb, var(--text) 50%, transparent); }
+
+    .footer-dev {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-top: 32px;
+        border-top: 1px solid var(--border);
+        margin-top: 32px;
+    }
+    .footer-dev span {
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--text) 20%, transparent);
+    }
+    .footer-dev img { height: 20px; filter: brightness(0) invert(0.25); }
+
+    /* ─── BOTÃO WHATSAPP FLUTUANTE ─── */
+    .wa-float {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        z-index: 9990;
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #25D366;
+        color: white;
+        border-radius: 0;
+        box-shadow: 0 8px 32px rgba(37,211,102,0.25);
+        text-decoration: none;
+        transition: transform 0.3s ease;
+    }
+    .wa-float:hover { transform: scale(1.1) translateY(-2px); }
+
+    /* ─── ANIMAÇÕES GERAIS ─── */
+    .reveal {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    .reveal-line {
+        opacity: 0;
+        transform: scaleX(0);
+        transform-origin: left;
+    }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(201,169,110,0.3); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+    /* ─── SECTION LABEL PADRÃO ─── */
+    .section-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 9px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--gold);
+        font-weight: 500;
+        margin-bottom: 24px;
+    }
+    .section-label::before {
+        content: '';
+        display: block;
+        width: 32px;
+        height: 1px;
+        background: var(--gold);
+    }
+
+    /* ─── VERTICAL ROTATING TEXT ─── */
+    .rotating-text {
+        position: absolute;
+        right: 48px;
+        top: 50%;
+        transform: translateY(-50%) rotate(90deg);
+        transform-origin: center;
+        font-size: 9px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--text) 20%, transparent);
+        font-weight: 500;
+        white-space: nowrap;
+        animation: rotate-text 20s linear infinite;
+        display: none;
+    }
+    @media (min-width: 1200px) { .rotating-text { display: block; } }
+    @keyframes rotate-text {
+        from { transform: translateY(-50%) rotate(90deg) translateX(0); }
+        to { transform: translateY(-50%) rotate(90deg) translateX(-20px); }
+    }
+
+    /* ─── PROGRESS BAR (SCROLL) ─── */
+    #scroll-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 2px;
+        background: var(--gold);
+        z-index: 9999;
+        transition: width 0.1s linear;
+        width: 0%;
+    }
+
+    /* ─── DIAGONAL DIVIDER ─── */
+    .diagonal-divider {
+        height: 80px;
+        background: var(--bg-card);
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        position: relative;
+    }
+
+    /* ─── SUCCESS MESSAGE ─── */
+    #leadSuccessMsg {
+        padding: 24px 32px;
+        border: 1px solid rgba(201,169,110,0.3);
+        background: rgba(201,169,110,0.05);
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.2rem;
+        font-weight: 300;
+        color: var(--gold);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-outline" id="cursorOutline"></div>
+
+<!-- Scroll Progress -->
+<div id="scroll-progress"></div>
+
+<!-- ─── PRELOADER ─── -->
+<div id="preloader">
+    <div class="preloader-logo">
+        {% if loja.logo %}
+            <img src="{{ loja.logo }}" style="height:60px;width:auto;object-fit:contain;">
+        {% else %}
+            <span style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:300;color:var(--text);letter-spacing:0.1em;">{{ loja.nome }}</span>
+        {% endif %}
+    </div>
+    <div class="preloader-line"><div class="preloader-progress"></div></div>
+    <div class="preloader-number">00</div>
+</div>
+
+<!-- ─── MOBILE NAV ─── -->
+<div id="mobile-nav">
+    {% if not loja.ocultar_sobre %}<a href="#sobre" onclick="closeMobileNav()">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
+    {% if not loja.ocultar_produtos %}<a href="#portfolio-section" onclick="closeMobileNav()">{{ loja.titulo_produtos or 'Projetos' }}</a>{% endif %}
+    {% if not loja.ocultar_agenda %}<a href="#agenda" onclick="closeMobileNav()">Agenda</a>{% endif %}
+    <a href="#contato" onclick="closeMobileNav()">Contato</a>
+    <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" style="color:var(--gold);font-size:1rem;font-family:'DM Sans',sans-serif;letter-spacing:0.15em;" target="_blank">WhatsApp →</a>
+</div>
+
+<!-- ─── HEADER ─── -->
+<header id="site-header">
+    <a href="/{{ loja.slug_url }}/" class="header-logo">
+        {% if loja.logo %}
+            <img src="{{ loja.logo }}" alt="{{ loja.nome }}">
+        {% else %}
+            <span>{{ loja.nome }}</span>
+        {% endif %}
+    </a>
+
+    <nav class="desktop-nav flex items-center gap-10">
+        {% if not loja.ocultar_sobre %}<a href="#sobre" class="nav-link">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
+
+        {% if not loja.ocultar_produtos %}
+        <div class="relative group">
+            <a href="#portfolio-section" class="nav-link flex items-center gap-1">
+                {{ loja.titulo_produtos or 'Projetos' }} <i data-lucide="chevron-down" style="width:10px;height:10px;"></i>
+            </a>
+            {% if categorias %}
+            <div class="absolute left-0 top-full pt-4 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-50" style="min-width:240px;">
+                <div style="background:color-mix(in srgb, var(--bg) 85%, #000 15%);border:1px solid var(--border);">
+                    <button onclick="filterCat2('all',this)" class="cat-filter-btn w-full text-left">Todos</button>
+                    {% for cat in categorias %}
+                    <button onclick="filterCat2('{{ cat.id }}',this)" class="cat-filter-btn w-full text-left">{{ cat.nome }}</button>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if not loja.ocultar_agenda %}<a href="#agenda" class="nav-link">Agenda</a>{% endif %}
+        <a href="#contato" class="nav-link">Contato</a>
+    </nav>
+
+    <div class="flex items-center gap-4">
+        <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="header-cta desktop-nav">
+            <i data-lucide="phone" style="width:12px;height:12px;"></i>
+            Fale Conosco
+        </a>
+        <button class="menu-toggle" id="menuToggle" onclick="toggleMobileNav()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</header>
+
+{% for secao in layout %}
+
+<!-- ─── HERO ─── -->
+{% if secao == 'banner' and not loja.ocultar_banner %}
+<section id="hero">
+    <div class="hero-bg">
+        {% if loja.banner1 %}
+        <img src="{{ loja.banner1 }}" alt="{{ loja.nome }}" id="heroBgImg">
+        {% else %}
+        <div style="width:100%;height:100%;background:linear-gradient(135deg, var(--bg), color-mix(in srgb, var(--bg) 80%, #fff 20%));"></div>
+        {% endif %}
+        <div class="hero-bg-gradient"></div>
+    </div>
+
+    <div class="hero-content">
+        <div class="hero-label reveal">{{ loja.banner1_subtitulo or loja.sobre_slogan or 'Excelência em cada detalhe' }}</div>
+        <h1 class="hero-title">
+            {% if loja.banner1_titulo %}
+                {{ loja.banner1_titulo | replace('  ', '<em>') | safe }}
+            {% else %}
+                {{ loja.nome }}<br><em>& Associados</em>
+            {% endif %}
+        </h1>
+        <p class="hero-subtitle reveal" style="animation-delay:0.2s;">
+            {{ loja.sobre_texto | truncate(160) if loja.sobre_texto else 'Construindo soluções com rigor técnico, ética profissional e visão estratégica.' }}
+        </p>
+        <div class="gold-line reveal" style="margin-top:56px;animation-delay:0.3s;"></div>
+        <a href="#contato" class="header-cta reveal" style="display:inline-flex;margin-top:0;animation-delay:0.4s;">
+            Iniciar Conversa <i data-lucide="arrow-up-right" style="width:12px;height:12px;"></i>
+        </a>
+    </div>
+
+    {% if loja.anos_experiencia or loja.numero_clientes or loja.numero_projetos or loja.numero_premios %}
+    <div class="hero-bottom-bar">
+        {% if loja.anos_experiencia %}
+        <div class="hero-stat">
+            <span class="hero-stat-number">{{ loja.anos_experiencia }}</span>
+            <span class="hero-stat-label">Anos de Experiência</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        {% endif %}
+        {% if loja.numero_clientes %}
+        <div class="hero-stat">
+            <span class="hero-stat-number">{{ loja.numero_clientes }}</span>
+            <span class="hero-stat-label">Clientes Atendidos</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        {% endif %}
+        {% if loja.numero_projetos %}
+        <div class="hero-stat">
+            <span class="hero-stat-number">{{ loja.numero_projetos }}</span>
+            <span class="hero-stat-label">Projetos Entregues</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        {% endif %}
+        {% if loja.numero_premios %}
+        <div class="hero-stat">
+            <span class="hero-stat-number">{{ loja.numero_premios }}</span>
+            <span class="hero-stat-label">Reconhecimentos</span>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</section>
+
+{% if loja.banner2 %}
+<div style="height:2px;background:var(--border);"></div>
+{% endif %}
+{% endif %}
+
+<!-- ─── SOBRE ─── -->
+{% if secao == 'sobre' and not loja.ocultar_sobre %}
+<div style="border-top:1px solid var(--border);">
+<section>
+    <div id="sobre" class="container mx-auto" style="max-width:1400px;">
+        <div class="sobre-grid">
+
+            <div class="sobre-img-wrapper reveal" {% if not loja.sobre_imagem_url %}style="display:none"{% endif %}>
+                {% if loja.sobre_imagem_url %}
+                <img src="{{ loja.sobre_imagem_url }}" alt="{{ loja.nome }}">
+                <div class="sobre-img-frame"></div>
+                {% if loja.anos_experiencia %}
+                <div class="sobre-img-badge">
+                    <span class="badge-num">{{ loja.anos_experiencia }}</span>
+                    <span class="badge-label">Anos de<br>Expertise</span>
+                </div>
+                {% endif %}
+                {% endif %}
+            </div>
+
+            <div {% if not loja.sobre_imagem_url %}style="grid-column:1/-1;max-width:700px;"{% endif %}>
+                <div class="sobre-label reveal">Quem Somos</div>
+                <h2 class="sobre-title reveal">
+                    {{ loja.sobre_titulo or loja.nome }}<br>
+                    <em>{{ loja.sobre_slogan or '& Associados' }}</em>
+                </h2>
+                <p class="sobre-text reveal">{{ loja.sobre_texto or 'Nossa prática é fundamentada em rigor técnico, ética profissional e comprometimento total com os resultados de cada cliente. Atuamos com discrição, profundidade e a precisão que cada caso merece.' }}</p>
+
+                {% if categorias %}
+                <div class="grid grid-cols-2 gap-x-8 gap-y-4 reveal">
+                    {% for cat in categorias[:6] %}
+                    <div style="padding:12px 0;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px;">
+                        <span style="width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;display:block;"></span>
+                        <span style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:color-mix(in srgb, var(--text) 50%, transparent);font-weight:500;">{{ cat.nome }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <a href="#contato" class="header-cta reveal" style="margin-top:48px;display:inline-flex;">
+                    Fale Conosco <i data-lucide="arrow-right" style="width:12px;height:12px;"></i>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+</div>
+
+<!-- CONTADORES -->
+<div class="counters-section">
+    {% if loja.numero_clientes %}
+    <div class="counter-item reveal">
+        <span class="counter-number" data-target="{{ loja.numero_clientes | replace('+','') | replace('k','000') }}">0</span>
+        <span class="counter-label">Clientes Atendidos</span>
+    </div>
+    {% endif %}
+    {% if loja.numero_projetos %}
+    <div class="counter-item reveal">
+        <span class="counter-number" data-target="{{ loja.numero_projetos | replace('+','') }}">0</span>
+        <span class="counter-label">Projetos Concluídos</span>
+    </div>
+    {% endif %}
+    {% if loja.anos_experiencia %}
+    <div class="counter-item reveal">
+        <span class="counter-number" data-target="{{ loja.anos_experiencia | replace('+','') }}">0</span>
+        <span class="counter-label">Anos de Atuação</span>
+    </div>
+    {% endif %}
+    {% if loja.numero_premios %}
+    <div class="counter-item reveal">
+        <span class="counter-number" data-target="{{ loja.numero_premios | replace('+','') }}">0</span>
+        <span class="counter-label">Prêmios & Reconhecimentos</span>
+    </div>
+    {% endif %}
+    {% if not (loja.numero_clientes or loja.numero_projetos or loja.anos_experiencia or loja.numero_premios) %}
+    <div class="counter-item reveal">
+        <span class="counter-number">+15</span>
+        <span class="counter-label">Anos de Experiência</span>
+    </div>
+    <div class="counter-item reveal">
+        <span class="counter-number">200+</span>
+        <span class="counter-label">Clientes Atendidos</span>
+    </div>
+    <div class="counter-item reveal">
+        <span class="counter-number">98%</span>
+        <span class="counter-label">Casos de Sucesso</span>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- ─── PORTFÓLIO / PROJETOS ─── -->
+{% if secao == 'produtos' and not loja.ocultar_produtos %}
+<section id="portfolio-section" style="border-top:1px solid var(--border);">
+    <div style="padding:140px 48px 60px; max-width:1400px; margin:0 auto;">
+        <div class="portfolio-header">
+            <h2 class="portfolio-title reveal">
+                {{ loja.titulo_produtos or 'Nossos' }}<br>
+                <em>Projetos</em>
+            </h2>
+            <p class="portfolio-desc reveal">
+                Cada projeto é uma história de confiança, estratégia e resultado. Conheça alguns dos trabalhos que nos orgulham.
+            </p>
+        </div>
+
+        {% if categorias %}
+        <div class="cat-filters" id="catFilters2">
+            <button class="cat-filter-btn active" onclick="filterCat2('all',this)">Todos</button>
+            {% for cat in categorias %}
+            <button class="cat-filter-btn" onclick="filterCat2('{{ cat.id }}',this)">{{ cat.nome }}</button>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="drag-scroll-wrapper">
+        <div class="drag-scroll-inner" id="portfolioDrag">
+            {% for p in produtos %}
+            <div class="portfolio-card product-item2" data-cat2="{{ p.categoria_id }}" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
+                <img src="{{ p.imagem }}" alt="{{ p.nome }}" loading="lazy">
+                <div class="portfolio-card-overlay">
+                    <div class="portfolio-card-num">{{ '%02d' % loop.index }}</div>
+                    <h3 class="portfolio-card-title">{{ p.nome }}</h3>
+                    {% if not loja.hide_explore_button %}
+                    <span class="portfolio-card-cta">
+                        <span class="cta-line"></span>
+                        Ver Projeto
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div style="width:400px;height:560px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);flex-shrink:0;">
+                <p style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:color-mix(in srgb, var(--text) 20%, transparent);">Nenhum projeto cadastrado</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div style="padding:40px 48px 80px;display:flex;justify-content:center;">
+        <div style="display:flex;align-items:center;gap:12px;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:color-mix(in srgb, var(--text) 25%, transparent);font-weight:500;">
+            <i data-lucide="mouse-pointer-2" style="width:12px;height:12px;"></i>
+            Arraste para explorar
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ─── AGENDA ─── -->
+{% if secao == 'agenda' and not loja.ocultar_agenda %}
+<div style="border-top:1px solid var(--border);">
+<section>
+    <div id="agenda" class="container mx-auto">
+        <div class="section-label reveal">Disponibilidade</div>
+        <h2 class="portfolio-title reveal" style="margin-bottom:0;">
+            {{ loja.titulo_agenda or 'Agende' }}<br>
+            <em>sua Consulta</em>
+        </h2>
+        <p style="color:color-mix(in srgb, var(--text) 40%, transparent);font-weight:300;margin-top:16px;font-size:0.9rem;" class="reveal">
+            Selecione um horário disponível e confirme via WhatsApp.
+        </p>
+
+        <div class="agenda-grid">
+            {% for horario in agenda %}
+                {% if horario.disponivel %}
+                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}?text=Olá! Gostaria de reservar o horário de {{ horario.data_hora_formatada or horario.data_hora }}" target="_blank" class="agenda-card reveal">
+                    <div class="agenda-time">{{ horario.data_hora_formatada.split(' ')[2] if horario.data_hora_formatada and 'às' in horario.data_hora_formatada else horario.data_hora_formatada }}</div>
+                    <div class="agenda-label">{{ horario.data_hora_formatada }}</div>
+                    <div class="agenda-status">
+                        <span class="dot"></span>
+                        Disponível — Clique para reservar
+                    </div>
+                </a>
+                {% endif %}
+            {% else %}
+            <div style="grid-column:1/-1;padding:80px 40px;border:1px solid var(--border);text-align:center;">
+                <i data-lucide="calendar-x" style="width:32px;height:32px;color:color-mix(in srgb, var(--text) 20%, transparent);margin:0 auto 16px;display:block;"></i>
+                <p style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:color-mix(in srgb, var(--text) 20%, transparent);">Nenhum horário disponível</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+</div>
+{% endif %}
+
+<!-- ─── MAPA ─── -->
+{% if secao == 'mapa' and loja.mostrar_mapa and loja.endereco_fisico %}
+<section id="mapa-section">
+    <div class="mapa-inner">
+        <div class="reveal">
+            <div class="section-label">Localização</div>
+            <h2 class="portfolio-title" style="font-size:clamp(2rem,4vw,3.5rem);">Como<br><em>Chegar</em></h2>
+            <div class="gold-line" style="margin:32px 0;"></div>
+            <div style="display:flex;align-items:flex-start;gap:16px;">
+                <div style="width:1px;height:100%;background:var(--border);flex-shrink:0;margin-top:4px;"></div>
+                <p style="color:color-mix(in srgb, var(--text) 50%, transparent);font-weight:300;font-size:0.9rem;line-height:1.8;">{{ loja.endereco_fisico }}</p>
+            </div>
+            <a href="https://maps.google.com/?q={{ loja.endereco_fisico | urlencode }}" target="_blank" class="header-cta" style="margin-top:40px;display:inline-flex;">
+                Ver no Google Maps <i data-lucide="external-link" style="width:11px;height:11px;"></i>
+            </a>
+        </div>
+        <div class="mapa-frame reveal">
+            <iframe src="https://maps.google.com/maps?q={{ loja.endereco_fisico | urlencode }}&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;display:block;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endfor %}
+
+<!-- ─── SOCIAL PROOF ─── -->
+{% if loja.logos_clientes %}
+<section id="clientes" style="border-top:1px solid var(--border);">
+    <div style="max-width:1400px;margin:0 auto;">
+        <div class="section-label reveal">Confiança</div>
+        <h2 class="portfolio-title reveal">Quem<br><em>Confia em Nós</em></h2>
+    </div>
+
+    <div class="clientes-marquee-wrapper" style="margin-top:80px;">
+        <div class="clientes-marquee" id="marqueeInner">
+            {% for link in loja.logos_clientes.split() %}
+                {% if link.strip() and not 'instagram.com' in link %}
+                <div class="cliente-logo">
+                    <img src="{{ link.strip() }}" alt="Cliente">
+                </div>
+                {% endif %}
+            {% endfor %}
+            <!-- Duplicate para loop infinito -->
+            {% for link in loja.logos_clientes.split() %}
+                {% if link.strip() and not 'instagram.com' in link %}
+                <div class="cliente-logo">
+                    <img src="{{ link.strip() }}" alt="Cliente">
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ─── FORMULÁRIO ─── -->
+{% if not loja.ocultar_formulario %}
+<section id="contato">
+    <div class="contato-inner">
+        <div>
+            <div class="section-label reveal">Contato</div>
+            <h2 class="contato-title reveal">
+                {{ loja.titulo_formulario or 'Vamos' }}<br>
+                <em>Conversar?</em>
+            </h2>
+            <p style="color:color-mix(in srgb, var(--text) 40%, transparent);font-weight:300;font-size:0.9rem;line-height:1.8;margin-bottom:40px;" class="reveal">
+                Descreva seu caso ou projeto. Nossa equipe analisará sua solicitação e retornará em breve.
+            </p>
+
+            <div class="contato-info">
+                {% if loja.whatsapp_comercial %}
+                <div class="contato-info-item reveal">
+                    <div class="contato-info-icon"><i data-lucide="phone" style="width:16px;height:16px;"></i></div>
+                    <div class="contato-info-text">
+                        <div class="label">WhatsApp</div>
+                        <div class="value"><a href="https://wa.me/55{{ loja.whatsapp_comercial }}">+55 {{ loja.whatsapp_comercial }}</a></div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if loja.email %}
+                <div class="contato-info-item reveal">
+                    <div class="contato-info-icon"><i data-lucide="mail" style="width:16px;height:16px;"></i></div>
+                    <div class="contato-info-text">
+                        <div class="label">E-mail</div>
+                        <div class="value"><a href="mailto:{{ loja.email }}">{{ loja.email }}</a></div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if loja.endereco_fisico %}
+                <div class="contato-info-item reveal">
+                    <div class="contato-info-icon"><i data-lucide="map-pin" style="width:16px;height:16px;"></i></div>
+                    <div class="contato-info-text">
+                        <div class="label">Endereço</div>
+                        <div class="value">{{ loja.endereco_fisico }}</div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if loja.instagram_url %}
+                <div class="contato-info-item reveal">
+                    <div class="contato-info-icon"><i data-lucide="instagram" style="width:16px;height:16px;"></i></div>
+                    <div class="contato-info-text">
+                        <div class="label">Instagram</div>
+                        <div class="value"><a href="{{ loja.instagram_url }}" target="_blank">{{ loja.instagram_url }}</a></div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div>
+            <form id="leadForm" class="reveal">
+                <div class="form-field">
+                    <input type="text" name="nome" id="nome" placeholder="." required>
+                    <label for="nome">Nome Completo</label>
+                    <div class="form-bottom-line"></div>
+                </div>
+                <div class="form-field">
+                    <input type="text" name="whatsapp" id="wpp" placeholder="." required>
+                    <label for="wpp">WhatsApp (DDD + Número)</label>
+                    <div class="form-bottom-line"></div>
+                </div>
+                <div class="form-field">
+                    <input type="email" name="email" id="mail" placeholder="." required>
+                    <label for="mail">E-mail Profissional</label>
+                    <div class="form-bottom-line"></div>
+                </div>
+                <div class="form-field">
+                    <input type="text" name="profissao" id="prof" placeholder=".">
+                    <label for="prof">Área de Interesse / Assunto</label>
+                    <div class="form-bottom-line"></div>
+                </div>
+                <button type="submit" class="submit-btn">
+                    Enviar Solicitação <i data-lucide="send" style="width:14px;height:14px;"></i>
+                </button>
+            </form>
+            <div id="leadSuccessMsg" class="hidden">
+                <i data-lucide="check" style="width:20px;height:20px;color:var(--gold);flex-shrink:0;"></i>
+                Solicitação recebida. Nossa equipe entrará em contato.
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ─── FOOTER ─── -->
+<footer>
+    <div style="max-width:1400px;margin:0 auto;">
+        <div class="footer-top">
+            <div class="footer-brand">
+                {% if loja.logo %}
+                <img src="{{ loja.logo }}" alt="{{ loja.nome }}">
+                {% else %}
+                <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--text);margin-bottom:24px;">{{ loja.nome }}</div>
+                {% endif %}
+                <p class="footer-tagline">
+                    {% if loja.chamada_rodape %}
+                        {{ loja.chamada_rodape }}
+                    {% else %}
+                        <em>Excelência</em> como padrão.<br>Resultado como compromisso.
+                    {% endif %}
+                </p>
+            </div>
+
+            <nav class="footer-links" style="padding-top:8px;">
+                {% if not loja.ocultar_sobre %}<a href="#sobre" class="footer-link">{{ loja.titulo_menu_sobre or 'Sobre' }}</a>{% endif %}
+                {% if not loja.ocultar_produtos %}<a href="#portfolio-section" class="footer-link">{{ loja.titulo_produtos or 'Projetos' }}</a>{% endif %}
+                {% if not loja.ocultar_agenda %}<a href="#agenda" class="footer-link">Agenda</a>{% endif %}
+                <a href="#contato" class="footer-link">Contato</a>
+                {% if loja.instagram_url %}<a href="{{ loja.instagram_url }}" target="_blank" class="footer-link">Instagram</a>{% endif %}
+                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="footer-link">WhatsApp</a>
+            </nav>
+        </div>
+
+        <div class="footer-bottom">
+            <span class="footer-copy">© {{ 2026 }} {{ loja.nome }}. Todos os direitos reservados.</span>
+            <a href="/{{ loja.slug_url }}/admin" class="footer-admin">
+                <i data-lucide="lock" style="width:10px;height:10px;"></i>
+                Acesso Admin
+            </a>
+        </div>
+
+        <div class="footer-dev">
+            <span>Desenvolvido por</span>
+            <div style="background:rgba(255,255,255,0.05);padding:8px 16px;border:1px solid var(--border);">
+                <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1773591878/presentes_180_x_50_px_720_x_200_px_1440_x_264_px_1_azuhgq.png" alt="Leanttro" style="height:18px;width:auto;filter:brightness(0) invert(0.4);">
+            </div>
+            <a href="https://wa.me/5511913324827" target="_blank" style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:color-mix(in srgb, var(--text) 20%, transparent);text-decoration:none;transition:color 0.3s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='color-mix(in srgb, var(--text) 20%, transparent)'">WhatsApp</a>
+        </div>
+    </div>
+</footer>
+
+{% if loja.mostrar_whatsapp_flutuante and loja.whatsapp_comercial %}
+<a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="wa-float">
+    <i data-lucide="message-circle" style="width:22px;height:22px;"></i>
+</a>
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    // ─── CURSOR PERSONALIZADO ───
+    const dot = document.getElementById('cursorDot');
+    const outline = document.getElementById('cursorOutline');
+    let mouseX = 0, mouseY = 0, outX = 0, outY = 0;
+
+    document.addEventListener('mousemove', e => {
+        mouseX = e.clientX; mouseY = e.clientY;
+        if (dot) { dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px'; }
+    });
+
+    function animateCursor() {
+        outX += (mouseX - outX) * 0.12;
+        outY += (mouseY - outY) * 0.12;
+        if (outline) { outline.style.left = outX + 'px'; outline.style.top = outY + 'px'; }
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    document.querySelectorAll('a, button, .portfolio-card, .agenda-card').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            if (outline) { outline.style.width = '56px'; outline.style.height = '56px'; outline.style.borderColor = 'var(--gold)'; }
+            if (dot) { dot.style.width = '4px'; dot.style.height = '4px'; }
+        });
+        el.addEventListener('mouseleave', () => {
+            if (outline) { outline.style.width = '36px'; outline.style.height = '36px'; outline.style.borderColor = 'rgba(201,169,110,0.5)'; }
+            if (dot) { dot.style.width = '8px'; dot.style.height = '8px'; }
+        });
+    });
+
+    // ─── SCROLL PROGRESS ───
+    const scrollBar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+        const total = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = (window.scrollY / total) * 100;
+        if (scrollBar) scrollBar.style.width = pct + '%';
+    }, { passive: true });
+
+    // ─── HEADER SCROLL ───
+    const header = document.getElementById('site-header');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 60) { header.classList.add('scrolled'); }
+        else { header.classList.remove('scrolled'); }
+    }, { passive: true });
+
+    // ─── MOBILE NAV ───
+    window.toggleMobileNav = function() {
+        const nav = document.getElementById('mobile-nav');
+        const btn = document.getElementById('menuToggle');
+        const isOpen = nav.style.display === 'flex';
+        nav.style.display = isOpen ? 'none' : 'flex';
+        btn.classList.toggle('active', !isOpen);
+        document.body.style.overflow = isOpen ? '' : 'hidden';
+    };
+    window.closeMobileNav = function() {
+        const nav = document.getElementById('mobile-nav');
+        const btn = document.getElementById('menuToggle');
+        nav.style.display = 'none';
+        btn.classList.remove('active');
+        document.body.style.overflow = '';
+    };
+
+    // ─── PRELOADER ───
+    gsap.registerPlugin(ScrollTrigger);
+    lucide.createIcons();
+
+    const preloader = document.getElementById('preloader');
+    const plogoEl = document.querySelector('.preloader-logo');
+    const pProgress = document.querySelector('.preloader-progress');
+    const pNumber = document.querySelector('.preloader-number');
+
+    if (preloader) {
+        document.body.style.overflow = 'hidden';
+        
+        let count = 0;
+        const countInt = setInterval(() => {
+            count += Math.floor(Math.random() * 15) + 5;
+            if (count > 100) count = 100;
+            if (pNumber) pNumber.textContent = count.toString().padStart(2, '0');
+            if (count >= 100) clearInterval(countInt);
+        }, 80);
+
+        const tl = gsap.timeline({ onComplete: () => {
+            preloader.style.display = 'none';
+            document.body.style.overflow = '';
+            startRevealAnimations();
+            ScrollTrigger.refresh();
+        }});
+
+        tl
+        .to(plogoEl, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' })
+        .to(pNumber, { opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.8')
+        .to(pProgress, { scaleX: 1, duration: 1.8, ease: 'power2.inOut' }, '-=0.6')
+        .to([plogoEl, pNumber], { opacity: 0, y: -30, duration: 0.5, ease: 'power2.in' }, '+=0.2')
+        .to(preloader, { yPercent: -100, duration: 1.2, ease: 'power4.inOut' }, '-=0.1');
+    } else {
+        startRevealAnimations();
+    }
+
+    // ─── REVEAL ANIMATIONS ───
+    function startRevealAnimations() {
+        // Hero
+        gsap.to('.hero-label', { opacity:1, y:0, duration:1, ease:'power3.out', delay:0.1 });
+        gsap.to('.hero-title', { opacity:1, y:0, duration:1.2, ease:'power3.out', delay:0.25, stagger:0.1 });
+        gsap.to('.hero-subtitle', { opacity:1, y:0, duration:1, ease:'power3.out', delay:0.45 });
+        gsap.to('.hero-stat', { opacity:1, duration:1, ease:'power2.out', delay:0.6, stagger:0.1 });
+
+        // Hero BG Zoom
+        const heroBg = document.getElementById('heroBgImg');
+        if (heroBg) { gsap.to(heroBg, { scale:1, duration:2.5, ease:'power2.out', delay:0.2 }); }
+
+        // Generic reveal on scroll
+        gsap.utils.toArray('.reveal').forEach((el, i) => {
+            gsap.fromTo(el,
+                { opacity: 0, y: 40 },
+                { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out',
+                  scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+                }
+            );
+        });
+
+        // Counters
+        gsap.utils.toArray('.counter-number[data-target]').forEach(el => {
+            const target = parseInt(el.getAttribute('data-target')) || 0;
+            const obj = { val: 0 };
+            ScrollTrigger.create({
+                trigger: el,
+                start: 'top 80%',
+                once: true,
+                onEnter: () => {
+                    gsap.to(obj, {
+                        val: target, duration: 2, ease: 'power2.out',
+                        onUpdate: () => { el.textContent = Math.floor(obj.val).toLocaleString('pt-BR'); }
+                    });
+                }
+            });
+        });
+    }
+
+    // ─── DRAG SCROLL PORTFÓLIO ───
+    const dragEl = document.getElementById('portfolioDrag');
+    if (dragEl) {
+        let isDragging = false, startX = 0, scrollStart = 0;
+        dragEl.addEventListener('mousedown', e => { isDragging = true; startX = e.pageX - dragEl.offsetLeft; scrollStart = dragEl.scrollLeft; dragEl.style.cursor = 'grabbing'; });
+        document.addEventListener('mouseup', () => { isDragging = false; dragEl.style.cursor = 'grab'; });
+        document.addEventListener('mousemove', e => {
+            if (!isDragging) return;
+            const x = e.pageX - dragEl.offsetLeft;
+            dragEl.scrollLeft = scrollStart - (x - startX);
+        });
+        // Wheel → horizontal
+        dragEl.addEventListener('wheel', e => {
+            const atLeft = dragEl.scrollLeft <= 0;
+            const atRight = Math.ceil(dragEl.scrollLeft + dragEl.clientWidth) >= dragEl.scrollWidth;
+            if (e.deltaY > 0 && !atRight) { e.preventDefault(); dragEl.scrollLeft += e.deltaY * 1.5; }
+            else if (e.deltaY < 0 && !atLeft) { e.preventDefault(); dragEl.scrollLeft += e.deltaY * 1.5; }
+        }, { passive: false });
+    }
+
+    // ─── FILTRO CATEGORIAS ───
+    window.filterCat2 = function(catId, btn) {
+        // Atualiza botões
+        document.querySelectorAll('.cat-filter-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+
+        // Rola para portfolio
+        const sec = document.getElementById('portfolio-section');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+
+        // Filtra cards
+        document.querySelectorAll('.product-item2').forEach(card => {
+            if (catId === 'all' || card.getAttribute('data-cat2') === String(catId)) {
+                card.style.display = '';
+                gsap.fromTo(card, { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' });
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    };
+
+    // ─── FORMULÁRIO ───
+    const form = document.getElementById('leadForm');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('.submit-btn');
+            const origHTML = btn.innerHTML;
+            btn.innerHTML = '<span style="letter-spacing:0.2em;">ENVIANDO</span>';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/{{ loja.slug_url }}/captura-lead', { method: 'POST', body: new FormData(this) });
+                const data = await res.json();
+                if (data.sucesso || res.ok) {
+                    form.style.display = 'none';
+                    const msg = document.getElementById('leadSuccessMsg');
+                    if (msg) msg.classList.remove('hidden');
+                } else {
+                    alert('Erro ao enviar. Tente novamente.');
+                    btn.innerHTML = origHTML;
+                    btn.disabled = false;
+                }
+            } catch(err) {
+                alert('Erro de conexão.');
+                btn.innerHTML = origHTML;
+                btn.disabled = false;
+            }
+        });
+    }
+
+});
+</script>
+</body>
+</html>
