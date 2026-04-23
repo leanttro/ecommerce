@@ -1014,11 +1014,11 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   <div class="clients-right">
     {% set client_logos = loja.logos_clientes.split('\n') %}
     <div class="clients-track">
-     {% for logo in client_logos %}
+      {% for i in range(4) %}
+        {% for logo in client_logos %}
           {% if logo.strip() and 'instagram.com' not in logo %}
           <img src="{{ logo.strip() }}" alt="Cliente">
           {% endif %}
-        {% endfor %}
         {% endfor %}
       {% endfor %}
     </div>
