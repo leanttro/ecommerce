@@ -327,16 +327,16 @@
                 <img src="{{ loja.banner1 }}" class="hero-img w-full h-auto block object-cover object-center transform scale-105">
                 
                 {% if loja.banner1_titulo or loja.banner1_subtitulo or loja.banner1_botao %}
-                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center md:justify-center pt-[10vh] md:pt-0 text-center px-6 pointer-events-none">
+                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center pb-[10vh] md:pb-0 md:pt-0 text-center px-6 pointer-events-none">
                     
                     {% if loja.banner1_titulo %}
-                    <h2 class="text-4xl md:text-6xl lg:text-7xl font-display uppercase tracking-tighter mb-4 drop-shadow-xl animate-banner-text" style="color: #ffffff;">
+                    <h2 class="text-3xl md:text-6xl lg:text-7xl font-display uppercase tracking-tighter mb-4 drop-shadow-xl animate-banner-text" style="color: var(--text-color);">
                         {{ loja.banner1_titulo | replace('  ', '<br>') | safe }}
                     </h2>
                     {% endif %}
                     
                     {% if loja.banner1_subtitulo %}
-                    <p class="text-base md:text-xl font-light mb-8 max-w-2xl drop-shadow-lg animate-banner-text text-white/90" style="animation-delay: 0.1s;">
+                    <p class="text-sm md:text-xl font-light mb-8 max-w-2xl drop-shadow-lg animate-banner-text opacity-90" style="color: var(--text-color); animation-delay: 0.1s;">
                         {{ loja.banner1_subtitulo | replace('  ', '<br>') | safe }}
                     </p>
                     {% endif %}
@@ -361,22 +361,22 @@
                 <img src="{{ loja.banner2 }}" class="hero-img w-full h-auto block object-cover object-center transform scale-105">
                 
                 {% if loja.banner2_titulo or loja.banner2_subtitulo or loja.banner2_botao %}
-                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center md:justify-center pt-[10vh] md:pt-0 text-center px-6 pointer-events-none">
+                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center pb-[10vh] md:pb-0 md:pt-0 text-center px-6 pointer-events-none">
                     
                     {% if loja.banner2_titulo %}
-                    <h2 class="text-4xl md:text-6xl lg:text-7xl font-display uppercase tracking-tighter mb-4 drop-shadow-xl animate-banner-text" style="color: #ffffff;">
+                    <h2 class="text-3xl md:text-6xl lg:text-7xl font-display uppercase tracking-tighter mb-4 drop-shadow-xl animate-banner-text" style="color: var(--text-color);">
                         {{ loja.banner2_titulo | replace('  ', '<br>') | safe }}
                     </h2>
                     {% endif %}
                     
                     {% if loja.banner2_subtitulo %}
-                    <p class="text-base md:text-xl font-light mb-8 max-w-2xl drop-shadow-lg animate-banner-text text-white/90" style="animation-delay: 0.1s;">
+                    <p class="text-sm md:text-xl font-light mb-8 max-w-2xl drop-shadow-lg animate-banner-text opacity-90" style="color: var(--text-color); animation-delay: 0.1s;">
                         {{ loja.banner2_subtitulo | replace('  ', '<br>') | safe }}
                     </p>
                     {% endif %}
                     
                     {% if loja.banner2_botao %}
-                    <a href="{{ loja.linkbannerprincipal2 or '#' }}" class="animate-banner-text px-8 py-4 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] transition-all hover:scale-105 pointer-events-auto shadow-2xl border border-white" style="background-color: transparent; color: #ffffff; animation-delay: 0.2s;">
+                    <a href="{{ loja.linkbannerprincipal2 or '#' }}" class="animate-banner-text px-8 py-4 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] transition-all hover:scale-105 pointer-events-auto shadow-2xl border" style="background-color: transparent; color: var(--text-color); border-color: var(--text-color); animation-delay: 0.2s;">
                         {{ loja.banner2_botao }}
                     </a>
                     {% endif %}
