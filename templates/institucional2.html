@@ -3,39 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<title>{{ loja.nome }} | Excelência & Expertise</title>
-<meta name="description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else loja.nome }}">
-
-<!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
-<meta property="og:type" content="website">
-<meta property="og:title" content="{{ loja.nome }}">
-<meta property="og:description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else loja.nome }}">
-<meta property="og:url" content="{{ request.url }}">
-{% if loja.logo %}<meta property="og:image" content="{{ loja.logo }}">{% elif loja.banner1 %}<meta property="og:image" content="{{ loja.banner1 }}">{% endif %}
-<meta property="og:locale" content="pt_BR">
-
-<!-- Twitter/X Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="{{ loja.nome }}">
-<meta name="twitter:description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else loja.nome }}">
-{% if loja.logo %}<meta name="twitter:image" content="{{ loja.logo }}">{% elif loja.banner1 %}<meta name="twitter:image" content="{{ loja.banner1 }}">{% endif %}
+<title>{{ loja.nome }} | {{ loja.sobre_slogan or 'Excelência & Expertise' }}</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family={{ (loja.font_titulo or 'Cormorant Garamond') | replace(' ', '+') }}:wght@300;400;600;700&family={{ (loja.font_corpo or 'DM Sans') | replace(' ', '+') }}:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family={{ (loja.font_titulo or 'Cormorant Garamond') | replace(' ', '+') }}:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family={{ (loja.font_corpo or 'DM Sans') | replace(' ', '+') }}:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
     :root {
-        --primary:  {{ loja.cor_primaria or '#C9A96E' }};
-        --bg:       {{ loja.cor_fundo or '#0A0A0A' }};
-        --bg-card:  {{ loja.cor_fundo or '#0A0A0A' }}; /* será escurecido via filter no card */
-        --text:     {{ loja.cor_titulo or '#E8E4DC' }};
-        --text-muted: color-mix(in srgb, {{ loja.cor_titulo or '#E8E4DC' }} 40%, transparent);
-        --gold:     {{ loja.cor_primaria or '#C9A96E' }};
-        --border:   color-mix(in srgb, {{ loja.cor_primaria or '#C9A96E' }} 15%, transparent);
+        --primary:    {{ loja.cor_primaria or '#C9A96E' }};
+        --bg:         {{ loja.cor_fundo or '#0A0A0A' }};
+        --text:       {{ loja.cor_titulo or '#E8E4DC' }};
+        --gold:       {{ loja.cor_primaria or '#C9A96E' }};
+        --border:     color-mix(in srgb, {{ loja.cor_primaria or '#C9A96E' }} 15%, transparent);
+        --font-titulo: '{{ loja.font_titulo or "Cormorant Garamond" }}';
+        --font-corpo:  '{{ loja.font_corpo or "DM Sans" }}';
     }
 
     /* Cards ligeiramente mais escuros/claros que o fundo */
@@ -57,7 +42,7 @@
     }
 
     body {
-        font-family: 'DM Sans', '{{ loja.font_corpo or "DM Sans" }}', sans-serif;
+        font-family: var(--font-corpo), sans-serif;
         background: var(--bg);
         color: var(--text);
         overflow-x: hidden;
@@ -88,8 +73,6 @@
         transform: translate(-50%, -50%);
         transition: all 0.12s ease-out;
     }
-    body:hover .cursor-dot { opacity: 1; }
-    a:hover ~ .cursor-dot, button:hover ~ .cursor-dot { width: 12px; height: 12px; }
 
     @media (max-width: 768px) {
         body { cursor: auto; }
@@ -98,7 +81,7 @@
 
     /* ─── FONTES ─── */
     h1, h2, h3, .serif {
-        font-family: 'Cormorant Garamond', '{{ loja.font_titulo or "Cormorant Garamond" }}', serif;
+        font-family: var(--font-titulo), serif;
         font-weight: 400;
         letter-spacing: -0.01em;
     }
@@ -134,7 +117,7 @@
         transform-origin: left;
     }
     .preloader-number {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: clamp(3rem, 8vw, 5rem);
         color: var(--gold);
         opacity: 0;
@@ -155,9 +138,7 @@
     /* ─── HEADER ─── */
     header {
         position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
+        top: 0; left: 0; right: 0;
         z-index: 9000;
         padding: 24px 48px;
         display: flex;
@@ -180,7 +161,7 @@
 
     .header-logo img { height: 48px; width: auto; object-fit: contain; }
     .header-logo span {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: 1.5rem;
         font-weight: 400;
         color: var(--text);
@@ -201,10 +182,8 @@
     .nav-link::after {
         content: '';
         position: absolute;
-        bottom: -2px;
-        left: 0;
-        width: 0;
-        height: 1px;
+        bottom: -2px; left: 0;
+        width: 0; height: 1px;
         background: var(--gold);
         transition: width 0.3s ease;
     }
@@ -244,8 +223,7 @@
     }
     .menu-toggle span {
         display: block;
-        width: 22px;
-        height: 1px;
+        width: 22px; height: 1px;
         background: var(--text);
         transition: all 0.3s ease;
     }
@@ -266,7 +244,7 @@
         padding: 80px 32px;
     }
     #mobile-nav a {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: clamp(2.5rem, 8vw, 4rem);
         color: var(--text);
         text-decoration: none;
@@ -291,33 +269,27 @@
         position: relative;
         overflow: hidden;
     }
-    .hero-bg {
-        position: absolute;
-        inset: 0;
-        z-index: 0;
-    }
+    .hero-bg { position: absolute; inset: 0; z-index: 0; }
     .hero-bg img {
-        width: 100%;
-        height: 100%;
+        width: 100%; height: 100%;
         object-fit: cover;
         filter: brightness(0.3) grayscale(0.2);
         transform: scale(1.06);
         transform-origin: center;
     }
     .hero-bg-gradient {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to top, var(--bg) 0%, color-mix(in srgb, var(--bg) 50%, transparent) 50%, color-mix(in srgb, var(--bg) 20%, transparent) 100%);
+        position: absolute; inset: 0;
+        background: linear-gradient(to top,
+            var(--bg) 0%,
+            color-mix(in srgb, var(--bg) 50%, transparent) 50%,
+            color-mix(in srgb, var(--bg) 20%, transparent) 100%);
     }
     .hero-content {
-        position: relative;
-        z-index: 2;
+        position: relative; z-index: 2;
         padding: 0 48px 80px;
         max-width: 1400px;
     }
-    @media (max-width: 768px) {
-        .hero-content { padding: 0 24px 60px; }
-    }
+    @media (max-width: 768px) { .hero-content { padding: 0 24px 60px; } }
 
     .hero-label {
         display: inline-flex;
@@ -334,13 +306,12 @@
     .hero-label::before {
         content: '';
         display: block;
-        width: 32px;
-        height: 1px;
+        width: 32px; height: 1px;
         background: var(--gold);
     }
 
     .hero-title {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: clamp(3.5rem, 8vw, 8rem);
         line-height: 0.95;
         font-weight: 300;
@@ -362,8 +333,7 @@
     }
 
     .hero-bottom-bar {
-        position: relative;
-        z-index: 2;
+        position: relative; z-index: 2;
         padding: 24px 48px;
         display: flex;
         align-items: center;
@@ -375,10 +345,7 @@
         -webkit-overflow-scrolling: touch;
     }
     .hero-bottom-bar::-webkit-scrollbar { display: none; }
-
-    @media (max-width: 768px) {
-        .hero-bottom-bar { padding: 20px 24px; gap: 32px; }
-    }
+    @media (max-width: 768px) { .hero-bottom-bar { padding: 20px 24px; gap: 32px; } }
 
     .hero-stat {
         flex-shrink: 0;
@@ -388,7 +355,7 @@
         opacity: 0;
     }
     .hero-stat-number {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: clamp(1.8rem, 3vw, 2.5rem);
         color: var(--gold);
         font-weight: 300;
@@ -402,16 +369,14 @@
         font-weight: 500;
     }
     .hero-stat-divider {
-        width: 1px;
-        height: 48px;
+        width: 1px; height: 48px;
         background: var(--border);
         flex-shrink: 0;
     }
 
     /* ─── LINHA DOURADA DIVISÓRIA ─── */
     .gold-line {
-        width: 80px;
-        height: 1px;
+        width: 80px; height: 1px;
         background: var(--gold);
         margin: 32px 0;
     }
@@ -448,13 +413,12 @@
     .sobre-label::before {
         content: '';
         display: block;
-        width: 32px;
-        height: 1px;
+        width: 32px; height: 1px;
         background: var(--gold);
     }
 
     .sobre-title {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: clamp(2.5rem, 5vw, 4.5rem);
         line-height: 1.05;
         font-weight: 300;
@@ -476,35 +440,28 @@
         aspect-ratio: 3/4;
     }
     .sobre-img-wrapper img {
-        width: 100%;
-        height: 100%;
+        width: 100%; height: 100%;
         object-fit: cover;
         filter: grayscale(0.3);
     }
     .sobre-img-frame {
         position: absolute;
-        top: 24px;
-        right: -24px;
-        bottom: -24px;
-        left: 24px;
+        top: 24px; right: -24px; bottom: -24px; left: 24px;
         border: 1px solid var(--border);
         pointer-events: none;
         z-index: -1;
         transition: transform 0.6s ease;
     }
-    .sobre-img-wrapper:hover .sobre-img-frame {
-        transform: translate(8px, 8px);
-    }
+    .sobre-img-wrapper:hover .sobre-img-frame { transform: translate(8px, 8px); }
     .sobre-img-badge {
         position: absolute;
-        bottom: -20px;
-        left: -20px;
+        bottom: -20px; left: -20px;
         padding: 20px 28px;
         background: var(--gold);
         color: var(--bg);
     }
     .sobre-img-badge .badge-num {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: 2.5rem;
         font-weight: 300;
         line-height: 1;
@@ -539,7 +496,7 @@
     @media (max-width: 768px) { .counter-item { border-right: none; } }
 
     .counter-number {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: clamp(3rem, 6vw, 5rem);
         font-weight: 300;
         color: var(--gold);
@@ -573,7 +530,7 @@
     @media (max-width: 768px) { .portfolio-header { flex-direction: column; align-items: flex-start; margin-bottom: 48px; } }
 
     .portfolio-title {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: clamp(3rem, 6vw, 5.5rem);
         font-weight: 300;
         line-height: 1;
@@ -589,7 +546,7 @@
         font-size: 0.9rem;
     }
 
-    /* ─── HORIZONTAL DRAG SCROLL (IGUAL AO ORIGINAL, MAS REFORMULADO) ─── */
+    /* ─── HORIZONTAL DRAG SCROLL ─── */
     .drag-scroll-wrapper {
         width: 100%;
         overflow: hidden;
@@ -618,31 +575,47 @@
         background: var(--bg-card);
         transition: flex 0.5s ease;
     }
+    {% if loja.disable_card_shadow %}
+    .portfolio-card { box-shadow: none; }
+    {% else %}
+    .portfolio-card { box-shadow: 0 8px 40px rgba(0,0,0,0.3); }
+    {% endif %}
+
     .portfolio-card img {
-        width: 100%;
-        height: 100%;
+        width: 100%; height: 100%;
         object-fit: cover;
         filter: grayscale(0.4) brightness(0.6);
         transition: filter 1.2s ease, transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    {% if loja.clean_cards_mode %}
+    .portfolio-card img { filter: none !important; }
+    {% endif %}
     .portfolio-card:hover img {
         filter: grayscale(0) brightness(0.5);
         transform: scale(1.06);
     }
+    {% if loja.clean_cards_mode %}
+    .portfolio-card:hover img { filter: none !important; }
+    {% endif %}
 
     .portfolio-card-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to top, color-mix(in srgb, var(--bg) 95%, transparent) 0%, color-mix(in srgb, var(--bg) 20%, transparent) 60%, transparent 100%);
+        position: absolute; inset: 0;
+        background: linear-gradient(to top,
+            color-mix(in srgb, var(--bg) 95%, transparent) 0%,
+            color-mix(in srgb, var(--bg) 20%, transparent) 60%,
+            transparent 100%);
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
         padding: 40px 32px;
         transition: background 0.5s ease;
     }
+    {% if loja.clean_cards_mode %}
+    .portfolio-card-overlay { background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%) !important; }
+    {% endif %}
 
     .portfolio-card-num {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: 0.85rem;
         color: var(--gold);
         font-weight: 300;
@@ -653,7 +626,7 @@
         transition: all 0.4s ease 0.05s;
     }
     .portfolio-card-title {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: clamp(1.4rem, 2.5vw, 2rem);
         font-weight: 400;
         color: var(--text);
@@ -679,21 +652,14 @@
     }
     .portfolio-card-cta .cta-line {
         display: block;
-        width: 24px;
-        height: 1px;
+        width: 24px; height: 1px;
         background: var(--gold);
         transition: width 0.3s ease;
     }
     .portfolio-card:hover .cta-line { width: 40px; }
-
     .portfolio-card:hover .portfolio-card-num,
-    .portfolio-card:hover .portfolio-card-cta {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    .portfolio-card:hover .portfolio-card-title {
-        transform: translateY(0);
-    }
+    .portfolio-card:hover .portfolio-card-cta { opacity: 1; transform: translateY(0); }
+    .portfolio-card:hover .portfolio-card-title { transform: translateY(0); }
 
     /* ─── FILTROS DE CATEGORIA ─── */
     .cat-filters {
@@ -744,7 +710,6 @@
     .agenda-card {
         padding: 40px 32px;
         border: 1px solid var(--border);
-        background: var(--bg-card);
         text-decoration: none;
         display: block;
         transition: all 0.4s ease;
@@ -753,8 +718,7 @@
     }
     .agenda-card::before {
         content: '';
-        position: absolute;
-        inset: 0;
+        position: absolute; inset: 0;
         background: var(--gold);
         transform: scaleX(0);
         transform-origin: left;
@@ -768,7 +732,7 @@
     .agenda-card:hover .agenda-status { color: var(--bg) !important; }
 
     .agenda-time {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: 2.5rem;
         font-weight: 300;
         color: var(--gold);
@@ -797,8 +761,7 @@
         transition: color 0.3s;
     }
     .agenda-status .dot {
-        width: 6px;
-        height: 6px;
+        width: 6px; height: 6px;
         border-radius: 50%;
         background: #4ADE80;
         display: block;
@@ -807,7 +770,6 @@
     /* ─── FORMULÁRIO DE CONTATO ─── */
     #contato {
         padding: 140px 48px;
-        background: var(--bg-card);
         border-top: 1px solid var(--border);
     }
     @media (max-width: 768px) { #contato { padding: 80px 24px; } }
@@ -823,7 +785,7 @@
     @media (max-width: 900px) { .contato-inner { grid-template-columns: 1fr; gap: 64px; } }
 
     .contato-title {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: clamp(3rem, 5vw, 5rem);
         font-weight: 300;
         line-height: 1;
@@ -832,28 +794,15 @@
     }
     .contato-title em { font-style: italic; color: var(--gold); }
 
-    .contato-info {
-        display: flex;
-        flex-direction: column;
-        gap: 32px;
-        margin-top: 48px;
-    }
-    .contato-info-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 16px;
-    }
+    .contato-info { display: flex; flex-direction: column; gap: 32px; margin-top: 48px; }
+    .contato-info-item { display: flex; align-items: flex-start; gap: 16px; }
     .contato-info-icon {
-        width: 40px;
-        height: 40px;
+        width: 40px; height: 40px;
         border: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        display: flex; align-items: center; justify-content: center;
         flex-shrink: 0;
     }
     .contato-info-icon i { color: var(--gold); }
-
     .contato-info-text .label {
         font-size: 9px;
         letter-spacing: 0.2em;
@@ -862,21 +811,13 @@
         font-weight: 500;
         margin-bottom: 4px;
     }
-    .contato-info-text .value {
-        font-size: 0.95rem;
-        color: var(--text);
-        font-weight: 300;
-    }
+    .contato-info-text .value { font-size: 0.95rem; color: var(--text); font-weight: 300; }
     .contato-info-text a { color: inherit; text-decoration: none; }
     .contato-info-text a:hover { color: var(--gold); }
 
     /* Form */
-    .form-field {
-        position: relative;
-        margin-bottom: 48px;
-    }
-    .form-field input,
-    .form-field textarea {
+    .form-field { position: relative; margin-bottom: 48px; }
+    .form-field input, .form-field textarea {
         width: 100%;
         background: transparent;
         border: none;
@@ -884,18 +825,16 @@
         padding: 16px 0;
         font-size: 1rem;
         color: var(--text);
-        font-family: 'DM Sans', sans-serif;
+        font-family: var(--font-corpo), sans-serif;
         font-weight: 300;
         outline: none;
         transition: border-color 0.3s ease;
         caret-color: var(--gold);
     }
-    .form-field input:focus,
-    .form-field textarea:focus { border-bottom-color: var(--gold); }
+    .form-field input:focus, .form-field textarea:focus { border-bottom-color: var(--gold); }
     .form-field label {
         position: absolute;
-        top: 16px;
-        left: 0;
+        top: 16px; left: 0;
         font-size: 9px;
         letter-spacing: 0.25em;
         text-transform: uppercase;
@@ -912,16 +851,13 @@
         font-size: 8px;
         color: var(--gold);
     }
-    .form-field input::placeholder,
-    .form-field textarea::placeholder { color: transparent; }
+    .form-field input::placeholder, .form-field textarea::placeholder { color: transparent; }
     .form-field textarea { resize: none; min-height: 100px; }
 
     .form-bottom-line {
         position: absolute;
-        bottom: -1px;
-        left: 0;
-        width: 0;
-        height: 1px;
+        bottom: -1px; left: 0;
+        width: 0; height: 1px;
         background: var(--gold);
         transition: width 0.5s ease;
     }
@@ -947,8 +883,7 @@
     }
     .submit-btn::after {
         content: '';
-        position: absolute;
-        inset: 0;
+        position: absolute; inset: 0;
         background: color-mix(in srgb, var(--bg) 10%, transparent);
         transform: scaleX(0);
         transform-origin: left;
@@ -979,7 +914,7 @@
         z-index: 2;
     }
     .clientes-marquee-wrapper::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
-    .clientes-marquee-wrapper::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
+    .clientes-marquee-wrapper::after  { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
 
     .clientes-marquee {
         display: flex;
@@ -991,7 +926,7 @@
 
     @keyframes marquee-scroll {
         from { transform: translateX(0); }
-        to { transform: translateX(-50%); }
+        to   { transform: translateX(-50%); }
     }
 
     .cliente-logo {
@@ -1006,10 +941,14 @@
         transition: border-color 0.3s;
     }
     .cliente-logo:hover { border-color: var(--gold); }
-    .cliente-logo img { height: 32px; width: auto; object-fit: contain; filter: brightness(0) invert(0.6); transition: filter 0.3s; }
+    .cliente-logo img {
+        height: 32px; width: auto; object-fit: contain;
+        filter: brightness(0) invert(0.6);
+        transition: filter 0.3s;
+    }
     .cliente-logo:hover img { filter: brightness(0) invert(0.8); }
     .cliente-logo span {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: 1.2rem;
         color: color-mix(in srgb, var(--text) 30%, transparent);
         letter-spacing: 0.1em;
@@ -1039,8 +978,7 @@
     }
     .mapa-frame::before {
         content: '';
-        position: absolute;
-        inset: 0;
+        position: absolute; inset: 0;
         border: 1px solid var(--border);
         z-index: 2;
         pointer-events: none;
@@ -1052,7 +990,6 @@
     footer {
         padding: 80px 48px 48px;
         border-top: 1px solid var(--border);
-        background: color-mix(in srgb, var(--bg) 70%, #000 30%);
     }
     @media (max-width: 768px) { footer { padding: 60px 24px 40px; } }
 
@@ -1066,12 +1003,10 @@
     }
     @media (max-width: 768px) { .footer-top { flex-direction: column; } }
 
-    .footer-brand {
-        max-width: 400px;
-    }
+    .footer-brand { max-width: 400px; }
     .footer-brand img { height: 48px; width: auto; object-fit: contain; margin-bottom: 24px; display: block; }
     .footer-tagline {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: 1.5rem;
         font-weight: 300;
         color: color-mix(in srgb, var(--text) 40%, transparent);
@@ -1143,14 +1078,10 @@
     /* ─── BOTÃO WHATSAPP FLUTUANTE ─── */
     .wa-float {
         position: fixed;
-        bottom: 32px;
-        right: 32px;
+        bottom: 32px; right: 32px;
         z-index: 9990;
-        width: 52px;
-        height: 52px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        width: 52px; height: 52px;
+        display: flex; align-items: center; justify-content: center;
         background: #25D366;
         color: white;
         border-radius: 0;
@@ -1161,15 +1092,7 @@
     .wa-float:hover { transform: scale(1.1) translateY(-2px); }
 
     /* ─── ANIMAÇÕES GERAIS ─── */
-    .reveal {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    .reveal-line {
-        opacity: 0;
-        transform: scaleX(0);
-        transform-origin: left;
-    }
+    .reveal { opacity: 0; transform: translateY(40px); }
 
     /* ─── SCROLLBAR ─── */
     ::-webkit-scrollbar { width: 4px; }
@@ -1192,38 +1115,14 @@
     .section-label::before {
         content: '';
         display: block;
-        width: 32px;
-        height: 1px;
+        width: 32px; height: 1px;
         background: var(--gold);
-    }
-
-    /* ─── VERTICAL ROTATING TEXT ─── */
-    .rotating-text {
-        position: absolute;
-        right: 48px;
-        top: 50%;
-        transform: translateY(-50%) rotate(90deg);
-        transform-origin: center;
-        font-size: 9px;
-        letter-spacing: 0.3em;
-        text-transform: uppercase;
-        color: color-mix(in srgb, var(--text) 20%, transparent);
-        font-weight: 500;
-        white-space: nowrap;
-        animation: rotate-text 20s linear infinite;
-        display: none;
-    }
-    @media (min-width: 1200px) { .rotating-text { display: block; } }
-    @keyframes rotate-text {
-        from { transform: translateY(-50%) rotate(90deg) translateX(0); }
-        to { transform: translateY(-50%) rotate(90deg) translateX(-20px); }
     }
 
     /* ─── PROGRESS BAR (SCROLL) ─── */
     #scroll-progress {
         position: fixed;
-        top: 0;
-        left: 0;
+        top: 0; left: 0;
         height: 2px;
         background: var(--gold);
         z-index: 9999;
@@ -1231,20 +1130,12 @@
         width: 0%;
     }
 
-    /* ─── DIAGONAL DIVIDER ─── */
-    .diagonal-divider {
-        height: 80px;
-        background: var(--bg-card);
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-        position: relative;
-    }
-
     /* ─── SUCCESS MESSAGE ─── */
     #leadSuccessMsg {
         padding: 24px 32px;
         border: 1px solid rgba(201,169,110,0.3);
         background: rgba(201,169,110,0.05);
-        font-family: 'Cormorant Garamond', serif;
+        font-family: var(--font-titulo), serif;
         font-size: 1.2rem;
         font-weight: 300;
         color: var(--gold);
@@ -1269,7 +1160,7 @@
         {% if loja.logo %}
             <img src="{{ loja.logo }}" style="height:60px;width:auto;object-fit:contain;">
         {% else %}
-            <span style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:300;color:var(--text);letter-spacing:0.1em;">{{ loja.nome }}</span>
+            <span style="font-family:var(--font-titulo),serif;font-size:2.5rem;font-weight:300;color:var(--text);letter-spacing:0.1em;">{{ loja.nome }}</span>
         {% endif %}
     </div>
     <div class="preloader-line"><div class="preloader-progress"></div></div>
@@ -1280,9 +1171,9 @@
 <div id="mobile-nav">
     {% if not loja.ocultar_sobre %}<a href="#sobre" onclick="closeMobileNav()">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
     {% if not loja.ocultar_produtos %}<a href="#portfolio-section" onclick="closeMobileNav()">{{ loja.titulo_produtos or 'Projetos' }}</a>{% endif %}
-    {% if not loja.ocultar_agenda %}<a href="#agenda" onclick="closeMobileNav()">Agenda</a>{% endif %}
-    <a href="#contato" onclick="closeMobileNav()">Contato</a>
-    <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" style="color:var(--gold);font-size:1rem;font-family:'DM Sans',sans-serif;letter-spacing:0.15em;" target="_blank">WhatsApp →</a>
+    {% if not loja.ocultar_agenda %}<a href="#agenda" onclick="closeMobileNav()">{{ loja.titulo_agenda or 'Agenda' }}</a>{% endif %}
+    {% if not loja.ocultar_formulario %}<a href="#contato" onclick="closeMobileNav()">Contato</a>{% endif %}
+    <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" style="color:var(--gold);font-size:1rem;font-family:var(--font-corpo),sans-serif;letter-spacing:0.15em;" target="_blank">WhatsApp →</a>
 </div>
 
 <!-- ─── HEADER ─── -->
@@ -1296,7 +1187,9 @@
     </a>
 
     <nav class="desktop-nav flex items-center gap-10">
-        {% if not loja.ocultar_sobre %}<a href="#sobre" class="nav-link">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
+        {% if not loja.ocultar_sobre %}
+        <a href="#sobre" class="nav-link">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>
+        {% endif %}
 
         {% if not loja.ocultar_produtos %}
         <div class="relative group">
@@ -1316,8 +1209,8 @@
         </div>
         {% endif %}
 
-        {% if not loja.ocultar_agenda %}<a href="#agenda" class="nav-link">Agenda</a>{% endif %}
-        <a href="#contato" class="nav-link">Contato</a>
+        {% if not loja.ocultar_agenda %}<a href="#agenda" class="nav-link">{{ loja.titulo_agenda or 'Agenda' }}</a>{% endif %}
+        {% if not loja.ocultar_formulario %}<a href="#contato" class="nav-link">Contato</a>{% endif %}
     </nav>
 
     <div class="flex items-center gap-4">
@@ -1333,7 +1226,7 @@
 
 {% for secao in layout %}
 
-<!-- ─── HERO ─── -->
+<!-- ─── HERO / BANNER ─── -->
 {% if secao == 'banner' and not loja.ocultar_banner %}
 <section id="hero">
     <div class="hero-bg">
@@ -1351,7 +1244,7 @@
             {% if loja.banner1_titulo %}
                 {{ loja.banner1_titulo | replace('  ', '<em>') | safe }}
             {% else %}
-                {{ loja.nome }}<br><em>& Associados</em>
+                {{ loja.nome }}<br><em>{{ loja.sobre_slogan or '& Associados' }}</em>
             {% endif %}
         </h1>
         <p class="hero-subtitle reveal" style="animation-delay:0.2s;">
@@ -1359,7 +1252,7 @@
         </p>
         <div class="gold-line reveal" style="margin-top:56px;animation-delay:0.3s;"></div>
         <a href="#contato" class="header-cta reveal" style="display:inline-flex;margin-top:0;animation-delay:0.4s;">
-            Iniciar Conversa <i data-lucide="arrow-up-right" style="width:12px;height:12px;"></i>
+            {{ loja.banner1_botao or 'Iniciar Conversa' }} <i data-lucide="arrow-up-right" style="width:12px;height:12px;"></i>
         </a>
     </div>
 
@@ -1395,10 +1288,6 @@
     </div>
     {% endif %}
 </section>
-
-{% if loja.banner2 %}
-<div style="height:2px;background:var(--border);"></div>
-{% endif %}
 {% endif %}
 
 <!-- ─── SOBRE ─── -->
@@ -1422,7 +1311,7 @@
             </div>
 
             <div {% if not loja.sobre_imagem_url %}style="grid-column:1/-1;max-width:700px;"{% endif %}>
-                <div class="sobre-label reveal">Quem Somos</div>
+                <div class="sobre-label reveal">{{ loja.titulo_menu_sobre or 'Quem Somos' }}</div>
                 <h2 class="sobre-title reveal">
                     {{ loja.sobre_titulo or loja.nome }}<br>
                     <em>{{ loja.sobre_slogan or '& Associados' }}</em>
@@ -1503,7 +1392,7 @@
                 <em>Projetos</em>
             </h2>
             <p class="portfolio-desc reveal">
-                Cada projeto é uma história de confiança, estratégia e resultado. Conheça alguns dos trabalhos que nos orgulham.
+                {{ loja.subtitulo_produtos or 'Cada projeto é uma história de confiança, estratégia e resultado. Conheça alguns dos trabalhos que nos orgulham.' }}
             </p>
         </div>
 
@@ -1524,7 +1413,9 @@
                 <img src="{{ p.imagem }}" alt="{{ p.nome }}" loading="lazy">
                 <div class="portfolio-card-overlay">
                     <div class="portfolio-card-num">{{ '%02d' % loop.index }}</div>
+                    {% if not loja.hide_card_title %}
                     <h3 class="portfolio-card-title">{{ p.nome }}</h3>
+                    {% endif %}
                     {% if not loja.hide_explore_button %}
                     <span class="portfolio-card-cta">
                         <span class="cta-line"></span>
@@ -1561,7 +1452,7 @@
             <em>sua Consulta</em>
         </h2>
         <p style="color:color-mix(in srgb, var(--text) 40%, transparent);font-weight:300;margin-top:16px;font-size:0.9rem;" class="reveal">
-            Selecione um horário disponível e confirme via WhatsApp.
+            {{ loja.subtitulo_agenda or 'Selecione um horário disponível e confirme via WhatsApp.' }}
         </p>
 
         <div class="agenda-grid">
@@ -1618,13 +1509,13 @@
 <section id="clientes" style="border-top:1px solid var(--border);">
     <div style="max-width:1400px;margin:0 auto;">
         <div class="section-label reveal">Confiança</div>
-        <h2 class="portfolio-title reveal">Quem<br><em>Confia em Nós</em></h2>
+        <h2 class="portfolio-title reveal" id="social-title">Nossos<br><em>Clientes</em></h2>
     </div>
 
     <div class="clientes-marquee-wrapper" style="margin-top:80px;">
         <div class="clientes-marquee" id="marqueeInner">
             {% for link in loja.logos_clientes.split() %}
-                {% if link.strip() and not 'instagram.com' in link %}
+                {% if link.strip() and 'instagram.com' not in link %}
                 <div class="cliente-logo">
                     <img src="{{ link.strip() }}" alt="Cliente">
                 </div>
@@ -1632,7 +1523,7 @@
             {% endfor %}
             <!-- Duplicate para loop infinito -->
             {% for link in loja.logos_clientes.split() %}
-                {% if link.strip() and not 'instagram.com' in link %}
+                {% if link.strip() and 'instagram.com' not in link %}
                 <div class="cliente-logo">
                     <img src="{{ link.strip() }}" alt="Cliente">
                 </div>
@@ -1654,7 +1545,7 @@
                 <em>Conversar?</em>
             </h2>
             <p style="color:color-mix(in srgb, var(--text) 40%, transparent);font-weight:300;font-size:0.9rem;line-height:1.8;margin-bottom:40px;" class="reveal">
-                Descreva seu caso ou projeto. Nossa equipe analisará sua solicitação e retornará em breve.
+                {{ loja.subtitulo_formulario or 'Deixe seus dados e nossa equipe entrará em contato.' }}
             </p>
 
             <div class="contato-info">
@@ -1711,7 +1602,7 @@
                 </div>
                 <div class="form-field">
                     <input type="email" name="email" id="mail" placeholder="." required>
-                    <label for="mail">E-mail Profissional</label>
+                    <label for="mail">E-mail</label>
                     <div class="form-bottom-line"></div>
                 </div>
                 <div class="form-field">
@@ -1720,7 +1611,8 @@
                     <div class="form-bottom-line"></div>
                 </div>
                 <button type="submit" class="submit-btn">
-                    Enviar Solicitação <i data-lucide="send" style="width:14px;height:14px;"></i>
+                    <span class="btn-text-wrapper">Enviar Solicitação</span>
+                    <i data-lucide="send" style="width:14px;height:14px;"></i>
                 </button>
             </form>
             <div id="leadSuccessMsg" class="hidden">
@@ -1740,7 +1632,7 @@
                 {% if loja.logo %}
                 <img src="{{ loja.logo }}" alt="{{ loja.nome }}">
                 {% else %}
-                <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--text);margin-bottom:24px;">{{ loja.nome }}</div>
+                <div style="font-family:var(--font-titulo),serif;font-size:2rem;font-weight:300;color:var(--text);margin-bottom:24px;">{{ loja.nome }}</div>
                 {% endif %}
                 <p class="footer-tagline">
                     {% if loja.chamada_rodape %}
@@ -1752,17 +1644,17 @@
             </div>
 
             <nav class="footer-links" style="padding-top:8px;">
-                {% if not loja.ocultar_sobre %}<a href="#sobre" class="footer-link">{{ loja.titulo_menu_sobre or 'Sobre' }}</a>{% endif %}
+                {% if not loja.ocultar_sobre %}<a href="#sobre" class="footer-link">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
                 {% if not loja.ocultar_produtos %}<a href="#portfolio-section" class="footer-link">{{ loja.titulo_produtos or 'Projetos' }}</a>{% endif %}
-                {% if not loja.ocultar_agenda %}<a href="#agenda" class="footer-link">Agenda</a>{% endif %}
-                <a href="#contato" class="footer-link">Contato</a>
+                {% if not loja.ocultar_agenda %}<a href="#agenda" class="footer-link">{{ loja.titulo_agenda or 'Agenda' }}</a>{% endif %}
+                {% if not loja.ocultar_formulario %}<a href="#contato" class="footer-link">Contato</a>{% endif %}
                 {% if loja.instagram_url %}<a href="{{ loja.instagram_url }}" target="_blank" class="footer-link">Instagram</a>{% endif %}
                 <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="footer-link">WhatsApp</a>
             </nav>
         </div>
 
         <div class="footer-bottom">
-            <span class="footer-copy">© {{ 2026 }} {{ loja.nome }}. Todos os direitos reservados.</span>
+            <span class="footer-copy">© 2026 {{ loja.nome }}. Todos os direitos reservados.</span>
             <a href="/{{ loja.slug_url }}/admin" class="footer-admin">
                 <i data-lucide="lock" style="width:10px;height:10px;"></i>
                 Acesso Admin
@@ -1854,13 +1746,13 @@ document.addEventListener('DOMContentLoaded', function() {
     lucide.createIcons();
 
     const preloader = document.getElementById('preloader');
-    const plogoEl = document.querySelector('.preloader-logo');
+    const plogoEl  = document.querySelector('.preloader-logo');
     const pProgress = document.querySelector('.preloader-progress');
-    const pNumber = document.querySelector('.preloader-number');
+    const pNumber   = document.querySelector('.preloader-number');
 
     if (preloader) {
         document.body.style.overflow = 'hidden';
-        
+
         let count = 0;
         const countInt = setInterval(() => {
             count += Math.floor(Math.random() * 15) + 5;
@@ -1877,8 +1769,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }});
 
         tl
-        .to(plogoEl, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' })
-        .to(pNumber, { opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.8')
+        .to(plogoEl,   { opacity: 1, y: 0, duration: 1, ease: 'power3.out' })
+        .to(pNumber,   { opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.8')
         .to(pProgress, { scaleX: 1, duration: 1.8, ease: 'power2.inOut' }, '-=0.6')
         .to([plogoEl, pNumber], { opacity: 0, y: -30, duration: 0.5, ease: 'power2.in' }, '+=0.2')
         .to(preloader, { yPercent: -100, duration: 1.2, ease: 'power4.inOut' }, '-=0.1');
@@ -1888,18 +1780,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ─── REVEAL ANIMATIONS ───
     function startRevealAnimations() {
-        // Hero
-        gsap.to('.hero-label', { opacity:1, y:0, duration:1, ease:'power3.out', delay:0.1 });
-        gsap.to('.hero-title', { opacity:1, y:0, duration:1.2, ease:'power3.out', delay:0.25, stagger:0.1 });
-        gsap.to('.hero-subtitle', { opacity:1, y:0, duration:1, ease:'power3.out', delay:0.45 });
-        gsap.to('.hero-stat', { opacity:1, duration:1, ease:'power2.out', delay:0.6, stagger:0.1 });
+        gsap.to('.hero-label',    { opacity:1, y:0, duration:1,   ease:'power3.out', delay:0.1 });
+        gsap.to('.hero-title',    { opacity:1, y:0, duration:1.2, ease:'power3.out', delay:0.25 });
+        gsap.to('.hero-subtitle', { opacity:1, y:0, duration:1,   ease:'power3.out', delay:0.45 });
+        gsap.to('.hero-stat',     { opacity:1,      duration:1,   ease:'power2.out', delay:0.6, stagger:0.1 });
 
-        // Hero BG Zoom
         const heroBg = document.getElementById('heroBgImg');
         if (heroBg) { gsap.to(heroBg, { scale:1, duration:2.5, ease:'power2.out', delay:0.2 }); }
 
-        // Generic reveal on scroll
-        gsap.utils.toArray('.reveal').forEach((el, i) => {
+        gsap.utils.toArray('.reveal').forEach(el => {
             gsap.fromTo(el,
                 { opacity: 0, y: 40 },
                 { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out',
@@ -1913,9 +1802,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const target = parseInt(el.getAttribute('data-target')) || 0;
             const obj = { val: 0 };
             ScrollTrigger.create({
-                trigger: el,
-                start: 'top 80%',
-                once: true,
+                trigger: el, start: 'top 80%', once: true,
                 onEnter: () => {
                     gsap.to(obj, {
                         val: target, duration: 2, ease: 'power2.out',
@@ -1930,16 +1817,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const dragEl = document.getElementById('portfolioDrag');
     if (dragEl) {
         let isDragging = false, startX = 0, scrollStart = 0;
-        dragEl.addEventListener('mousedown', e => { isDragging = true; startX = e.pageX - dragEl.offsetLeft; scrollStart = dragEl.scrollLeft; dragEl.style.cursor = 'grabbing'; });
+        dragEl.addEventListener('mousedown', e => {
+            isDragging = true;
+            startX = e.pageX - dragEl.offsetLeft;
+            scrollStart = dragEl.scrollLeft;
+            dragEl.style.cursor = 'grabbing';
+        });
         document.addEventListener('mouseup', () => { isDragging = false; dragEl.style.cursor = 'grab'; });
         document.addEventListener('mousemove', e => {
             if (!isDragging) return;
-            const x = e.pageX - dragEl.offsetLeft;
-            dragEl.scrollLeft = scrollStart - (x - startX);
+            dragEl.scrollLeft = scrollStart - (e.pageX - dragEl.offsetLeft - startX);
         });
-        // Wheel → horizontal
         dragEl.addEventListener('wheel', e => {
-            const atLeft = dragEl.scrollLeft <= 0;
+            const atLeft  = dragEl.scrollLeft <= 0;
             const atRight = Math.ceil(dragEl.scrollLeft + dragEl.clientWidth) >= dragEl.scrollWidth;
             if (e.deltaY > 0 && !atRight) { e.preventDefault(); dragEl.scrollLeft += e.deltaY * 1.5; }
             else if (e.deltaY < 0 && !atLeft) { e.preventDefault(); dragEl.scrollLeft += e.deltaY * 1.5; }
@@ -1948,15 +1838,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ─── FILTRO CATEGORIAS ───
     window.filterCat2 = function(catId, btn) {
-        // Atualiza botões
         document.querySelectorAll('.cat-filter-btn').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
 
-        // Rola para portfolio
         const sec = document.getElementById('portfolio-section');
         if (sec) sec.scrollIntoView({ behavior: 'smooth' });
 
-        // Filtra cards
         document.querySelectorAll('.product-item2').forEach(card => {
             if (catId === 'all' || card.getAttribute('data-cat2') === String(catId)) {
                 card.style.display = '';
@@ -1973,12 +1860,16 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = this.querySelector('.submit-btn');
-            const origHTML = btn.innerHTML;
-            btn.innerHTML = '<span style="letter-spacing:0.2em;">ENVIANDO</span>';
+            const textWrapper = btn.querySelector('.btn-text-wrapper');
+            const origHTML = textWrapper.innerHTML;
+            textWrapper.innerHTML = 'ENVIANDO...';
             btn.disabled = true;
 
             try {
-                const res = await fetch('/{{ loja.slug_url }}/captura-lead', { method: 'POST', body: new FormData(this) });
+                const res = await fetch('/{{ loja.slug_url }}/captura-lead', {
+                    method: 'POST',
+                    body: new FormData(this)
+                });
                 const data = await res.json();
                 if (data.sucesso || res.ok) {
                     form.style.display = 'none';
@@ -1986,12 +1877,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (msg) msg.classList.remove('hidden');
                 } else {
                     alert('Erro ao enviar. Tente novamente.');
-                    btn.innerHTML = origHTML;
+                    textWrapper.innerHTML = origHTML;
                     btn.disabled = false;
                 }
             } catch(err) {
                 alert('Erro de conexão.');
-                btn.innerHTML = origHTML;
+                textWrapper.innerHTML = origHTML;
                 btn.disabled = false;
             }
         });
