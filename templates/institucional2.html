@@ -4,6 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <title>{{ loja.nome }} | Excelência & Expertise</title>
+<meta name="description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else loja.nome }}">
+
+<!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ loja.nome }}">
+<meta property="og:description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else loja.nome }}">
+<meta property="og:url" content="{{ request.url }}">
+{% if loja.logo %}<meta property="og:image" content="{{ loja.logo }}">{% elif loja.banner1 %}<meta property="og:image" content="{{ loja.banner1 }}">{% endif %}
+<meta property="og:locale" content="pt_BR">
+
+<!-- Twitter/X Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ loja.nome }}">
+<meta name="twitter:description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else loja.nome }}">
+{% if loja.logo %}<meta name="twitter:image" content="{{ loja.logo }}">{% elif loja.banner1 %}<meta name="twitter:image" content="{{ loja.banner1 }}">{% endif %}
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
