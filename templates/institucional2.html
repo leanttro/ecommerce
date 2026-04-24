@@ -118,7 +118,7 @@
     }
     .preloader-number {
         font-family: var(--font-titulo), serif;
-        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        font-size: clamp(3rem, 8vw, 5rem);
         color: var(--gold);
         opacity: 0;
         font-weight: 300;
@@ -159,7 +159,7 @@
         header.scrolled { padding: 14px 24px; }
     }
 
-    .header-logo img { height: 64px; width: auto; object-fit: contain; }
+    .header-logo img { height: 48px; width: auto; object-fit: contain; }
     .header-logo span {
         font-family: var(--font-titulo), serif;
         font-size: 1.5rem;
@@ -1158,7 +1158,7 @@
 <div id="preloader">
     <div class="preloader-logo">
         {% if loja.logo %}
-            <img src="{{ loja.logo }}" style="height:90px;width:auto;object-fit:contain;">
+            <img src="{{ loja.logo }}" style="height:60px;width:auto;object-fit:contain;">
         {% else %}
             <span style="font-family:var(--font-titulo),serif;font-size:2.5rem;font-weight:300;color:var(--text);letter-spacing:0.1em;">{{ loja.nome }}</span>
         {% endif %}
@@ -1374,8 +1374,7 @@
     <div style="padding:140px 48px 60px; max-width:1400px; margin:0 auto;">
         <div class="portfolio-header">
             <h2 class="portfolio-title reveal">
-                {{ loja.titulo_produtos or 'Nossos' }}<br>
-                <em>Projetos</em>
+                {{ loja.titulo_produtos or 'Empreendimentos &amp; Cases' }}
             </h2>
             <p class="portfolio-desc reveal">
                 {{ loja.subtitulo_produtos or 'Cada projeto é uma história de confiança, estratégia e resultado. Conheça alguns dos trabalhos que nos orgulham.' }}
@@ -1520,6 +1519,44 @@
 </section>
 {% endif %}
 
+<!-- ─── BLOG ─── -->
+{% if not loja.ocultar_blog and posts %}
+<section id="blog" style="border-top:1px solid var(--border);">
+    <div style="padding:140px 48px 80px; max-width:1400px; margin:0 auto;">
+        <div class="section-label reveal">{{ loja.titulo_blog or 'Conteúdo Especializado' }}</div>
+        <h2 class="portfolio-title reveal">
+            {{ loja.titulo_blog or 'Últimas do Blog' }}
+        </h2>
+        <div style="margin-top:64px; display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:2px;">
+            {% for post in posts %}
+            <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}" style="text-decoration:none; display:block; border:1px solid var(--border); padding:48px 40px; transition:background 0.3s ease; background:color-mix(in srgb, var(--bg) 85%, #000 15%);" onmouseover="this.style.background='color-mix(in srgb, var(--bg) 75%, #000 25%)'" onmouseout="this.style.background='color-mix(in srgb, var(--bg) 85%, #000 15%)'">
+                {% if post.imagem_destaque %}
+                <div style="width:100%;height:200px;overflow:hidden;margin-bottom:32px;">
+                    <img src="{{ post.imagem_destaque }}" alt="{{ post.titulo }}" style="width:100%;height:100%;object-fit:cover;filter:grayscale(0.3);transition:transform 0.6s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                </div>
+                {% endif %}
+                <div style="font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:16px;">
+                    {{ post.date_created[:10] if post.date_created else '' }}
+                </div>
+                <h3 style="font-family:var(--font-titulo),serif;font-size:clamp(1.3rem,2vw,1.8rem);font-weight:300;color:var(--text);line-height:1.2;margin-bottom:20px;">
+                    {{ post.titulo }}
+                </h3>
+                {% if post.resumo %}
+                <p style="font-size:0.85rem;color:color-mix(in srgb, var(--text) 45%, transparent);font-weight:300;line-height:1.8;margin-bottom:28px;">
+                    {{ post.resumo }}
+                </p>
+                {% endif %}
+                <div style="display:flex;align-items:center;gap:8px;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:500;">
+                    <span>Ler mais</span>
+                    <span style="display:block;width:24px;height:1px;background:var(--gold);"></span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
 <!-- ─── FORMULÁRIO ─── -->
 {% if not loja.ocultar_formulario %}
 <section id="contato">
@@ -1527,8 +1564,7 @@
         <div>
             <div class="section-label reveal">Contato</div>
             <h2 class="contato-title reveal">
-                {{ loja.titulo_formulario or 'Vamos' }}<br>
-                <em>Conversar?</em>
+                {{ loja.titulo_formulario or 'Fale com um Especialista' }}
             </h2>
             <p style="color:color-mix(in srgb, var(--text) 40%, transparent);font-weight:300;font-size:0.9rem;line-height:1.8;margin-bottom:40px;" class="reveal">
                 {{ loja.subtitulo_formulario or 'Deixe seus dados e nossa equipe entrará em contato.' }}
