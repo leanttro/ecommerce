@@ -1487,43 +1487,11 @@
 </section>
 {% endif %}
 
-{% endfor %}
-
-<!-- ─── SOCIAL PROOF ─── -->
-{% if loja.logos_clientes %}
-<section id="clientes" style="border-top:1px solid var(--border);">
-    <div style="max-width:1400px;margin:0 auto;">
-        <div class="section-label reveal">Confiança</div>
-        <h2 class="portfolio-title reveal" id="social-title">Nossos<br><em>Clientes</em></h2>
-    </div>
-
-    <div class="clientes-marquee-wrapper" style="margin-top:80px;">
-        <div class="clientes-marquee" id="marqueeInner">
-            {% for link in loja.logos_clientes.split() %}
-                {% if link.strip() and 'instagram.com' not in link %}
-                <div class="cliente-logo">
-                    <img src="{{ link.strip() }}" alt="Cliente">
-                </div>
-                {% endif %}
-            {% endfor %}
-            <!-- Duplicate para loop infinito -->
-            {% for link in loja.logos_clientes.split() %}
-                {% if link.strip() and 'instagram.com' not in link %}
-                <div class="cliente-logo">
-                    <img src="{{ link.strip() }}" alt="Cliente">
-                </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-</section>
-{% endif %}
-
-<!-- ─── BLOG ─── -->
-{% if not loja.ocultar_blog and posts %}
+<!-- ─── BLOG (dentro do loop de layout) ─── -->
+{% if secao == 'blog' and not loja.ocultar_blog and posts %}
 <section id="blog" style="border-top:1px solid var(--border);">
     <div style="padding:140px 48px 80px; max-width:1400px; margin:0 auto;">
-        <div class="section-label reveal">{{ loja.titulo_blog or 'Conteúdo Especializado' }}</div>
+        <div class="section-label reveal">Blog</div>
         <h2 class="portfolio-title reveal">
             {{ loja.titulo_blog or 'Últimas do Blog' }}
         </h2>
@@ -1551,6 +1519,38 @@
                     <span style="display:block;width:24px;height:1px;background:var(--gold);"></span>
                 </div>
             </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endfor %}
+
+<!-- ─── SOCIAL PROOF ─── -->
+{% if loja.logos_clientes %}
+<section id="clientes" style="border-top:1px solid var(--border);">
+    <div style="max-width:1400px;margin:0 auto;">
+        <div class="section-label reveal">Confiança</div>
+        <h2 class="portfolio-title reveal" id="social-title">Nossos<br><em>Clientes</em></h2>
+    </div>
+
+    <div class="clientes-marquee-wrapper" style="margin-top:80px;">
+        <div class="clientes-marquee" id="marqueeInner">
+            {% for link in loja.logos_clientes.split() %}
+                {% if link.strip() and 'instagram.com' not in link %}
+                <div class="cliente-logo">
+                    <img src="{{ link.strip() }}" alt="Cliente">
+                </div>
+                {% endif %}
+            {% endfor %}
+            <!-- Duplicate para loop infinito -->
+            {% for link in loja.logos_clientes.split() %}
+                {% if link.strip() and 'instagram.com' not in link %}
+                <div class="cliente-logo">
+                    <img src="{{ link.strip() }}" alt="Cliente">
+                </div>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
