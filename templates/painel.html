@@ -836,6 +836,14 @@
                         <div>
                             <label class="block text-sm font-bold mb-2">Endereço Físico (Mapa)</label>
                             <input type="text" name="endereco_fisico" value="{{ loja.endereco_fisico or '' }}" placeholder="Ex: Av Paulista, 1000 - São Paulo, SP" class="w-full border rounded p-2">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold mb-2">Google Analytics (GA4 ID)</label>
+                                <input type="text" name="ga4_id" value="{{ loja.ga4_id or '' }}" placeholder="Ex: G-XXXXXXXXXX" class="w-full border rounded p-2">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold mb-2">Facebook Pixel ID</label>
+                                <input type="text" name="facebook_pixel" value="{{ loja.facebook_pixel or '' }}" placeholder="Ex: 1234567890" class="w-full border rounded p-2">
                         </div>
                         <div class="col-span-1 md:col-span-2 flex flex-col md:flex-row gap-6 mt-2">
                             <label class="flex items-center gap-2 cursor-pointer">
