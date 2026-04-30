@@ -1144,6 +1144,15 @@
         gap: 12px;
     }
 </style>
+{% if loja.ga4_id %}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ loja.ga4_id }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{{ loja.ga4_id }}');
+</script>
+{% endif %}
 </head>
 <body>
 
@@ -1487,8 +1496,12 @@
 </section>
 {% endif %}
 
-<!-- ─── BLOG (dentro do loop de layout) ─── -->
-{% if secao == 'blog' and not loja.ocultar_blog and posts %}
+
+
+{% endfor %}
+
+<!-- ─── BLOG ─── -->
+{% if not loja.ocultar_blog and posts %}
 <section id="blog" style="border-top:1px solid var(--border);">
     <div style="padding:140px 48px 80px; max-width:1400px; margin:0 auto;">
         <div class="section-label reveal">Blog</div>
@@ -1524,8 +1537,6 @@
     </div>
 </section>
 {% endif %}
-
-{% endfor %}
 
 <!-- ─── SOCIAL PROOF ─── -->
 {% set ns = namespace(has_logos=false) %}
