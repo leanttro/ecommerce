@@ -815,8 +815,7 @@ def admin_painel(loja_slug):
             "mostrar_mapa": True if request.form.get('mostrar_mapa') else False,
             "mostrar_whatsapp_flutuante": True if request.form.get('mostrar_whatsapp_flutuante') else False,
             "ocultar_agenda": True if request.form.get('ocultar_agenda') else False,
-            "titulo_agenda": sanitize_input(request.form.get('titulo_agenda')),
-            "instagram_url": request.form.get('instagram_url')
+            "titulo_agenda": sanitize_input(request.form.get('titulo_agenda'))
         }
         
         nova_senha = request.form.get('nova_senha')
@@ -900,6 +899,8 @@ def admin_painel(loja_slug):
             g.loja['layout_order'] += ",mapa"
         if 'agenda' not in g.loja['layout_order']:
             g.loja['layout_order'] += ",agenda"
+        if 'blog' not in g.loja['layout_order']:
+            g.loja['layout_order'] += ",blog"
 
     loja_visual = {
         **g.loja,
