@@ -1528,7 +1528,15 @@
 {% endfor %}
 
 <!-- ─── SOCIAL PROOF ─── -->
+{% set ns = namespace(has_logos=false) %}
 {% if loja.logos_clientes %}
+    {% for link in loja.logos_clientes.split() %}
+        {% if link.strip() and 'instagram.com' not in link %}
+            {% set ns.has_logos = true %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+{% if ns.has_logos %}
 <section id="clientes" style="border-top:1px solid var(--border);">
     <div style="max-width:1400px;margin:0 auto;">
         <div class="section-label reveal">Confiança</div>
