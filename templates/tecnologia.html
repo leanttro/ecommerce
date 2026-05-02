@@ -2,14 +2,15 @@
 
 <html lang="pt-br">
 <head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-34Z655HQ68"></script>
+{% if loja.ga4_id %}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ loja.ga4_id }}"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
-  gtag('config', 'G-34Z655HQ68');
-</script>    
+  gtag('config', '{{ loja.ga4_id }}');
+</script>
+{% endif %}
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <title>{{ loja.nome }} | Portfolio</title>
