@@ -94,18 +94,11 @@ def sanitize_input(text):
     return re.sub(r'<(script|iframe|object|embed|applet|style|link)', r'&lt;\1', str(text), flags=re.IGNORECASE)
 
 # SEGURANÇA BLOQUEIO DE BOTS
-BLOCBLOCKED_USER_AGENTS = ['python-requests', 'curl', 'postmanruntime', 'wget', 'urllib', 'spider']
-
-ALLOWED_BOTS = ['googlebot', 'bingbot', 'yandexbot', 'duckduckbot', 'baiduspider', 'facebookexternalhit']
+BLOCKED_USER_AGENTS = ['python-requests', 'curl', 'postmanruntime', 'wget', 'urllib', 'bot', 'spider', 'crawler']
 
 @app.before_request
 def block_bots():
     user_agent = request.headers.get('User-Agent', '').lower()
-    # Libera bots de motores de busca
-    for allowed in ALLOWED_BOTS:
-        if allowed in user_agent:
-            return None
-    # Bloqueia o resto
     for bot in BLOCKED_USER_AGENTS:
         if bot in user_agent:
             return "Acesso negado. Tráfego automatizado não permitido.", 403
