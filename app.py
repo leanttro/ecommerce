@@ -145,7 +145,13 @@ def gerar_slug(texto):
     if not texto: return ""
     import unicodedata
     texto = unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('utf-8')
-    return texto.lower().strip().replace(' ', '-',).replace('/', '-').replace('.', '')
+    texto = texto.lower().strip()
+    # Remove todos os caracteres que não sejam letras, números, espaços ou hífens
+    texto = re.sub(r'[^a-z0-9\s-]', '', texto)
+    # Substitui espaços por hífen e remove hífens duplicados
+    texto = re.sub(r'\s+', '-', texto)
+    texto = re.sub(r'-+', '-', texto)
+    return texto.strip('-')
 
 def send_reset_email(user_email, reset_url, nome_loja):
     if not SMTP_USER or not SMTP_PASS:
@@ -1060,7 +1066,7 @@ def admin_salvar_produto(loja_slug):
         payload["categoria_id"] = None
     
     if not prod_id and nome:
-        payload["slug"] = gerar_slug(nome) + "-" + str(uuid.uuid4())[:4]
+        payload["slug"] = gerar_slug(nome)
 
     # Upload da Imagem Principal Destaque
     f = request.files.get('imagem')
