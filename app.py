@@ -1213,6 +1213,57 @@ def admin_excluir_post(loja_slug, id):
         
     return redirect(f'/{loja_slug}/admin/painel#blog')
 
+# ROTA BLOG POST INDIVIDUAL
+@app.route('/<loja_slug>/blog/<slug>')
+def blog_post(loja_slug, slug):
+    if not g.loja:
+        return "Loja não encontrada", 404
+
+    headers = get_headers()
+    url = f"{DIRECTUS_URL}/items/posts?filter[slug][_eq]={slug}&filter[loja_id][_eq]={g.loja_id}&fields=*.*"
+    r = requests.get(url, headers=headers, timeout=7)
+
+    if r.status_code == 200 and r.json()['data']:
+        post_raw = r.json()['data'][0]
+
+        categoria_nome = ""
+        try:
+            cat = post_raw.get('categoria_id')
+            if isinstance(cat, dict):
+                categoria_nome = cat.get('nome', '')
+            elif cat:
+                r_cat = requests.get(f"{DIRECTUS_URL}/items/categorias/{cat}?fields=nome", headers=headers, timeout=7)
+                if r_cat.status_code == 200:
+                    categoria_nome = r_cat.json().get('data', {}).get('nome', '')
+        except:
+            pass
+
+        try:
+            data_pub = datetime.fromisoformat(post_raw['date_created'].split('T')[0]).strftime('%d/%m/%Y')
+        except:
+            data_pub = ""
+
+        post = {
+            "titulo": post_raw.get('titulo', ''),
+            "slug": post_raw.get('slug', ''),
+            "resumo": post_raw.get('resumo', ''),
+            "conteudo": post_raw.get('conteudo', ''),
+            "capa": get_img_url(post_raw.get('capa')),
+            "categoria_nome": categoria_nome,
+            "data_publicacao": data_pub
+        }
+
+        loja_visual = {
+            **g.loja,
+            "logo": get_img_url(g.loja.get('logo')),
+            "slug_url": loja_slug
+        }
+
+        return render_template('blog_post.html', post=post, loja=loja_visual)
+
+    return "Post não encontrado", 404
+
+
 # CRUD AGENDA
 @app.route('/<loja_slug>/admin/agenda/salvar', methods=['POST'])
 def admin_salvar_agenda(loja_slug):
