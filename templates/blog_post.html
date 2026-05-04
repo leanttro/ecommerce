@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<title>{{ post.titulo }} | {{ loja.nome }}</title>
+<meta name="description" content="{{ post.resumo or post.conteudo | striptags | truncate(160) }}">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family={{ (loja.font_titulo or 'Cormorant Garamond') | replace(' ', '+') }}:ital,wght@0,300;0,400;0,600;1,300;1,400&family={{ (loja.font_corpo or 'DM Sans') | replace(' ', '+') }}:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+  :root {
+    --primary:    {{ loja.cor_primaria or '#C9A96E' }};
+    --bg:         {{ loja.cor_fundo or '#0A0A0A' }};
+    --text:       {{ loja.cor_titulo or '#E8E4DC' }};
+    --text-muted: color-mix(in srgb, {{ loja.cor_titulo or '#E8E4DC' }} 45%, transparent);
+    --border:     color-mix(in srgb, {{ loja.cor_primaria or '#C9A96E' }} 15%, transparent);
+    --surface:    color-mix(in srgb, {{ loja.cor_fundo or '#0A0A0A' }} 85%, #000 15%);
+    --font-titulo: '{{ loja.font_titulo or "Cormorant Garamond" }}';
+    --font-corpo:  '{{ loja.font_corpo or "DM Sans" }}';
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-corpo), sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--primary) 30%, transparent); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+  /* ─── HEADER ─── */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 9000;
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--border);
+  }
+  @media (max-width: 768px) { header { padding: 16px 20px; } }
+
+  .header-logo img { height: 56px; width: auto; object-fit: contain; display: block; }
+  .header-logo span {
+    font-family: var(--font-titulo), serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--text);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-link {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-link:hover, .nav-link.active { color: var(--primary); }
+
+  .header-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--primary);
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  .header-cta:hover { background: var(--primary); color: var(--bg); border-color: var(--primary); }
+
+  /* MOBILE MENU */
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+  }
+  .menu-toggle span { display: block; width: 22px; height: 1px; background: var(--text); transition: all 0.3s; }
+  .menu-toggle.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .menu-toggle.active span:nth-child(2) { opacity: 0; }
+  .menu-toggle.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+  #mobile-nav {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: color-mix(in srgb, var(--bg) 98%, transparent);
+    z-index: 8999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 36px;
+  }
+  #mobile-nav a {
+    font-family: var(--font-titulo), serif;
+    font-size: clamp(2.2rem, 8vw, 3.5rem);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    transition: color 0.3s;
+  }
+  #mobile-nav a:hover { color: var(--primary); }
+
+  @media (max-width: 768px) {
+    .menu-toggle { display: flex; }
+    .desktop-nav { display: none !important; }
+  }
+
+  /* ─── SCROLL PROGRESS ─── */
+  #scroll-progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--primary);
+    z-index: 9999;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  /* ─── HERO DA POSTAGEM ─── */
+  .post-hero {
+    padding-top: 100px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .post-hero-cover {
+    width: 100%;
+    max-height: 540px;
+    object-fit: cover;
+    display: block;
+    filter: brightness(0.6);
+  }
+
+  .post-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top,
+      var(--bg) 0%,
+      color-mix(in srgb, var(--bg) 50%, transparent) 50%,
+      transparent 100%
+    );
+  }
+
+  .post-hero-content {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 0 48px 60px;
+    max-width: 860px;
+  }
+  @media (max-width: 768px) {
+    .post-hero-content { padding: 0 20px 40px; }
+  }
+
+  /* Hero sem imagem */
+  .post-hero-nocover {
+    padding: 100px 48px 0;
+    min-height: 340px;
+    display: flex;
+    align-items: flex-end;
+    position: relative;
+  }
+  .post-hero-nocover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 80%, color-mix(in srgb, var(--primary) 6%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+  .post-hero-nocoverinner {
+    max-width: 860px;
+    padding-bottom: 60px;
+    position: relative;
+    z-index: 1;
+  }
+  @media (max-width: 768px) {
+    .post-hero-nocover { padding: 100px 20px 0; min-height: 260px; }
+    .post-hero-nocoverinner { padding-bottom: 40px; }
+  }
+
+  /* META (categoria + data) */
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .post-cat {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--primary);
+    border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
+    padding: 5px 12px;
+  }
+  .post-date {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .post-read-time {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* TÍTULO */
+  .post-titulo {
+    font-family: var(--font-titulo), serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  /* RESUMO / SUBTÍTULO */
+  .post-resumo {
+    margin-top: 20px;
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    color: var(--text-muted);
+    font-weight: 300;
+    line-height: 1.8;
+    max-width: 680px;
+  }
+
+  /* ─── LINHA DIVISÓRIA ─── */
+  .gold-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--primary);
+    margin: 40px 0;
+  }
+
+  /* ─── CORPO DO ARTIGO ─── */
+  .post-wrapper {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 60px 48px 120px;
+  }
+  @media (max-width: 768px) {
+    .post-wrapper { padding: 40px 20px 80px; }
+  }
+
+  /* Conteúdo richtext */
+  .post-content {
+    font-size: clamp(0.95rem, 1.4vw, 1.05rem);
+    line-height: 1.9;
+    color: color-mix(in srgb, var(--text) 80%, transparent);
+    font-weight: 300;
+  }
+  .post-content h2 {
+    font-family: var(--font-titulo), serif;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 400;
+    color: var(--text);
+    margin: 56px 0 20px;
+    line-height: 1.15;
+  }
+  .post-content h3 {
+    font-family: var(--font-titulo), serif;
+    font-size: clamp(1.2rem, 2vw, 1.6rem);
+    font-weight: 400;
+    color: var(--text);
+    margin: 40px 0 16px;
+  }
+  .post-content p { margin-bottom: 24px; }
+  .post-content p:last-child { margin-bottom: 0; }
+  .post-content strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .post-content em { font-style: italic; color: var(--primary); }
+  .post-content a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: opacity 0.3s;
+  }
+  .post-content a:hover { opacity: 0.7; }
+  .post-content ul, .post-content ol {
+    margin: 0 0 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .post-content li::marker { color: var(--primary); }
+  .post-content blockquote {
+    border-left: 2px solid var(--primary);
+    padding: 20px 28px;
+    margin: 40px 0;
+    background: color-mix(in srgb, var(--primary) 5%, transparent);
+    font-family: var(--font-titulo), serif;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .post-content img {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 40px 0;
+    filter: brightness(0.9);
+  }
+  .post-content hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+  .post-content pre, .post-content code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+  .post-content pre {
+    padding: 24px;
+    overflow-x: auto;
+    margin: 32px 0;
+  }
+  .post-content pre code {
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  /* ─── FOOTER DO ARTIGO ─── */
+  .post-footer {
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s, gap 0.3s;
+  }
+  .back-btn:hover { color: var(--primary); gap: 16px; }
+  .back-btn .btn-line { display: block; width: 32px; height: 1px; background: currentColor; transition: width 0.3s; }
+  .back-btn:hover .btn-line { width: 48px; }
+
+  .share-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .share-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-right: 4px;
+  }
+  .share-btn {
+    width: 36px; height: 36px;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  .share-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: color-mix(in srgb, var(--bg) 70%, #000 30%);
+    border-top: 1px solid var(--border);
+    padding: 60px 48px 40px;
+  }
+  @media (max-width: 768px) { footer { padding: 48px 20px 32px; } }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 48px;
+    flex-wrap: wrap;
+  }
+
+  .footer-brand img { height: 40px; width: auto; object-fit: contain; display: block; margin-bottom: 16px; }
+  .footer-brand-name {
+    font-family: var(--font-titulo), serif;
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .footer-tagline {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  .footer-nav { display: flex; flex-direction: column; gap: 12px; }
+  .footer-nav a {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-nav a:hover { color: var(--primary); }
+
+  .footer-bottom {
+    max-width: 1200px;
+    margin: 48px auto 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-copy {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--text) 20%, transparent);
+    font-weight: 500;
+  }
+  .footer-admin {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--text) 15%, transparent);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.3s;
+  }
+  .footer-admin:hover { color: var(--text-muted); }
+
+  /* ─── WHATSAPP FLUTUANTE ─── */
+  .wa-float {
+    position: fixed;
+    bottom: 28px; right: 28px;
+    z-index: 9990;
+    width: 50px; height: 50px;
+    display: flex; align-items: center; justify-content: center;
+    background: #25D366;
+    color: white;
+    text-decoration: none;
+    box-shadow: 0 8px 28px rgba(37,211,102,0.25);
+    transition: transform 0.3s;
+  }
+  .wa-float:hover { transform: scale(1.1) translateY(-2px); }
+</style>
+
+{% if loja.ga4_id %}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ loja.ga4_id }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{{ loja.ga4_id }}');
+</script>
+{% endif %}
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div id="scroll-progress"></div>
+
+<!-- ─── MOBILE NAV ─── -->
+<div id="mobile-nav">
+  <a href="/{{ loja.slug_url }}/">Início</a>
+  {% if not loja.ocultar_sobre %}<a href="/{{ loja.slug_url }}/#sobre">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
+  {% if not loja.ocultar_produtos %}<a href="/{{ loja.slug_url }}/#portfolio-section">{{ loja.titulo_produtos or 'Projetos' }}</a>{% endif %}
+  {% if not loja.ocultar_formulario %}<a href="/{{ loja.slug_url }}/#contato">Contato</a>{% endif %}
+  <a href="/{{ loja.slug_url }}/blog" style="color:var(--primary);">Blog</a>
+  {% if loja.whatsapp_comercial %}
+  <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" style="font-family:var(--font-corpo),sans-serif;font-size:1rem;letter-spacing:0.15em;color:var(--primary);">WhatsApp →</a>
+  {% endif %}
+</div>
+
+<!-- ─── HEADER ─── -->
+<header>
+  <a href="/{{ loja.slug_url }}/" class="header-logo" style="text-decoration:none;">
+    {% if loja.logo %}
+      <img src="{{ loja.logo }}" alt="{{ loja.nome }}">
+    {% else %}
+      <span>{{ loja.nome }}</span>
+    {% endif %}
+  </a>
+
+  <nav class="nav-links desktop-nav">
+    <a href="/{{ loja.slug_url }}/" class="nav-link">Início</a>
+    {% if not loja.ocultar_sobre %}
+    <a href="/{{ loja.slug_url }}/#sobre" class="nav-link">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>
+    {% endif %}
+    {% if not loja.ocultar_produtos %}
+    <a href="/{{ loja.slug_url }}/#portfolio-section" class="nav-link">{{ loja.titulo_produtos or 'Projetos' }}</a>
+    {% endif %}
+    {% if not loja.ocultar_formulario %}
+    <a href="/{{ loja.slug_url }}/#contato" class="nav-link">Contato</a>
+    {% endif %}
+    <a href="/{{ loja.slug_url }}/blog" class="nav-link active">Blog</a>
+  </nav>
+
+  <div style="display:flex;align-items:center;gap:16px;">
+    {% if loja.whatsapp_comercial %}
+    <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="header-cta desktop-nav">
+      <i data-lucide="phone" style="width:11px;height:11px;"></i>
+      Fale Conosco
+    </a>
+    {% endif %}
+    <button class="menu-toggle" id="menuToggle" onclick="toggleMobileNav()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ─── HERO ─── -->
+{% if post.capa %}
+<section class="post-hero">
+  <img src="{{ post.capa }}" alt="{{ post.titulo }}" class="post-hero-cover">
+  <div class="post-hero-overlay"></div>
+  <div class="post-hero-content">
+    <div class="post-meta">
+      {% if post.categoria_nome %}
+      <span class="post-cat">{{ post.categoria_nome }}</span>
+      {% endif %}
+      {% if post.data_publicacao %}
+      <span class="post-date">{{ post.data_publicacao }}</span>
+      {% endif %}
+    </div>
+    <h1 class="post-titulo">{{ post.titulo }}</h1>
+    {% if post.resumo %}
+    <p class="post-resumo">{{ post.resumo }}</p>
+    {% endif %}
+  </div>
+</section>
+
+{% else %}
+<section class="post-hero-nocover">
+  <div class="post-hero-nocoverinner">
+    <div class="post-meta">
+      {% if post.categoria_nome %}
+      <span class="post-cat">{{ post.categoria_nome }}</span>
+      {% endif %}
+      {% if post.data_publicacao %}
+      <span class="post-date">{{ post.data_publicacao }}</span>
+      {% endif %}
+    </div>
+    <h1 class="post-titulo">{{ post.titulo }}</h1>
+    {% if post.resumo %}
+    <p class="post-resumo">{{ post.resumo }}</p>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+<!-- ─── CONTEÚDO ─── -->
+<div class="post-wrapper">
+  <div class="gold-divider"></div>
+
+  <div class="post-content">
+    {{ post.conteudo | safe }}
+  </div>
+
+  <!-- RODAPÉ DO ARTIGO -->
+  <div class="post-footer">
+    <a href="/{{ loja.slug_url }}/blog" class="back-btn">
+      <span class="btn-line"></span>
+      Voltar ao Blog
+    </a>
+
+    <div class="share-links">
+      <span class="share-label">Compartilhar</span>
+      <a href="https://wa.me/?text={{ post.titulo | urlencode }}%20{{ request.url | urlencode }}"
+         target="_blank" class="share-btn" title="WhatsApp">
+        <i data-lucide="message-circle" style="width:15px;height:15px;"></i>
+      </a>
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.url | urlencode }}"
+         target="_blank" class="share-btn" title="LinkedIn">
+        <i data-lucide="linkedin" style="width:15px;height:15px;"></i>
+      </a>
+      <button onclick="copyLink()" class="share-btn" title="Copiar link" style="cursor:pointer;background:none;">
+        <i data-lucide="link" style="width:15px;height:15px;"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      {% if loja.logo %}
+      <img src="{{ loja.logo }}" alt="{{ loja.nome }}">
+      {% else %}
+      <div class="footer-brand-name">{{ loja.nome }}</div>
+      {% endif %}
+      <p class="footer-tagline">
+        {% if loja.chamada_rodape %}{{ loja.chamada_rodape }}{% else %}Excelência como padrão.{% endif %}
+      </p>
+    </div>
+
+    <nav class="footer-nav">
+      <a href="/{{ loja.slug_url }}/">Início</a>
+      {% if not loja.ocultar_sobre %}<a href="/{{ loja.slug_url }}/#sobre">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
+      {% if not loja.ocultar_produtos %}<a href="/{{ loja.slug_url }}/#portfolio-section">{{ loja.titulo_produtos or 'Projetos' }}</a>{% endif %}
+      {% if not loja.ocultar_agenda %}<a href="/{{ loja.slug_url }}/#agenda">{{ loja.titulo_agenda or 'Agenda' }}</a>{% endif %}
+      {% if not loja.ocultar_formulario %}<a href="/{{ loja.slug_url }}/#contato">Contato</a>{% endif %}
+      <a href="/{{ loja.slug_url }}/blog">Blog</a>
+      {% if loja.instagram_url %}<a href="{{ loja.instagram_url }}" target="_blank">Instagram</a>{% endif %}
+      {% if loja.whatsapp_comercial %}<a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank">WhatsApp</a>{% endif %}
+    </nav>
+  </div>
+
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 {{ loja.nome }}. Todos os direitos reservados.</span>
+    <a href="/{{ loja.slug_url }}/admin" class="footer-admin">
+      <i data-lucide="lock" style="width:10px;height:10px;"></i>
+      Admin
+    </a>
+  </div>
+</footer>
+
+{% if loja.mostrar_whatsapp_flutuante and loja.whatsapp_comercial %}
+<a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="wa-float">
+  <i data-lucide="message-circle" style="width:22px;height:22px;"></i>
+</a>
+{% endif %}
+
+<script>
+  lucide.createIcons();
+
+  // ─── SCROLL PROGRESS ───
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('scroll-progress');
+    if (!el) return;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    el.style.width = (window.scrollY / total * 100) + '%';
+  });
+
+  // ─── MOBILE NAV ───
+  function toggleMobileNav() {
+    const nav = document.getElementById('mobile-nav');
+    const btn = document.getElementById('menuToggle');
+    const open = nav.style.display === 'flex';
+    nav.style.display = open ? 'none' : 'flex';
+    btn.classList.toggle('active', !open);
+    document.body.style.overflow = open ? '' : 'hidden';
+  }
+
+  // Fecha ao clicar em link
+  document.querySelectorAll('#mobile-nav a').forEach(a => {
+    a.addEventListener('click', () => {
+      document.getElementById('mobile-nav').style.display = 'none';
+      document.getElementById('menuToggle').classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // ─── COPIAR LINK ───
+  function copyLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      const btn = document.querySelector('[onclick="copyLink()"]');
+      if (btn) {
+        btn.style.borderColor = 'var(--primary)';
+        btn.style.color = 'var(--primary)';
+        setTimeout(() => {
+          btn.style.borderColor = '';
+          btn.style.color = '';
+        }, 1500);
+      }
+    });
+  }
+</script>
+</body>
+</html>
