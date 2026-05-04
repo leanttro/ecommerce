@@ -13,7 +13,17 @@
 {% endif %}
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<title>{{ loja.nome }} | Portfolio</title>
+<title>{{ loja.nome }} | {{ loja.sobre_slogan or 'Portfolio' }}</title>
+<meta name="description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else loja.nome }}">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://{{ request.host }}/{{ loja.slug_url }}/">
+<!-- Open Graph -->
+<meta property="og:title" content="{{ loja.nome }} | {{ loja.sobre_slogan or 'Portfolio' }}">
+<meta property="og:description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else loja.nome }}">
+<meta property="og:image" content="{{ loja.logo or loja.banner1 or '' }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://{{ request.host }}/{{ loja.slug_url }}/">
+<meta property="og:locale" content="pt_BR">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -2480,6 +2490,25 @@
             });
         });
     });
+</script>
+
+<!-- Schema LocalBusiness -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "{{ loja.nome }}",
+  "description": "{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else loja.nome }}",
+  "url": "https://{{ request.host }}/{{ loja.slug_url }}/",
+  "telephone": "{{ loja.whatsapp_comercial or '' }}",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "{{ loja.endereco_fisico or '' }}",
+    "addressCountry": "BR"
+  }{% if loja.logo %},
+  "logo": "{{ loja.logo }}"{% endif %}{% if loja.banner1 %},
+  "image": "{{ loja.banner1 }}"{% endif %}
+}
 </script>
 </body>
 </html>
