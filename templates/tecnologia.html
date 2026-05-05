@@ -1212,12 +1212,19 @@
         gap: 16px;
         padding: 0 5vw;
     }
-  
-    /* Alternating layout: big-small / small-big */
-    .pgrid-card:nth-child(4n+1) { grid-column: span 7; }
-    .pgrid-card:nth-child(4n+2) { grid-column: span 5; }
-    .pgrid-card:nth-child(4n+3) { grid-column: span 5; }
-    .pgrid-card:nth-child(4n+4) { grid-column: span 7; }
+
+    /* Alternating layout: big-small-small / small-small-big */
+    .pgrid-card:nth-child(3n+1) { grid-column: span 7; }
+    .pgrid-card:nth-child(3n+2) { grid-column: span 5; }
+    .pgrid-card:nth-child(3n+3) { grid-column: span 5; }
+    .pgrid-card:nth-child(4)    { grid-column: span 7; }
+    /* reset the pattern every 6 */
+    .pgrid-card:nth-child(6n+4) { grid-column: span 5; }
+    .pgrid-card:nth-child(6n+5) { grid-column: span 7; }
+    .pgrid-card:nth-child(6n+6) { grid-column: span 5; }
+    .pgrid-card:nth-child(6n+1) { grid-column: span 7; }
+    .pgrid-card:nth-child(6n+2) { grid-column: span 5; }
+    .pgrid-card:nth-child(6n+3) { grid-column: span 12; }
 
     .pgrid-card {
         display: flex;
@@ -1625,13 +1632,13 @@
     </section>
 
     <!-- STATS SECTION -->
-    <div class="stats-section" id="portfolio">
+    <div class="stats-section">
         <div class="stat-item">
             <div class="stat-number">30<sup>+</sup></div>
             <div class="stat-label">Projetos entregues</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">7k<sup>+</sup></div>
+            <div class="stat-number">5k</div>
             <div class="stat-label">Visitas orgânicas</div>
         </div>
         <div class="stat-item">
@@ -1655,29 +1662,33 @@
             <h2 class="pgrid-title">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
             <div class="filter-tabs" id="filter-tabs">
                 <button class="filter-tab active" data-filter="todos">Todos</button>
-                {% for cat in categorias %}
-                <button class="filter-tab" data-filter="{{ cat.id }}">{{ cat.nome }}</button>
-                {% endfor %}
+                <button class="filter-tab" data-filter="saas">Automação &amp; IA</button>
+                <button class="filter-tab" data-filter="ecommerce">E-commerce</button>
+                <button class="filter-tab" data-filter="landing">Landing Pages</button>
+                <button class="filter-tab" data-filter="ferramentas">Ferramentas</button>
             </div>
         </div>
 
         <div class="pgrid" id="portfolio-container">
-            <a class="pgrid-card" href="https://www.feirasderua.com.br" target="_blank" data-categoria="destaque">
-                <div class="pgrid-img relative">
-                    <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1778001052/Sem_nome_750_x_500_px_2000_x_2000_px_2_kvmzl1.png" alt="Feiras de Rua" class="pgrid-img-main" loading="lazy" style="object-fit: cover; opacity: 0.6;">
+            {% for p in produtos %}
+            <a class="pgrid-card" href="/{{ loja.slug_url }}/produto/{{ p.slug }}"
+               data-tags="{{ p.tags or '' }}" data-categoria="{{ p.categoria or '' }}">
+                <div class="pgrid-img">
+                    <img src="{{ p.imagem }}" alt="{{ p.nome }} — projeto {{ loja.nome }}" class="pgrid-img-main" loading="lazy">
+                    {% if p.imagem1 %}
+                    <img src="{{ p.imagem1 }}" alt="{{ p.nome }} — detalhe" class="pgrid-img-hover" loading="lazy">
+                    {% elif p.imagem_secundaria %}
+                    <img src="{{ p.imagem_secundaria }}" alt="{{ p.nome }} — detalhe" class="pgrid-img-hover" loading="lazy">
+                    {% endif %}
                     <div class="pgrid-overlay"></div>
-                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[5] w-3/4 max-w-[200px]">
-                        <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1777819162/logo_feiras_ynhomo.png" alt="Logo Feiras de Rua" class="w-full h-auto drop-shadow-2xl">
-                    </div>
-                    <div class="pgrid-badge-row" data-nome="Feiras de Rua" data-tags="SEO organico">
-                        <span class="badge badge-primary">+7k Visitas Orgânicas</span>
-                        <span class="badge">Projeto Destaque</span>
-                    </div>
+                    <div class="pgrid-badge-row" data-nome="{{ p.nome }}" data-tags="{{ p.tags or '' }}" data-cat="{{ p.categoria or '' }}"></div>
                 </div>
                 <div class="pgrid-info">
-                    <h3 class="pgrid-name">Feiras de Rua</h3>
-                    <p class="pgrid-desc">Guia editorial com IA, geolocalização e +7k de acessos orgânicos em 3 meses.</p>
-                    <span class="pgrid-cta">Ver projeto ao vivo <i data-lucide="arrow-up-right" class="w-4 h-4"></i></span>
+                    <h3 class="pgrid-name">{{ p.nome }}</h3>
+                    {% if p.descricao_curta %}
+                    <p class="pgrid-desc">{{ p.descricao_curta }}</p>
+                    {% endif %}
+                    <span class="pgrid-cta">Ver projeto <i data-lucide="arrow-up-right" class="w-4 h-4"></i></span>
                 </div>
             </a>
             {% else %}
@@ -2321,6 +2332,14 @@
     });
 
     // FILTER TABS
+    const FILTER_KEYWORDS = {
+        'todos':       null,
+        'saas':        ['marketing','saas','ia','inteligencia','groq','automacao','plataforma'],
+        'ecommerce':   ['ecommerce','e-commerce','loja','catalogo','oscar','onepiece'],
+        'landing':     ['landing','lp','fit4life','institucional','construtora','interior'],
+        'ferramentas': ['grafica','editor','serigrafia','dtf','mousepad','lacre','gerador','feiras','feira'],
+    };
+
     const filterTabs = document.querySelectorAll('.filter-tab');
     const portfolioCards = document.querySelectorAll('#portfolio-container .pgrid-card');
 
@@ -2329,25 +2348,16 @@
             filterTabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
             const f = tab.dataset.filter;
-            
+            const kws = FILTER_KEYWORDS[f];
             portfolioCards.forEach(card => {
-                if (f === 'todos') { 
-                    card.style.display = ''; 
-                    return; 
-                }
-                
-                if (card.dataset.categoria === 'destaque') {
-                    card.style.display = f === 'todos' ? '' : 'none';
-                    return;
-                }
-
-                const cat = (card.dataset.categoria || '').toString();
-                
-                if (cat === f.toString()) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
+                if (!kws) { card.style.display = ''; return; }
+                const haystack = (
+                    (card.dataset.tags || '') + ' ' +
+                    (card.dataset.categoria || '') + ' ' +
+                    (card.querySelector('.pgrid-name')?.textContent || '') + ' ' +
+                    (card.querySelector('.pgrid-desc')?.textContent || '')
+                ).toLowerCase();
+                card.style.display = kws.some(k => haystack.includes(k)) ? '' : 'none';
             });
             // Reflow grid after filter
             document.getElementById('portfolio-container').style.display = 'none';
