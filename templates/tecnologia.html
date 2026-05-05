@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 {% if loja.ga4_id %}
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ loja.ga4_id }}"></script>
@@ -13,25 +13,63 @@
 {% endif %}
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<title>{{ loja.nome }} | {{ loja.sobre_slogan or 'Portfolio' }}</title>
-<meta name="description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else loja.nome }}">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://{{ request.host }}/{{ loja.slug_url }}/">
-<!-- Open Graph -->
-<meta property="og:title" content="{{ loja.nome }} | {{ loja.sobre_slogan or 'Portfolio' }}">
-<meta property="og:description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else loja.nome }}">
-<meta property="og:image" content="{{ loja.logo or loja.banner1 or '' }}">
+
+<!-- SEO: Title e Description otimizados com palavra-chave principal -->
+<title>{{ loja.nome }} | {{ loja.sobre_slogan or 'Automação com IA, Full Stack & Desenvolvimento de Software — São Paulo' }}</title>
+<meta name="description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else (loja.nome + ' — Automação de processos com Inteligência Artificial, desenvolvimento Full Stack e soluções de tecnologia sob medida para empresas. São Paulo, SP.') }}">
+
+<!-- SEO: Indexação e canonical -->
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<link rel="canonical" href="{{ ('https://' + loja.dominio_proprio + '/') if loja.dominio_proprio else ('https://' + request.host + '/' + loja.slug_url + '/') }}">
+
+<!-- SEO: Autor, idioma e localização -->
+<meta name="author" content="{{ loja.nome }}">
+<meta name="language" content="pt-BR">
+<meta name="geo.region" content="BR-SP">
+<meta name="geo.placename" content="São Paulo">
+<meta name="geo.country" content="BR">
+<meta name="theme-color" content="{{ loja.cor_primaria or '#7C3AED' }}">
+<meta name="keywords" content="{{ loja.nome }}, automação com IA, desenvolvimento full stack, inteligência artificial, SaaS, e-commerce, agência de tecnologia, São Paulo, SP">
+
+<!-- SEO: hreflang para Brasil -->
+<link rel="alternate" hreflang="pt-BR" href="{{ ('https://' + loja.dominio_proprio + '/') if loja.dominio_proprio else ('https://' + request.host + '/' + loja.slug_url + '/') }}">
+
+<!-- SEO: Sitemap -->
+<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+
+<!-- Open Graph (Facebook / WhatsApp) -->
+<meta property="og:site_name" content="{{ loja.nome }}">
+<meta property="og:title" content="{{ loja.nome }} | {{ loja.sobre_slogan or 'Automação com IA, Full Stack & Desenvolvimento de Software' }}">
+<meta property="og:description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else (loja.nome + ' — Automação de processos com Inteligência Artificial, desenvolvimento Full Stack e soluções de tecnologia sob medida para empresas.') }}">
+<meta property="og:image" content="{{ loja.banner1 or loja.logo or '' }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{ loja.nome }} — Automação com IA">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://{{ request.host }}/{{ loja.slug_url }}/">
+<meta property="og:url" content="{{ ('https://' + loja.dominio_proprio + '/') if loja.dominio_proprio else ('https://' + request.host + '/' + loja.slug_url + '/') }}">
 <meta property="og:locale" content="pt_BR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ loja.nome }} | {{ loja.sobre_slogan or 'Automação com IA, Full Stack & Desenvolvimento de Software' }}">
+<meta name="twitter:description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else (loja.nome + ' — Automação de processos com Inteligência Artificial e desenvolvimento Full Stack.') }}">
+<meta name="twitter:image" content="{{ loja.banner1 or loja.logo or '' }}">
+<meta name="twitter:image:alt" content="{{ loja.nome }} — Automação com IA">
+
+<!-- Performance: Preconnect para fontes externas -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Fontes consolidadas em uma única requisição com display=swap -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&family=Kanit:ital,wght@1,800&display=swap" rel="stylesheet">
+
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@1,800&display=swap" rel="stylesheet">
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&display=swap');
+    /* Fontes carregadas via <link> acima — removido @import duplicado */
     
     :root { 
         --primary: {{ loja.cor_primaria or '#7C3AED' }}; 
@@ -1335,13 +1373,13 @@
         <div class="flex flex-row justify-between items-center w-full">
             <a href="/{{ loja.slug_url }}/" class="block">
                 {% if loja.logo %}
-                    <img src="{{ loja.logo }}" class="h-10 md:h-14 w-auto object-contain">
+                    <img src="{{ loja.logo }}" class="h-10 md:h-14 w-auto object-contain" loading="eager" fetchpriority="high" alt="{{ loja.nome }} — logotipo">
                 {% else %}
                     <span class="text-2xl md:text-3xl font-bold tracking-tighter text-[var(--text-color)]">{{ loja.nome }}</span>
                 {% endif %}
             </a>
             
-            <nav class="hidden md:flex items-center gap-12 text-xs font-bold uppercase tracking-widest opacity-90">
+            <nav class="hidden md:flex items-center gap-12 text-xs font-bold uppercase tracking-widest opacity-90" aria-label="Navegação principal">
                 {% if not loja.ocultar_sobre %}<a href="#sobre" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Sobre</a>{% endif %}
                 
                 {% if not loja.ocultar_produtos %}
@@ -1361,7 +1399,7 @@
                 <a href="#contato" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)]">Contato</a>
             </nav>
 
-            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="flex items-center">
+            <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" rel="noopener noreferrer" class="flex items-center">
                 <div class="md:hidden p-3 rounded-full border border-black/10 hover:bg-black/5 transition">
                     <i data-lucide="message-circle" class="w-5 h-5 text-[var(--text-color)]"></i>
                 </div>
@@ -1560,7 +1598,7 @@
                         <div class="hero-case-title">Feiras<br>de Rua</div>
                         <div class="hero-case-desc">Guia editorial de feiras de SP com chatbot IA, geolocalização e sistema de anúncios — 5.000 visitas orgânicas em 3 meses sem investir um centavo em tráfego pago.</div>
                     </div>
-                    <a href="https://www.feirasderua.com.br" target="_blank" class="hero-case-cta" onclick="event.stopPropagation()">
+                    <a href="https://www.feirasderua.com.br" target="_blank" rel="noopener noreferrer" class="hero-case-cta" onclick="event.stopPropagation()">
                         Ver ao Vivo <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
                     </a>
                 </div>
@@ -1611,11 +1649,11 @@
             <a class="pgrid-card" href="/{{ loja.slug_url }}/produto/{{ p.slug }}"
                data-tags="{{ p.tags or '' }}" data-categoria="{{ p.categoria or '' }}">
                 <div class="pgrid-img">
-                    <img src="{{ p.imagem }}" alt="{{ p.nome }}" class="pgrid-img-main">
+                    <img src="{{ p.imagem }}" alt="{{ p.nome }} — projeto {{ loja.nome }}" class="pgrid-img-main" loading="lazy">
                     {% if p.imagem1 %}
-                    <img src="{{ p.imagem1 }}" alt="{{ p.nome }}" class="pgrid-img-hover">
+                    <img src="{{ p.imagem1 }}" alt="{{ p.nome }} — detalhe" class="pgrid-img-hover" loading="lazy">
                     {% elif p.imagem_secundaria %}
-                    <img src="{{ p.imagem_secundaria }}" alt="{{ p.nome }}" class="pgrid-img-hover">
+                    <img src="{{ p.imagem_secundaria }}" alt="{{ p.nome }} — detalhe" class="pgrid-img-hover" loading="lazy">
                     {% endif %}
                     <div class="pgrid-overlay"></div>
                     <div class="pgrid-badge-row" data-nome="{{ p.nome }}" data-tags="{{ p.tags or '' }}" data-cat="{{ p.categoria or '' }}"></div>
@@ -1640,18 +1678,22 @@
 {% endfor %}
 
 {% if loja.logos_clientes %}
-<section class="client-marquee-wrapper">
+<section class="client-marquee-wrapper" aria-label="Nossos clientes">
     <div class="client-marquee-track">
         {% for logo in loja.logos_clientes.split() %}
             {% if logo.strip() %}
-            <img src="{{ logo.strip() }}" alt="Cliente" onerror="this.style.display='none'">
+            {% set logo_url = logo.strip() %}
+            {% set logo_filename = logo_url.split('/')[-1].split('.')[0] | replace('-', ' ') | replace('_', ' ') | title %}
+            <img src="{{ logo_url }}" alt="Logo {{ logo_filename }} — cliente {{ loja.nome }}" loading="lazy" onerror="this.style.display='none'">
             {% endif %}
         {% endfor %}
     </div>
-    <div class="client-marquee-track">
+    <div class="client-marquee-track" aria-hidden="true">
         {% for logo in loja.logos_clientes.split() %}
             {% if logo.strip() %}
-            <img src="{{ logo.strip() }}" alt="Cliente" onerror="this.style.display='none'">
+            {% set logo_url = logo.strip() %}
+            {% set logo_filename = logo_url.split('/')[-1].split('.')[0] | replace('-', ' ') | replace('_', ' ') | title %}
+            <img src="{{ logo_url }}" alt="Logo {{ logo_filename }} — cliente {{ loja.nome }}" loading="lazy" onerror="this.style.display='none'">
             {% endif %}
         {% endfor %}
     </div>
@@ -1722,7 +1764,7 @@
             </a>
             
             {% if loja.instagram_url %}
-            <a href="{{ loja.instagram_url }}" target="_blank" class="inline-flex items-center gap-2 text-xl hover:opacity-70 transition">
+            <a href="{{ loja.instagram_url if loja.instagram_url.startswith('http') else 'https://instagram.com/' + loja.instagram_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-xl hover:opacity-70 transition">
                 <i data-lucide="instagram" class="w-6 h-6"></i> Instagram
             </a>
             {% endif %}
@@ -2492,6 +2534,26 @@
     });
 </script>
 
+<!-- Schema Organization -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "{{ loja.nome }}",
+  "description": "{{ loja.sobre_texto | truncate(200) if loja.sobre_texto else (loja.nome + ' — Automação de processos com Inteligência Artificial, desenvolvimento Full Stack e soluções de tecnologia sob medida para empresas em São Paulo, SP.') }}",
+  "url": "{{ ('https://' + loja.dominio_proprio + '/') if loja.dominio_proprio else ('https://' + request.host + '/' + loja.slug_url + '/') }}",
+  "telephone": "{{ loja.whatsapp_comercial or '' }}",
+  "foundingDate": "2023",
+  "areaServed": { "@type": "Country", "name": "Brasil" },
+  "knowsAbout": ["Automação com Inteligência Artificial", "Desenvolvimento Full Stack", "SaaS", "E-commerce", "Marketing Digital"]{% if loja.logo %},
+  "logo": {
+    "@type": "ImageObject",
+    "url": "{{ loja.logo }}"
+  }{% endif %}{% if loja.instagram_url %},
+  "sameAs": ["{{ loja.instagram_url }}"]{% endif %}
+}
+</script>
+
 <!-- Schema LocalBusiness -->
 <script type="application/ld+json">
 {
@@ -2499,15 +2561,37 @@
   "@type": "LocalBusiness",
   "name": "{{ loja.nome }}",
   "description": "{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else loja.nome }}",
-  "url": "https://{{ request.host }}/{{ loja.slug_url }}/",
+  "url": "{{ ('https://' + loja.dominio_proprio + '/') if loja.dominio_proprio else ('https://' + request.host + '/' + loja.slug_url + '/') }}",
   "telephone": "{{ loja.whatsapp_comercial or '' }}",
+  "priceRange": "$$",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "{{ loja.endereco_fisico or '' }}",
+    "addressLocality": "São Paulo",
+    "addressRegion": "SP",
     "addressCountry": "BR"
   }{% if loja.logo %},
   "logo": "{{ loja.logo }}"{% endif %}{% if loja.banner1 %},
   "image": "{{ loja.banner1 }}"{% endif %}
+}
+</script>
+
+<!-- Schema Service -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Automação com IA e Desenvolvimento Full Stack",
+  "provider": {
+    "@type": "Organization",
+    "name": "{{ loja.nome }}"
+  },
+  "serviceType": ["Automação de Processos com IA", "Desenvolvimento Full Stack", "Criação de SaaS", "Integração de APIs", "Landing Pages", "E-commerce"],
+  "areaServed": {
+    "@type": "Country",
+    "name": "Brasil"
+  },
+  "description": "{{ loja.sobre_texto | truncate(200) if loja.sobre_texto else 'Desenvolvemos automações com Inteligência Artificial, sistemas Full Stack e soluções de tecnologia sob medida para escalar o lucro operacional de empresas.' }}"
 }
 </script>
 </body>
