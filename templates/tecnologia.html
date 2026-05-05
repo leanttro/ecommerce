@@ -1179,12 +1179,31 @@
 
     .pgrid-title {
         font-family: 'Archivo Black', sans-serif;
-        font-size: clamp(3rem, 8vw, 8rem);
+        font-size: clamp(1.8rem, 4vw, 4rem);
         text-transform: uppercase;
-        letter-spacing: -0.04em;
-        line-height: 0.9;
+        letter-spacing: -0.03em;
+        line-height: 1;
         color: var(--text-color);
         margin: 0;
+        display: inline-block;
+        cursor: default;
+        transform-style: preserve-3d;
+        transform-origin: center center;
+        transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+                    text-shadow 0.4s ease;
+        text-shadow:
+            2px 2px 0px color-mix(in srgb, var(--primary) 60%, transparent),
+            4px 4px 0px color-mix(in srgb, var(--primary) 35%, transparent),
+            6px 6px 0px color-mix(in srgb, var(--primary) 15%, transparent);
+    }
+
+    .pgrid-title:hover {
+        transform: perspective(600px) rotateX(12deg) rotateY(-8deg) translateZ(10px);
+        text-shadow:
+            3px 3px 0px color-mix(in srgb, var(--primary) 70%, transparent),
+            6px 6px 0px color-mix(in srgb, var(--primary) 45%, transparent),
+            10px 10px 0px color-mix(in srgb, var(--primary) 20%, transparent),
+            14px 14px 20px color-mix(in srgb, var(--primary) 15%, transparent);
     }
 
     .pgrid {
@@ -1671,6 +1690,49 @@
                 <p>Nenhum projeto cadastrado.</p>
             </div>
             {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if secao == 'blog' and not loja.ocultar_blog %}
+    <section class="w-full py-24" id="blog" style="background-color: var(--bg-color);">
+        <div class="px-[5vw]">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                <h2 class="font-display text-[clamp(3rem,8vw,8rem)] leading-[0.9] tracking-tight uppercase" style="color: var(--text-color);">
+                    {{ loja.titulo_blog or 'Blog' }}
+                </h2>
+                <a href="/{{ loja.slug_url }}/blog" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest opacity-60 hover:opacity-100 transition shrink-0 mb-2" style="color: var(--text-color);">
+                    Ver todos os posts <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+
+            {% if posts %}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for post in posts %}
+                <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}" class="group flex flex-col rounded-2xl overflow-hidden border transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="border-color: rgba(0,0,0,0.07); background-color: var(--bg-color);">
+                    {% if post.capa %}
+                    <div class="w-full aspect-[16/9] overflow-hidden bg-black">
+                        <img src="{{ post.capa }}" alt="{{ post.titulo }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
+                    </div>
+                    {% endif %}
+                    <div class="flex flex-col gap-3 p-6 flex-1">
+                        <span class="text-[11px] font-bold uppercase tracking-widest opacity-40" style="color: var(--text-color);">{{ post.data }}</span>
+                        <h3 class="font-display text-xl leading-tight uppercase tracking-tight" style="color: var(--text-color);">{{ post.titulo }}</h3>
+                        {% if post.resumo %}
+                        <p class="text-sm leading-relaxed opacity-50 line-clamp-2" style="color: var(--text-color);">{{ post.resumo }}</p>
+                        {% endif %}
+                        <span class="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest transition-all duration-300 group-hover:gap-3" style="color: var(--primary);">
+                            Ler artigo <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                        </span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-16 border-2 border-dashed rounded-2xl opacity-30" style="border-color: rgba(0,0,0,0.12);">
+                <p class="font-display text-sm uppercase tracking-widest">Nenhum post publicado ainda.</p>
+            </div>
+            {% endif %}
         </div>
     </section>
     {% endif %}
