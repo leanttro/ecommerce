@@ -1624,7 +1624,6 @@
                     <img src="{{ p.imagem_secundaria }}" alt="{{ p.nome }} — detalhe" class="pgrid-img-hover" loading="lazy">
                     {% endif %}
                     <div class="pgrid-overlay"></div>
-                    <div class="pgrid-badge-row" data-nome="{{ p.nome }}" data-tags="{{ p.tags or '' }}" data-cat="{{ p.categoria or '' }}"></div>
                 </div>
                 <div class="pgrid-info">
                     <h3 class="pgrid-name">{{ p.nome }}</h3>
@@ -2248,24 +2247,6 @@
         { keywords: ['directus','cms','headless'], label: 'CMS headless', cls: '' },
     ];
 
-    document.querySelectorAll('.badge-row, .pgrid-badge-row').forEach(row => {
-        const nome = (row.dataset.nome || '').toLowerCase();
-        const tags = (row.dataset.tags || '').toLowerCase();
-        const cat  = (row.dataset.cat  || '').toLowerCase();
-        const haystack = nome + ' ' + tags + ' ' + cat;
-        const added = new Set();
-        BADGE_MAP.forEach(({ keywords, label, cls }) => {
-            if (added.size >= 3) return;
-            if (keywords.some(k => haystack.includes(k))) {
-                if (!added.has(label)) {
-                    added.add(label);
-                    const b = document.createElement('span');
-                    b.className = 'badge ' + (cls || '');
-                    b.textContent = label;
-                    row.appendChild(b);
-                }
-            }
-        });
         if (added.size === 0 && cat) {
             const b = document.createElement('span');
             b.className = 'badge';
