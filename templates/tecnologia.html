@@ -1248,27 +1248,34 @@
     .pgrid-img {
         position: relative;
         width: 100%;
-        aspect-ratio: 16 / 10;
         overflow: hidden;
         background: #111;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 180px;
     }
-
-    /* Wide card (span 12) gets taller image */
-    .pgrid-card:nth-child(6n+3) .pgrid-img { aspect-ratio: 21 / 8; }
 
     .pgrid-img-main,
     .pgrid-img-hover {
-        position: absolute;
-        inset: 0;
         width: 100%;
-        height: 100%;
-        object-fit: cover;
+        height: auto;
+        display: block;
+        object-fit: contain;
         transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.5s;
     }
-    .pgrid-img-hover { opacity: 0; z-index: 2; }
-    .pgrid-img-main  { opacity: 1; z-index: 1; }
+    .pgrid-img-hover {
+        opacity: 0;
+        z-index: 2;
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    .pgrid-img-main  { opacity: 1; z-index: 1; position: relative; }
 
-    .pgrid-card:hover .pgrid-img-main  { transform: scale(1.06); }
+    .pgrid-card:hover .pgrid-img-main  { transform: scale(1.03); }
     .pgrid-card:hover .pgrid-img-hover { opacity: 1; }
     .pgrid-card:hover .pgrid-img-hover + .pgrid-img-main { opacity: 0; }
 
@@ -1353,8 +1360,7 @@
         .pgrid { grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 4vw; }
         .pgrid-card:nth-child(n) { grid-column: span 1 !important; }
         .pgrid-card:nth-child(5n+1) { grid-column: span 2 !important; }
-        .pgrid-card:nth-child(6n+3) .pgrid-img { aspect-ratio: 16/9; }
-        .pgrid-img { aspect-ratio: 4/3; }
+        .pgrid-img { min-height: 140px; }
         .pgrid-name { font-size: 1.1rem; }
         .pgrid-info { padding: 14px 16px 18px; }
         .pgrid-header { padding: 0 4vw 36px; }
@@ -1743,7 +1749,7 @@
 <section class="client-marquee-wrapper" aria-label="Nossos clientes">
     <div class="client-marquee-track">
         {% for logo in loja.logos_clientes.split() %}
-            {% if logo.strip() %}
+            {% if logo.strip() and 'instagram.com' not in logo.strip() %}
             {% set logo_url = logo.strip() %}
             {% set logo_filename = logo_url.split('/')[-1].split('.')[0] | replace('-', ' ') | replace('_', ' ') | title %}
             <img src="{{ logo_url }}" alt="Logo {{ logo_filename }} — cliente {{ loja.nome }}" loading="lazy" onerror="this.style.display='none'">
@@ -1752,7 +1758,7 @@
     </div>
     <div class="client-marquee-track" aria-hidden="true">
         {% for logo in loja.logos_clientes.split() %}
-            {% if logo.strip() %}
+            {% if logo.strip() and 'instagram.com' not in logo.strip() %}
             {% set logo_url = logo.strip() %}
             {% set logo_filename = logo_url.split('/')[-1].split('.')[0] | replace('-', ' ') | replace('_', ' ') | title %}
             <img src="{{ logo_url }}" alt="Logo {{ logo_filename }} — cliente {{ loja.nome }}" loading="lazy" onerror="this.style.display='none'">
@@ -1760,6 +1766,40 @@
         {% endfor %}
     </div>
 </section>
+
+{% set has_insta_posts = namespace(value=false) %}
+{% for logo in loja.logos_clientes.split() %}
+    {% if 'instagram.com' in logo.strip() %}{% set has_insta_posts.value = true %}{% endif %}
+{% endfor %}
+
+{% if has_insta_posts.value %}
+<section class="w-full py-20" id="instagram-section" style="background-color: #050505; border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06);">
+    <div class="px-[5vw]">
+        <h2 style="font-family:'Archivo Black',sans-serif; font-size:clamp(2rem,5vw,4rem); text-transform:uppercase; letter-spacing:-0.03em; color:#fff; margin-bottom:2.5rem; text-shadow: 2px 2px 0px color-mix(in srgb, var(--primary) 60%, transparent), 4px 4px 0px color-mix(in srgb, var(--primary) 25%, transparent);">Siga Nosso Instagram</h2>
+
+        <div class="relative" style="padding: 0 20px;">
+            <button onclick="scrollSocial(-1)" style="position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:10;width:44px;height:44px;border-radius:50%;background:var(--primary);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(124,58,237,0.4);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-50%) scale(1.1)'" onmouseout="this.style.transform='translateY(-50%)'">
+                <i data-lucide="chevron-left" style="width:22px;height:22px;color:#fff;"></i>
+            </button>
+
+            <div id="social-container" style="display:flex;gap:20px;overflow-x:auto;scroll-behavior:smooth;padding-bottom:16px;scrollbar-width:thin;scrollbar-color:var(--primary) rgba(255,255,255,0.05);">
+                {% for link in loja.logos_clientes.split() %}
+                    {% if link.strip() and 'instagram.com' in link %}
+                        <div style="flex:none;width:320px;border-radius:16px;overflow:hidden;border:1.5px solid rgba(255,255,255,0.1);background:#0a0a0a;box-shadow:0 20px 40px rgba(0,0,0,0.4);">
+                            <iframe src="{{ link.strip().split('?')[0].rstrip('/') | replace('/embed','') }}/embed" width="320" height="540" frameborder="0" scrolling="no" allowtransparency="true" style="background:#0a0a0a;display:block;"></iframe>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <button onclick="scrollSocial(1)" style="position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:10;width:44px;height:44px;border-radius:50%;background:var(--primary);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(124,58,237,0.4);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-50%) scale(1.1)'" onmouseout="this.style.transform='translateY(-50%)'">
+                <i data-lucide="chevron-right" style="width:22px;height:22px;color:#fff;"></i>
+            </button>
+        </div>
+    </div>
+</section>
+{% endif %}
+
 {% endif %}
 
 <section class="show-milhao-section" id="dicas-de-ouro">
@@ -1888,6 +1928,14 @@
         </div>
     </div>
 </footer>
+
+<script>
+    function scrollSocial(direction) {
+        const socialContainer = document.getElementById('social-container');
+        const scrollAmount = 340;
+        if (socialContainer) socialContainer.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    }
+</script>
 
 <script>
     const loaderOverlay = document.getElementById('loader-overlay');
@@ -2306,10 +2354,15 @@
                 const haystack = (
                     (card.dataset.tags || '') + ' ' +
                     (card.dataset.categoria || '') + ' ' +
-                    (card.querySelector('.case-title-new')?.textContent || '')
+                    (card.querySelector('.pgrid-name')?.textContent || '') + ' ' +
+                    (card.querySelector('.pgrid-desc')?.textContent || '')
                 ).toLowerCase();
                 card.style.display = kws.some(k => haystack.includes(k)) ? '' : 'none';
             });
+            // Reflow grid after filter
+            document.getElementById('portfolio-container').style.display = 'none';
+            document.getElementById('portfolio-container').offsetHeight;
+            document.getElementById('portfolio-container').style.display = '';
         });
     });
 
