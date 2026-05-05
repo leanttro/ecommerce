@@ -1213,18 +1213,9 @@
         padding: 0 5vw;
     }
 
-    /* Alternating layout: big-small-small / small-small-big */
-    .pgrid-card:nth-child(3n+1) { grid-column: span 7; }
-    .pgrid-card:nth-child(3n+2) { grid-column: span 5; }
-    .pgrid-card:nth-child(3n+3) { grid-column: span 5; }
-    .pgrid-card:nth-child(4)    { grid-column: span 7; }
-    /* reset the pattern every 6 */
-    .pgrid-card:nth-child(6n+4) { grid-column: span 5; }
-    .pgrid-card:nth-child(6n+5) { grid-column: span 7; }
-    .pgrid-card:nth-child(6n+6) { grid-column: span 5; }
-    .pgrid-card:nth-child(6n+1) { grid-column: span 7; }
-    .pgrid-card:nth-child(6n+2) { grid-column: span 5; }
-    .pgrid-card:nth-child(6n+3) { grid-column: span 12; }
+    /* Layout: alternando maior (7) e menor (5), 2 por linha, sem full-width */
+    .pgrid-card:nth-child(odd)  { grid-column: span 7; }
+    .pgrid-card:nth-child(even) { grid-column: span 5; }
 
     .pgrid-card {
         display: flex;
@@ -1591,54 +1582,14 @@
 
     {% if secao == 'produtos' and not loja.ocultar_produtos %}
 
-    <!-- HERO CASE CARD -->
-    <section class="hero-case-section" id="portfolio">
-        <div class="hero-case-card" onclick="window.open('https://www.feirasderua.com.br', '_blank')">
-            <div class="hero-case-bg-text">
-                <span>FEIRAS DE RUA</span>
-                <span>FEIRAS DE RUA</span>
-            </div>
-            <div class="hero-case-content">
-                <div class="hero-case-top">
-                    <span class="hero-case-tag">&#9733; Projeto Destaque</span>
-                    <div style="display:flex; align-items:center; gap: 0;">
-                        <div class="hero-case-stat">
-                            <div class="hero-case-stat-number">5.000</div>
-                            <div class="hero-case-stat-label">Visitas orgânicas</div>
-                        </div>
-                        <div class="hero-case-divider"></div>
-                        <div class="hero-case-stat">
-                            <div class="hero-case-stat-number">3</div>
-                            <div class="hero-case-stat-label">Meses — zero ads</div>
-                        </div>
-                        <div class="hero-case-divider"></div>
-                        <div class="hero-case-stat">
-                            <div class="hero-case-stat-number">SEO</div>
-                            <div class="hero-case-stat-label">Tráfego 100% orgânico</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="hero-case-bottom">
-                    <div>
-                        <div class="hero-case-title">Feiras<br>de Rua</div>
-                        <div class="hero-case-desc">Guia editorial de feiras de SP com chatbot IA, geolocalização e sistema de anúncios — 5.000 visitas orgânicas em 3 meses sem investir um centavo em tráfego pago.</div>
-                    </div>
-                    <a href="https://www.feirasderua.com.br" target="_blank" rel="noopener noreferrer" class="hero-case-cta" onclick="event.stopPropagation()">
-                        Ver ao Vivo <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- STATS SECTION -->
-    <div class="stats-section">
+    <div class="stats-section" id="portfolio">
         <div class="stat-item">
             <div class="stat-number">30<sup>+</sup></div>
             <div class="stat-label">Projetos entregues</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number">5k</div>
+            <div class="stat-number">+7k</div>
             <div class="stat-label">Visitas orgânicas</div>
         </div>
         <div class="stat-item">
@@ -1654,22 +1605,51 @@
             <div class="stat-label">Integrações de IA</div>
         </div>
     </div>
-
     <!-- PORTFOLIO GRID -->
     <section class="portfolio-grid-section" id="portfolio-grid">
 
         <div class="pgrid-header">
             <h2 class="pgrid-title">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
-            <div class="filter-tabs" id="filter-tabs">
-                <button class="filter-tab active" data-filter="todos">Todos</button>
-                <button class="filter-tab" data-filter="saas">Automação &amp; IA</button>
-                <button class="filter-tab" data-filter="ecommerce">E-commerce</button>
-                <button class="filter-tab" data-filter="landing">Landing Pages</button>
-                <button class="filter-tab" data-filter="ferramentas">Ferramentas</button>
+
+            <!-- Filtros no mesmo estilo das categorias de cima -->
+            <div style="display:flex; flex-wrap:wrap; gap:0; border-top: 1px solid rgba(0,0,0,0.1); border-bottom: 1px solid rgba(0,0,0,0.1); margin-top: 24px;" id="filter-tabs">
+                <button class="pgrid-filter-btn active" data-filter="todos" style="flex:1; min-width:120px; padding:18px 12px; font-family:'Archivo Black',sans-serif; font-size:clamp(0.85rem,1.8vw,1.2rem); text-transform:uppercase; letter-spacing:-0.01em; background:transparent; border:none; border-right:1px solid rgba(0,0,0,0.1); cursor:pointer; color:var(--text-color); opacity:1; transition:background 0.25s, color 0.25s; position:relative; overflow:hidden;">Todos</button>
+                <button class="pgrid-filter-btn" data-filter="saas" style="flex:1; min-width:120px; padding:18px 12px; font-family:'Archivo Black',sans-serif; font-size:clamp(0.85rem,1.8vw,1.2rem); text-transform:uppercase; letter-spacing:-0.01em; background:transparent; border:none; border-right:1px solid rgba(0,0,0,0.1); cursor:pointer; color:var(--text-color); opacity:0.45; transition:background 0.25s, color 0.25s;">Automação &amp; IA</button>
+                <button class="pgrid-filter-btn" data-filter="ecommerce" style="flex:1; min-width:120px; padding:18px 12px; font-family:'Archivo Black',sans-serif; font-size:clamp(0.85rem,1.8vw,1.2rem); text-transform:uppercase; letter-spacing:-0.01em; background:transparent; border:none; border-right:1px solid rgba(0,0,0,0.1); cursor:pointer; color:var(--text-color); opacity:0.45; transition:background 0.25s, color 0.25s;">E-commerce</button>
+                <button class="pgrid-filter-btn" data-filter="landing" style="flex:1; min-width:120px; padding:18px 12px; font-family:'Archivo Black',sans-serif; font-size:clamp(0.85rem,1.8vw,1.2rem); text-transform:uppercase; letter-spacing:-0.01em; background:transparent; border:none; border-right:1px solid rgba(0,0,0,0.1); cursor:pointer; color:var(--text-color); opacity:0.45; transition:background 0.25s, color 0.25s;">Landing Pages</button>
+                <button class="pgrid-filter-btn" data-filter="ferramentas" style="flex:1; min-width:120px; padding:18px 12px; font-family:'Archivo Black',sans-serif; font-size:clamp(0.85rem,1.8vw,1.2rem); text-transform:uppercase; letter-spacing:-0.01em; background:transparent; border:none; cursor:pointer; color:var(--text-color); opacity:0.45; transition:background 0.25s, color 0.25s;">Ferramentas</button>
             </div>
         </div>
 
         <div class="pgrid" id="portfolio-container">
+
+            <!-- Card fixo: Feiras de Rua destaque — aparece sempre, independe de filtro -->
+            <a class="pgrid-card pgrid-card-feiras" href="https://www.feirasderua.com.br" target="_blank" rel="noopener noreferrer"
+               data-tags="saas landing ecommerce ferramentas" data-categoria="saas"
+               style="background:#050505; border-color:rgba(124,58,237,0.25);">
+                <div class="pgrid-img" style="min-height:220px; background:#050505; position:relative; overflow:hidden;">
+                    <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1778001052/Sem_nome_750_x_500_px_2000_x_2000_px_2_kvmzl1.png"
+                         alt="Feiras de Rua — projeto destaque" class="pgrid-img-main"
+                         style="object-fit:cover; width:100%; height:100%; position:absolute; top:0; left:0;" loading="lazy">
+                    <div class="pgrid-overlay"></div>
+                    <div class="pgrid-badge-row">
+                        <span class="badge badge-primary">&#9733; Destaque</span>
+                        <span class="badge">SEO</span>
+                        <span class="badge">IA</span>
+                    </div>
+                    <!-- Logo Feiras de Rua sobreposta -->
+                    <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1777819162/logo_feiras_ynhomo.png"
+                         alt="Logo Feiras de Rua"
+                         style="position:absolute; bottom:14px; right:14px; height:36px; width:auto; object-fit:contain; z-index:5; filter:brightness(0) invert(1); opacity:0.9;"
+                         loading="lazy">
+                </div>
+                <div class="pgrid-info">
+                    <h3 class="pgrid-name" style="color:#fff;">Feiras de Rua</h3>
+                    <p class="pgrid-desc" style="color:rgba(255,255,255,0.5);">Guia editorial de feiras de SP com chatbot IA, geolocalização e sistema de anúncios — +7k visitas orgânicas em 3 meses, zero tráfego pago.</p>
+                    <span class="pgrid-cta" style="color:var(--primary);">Ver ao vivo <i data-lucide="arrow-up-right" class="w-4 h-4"></i></span>
+                </div>
+            </a>
+
             {% for p in produtos %}
             <a class="pgrid-card" href="/{{ loja.slug_url }}/produto/{{ p.slug }}"
                data-tags="{{ p.tags or '' }}" data-categoria="{{ p.categoria or '' }}">
@@ -2331,7 +2311,7 @@
         }
     });
 
-    // FILTER TABS
+// FILTER TABS
     const FILTER_KEYWORDS = {
         'todos':       null,
         'saas':        ['marketing','saas','ia','inteligencia','groq','automacao','plataforma'],
@@ -2340,13 +2320,21 @@
         'ferramentas': ['grafica','editor','serigrafia','dtf','mousepad','lacre','gerador','feiras','feira'],
     };
 
-    const filterTabs = document.querySelectorAll('.filter-tab');
+    const filterTabs = document.querySelectorAll('.pgrid-filter-btn');
     const portfolioCards = document.querySelectorAll('#portfolio-container .pgrid-card');
 
     filterTabs.forEach(tab => {
         tab.addEventListener('click', () => {
-            filterTabs.forEach(t => t.classList.remove('active'));
+            filterTabs.forEach(t => {
+                t.classList.remove('active');
+                t.style.opacity = '0.45';
+                t.style.background = 'transparent';
+                t.style.color = 'var(--text-color)';
+            });
             tab.classList.add('active');
+            tab.style.opacity = '1';
+            tab.style.background = 'var(--text-color)';
+            tab.style.color = 'var(--bg-color)';
             const f = tab.dataset.filter;
             const kws = FILTER_KEYWORDS[f];
             portfolioCards.forEach(card => {
@@ -2365,7 +2353,6 @@
             document.getElementById('portfolio-container').style.display = '';
         });
     });
-
     gsap.registerPlugin(ScrollTrigger);
 
     // GSAP reveal for grid cards
