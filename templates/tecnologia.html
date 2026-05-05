@@ -1622,34 +1622,7 @@
         </div>
 
         <div class="pgrid" id="portfolio-container">
-
-            <!-- Card fixo: Feiras de Rua destaque — aparece sempre, independe de filtro -->
-            <a class="pgrid-card pgrid-card-feiras" href="https://www.feirasderua.com.br" target="_blank" rel="noopener noreferrer"
-               data-tags="saas landing ecommerce ferramentas" data-categoria="saas"
-               style="background:#050505; border-color:rgba(124,58,237,0.25);">
-                <div class="pgrid-img" style="min-height:220px; background:#050505; position:relative; overflow:hidden;">
-                    <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1778001052/Sem_nome_750_x_500_px_2000_x_2000_px_2_kvmzl1.png"
-                         alt="Feiras de Rua — projeto destaque" class="pgrid-img-main"
-                         style="object-fit:cover; width:100%; height:100%; position:absolute; top:0; left:0;" loading="lazy">
-                    <div class="pgrid-overlay"></div>
-                    <div class="pgrid-badge-row">
-                        <span class="badge badge-primary">&#9733; Destaque</span>
-                        <span class="badge">SEO</span>
-                        <span class="badge">IA</span>
-                    </div>
-                    <!-- Logo Feiras de Rua sobreposta -->
-                    <img src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1777819162/logo_feiras_ynhomo.png"
-                         alt="Logo Feiras de Rua"
-                         style="position:absolute; bottom:14px; right:14px; height:36px; width:auto; object-fit:contain; z-index:5; filter:brightness(0) invert(1); opacity:0.9;"
-                         loading="lazy">
-                </div>
-                <div class="pgrid-info">
-                    <h3 class="pgrid-name" style="color:#fff;">Feiras de Rua</h3>
-                    <p class="pgrid-desc" style="color:rgba(255,255,255,0.5);">Guia editorial de feiras de SP com chatbot IA, geolocalização e sistema de anúncios — +7k visitas orgânicas em 3 meses, zero tráfego pago.</p>
-                    <span class="pgrid-cta" style="color:var(--primary);">Ver ao vivo <i data-lucide="arrow-up-right" class="w-4 h-4"></i></span>
-                </div>
-            </a>
-
+          
             {% for p in produtos %}
             <a class="pgrid-card" href="/{{ loja.slug_url }}/produto/{{ p.slug }}"
                data-tags="{{ p.tags or '' }}" data-categoria="{{ p.categoria or '' }}">
