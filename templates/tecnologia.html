@@ -1611,18 +1611,6 @@
         <div class="pgrid-header">
             <h2 class="pgrid-title">{{ loja.titulo_produtos or 'Nossos Cases' }}</h2>
 
-        <!-- Filtros dinâmicos puxados do banco de dados -->
-            <div style="display:flex; flex-wrap:wrap; gap:0; border-top: 1px solid rgba(0,0,0,0.1); border-bottom: 1px solid rgba(0,0,0,0.1); margin-top: 24px;" id="filter-tabs">
-                <button class="pgrid-filter-btn active" data-filter="todos" style="flex:1; min-width:120px; padding:18px 12px; font-family:'Archivo Black',sans-serif; font-size:clamp(0.85rem,1.8vw,1.2rem); text-transform:uppercase; letter-spacing:-0.01em; background:transparent; border:none; border-right:1px solid rgba(0,0,0,0.1); cursor:pointer; color:var(--text-color); opacity:1; transition:background 0.25s, color 0.25s; position:relative; overflow:hidden;">Todos</button>
-                {% set cats_vistas = [] %}
-                {% for p in produtos %}
-                    {% if p.categoria and p.categoria not in cats_vistas %}
-                        {% set _ = cats_vistas.append(p.categoria) %}
-                        <button class="pgrid-filter-btn" data-filter="{{ p.categoria }}" style="flex:1; min-width:120px; padding:18px 12px; font-family:'Archivo Black',sans-serif; font-size:clamp(0.85rem,1.8vw,1.2rem); text-transform:uppercase; letter-spacing:-0.01em; background:transparent; border:none; border-right:1px solid rgba(0,0,0,0.1); cursor:pointer; color:var(--text-color); opacity:0.45; transition:background 0.25s, color 0.25s;">{{ p.categoria }}</button>
-                    {% endif %}
-                {% endfor %}
-            </div>
-
         <div class="pgrid" id="portfolio-container">
           
             {% for p in produtos %}
