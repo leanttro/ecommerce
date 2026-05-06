@@ -279,6 +279,7 @@ nav {
   top: 0; left: 0; width: 100%; height: 100%;
   background-size: cover;
   background-position: center;
+  background: radial-gradient(ellipse at 70% 30%, rgba(208,255,0,0.08) 0%, #0a0a0a 60%);
   opacity: 0;
   transition: opacity 1.2s var(--ease);
   will-change: opacity;
@@ -409,7 +410,7 @@ nav {
   color: var(--accent);
 }
 
-.evolve-wrapper { height: 200vh; position: relative; background: var(--bg); }
+.evolve-wrapper { height: 320vh; position: relative; background: var(--bg); }
 .evolve-sticky {
   position: sticky; top: 0; height: 100vh; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
@@ -1662,14 +1663,13 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
          const currentScroll = -rect.top;
          let progress = currentScroll / totalScroll;
 
-         // phrase-1 (PT) stays until 0.25, then black closes
-         // phrase-2 (EN) only shows after one extra scroll segment (0.38+)
-         // phrase-3 (FR) at 0.58+
-         // phrase-4 (ZH) at 0.80+
+         // 4 frases divididas em 4 blocos iguais de 25% cada
+         // phrase-1 (PT): 0–0.25 → phrase-2 (EN): 0.25–0.50 → phrase-3 (FR): 0.50–0.75 → phrase-4 (ZH): 0.75–1.0
+         // delay extra após o preto antes de trocar: cada bloco começa só em +0.05 do threshold
          let activeIndex = 0;
-         if (progress > 0.80) activeIndex = 3;
-         else if (progress > 0.58) activeIndex = 2;
-         else if (progress > 0.38) activeIndex = 1; 
+         if (progress > 0.75) activeIndex = 3;
+         else if (progress > 0.50) activeIndex = 2;
+         else if (progress > 0.25) activeIndex = 1;
          else activeIndex = 0;
 
          if (activeIndex !== evolveLastIndex) {
