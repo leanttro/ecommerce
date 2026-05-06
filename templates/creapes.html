@@ -1,9 +1,67 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" prefix="og: https://ogp.me/ns#">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{ loja.nome }} | Elite Audiovisual</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- ══ SEO PRIMÁRIO ══════════════════════════════════════════════════════ -->
+<title>{{ loja.nome }} | Produtora Audiovisual de Elite</title>
+<meta name="description" content="{{ loja.nome }} — Produtora audiovisual de alto padrão. Criamos filmes, motion design, showreels e conteúdo visual que elevam marcas ao próximo nível. Vamos evoluir juntos.">
+<meta name="keywords" content="{{ loja.nome }}, produtora audiovisual, produção de vídeo, motion design, showreel, filmagem profissional, edição de vídeo, colorização, pós-produção, audiovisual">
+<meta name="author" content="{{ loja.nome }}">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="theme-color" content="#0f1923">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="{{ loja.nome }}">
+
+<!-- ══ CANONICAL ════════════════════════════════════════════════════════ -->
+<link rel="canonical" href="https://{{ loja.slug_url }}.com.br/">
+
+<!-- ══ OPEN GRAPH (Facebook / WhatsApp / LinkedIn) ══════════════════════ -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ loja.nome }}">
+<meta property="og:title" content="{{ loja.nome }} | Produtora Audiovisual de Elite">
+<meta property="og:description" content="Criamos filmes, motion design e conteúdo visual que elevam marcas ao próximo nível. Vamos evoluir juntos.">
+<meta property="og:url" content="https://{{ loja.slug_url }}.com.br/">
+<meta property="og:locale" content="pt_BR">
+{% if loja.logo and loja.logo != 'None' and loja.logo != 'null' %}
+<meta property="og:image" content="{{ loja.logo }}">
+<meta property="og:image:alt" content="{{ loja.nome }} - Produtora Audiovisual">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+{% endif %}
+
+<!-- ══ TWITTER CARD ══════════════════════════════════════════════════════ -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ loja.nome }} | Produtora Audiovisual de Elite">
+<meta name="twitter:description" content="Criamos filmes, motion design e conteúdo visual que elevam marcas ao próximo nível. Vamos evoluir juntos.">
+{% if loja.logo and loja.logo != 'None' and loja.logo != 'null' %}
+<meta name="twitter:image" content="{{ loja.logo }}">
+{% endif %}
+
+<!-- ══ SCHEMA.ORG / JSON-LD ══════════════════════════════════════════════ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "{{ loja.nome }}",
+  "description": "Produtora audiovisual de alto padrão especializada em filmes, motion design, showreels e pós-produção.",
+  "url": "https://{{ loja.slug_url }}.com.br/",
+  {% if loja.logo and loja.logo != 'None' and loja.logo != 'null' %}"logo": "{{ loja.logo }}",{% endif %}
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer service",
+    "availableLanguage": ["Portuguese", "English"]
+  },
+  "sameAs": [
+    {% if loja.instagram_url %}"{{ loja.instagram_url }}"{% endif %}
+  ]
+}
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
@@ -101,7 +159,7 @@ body.loading {
   display: flex;
   gap: 0.4vw;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-size: clamp(1.4rem, 3.2vw, 2.8rem);
   font-weight: 700;
   letter-spacing: 0.3em;
   color: #fff;
@@ -351,7 +409,7 @@ nav {
   color: var(--accent);
 }
 
-.evolve-wrapper { height: 120vh; position: relative; background: var(--bg); }
+.evolve-wrapper { height: 200vh; position: relative; background: var(--bg); }
 .evolve-sticky {
   position: sticky; top: 0; height: 100vh; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
@@ -1590,6 +1648,9 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   const flashBang = document.querySelector('.flash-bang');
   let evolveLastIndex = -1;
 
+  // track when black curtains fully closed (phrase-1 gone dark) so we delay lang switch
+  let blackFiredAt = -1; // progress at which the black overlay fully arrived
+
   let calcScroll = () => {
     const windowHeight = window.innerHeight;
 
@@ -1601,10 +1662,14 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
          const currentScroll = -rect.top;
          let progress = currentScroll / totalScroll;
 
+         // phrase-1 (PT) stays until 0.25, then black closes
+         // phrase-2 (EN) only shows after one extra scroll segment (0.38+)
+         // phrase-3 (FR) at 0.58+
+         // phrase-4 (ZH) at 0.80+
          let activeIndex = 0;
-         if (progress > 0.8) activeIndex = 3;
-         else if (progress > 0.5) activeIndex = 2;
-         else if (progress > 0.15) activeIndex = 1; 
+         if (progress > 0.80) activeIndex = 3;
+         else if (progress > 0.58) activeIndex = 2;
+         else if (progress > 0.38) activeIndex = 1; 
          else activeIndex = 0;
 
          if (activeIndex !== evolveLastIndex) {
@@ -1658,6 +1723,10 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
       curtainBot.style.transform = 'translateY(0%)';
     }
   }
+
+  // Run curtain update on load and resize too
+  window.addEventListener('load', updateEvolveCurtain);
+  window.addEventListener('resize', updateEvolveCurtain);
 
   window.addEventListener('scroll', () => {
     calcScroll();
