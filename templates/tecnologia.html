@@ -61,7 +61,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <!-- Fontes consolidadas em uma única requisição com display=swap -->
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&family=Kanit:ital,wght@1,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&family=Kanit:ital,wght@1,800&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
@@ -1387,12 +1387,13 @@
 <header class="fixed top-0 w-full z-[1000] py-2 md:py-3">
     <div class="container mx-auto px-4 md:px-8">
         <div class="flex flex-row justify-between items-center w-full">
-            <a href="/{{ loja.slug_url }}/" class="block">
+            <a href="/{{ loja.slug_url }}/" class="flex items-center gap-2 block">
                 {% if loja.logo %}
                     <img src="{{ loja.logo }}" class="h-10 md:h-14 w-auto object-contain" loading="eager" fetchpriority="high" alt="{{ loja.nome }} — logotipo">
                 {% else %}
                     <span class="text-2xl md:text-3xl font-bold tracking-tighter text-[var(--text-color)]">{{ loja.nome }}</span>
                 {% endif %}
+                <span style="font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-color); opacity: 0.55; line-height: 1; padding-top: 2px;">tecnologia</span>
             </a>
             
             <nav class="hidden md:flex items-center gap-12 text-xs font-bold uppercase tracking-widest opacity-90" aria-label="Navegação principal">
@@ -1466,11 +1467,11 @@
             </div>
 
             <div class="relative z-10 flex flex-col items-center text-center px-4 w-full mt-10">
-                <h1 class="font-display text-white text-[clamp(3rem,8vw,8rem)] leading-[0.85] tracking-tighter uppercase mb-6 drop-shadow-2xl hero-title" style="text-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+                <h1 class="font-display text-white text-[clamp(2rem,5vw,5rem)] leading-[0.9] tracking-tighter uppercase mb-6 drop-shadow-2xl hero-title" style="text-shadow: 0 20px 40px rgba(0,0,0,0.5);">
                     VOCÊ TEM OPERAÇÃO.<br>
                     <span style="color: var(--primary);">A GENTE TRANSFORMA EM SISTEMA.</span>
                 </h1>
-                <p class="text-gray-300 text-[clamp(1rem,2vw,1.5rem)] font-light max-w-3xl mx-auto uppercase tracking-widest hero-subtitle">
+                <p class="text-gray-300 text-[clamp(0.75rem,1.2vw,1rem)] font-light max-w-2xl mx-auto uppercase tracking-widest hero-subtitle">
                     Do lead ao pós-vendas: tecnologia e tráfego trabalhando juntos pelo seu faturamento.
                 </p>
                 <a href="#contato" class="mt-10 bg-[var(--primary)] text-white px-8 py-4 rounded-full text-sm font-bold uppercase tracking-widest hover:scale-105 transition shadow-[0_10px_30px_rgba(124,58,237,0.3)] hero-title border border-white/20">
@@ -1649,9 +1650,6 @@
                 <h2 class="font-display text-[clamp(3rem,8vw,8rem)] leading-[0.9] tracking-tight uppercase" style="color: var(--text-color);">
                     {{ loja.titulo_blog or 'Blog' }}
                 </h2>
-                <a href="/{{ loja.slug_url }}/blog" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest opacity-60 hover:opacity-100 transition shrink-0 mb-2" style="color: var(--text-color);">
-                    . <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-                </a>
             </div>
 
             {% if posts %}
