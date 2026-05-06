@@ -1593,12 +1593,12 @@
         <h2 class="portfolio-title reveal" id="instagram-title">Nosso<br><em>Instagram</em></h2>
     </div>
 
-    <div style="position:relative;padding:0 64px;">
-        <button onclick="scrollInstagram(-1)" style="position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:20;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:color-mix(in srgb, var(--bg) 85%, #000 15%);color:var(--text);transition:all 0.3s ease;cursor:none;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'">
+    <div style="position:relative;padding:0 64px;" class="instagram-wrapper-desktop">
+        <button onclick="scrollInstagram(-1)" class="instagram-arrow instagram-arrow-left" style="position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:20;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:color-mix(in srgb, var(--bg) 85%, #000 15%);color:var(--text);transition:all 0.3s ease;cursor:none;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'">
             <i data-lucide="arrow-left" style="width:18px;height:18px;"></i>
         </button>
 
-        <div style="display:flex;gap:20px;overflow-x:auto;scroll-behavior:smooth;padding-bottom:8px;scrollbar-width:none;-webkit-overflow-scrolling:touch;" id="instagram-container">
+        <div style="display:flex;gap:20px;overflow-x:auto;scroll-behavior:smooth;padding-bottom:8px;-webkit-overflow-scrolling:touch;" id="instagram-container" class="instagram-container">
             {% if loja.logos_clientes %}
                 {% for link in loja.logos_clientes.split() %}
                     {% if link.strip() and 'instagram.com' in link %}
@@ -1610,11 +1610,48 @@
             {% endif %}
         </div>
 
-        <button onclick="scrollInstagram(1)" style="position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:20;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:color-mix(in srgb, var(--bg) 85%, #000 15%);color:var(--text);transition:all 0.3s ease;cursor:none;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'">
+        <button onclick="scrollInstagram(1)" class="instagram-arrow instagram-arrow-right" style="position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:20;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:color-mix(in srgb, var(--bg) 85%, #000 15%);color:var(--text);transition:all 0.3s ease;cursor:none;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'">
             <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
         </button>
     </div>
 </section>
+
+<style>
+/* ─── INSTAGRAM: DESKTOP com setas, MOBILE sem setas + scrollbar ─── */
+@media (min-width: 769px) {
+    .instagram-container {
+        scrollbar-width: none;
+    }
+    .instagram-container::-webkit-scrollbar { display: none; }
+}
+
+@media (max-width: 768px) {
+    .instagram-wrapper-desktop {
+        padding: 0 !important;
+    }
+    .instagram-arrow {
+        display: none !important;
+    }
+    .instagram-container {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(201,169,110,0.4) transparent;
+        padding-bottom: 12px !important;
+    }
+    .instagram-container::-webkit-scrollbar {
+        height: 3px;
+    }
+    .instagram-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .instagram-container::-webkit-scrollbar-thumb {
+        background: rgba(201,169,110,0.4);
+        border-radius: 2px;
+    }
+    .instagram-container::-webkit-scrollbar-thumb:hover {
+        background: var(--gold);
+    }
+}
+</style>
 
 <!-- ─── FORMULÁRIO ─── -->
 {% if not loja.ocultar_formulario %}
