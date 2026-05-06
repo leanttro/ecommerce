@@ -1189,7 +1189,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
             <div id="creapes-step-1-trailer" style="position:absolute;opacity:1;transition:opacity 0.3s, transform 0.3s;pointer-events:auto;text-align:center;width:90%;max-width:1000px;transform:translateY(0);">
                 <h2 style="color:var(--text);font-size:clamp(1.5rem, 3vw, 2.5rem);margin-bottom:20px;text-transform:uppercase;letter-spacing:2px;font-family:'Space Grotesk', sans-serif;">Nosso Showreel</h2>
                 <div style="padding:10px;aspect-ratio:16/9;width:100%;background:rgba(5,5,5,0.8);backdrop-filter:blur(10px);border:1px solid var(--accent);box-shadow:0 0 30px rgba(208, 255, 0, 0.1);border-radius:4px;">
-                    <iframe id="showreel-iframe" data-src="https://player.vimeo.com/video/1176338391?h=9316747c6c&autoplay=1&loop=1&muted=1&title=0&byline=0&portrait=0" src="" style="width:100%;height:100%;border:none;border-radius:2px;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                    <iframe src="https://player.vimeo.com/video/1176338391?h=9316747c6c&autoplay=1&loop=1&muted=1&title=0&byline=0&portrait=0" style="width:100%;height:100%;border:none;border-radius:2px;" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
                 </div>
             </div>
 
@@ -1834,24 +1834,6 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
            });
       });
   });
-</script>
-<script>
-  (function() {
-    var iframe = document.getElementById("showreel-iframe");
-    if (!iframe) return;
-    var section = document.getElementById("nav-3d-trailer-creapes");
-    var played = false;
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting && !played) {
-          played = true;
-          iframe.src = iframe.getAttribute("data-src");
-          observer.disconnect();
-        }
-      });
-    }, { threshold: 0.3 });
-    if (section) observer.observe(section);
-  })();
 </script>
 </body>
 </html>
