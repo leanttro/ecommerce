@@ -1,67 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR" prefix="og: https://ogp.me/ns#">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-<!-- ══ SEO PRIMÁRIO ══════════════════════════════════════════════════════ -->
-<title>{{ loja.nome }} | Produtora Audiovisual de Elite</title>
-<meta name="description" content="{{ loja.nome }} — Produtora audiovisual de alto padrão. Criamos filmes, motion design, showreels e conteúdo visual que elevam marcas ao próximo nível. Vamos evoluir juntos.">
-<meta name="keywords" content="{{ loja.nome }}, produtora audiovisual, produção de vídeo, motion design, showreel, filmagem profissional, edição de vídeo, colorização, pós-produção, audiovisual">
-<meta name="author" content="{{ loja.nome }}">
-<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-<meta name="theme-color" content="#0f1923">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="{{ loja.nome }}">
-
-<!-- ══ CANONICAL ════════════════════════════════════════════════════════ -->
-<link rel="canonical" href="https://{{ loja.slug_url }}.com.br/">
-
-<!-- ══ OPEN GRAPH (Facebook / WhatsApp / LinkedIn) ══════════════════════ -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="{{ loja.nome }}">
-<meta property="og:title" content="{{ loja.nome }} | Produtora Audiovisual de Elite">
-<meta property="og:description" content="Criamos filmes, motion design e conteúdo visual que elevam marcas ao próximo nível. Vamos evoluir juntos.">
-<meta property="og:url" content="https://{{ loja.slug_url }}.com.br/">
-<meta property="og:locale" content="pt_BR">
-{% if loja.logo and loja.logo != 'None' and loja.logo != 'null' %}
-<meta property="og:image" content="{{ loja.logo }}">
-<meta property="og:image:alt" content="{{ loja.nome }} - Produtora Audiovisual">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-{% endif %}
-
-<!-- ══ TWITTER CARD ══════════════════════════════════════════════════════ -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="{{ loja.nome }} | Produtora Audiovisual de Elite">
-<meta name="twitter:description" content="Criamos filmes, motion design e conteúdo visual que elevam marcas ao próximo nível. Vamos evoluir juntos.">
-{% if loja.logo and loja.logo != 'None' and loja.logo != 'null' %}
-<meta name="twitter:image" content="{{ loja.logo }}">
-{% endif %}
-
-<!-- ══ SCHEMA.ORG / JSON-LD ══════════════════════════════════════════════ -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "{{ loja.nome }}",
-  "description": "Produtora audiovisual de alto padrão especializada em filmes, motion design, showreels e pós-produção.",
-  "url": "https://{{ loja.slug_url }}.com.br/",
-  {% if loja.logo and loja.logo != 'None' and loja.logo != 'null' %}"logo": "{{ loja.logo }}",{% endif %}
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "contactType": "customer service",
-    "availableLanguage": ["Portuguese", "English"]
-  },
-  "sameAs": [
-    {% if loja.instagram_url %}"{{ loja.instagram_url }}"{% endif %}
-  ]
-}
-</script>
-
+<title>{{ loja.nome }} | Elite Audiovisual</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
@@ -153,13 +95,11 @@ body.loading {
 
 .loader-brand {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  bottom: 10%;
   display: flex;
   gap: 0.4vw;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(1.4rem, 3.2vw, 2.8rem);
+  font-size: clamp(0.9rem, 1.5vw, 1.2rem);
   font-weight: 700;
   letter-spacing: 0.3em;
   color: #fff;
@@ -409,7 +349,7 @@ nav {
   color: var(--accent);
 }
 
-.evolve-wrapper { height: 320vh; position: relative; background: var(--bg); }
+.evolve-wrapper { height: 120vh; position: relative; background: var(--bg); }
 .evolve-sticky {
   position: sticky; top: 0; height: 100vh; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
@@ -536,8 +476,8 @@ nav {
 .clients-right::before, .clients-right::after { content: ''; position: absolute; top: 0; width: 100px; height: 100%; z-index: 2; pointer-events: none; }
 .clients-right::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
 .clients-right::after  { right: 0; background: linear-gradient(to left,  var(--bg), transparent); }
-.clients-track { display: flex; gap: 4rem; align-items: center; animation: marquee-clients 60s linear infinite; width: max-content; }
-.clients-track.reverse { animation-direction: reverse; animation-duration: 90s;}
+.clients-track { display: flex; gap: 4rem; align-items: center; animation: marquee-clients 30s linear infinite; width: max-content; }
+.clients-track.reverse { animation-direction: reverse; animation-duration: 50s;}
 .clients-track img { height: 140px; object-fit: contain; max-width: 300px; filter: grayscale(100%) brightness(0.6); transition: all 0.4s var(--ease); }
 .clients-track img:hover { filter: grayscale(0%) brightness(1); transform: scale(1.1) !important; animation-play-state: paused; }
 @keyframes marquee-clients { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
@@ -968,6 +908,13 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   <div class="loader-bg-flash"></div>
   <div class="loader-panel top"></div>
   <div class="loader-panel bottom"></div>
+  <div class="loader-logo">
+    {% if loja.logo and loja.logo != 'None' and loja.logo != 'null' %}
+    <img src="{{ loja.logo }}" alt="{{ loja.nome }}">
+    {% else %}
+    <span>{{ loja.nome }}</span>
+    {% endif %}
+  </div>
   <div class="loader-brand" id="loaderBrand"></div>
 </div>
 
@@ -1078,9 +1025,6 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   </div>
 </section>
 {% endif %}
-
-<div id="evolve-curtain-top" style="position:fixed;top:-50%;left:0;width:100%;height:50%;background:#000;z-index:9998;pointer-events:none;transition:transform 0.6s cubic-bezier(0.16,1,0.3,1);"></div>
-<div id="evolve-curtain-bottom" style="position:fixed;bottom:-50%;left:0;width:100%;height:50%;background:#000;z-index:9998;pointer-events:none;transition:transform 0.6s cubic-bezier(0.16,1,0.3,1);"></div>
 
 <div class="evolve-wrapper">
   <div class="evolve-sticky">
@@ -1569,8 +1513,18 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   gsap.set('.loader-char', { opacity: 0, y: 20 });
 
   tlLoader
-    .to('.loader-char', { opacity: 1, y: 0, duration: 0.5, stagger: 0.12, ease: 'back.out(1.7)' }, '+=0.3')
-    .to('.loader-char', { scale: 0, opacity: 0, duration: 0.4, stagger: 0.04, ease: 'power4.in', delay: 2.0 })
+    .to('.loader-logo', { opacity: 1, duration: 0.1 })
+    .to('.loader-bg-flash', { opacity: 1, duration: 0.05 })
+    .to('.loader-bg-flash', { opacity: 0, duration: 0.05 })
+    .to('.loader-logo', { scale: 1.1, duration: 0.3, ease: 'power2.out' })
+    .to('.loader-bg-flash', { opacity: 1, duration: 0.05 })
+    .to('.loader-logo', { x: 10, skewX: 10, duration: 0.05 })
+    .to('.loader-logo', { x: -10, skewX: -10, duration: 0.05 })
+    .to('.loader-logo', { x: 0, skewX: 0, scale: 1, duration: 0.05 })
+    .to('.loader-bg-flash', { opacity: 0, duration: 0.05 })
+    .to('.loader-char', { opacity: 1, y: 0, duration: 0.3, stagger: 0.05, ease: 'back.out(1.7)' }, '-=0.1')
+    .to('.loader-logo', { scale: 0, opacity: 0, duration: 0.4, ease: 'back.in(2)', delay: 0.5 })
+    .to('.loader-char', { scale: 0, opacity: 0, duration: 0.3, stagger: 0.02, ease: 'power4.in' }, '<')
     .to('.loader-panel.top', { yPercent: -100, duration: 0.8, ease: 'expo.inOut' })
     .to('.loader-panel.bottom', { yPercent: 100, duration: 0.8, ease: 'expo.inOut' }, '<')
     .to('#loader', { opacity: 0, duration: 0.3 }, '-=0.3');
@@ -1648,9 +1602,6 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   const flashBang = document.querySelector('.flash-bang');
   let evolveLastIndex = -1;
 
-  // track when black curtains fully closed (phrase-1 gone dark) so we delay lang switch
-  let blackFiredAt = -1; // progress at which the black overlay fully arrived
-
   let calcScroll = () => {
     const windowHeight = window.innerHeight;
 
@@ -1662,13 +1613,10 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
          const currentScroll = -rect.top;
          let progress = currentScroll / totalScroll;
 
-         // 4 frases divididas em 4 blocos iguais de 25% cada
-         // phrase-1 (PT): 0–0.25 → phrase-2 (EN): 0.25–0.50 → phrase-3 (FR): 0.50–0.75 → phrase-4 (ZH): 0.75–1.0
-         // delay extra após o preto antes de trocar: cada bloco começa só em +0.05 do threshold
          let activeIndex = 0;
-         if (progress > 0.75) activeIndex = 3;
-         else if (progress > 0.50) activeIndex = 2;
-         else if (progress > 0.25) activeIndex = 1;
+         if (progress > 0.8) activeIndex = 3;
+         else if (progress > 0.5) activeIndex = 2;
+         else if (progress > 0.15) activeIndex = 1; 
          else activeIndex = 0;
 
          if (activeIndex !== evolveLastIndex) {
@@ -1705,32 +1653,7 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 
   window.addEventListener('load', calcScroll);
   window.addEventListener('resize', calcScroll);
-
-  // ── LETTERBOX: faixas fecham parcialmente quando está na seção evolve ──
-  const curtainTop = document.getElementById('evolve-curtain-top');
-  const curtainBot = document.getElementById('evolve-curtain-bottom');
-
-  function updateEvolveCurtain() {
-    if (!curtainTop || !curtainBot || !evolveSection) return;
-    const rect = evolveSection.getBoundingClientRect();
-    const inSection = rect.top <= 0 && rect.bottom >= window.innerHeight;
-    if (inSection) {
-      curtainTop.style.transform = 'translateY(56%)';
-      curtainBot.style.transform = 'translateY(-56%)';
-    } else {
-      curtainTop.style.transform = 'translateY(0%)';
-      curtainBot.style.transform = 'translateY(0%)';
-    }
-  }
-
-  // Run curtain update on load and resize too
-  window.addEventListener('load', updateEvolveCurtain);
-  window.addEventListener('resize', updateEvolveCurtain);
-
-  window.addEventListener('scroll', () => {
-    calcScroll();
-    updateEvolveCurtain();
-  });
+  window.addEventListener('scroll', calcScroll);
 
   const portfolioSection = document.querySelector('.portfolio-horizontal-wrapper');
   const portfolioTrack = document.querySelector('.portfolio-track');
