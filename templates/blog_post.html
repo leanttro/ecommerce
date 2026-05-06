@@ -607,7 +607,7 @@
   {% if not loja.ocultar_sobre %}<a href="/{{ loja.slug_url }}/#sobre">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
   {% if not loja.ocultar_produtos %}<a href="/{{ loja.slug_url }}/#portfolio-section">{{ loja.titulo_produtos or 'Projetos' }}</a>{% endif %}
   {% if not loja.ocultar_formulario %}<a href="/{{ loja.slug_url }}/#contato">Contato</a>{% endif %}
-  <a href="/{{ loja.slug_url }}/blog" style="color:var(--primary);">Blog</a>
+  <a href="/{{ loja.slug_url }}/" style="color:var(--primary);">Início</a>
   {% if loja.whatsapp_comercial %}
   <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" style="font-family:var(--font-corpo),sans-serif;font-size:1rem;letter-spacing:0.15em;color:var(--primary);">WhatsApp →</a>
   {% endif %}
@@ -634,7 +634,7 @@
     {% if not loja.ocultar_formulario %}
     <a href="/{{ loja.slug_url }}/#contato" class="nav-link">Contato</a>
     {% endif %}
-    <a href="/{{ loja.slug_url }}/blog" class="nav-link active">Blog</a>
+    <a href="/{{ loja.slug_url }}/" class="nav-link">Início</a>
   </nav>
 
   <div style="display:flex;align-items:center;gap:16px;">
@@ -700,7 +700,7 @@
 
   <!-- RODAPÉ DO ARTIGO -->
   <div class="post-footer">
-    <a href="/{{ loja.slug_url }}/blog" class="back-btn">
+    <a href="/{{ loja.slug_url }}/" class="back-btn">
       <span class="btn-line"></span>
     </a>
 
@@ -741,7 +741,7 @@
       {% if not loja.ocultar_produtos %}<a href="/{{ loja.slug_url }}/#portfolio-section">{{ loja.titulo_produtos or 'Projetos' }}</a>{% endif %}
       {% if not loja.ocultar_agenda %}<a href="/{{ loja.slug_url }}/#agenda">{{ loja.titulo_agenda or 'Agenda' }}</a>{% endif %}
       {% if not loja.ocultar_formulario %}<a href="/{{ loja.slug_url }}/#contato">Contato</a>{% endif %}
-      <a href="/{{ loja.slug_url }}/blog">Blog</a>
+      <a href="/{{ loja.slug_url }}/">Início</a>
       {% if loja.instagram_url %}<a href="{{ loja.instagram_url }}" target="_blank">Instagram</a>{% endif %}
       {% if loja.whatsapp_comercial %}<a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank">WhatsApp</a>{% endif %}
     </nav>
