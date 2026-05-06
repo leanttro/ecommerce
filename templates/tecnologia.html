@@ -576,12 +576,30 @@
 
     .client-marquee-wrapper {
         display: flex;
+        flex-direction: column;
         width: 100%;
         overflow: hidden;
         position: relative;
-        padding: 60px 0;
-        background-color: #050505;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        padding: 50px 0 60px;
+        background-color: #ffffff;
+        border-top: 1px solid rgba(0,0,0,0.06);
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .client-marquee-title {
+        font-family: 'Archivo Black', sans-serif;
+        font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+        text-transform: uppercase;
+        letter-spacing: 0.25em;
+        color: #111;
+        opacity: 0.35;
+        text-align: center;
+        margin-bottom: 32px;
+    }
+    .client-marquee-tracks {
+        display: flex;
+        width: 100%;
+        overflow: hidden;
+        position: relative;
     }
     .client-marquee-track {
         display: flex;
@@ -1171,7 +1189,7 @@
     }
 
     .pgrid-header {
-        padding: 0 5vw 200px;
+        padding: 0 5vw 60px;
         display: flex;
         flex-direction: column;
         gap: 20px;
@@ -1469,12 +1487,12 @@
             <div class="relative z-10 flex flex-col items-center text-center px-4 w-full mt-10">
                 <h1 class="font-display text-white text-[clamp(2rem,5vw,5rem)] leading-[0.9] tracking-tighter uppercase mb-6 drop-shadow-2xl hero-title" style="text-shadow: 0 20px 40px rgba(0,0,0,0.5);">
                     VOCÊ TEM OPERAÇÃO.<br>
-                    <span style="color: var(--primary);">NÓS TRANSFORMAMOS EM SISTEMA.</span>
+                    <span style="color: var(--primary);">A GENTE TRANSFORMA<br>EM SISTEMA.</span>
                 </h1>
                 <p class="text-gray-300 text-[clamp(0.75rem,1.2vw,1rem)] font-light max-w-2xl mx-auto uppercase tracking-widest hero-subtitle">
                     Do lead ao pós-vendas: tecnologia e tráfego trabalhando juntos pelo seu faturamento.
                 </p>
-                <a href="#contato" class="mt-10 bg-[var(--primary)] text-white px-8 py-4 rounded-full text-sm font-bold uppercase tracking-widest hover:scale-105 transition shadow-[0_10px_30px_rgba(124,58,237,0.3)] hero-title border border-white/20">
+                <a href="#contato" class="mt-10 text-white px-8 py-4 rounded-full text-sm font-bold uppercase tracking-widest hover:scale-105 transition hero-title border border-white/30" style="background: linear-gradient(135deg, #9333ea, #7c3aed, #6d28d9); box-shadow: 0 10px 40px rgba(147,51,234,0.6), 0 0 0 1px rgba(255,255,255,0.1);">
                     Quero transformar minha operação
                 </a>
             </div>
@@ -1687,23 +1705,26 @@
 
 {% if loja.logos_clientes %}
 <section class="client-marquee-wrapper" aria-label="Nossos clientes">
-    <div class="client-marquee-track">
-        {% for logo in loja.logos_clientes.split() %}
-            {% if logo.strip() and 'instagram.com' not in logo.strip() %}
-            {% set logo_url = logo.strip() %}
-            {% set logo_filename = logo_url.split('/')[-1].split('.')[0] | replace('-', ' ') | replace('_', ' ') | title %}
-            <img src="{{ logo_url }}" alt="Logo {{ logo_filename }} — cliente {{ loja.nome }}" loading="lazy" onerror="this.style.display='none'">
-            {% endif %}
-        {% endfor %}
-    </div>
-    <div class="client-marquee-track" aria-hidden="true">
-        {% for logo in loja.logos_clientes.split() %}
-            {% if logo.strip() and 'instagram.com' not in logo.strip() %}
-            {% set logo_url = logo.strip() %}
-            {% set logo_filename = logo_url.split('/')[-1].split('.')[0] | replace('-', ' ') | replace('_', ' ') | title %}
-            <img src="{{ logo_url }}" alt="Logo {{ logo_filename }} — cliente {{ loja.nome }}" loading="lazy" onerror="this.style.display='none'">
-            {% endif %}
-        {% endfor %}
+    <div class="client-marquee-title">Nossos Clientes</div>
+    <div class="client-marquee-tracks">
+        <div class="client-marquee-track">
+            {% for logo in loja.logos_clientes.split() %}
+                {% if logo.strip() and 'instagram.com' not in logo.strip() %}
+                {% set logo_url = logo.strip() %}
+                {% set logo_filename = logo_url.split('/')[-1].split('.')[0] | replace('-', ' ') | replace('_', ' ') | title %}
+                <img src="{{ logo_url }}" alt="Logo {{ logo_filename }} — cliente {{ loja.nome }}" loading="lazy" onerror="this.style.display='none'">
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="client-marquee-track" aria-hidden="true">
+            {% for logo in loja.logos_clientes.split() %}
+                {% if logo.strip() and 'instagram.com' not in logo.strip() %}
+                {% set logo_url = logo.strip() %}
+                {% set logo_filename = logo_url.split('/')[-1].split('.')[0] | replace('-', ' ') | replace('_', ' ') | title %}
+                <img src="{{ logo_url }}" alt="Logo {{ logo_filename }} — cliente {{ loja.nome }}" loading="lazy" onerror="this.style.display='none'">
+                {% endif %}
+            {% endfor %}
+        </div>
     </div>
 </section>
 
