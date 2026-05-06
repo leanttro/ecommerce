@@ -95,11 +95,13 @@ body.loading {
 
 .loader-brand {
   position: absolute;
-  bottom: 10%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   gap: 0.4vw;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+  font-size: clamp(2.5rem, 6vw, 5rem);
   font-weight: 700;
   letter-spacing: 0.3em;
   color: #fff;
@@ -476,8 +478,8 @@ nav {
 .clients-right::before, .clients-right::after { content: ''; position: absolute; top: 0; width: 100px; height: 100%; z-index: 2; pointer-events: none; }
 .clients-right::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
 .clients-right::after  { right: 0; background: linear-gradient(to left,  var(--bg), transparent); }
-.clients-track { display: flex; gap: 4rem; align-items: center; animation: marquee-clients 30s linear infinite; width: max-content; }
-.clients-track.reverse { animation-direction: reverse; animation-duration: 50s;}
+.clients-track { display: flex; gap: 4rem; align-items: center; animation: marquee-clients 60s linear infinite; width: max-content; }
+.clients-track.reverse { animation-direction: reverse; animation-duration: 90s;}
 .clients-track img { height: 140px; object-fit: contain; max-width: 300px; filter: grayscale(100%) brightness(0.6); transition: all 0.4s var(--ease); }
 .clients-track img:hover { filter: grayscale(0%) brightness(1); transform: scale(1.1) !important; animation-play-state: paused; }
 @keyframes marquee-clients { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
@@ -908,13 +910,6 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   <div class="loader-bg-flash"></div>
   <div class="loader-panel top"></div>
   <div class="loader-panel bottom"></div>
-  <div class="loader-logo">
-    {% if loja.logo and loja.logo != 'None' and loja.logo != 'null' %}
-    <img src="{{ loja.logo }}" alt="{{ loja.nome }}">
-    {% else %}
-    <span>{{ loja.nome }}</span>
-    {% endif %}
-  </div>
   <div class="loader-brand" id="loaderBrand"></div>
 </div>
 
@@ -1025,6 +1020,9 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   </div>
 </section>
 {% endif %}
+
+<div id="evolve-curtain-top" style="position:fixed;top:-50%;left:0;width:100%;height:50%;background:#000;z-index:9998;pointer-events:none;transition:transform 0.6s cubic-bezier(0.16,1,0.3,1);"></div>
+<div id="evolve-curtain-bottom" style="position:fixed;bottom:-50%;left:0;width:100%;height:50%;background:#000;z-index:9998;pointer-events:none;transition:transform 0.6s cubic-bezier(0.16,1,0.3,1);"></div>
 
 <div class="evolve-wrapper">
   <div class="evolve-sticky">
@@ -1513,18 +1511,8 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
   gsap.set('.loader-char', { opacity: 0, y: 20 });
 
   tlLoader
-    .to('.loader-logo', { opacity: 1, duration: 0.1 })
-    .to('.loader-bg-flash', { opacity: 1, duration: 0.05 })
-    .to('.loader-bg-flash', { opacity: 0, duration: 0.05 })
-    .to('.loader-logo', { scale: 1.1, duration: 0.3, ease: 'power2.out' })
-    .to('.loader-bg-flash', { opacity: 1, duration: 0.05 })
-    .to('.loader-logo', { x: 10, skewX: 10, duration: 0.05 })
-    .to('.loader-logo', { x: -10, skewX: -10, duration: 0.05 })
-    .to('.loader-logo', { x: 0, skewX: 0, scale: 1, duration: 0.05 })
-    .to('.loader-bg-flash', { opacity: 0, duration: 0.05 })
-    .to('.loader-char', { opacity: 1, y: 0, duration: 0.3, stagger: 0.05, ease: 'back.out(1.7)' }, '-=0.1')
-    .to('.loader-logo', { scale: 0, opacity: 0, duration: 0.4, ease: 'back.in(2)', delay: 0.5 })
-    .to('.loader-char', { scale: 0, opacity: 0, duration: 0.3, stagger: 0.02, ease: 'power4.in' }, '<')
+    .to('.loader-char', { opacity: 1, y: 0, duration: 0.5, stagger: 0.12, ease: 'back.out(1.7)' }, '+=0.3')
+    .to('.loader-char', { scale: 0, opacity: 0, duration: 0.4, stagger: 0.04, ease: 'power4.in', delay: 2.0 })
     .to('.loader-panel.top', { yPercent: -100, duration: 0.8, ease: 'expo.inOut' })
     .to('.loader-panel.bottom', { yPercent: 100, duration: 0.8, ease: 'expo.inOut' }, '<')
     .to('#loader', { opacity: 0, duration: 0.3 }, '-=0.3');
@@ -1653,7 +1641,28 @@ footer { background: #020202; padding: 6rem 4rem 2rem; border-top: 1px solid #11
 
   window.addEventListener('load', calcScroll);
   window.addEventListener('resize', calcScroll);
-  window.addEventListener('scroll', calcScroll);
+
+  // ── LETTERBOX: faixas fecham parcialmente quando está na seção evolve ──
+  const curtainTop = document.getElementById('evolve-curtain-top');
+  const curtainBot = document.getElementById('evolve-curtain-bottom');
+
+  function updateEvolveCurtain() {
+    if (!curtainTop || !curtainBot || !evolveSection) return;
+    const rect = evolveSection.getBoundingClientRect();
+    const inSection = rect.top <= 0 && rect.bottom >= window.innerHeight;
+    if (inSection) {
+      curtainTop.style.transform = 'translateY(56%)';
+      curtainBot.style.transform = 'translateY(-56%)';
+    } else {
+      curtainTop.style.transform = 'translateY(0%)';
+      curtainBot.style.transform = 'translateY(0%)';
+    }
+  }
+
+  window.addEventListener('scroll', () => {
+    calcScroll();
+    updateEvolveCurtain();
+  });
 
   const portfolioSection = document.querySelector('.portfolio-horizontal-wrapper');
   const portfolioTrack = document.querySelector('.portfolio-track');
