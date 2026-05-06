@@ -1,12 +1,89 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" prefix="og: https://ogp.me/ns#">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+<!-- ═══════════════════════════════════════════
+     SEO PRIMÁRIO
+═══════════════════════════════════════════ -->
 <title>{{ post.titulo }} | {{ loja.nome }}</title>
 <meta name="description" content="{{ post.resumo or post.conteudo | striptags | truncate(160) }}">
+<meta name="author" content="{{ loja.nome }}">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<link rel="canonical" href="{{ loja.url }}/blog/{{ post.slug_url }}">
 
+<!-- ═══════════════════════════════════════════
+     OPEN GRAPH (Facebook, WhatsApp, LinkedIn)
+═══════════════════════════════════════════ -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="{{ loja.nome }}">
+<meta property="og:title" content="{{ post.titulo }} | {{ loja.nome }}">
+<meta property="og:description" content="{{ post.resumo or post.conteudo | striptags | truncate(160) }}">
+<meta property="og:url" content="{{ loja.url }}/blog/{{ post.slug_url }}">
+<meta property="og:image" content="{{ post.capa or loja.og_imagem_padrao }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{ post.titulo }} — {{ loja.nome }}">
+<meta property="og:locale" content="pt_BR">
+{% if post.data_publicacao %}<meta property="article:published_time" content="{{ post.data_publicacao }}">{% endif %}
+{% if post.categoria_nome %}<meta property="article:section" content="{{ post.categoria_nome }}">{% endif %}
+
+<!-- ═══════════════════════════════════════════
+     TWITTER CARD
+═══════════════════════════════════════════ -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ post.titulo }} | {{ loja.nome }}">
+<meta name="twitter:description" content="{{ post.resumo or post.conteudo | striptags | truncate(160) }}">
+<meta name="twitter:image" content="{{ post.capa or loja.og_imagem_padrao }}">
+<meta name="twitter:image:alt" content="{{ post.titulo }} — {{ loja.nome }}">
+
+<!-- ═══════════════════════════════════════════
+     SCHEMA.ORG JSON-LD — Rich Results Google
+═══════════════════════════════════════════ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ post.titulo }}",
+  "description": "{{ post.resumo or post.conteudo | striptags | truncate(200) }}",
+  "url": "{{ loja.url }}/blog/{{ post.slug_url }}",
+  "image": "{{ post.capa or loja.og_imagem_padrao }}",
+  "datePublished": "{{ post.data_publicacao }}",
+  "dateModified": "{{ post.data_modificacao or post.data_publicacao }}",
+  "inLanguage": "pt-BR",
+  "author": {
+    "@type": "Organization",
+    "name": "{{ loja.nome }}",
+    "url": "{{ loja.url }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ loja.nome }}",
+    "url": "{{ loja.url }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ loja.logo }}"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ loja.url }}/blog/{{ post.slug_url }}"
+  }{% if post.categoria_nome %},
+  "articleSection": "{{ post.categoria_nome }}"{% endif %}
+}
+</script>
+
+<!-- ═══════════════════════════════════════════
+     PERFORMANCE — Preconnect & DNS Prefetch
+═══════════════════════════════════════════ -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://unpkg.com">
+
+<!-- Preload da imagem hero (LCP) -->
+{% if post.capa %}<link rel="preload" as="image" href="{{ post.capa }}" fetchpriority="high">{% endif %}
+
 <link href="https://fonts.googleapis.com/css2?family={{ (loja.font_titulo or 'Cormorant Garamond') | replace(' ', '+') }}:ital,wght@0,300;0,400;0,600;1,300;1,400&family={{ (loja.font_corpo or 'DM Sans') | replace(' ', '+') }}:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -576,7 +653,7 @@
 <!-- ─── HERO ─── -->
 {% if post.capa %}
 <section class="post-hero">
-  <img src="{{ post.capa }}" alt="{{ post.titulo }}" class="post-hero-cover">
+  <img src="{{ post.capa }}" alt="{{ post.titulo }} — {{ loja.nome }}" class="post-hero-cover" width="1200" height="540" fetchpriority="high" decoding="async">
   <div class="post-hero-overlay"></div>
   <div class="post-hero-content">
     <div class="post-meta">
