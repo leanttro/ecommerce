@@ -1669,37 +1669,140 @@
                 <h2 class="font-display text-[clamp(3rem,8vw,8rem)] leading-[0.9] tracking-tight uppercase" style="color: var(--text-color);">
                     {{ loja.titulo_blog or 'Blog' }}
                 </h2>
+                {% if posts %}
+                <div class="flex items-center gap-2 self-end md:self-auto">
+                    <button id="blog-btn-carrossel" onclick="setBlogView('carrossel')" title="Carrossel"
+                        class="blog-view-btn active-view flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest border transition-all duration-300"
+                        style="border-color: var(--primary); color: var(--primary); background: transparent;">
+                        <i data-lucide="layout-list" class="w-4 h-4"></i> Carrossel
+                    </button>
+                    <button id="blog-btn-grade" onclick="setBlogView('grade')" title="Grade"
+                        class="blog-view-btn flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest border transition-all duration-300"
+                        style="border-color: rgba(0,0,0,0.15); color: var(--text-color); background: transparent;">
+                        <i data-lucide="layout-grid" class="w-4 h-4"></i> Grade
+                    </button>
+                </div>
+                {% endif %}
             </div>
 
             {% if posts %}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {% for post in posts %}
-                <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}" class="group flex flex-col rounded-2xl overflow-hidden border transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="border-color: rgba(0,0,0,0.07); background-color: var(--bg-color);">
-                    {% if post.capa %}
-                    <div class="w-full aspect-[16/9] overflow-hidden bg-black">
-                        <img src="{{ post.capa }}" alt="{{ post.titulo }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
-                    </div>
-                    {% endif %}
-                    <div class="flex flex-col gap-3 p-6 flex-1">
-                        <span class="text-[11px] font-bold uppercase tracking-widest opacity-40" style="color: var(--text-color);">{{ post.data }}</span>
-                        <h3 class="font-display text-xl leading-tight uppercase tracking-tight" style="color: var(--text-color);">{{ post.titulo }}</h3>
-                        {% if post.resumo %}
-                        <p class="text-sm leading-relaxed opacity-50 line-clamp-2" style="color: var(--text-color);">{{ post.resumo }}</p>
+
+            <!-- CARROSSEL -->
+            <div id="blog-carrossel" class="blog-view-panel">
+                <div id="blog-scroll-track"
+                    style="display:flex; overflow-x:auto; overflow-y:hidden; padding-bottom:20px; gap:24px; cursor:grab; scroll-behavior:auto; -webkit-overflow-scrolling:touch; scrollbar-width:auto; scrollbar-color: var(--primary) rgba(0,0,0,0.06);">
+                    {% for post in posts %}
+                    <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}"
+                        class="group flex flex-col rounded-2xl overflow-hidden border transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl blog-carousel-card"
+                        style="flex-shrink:0; width:340px; min-width:280px; max-width:85vw; border-color:rgba(0,0,0,0.07); background-color:var(--bg-color);">
+                        {% if post.capa %}
+                        <div class="w-full overflow-hidden bg-black" style="aspect-ratio:16/9;">
+                            <img src="{{ post.capa }}" alt="{{ post.titulo }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
+                        </div>
                         {% endif %}
-                        <span class="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest transition-all duration-300 group-hover:gap-3" style="color: var(--primary);">
-                            Ler artigo <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-                        </span>
-                    </div>
-                </a>
-                {% endfor %}
+                        <div class="flex flex-col gap-3 p-6 flex-1">
+                            <span class="text-[11px] font-bold uppercase tracking-widest opacity-40" style="color:var(--text-color);">{{ post.data }}</span>
+                            <h3 class="font-display text-xl leading-tight uppercase tracking-tight" style="color:var(--text-color);">{{ post.titulo }}</h3>
+                            {% if post.resumo %}
+                            <p class="text-sm leading-relaxed opacity-50 line-clamp-2" style="color:var(--text-color);">{{ post.resumo }}</p>
+                            {% endif %}
+                            <span class="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest transition-all duration-300 group-hover:gap-3" style="color:var(--primary);">
+                                Ler artigo <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                            </span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
             </div>
+
+            <!-- GRADE -->
+            <div id="blog-grade" class="blog-view-panel" style="display:none;">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {% for post in posts %}
+                    <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}"
+                        class="group flex flex-col rounded-2xl overflow-hidden border transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
+                        style="border-color:rgba(0,0,0,0.07); background-color:var(--bg-color);">
+                        {% if post.capa %}
+                        <div class="w-full overflow-hidden bg-black" style="aspect-ratio:16/9;">
+                            <img src="{{ post.capa }}" alt="{{ post.titulo }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
+                        </div>
+                        {% endif %}
+                        <div class="flex flex-col gap-3 p-6 flex-1">
+                            <span class="text-[11px] font-bold uppercase tracking-widest opacity-40" style="color:var(--text-color);">{{ post.data }}</span>
+                            <h3 class="font-display text-xl leading-tight uppercase tracking-tight" style="color:var(--text-color);">{{ post.titulo }}</h3>
+                            {% if post.resumo %}
+                            <p class="text-sm leading-relaxed opacity-50 line-clamp-2" style="color:var(--text-color);">{{ post.resumo }}</p>
+                            {% endif %}
+                            <span class="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest transition-all duration-300 group-hover:gap-3" style="color:var(--primary);">
+                                Ler artigo <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                            </span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
             {% else %}
-            <div class="text-center py-16 border-2 border-dashed rounded-2xl opacity-30" style="border-color: rgba(0,0,0,0.12);">
+            <div class="text-center py-16 border-2 border-dashed rounded-2xl opacity-30" style="border-color:rgba(0,0,0,0.12);">
                 <p class="font-display text-sm uppercase tracking-widest">Nenhum post publicado ainda.</p>
             </div>
             {% endif %}
         </div>
     </section>
+
+    <style>
+        .blog-view-btn.active-view {
+            background: var(--primary) !important;
+            color: #fff !important;
+            border-color: var(--primary) !important;
+        }
+        #blog-scroll-track::-webkit-scrollbar { height: 8px; display: block; }
+        #blog-scroll-track::-webkit-scrollbar-track { background: rgba(0,0,0,0.06); border-radius: 10px; }
+        #blog-scroll-track::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+    </style>
+
+    <script>
+        function setBlogView(view) {
+            document.getElementById('blog-carrossel').style.display = view === 'carrossel' ? 'block' : 'none';
+            document.getElementById('blog-grade').style.display = view === 'grade' ? 'block' : 'none';
+            document.querySelectorAll('.blog-view-btn').forEach(function(btn) {
+                btn.classList.remove('active-view');
+                btn.style.background = 'transparent';
+                btn.style.color = 'var(--text-color)';
+                btn.style.borderColor = 'rgba(0,0,0,0.15)';
+            });
+            var activeBtn = document.getElementById('blog-btn-' + view);
+            activeBtn.classList.add('active-view');
+            activeBtn.style.background = 'var(--primary)';
+            activeBtn.style.color = '#fff';
+            activeBtn.style.borderColor = 'var(--primary)';
+        }
+
+        // Drag to scroll no carrossel (mouse)
+        (function() {
+            var track = document.getElementById('blog-scroll-track');
+            if (!track) return;
+            var isDown = false, startX, scrollLeft;
+            track.addEventListener('mousedown', function(e) {
+                isDown = true;
+                track.style.cursor = 'grabbing';
+                startX = e.pageX - track.offsetLeft;
+                scrollLeft = track.scrollLeft;
+            });
+            document.addEventListener('mouseup', function() {
+                isDown = false;
+                if (track) track.style.cursor = 'grab';
+            });
+            track.addEventListener('mouseleave', function() { isDown = false; track.style.cursor = 'grab'; });
+            track.addEventListener('mousemove', function(e) {
+                if (!isDown) return;
+                e.preventDefault();
+                var x = e.pageX - track.offsetLeft;
+                var walk = (x - startX) * 1.5;
+                track.scrollLeft = scrollLeft - walk;
+            });
+        })();
+    </script>
     {% endif %}
 
 {% endfor %}
