@@ -611,7 +611,7 @@ def index(loja_slug):
     # 3 Busca Posts
     posts = []
     try:
-        url_blog = f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published&limit=3&sort=-date_created"
+        url_blog = f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published&limit=100&sort=-date_created"
         r_blog = requests.get(url_blog, headers=headers, timeout=7)
         if r_blog.status_code == 200:
             for post in r_blog.json()['data']:
