@@ -59,7 +59,7 @@ SMTP_PASS = os.getenv("SMTP_PASS", "")
 # BLACKLIST DE ROTAS PALAVRAS RESERVADAS
 # Rotas que não devem ser tratadas como SLUG de loja
 # ADICIONADO catalogo AQUI PARA NÃO CONFUNDIR COM LOJA
-BLACKLIST_ROTAS = ['static', 'cadastro', 'catalogo', 'login', 'logout', 'api', 'admin', 'favicon.ico']
+BLACKLIST_ROTAS = ['static', 'cadastro', 'catalogo', 'login', 'logout', 'api', 'admin', 'favicon.ico', 'sitemap.xml', 'robots.txt']
 
 # SEGURANÇA RATE LIMITING NA MEMÓRIA
 RATE_LIMIT_DATA = {}
@@ -290,6 +290,118 @@ def home_saas():
 @app.route('/catalogo')
 def landing_page_rota():
     return render_template('catalogo.html')
+
+
+
+# ───────────────────────────────────────────────────────────────
+# ROTA SITEMAP DINÂMICO
+# ───────────────────────────────────────────────────────────────
+@app.route('/sitemap.xml')
+@app.route('/<loja_slug>/sitemap.xml')
+def sitemap(loja_slug=None):
+    headers_req = get_headers()
+    BASE = "https://www.leanttro.com"
+    hoje = datetime.utcnow().strftime('%Y-%m-%d')
+
+    slug = loja_slug or "tecnologia"
+
+    try:
+        r_loja = requests.get(
+            f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]={slug}&fields=id,slug,dominio_proprio",
+            headers=headers_req, timeout=7
+        )
+        if r_loja.status_code != 200 or not r_loja.json()['data']:
+            return Response("Loja não encontrada", status=404)
+        loja_data = r_loja.json()['data'][0]
+        loja_id = loja_data['id']
+    except Exception as e:
+        return Response(f"Erro: {e}", status=500)
+
+    dominio_proprio = loja_data.get('dominio_proprio', '')
+    if dominio_proprio:
+        url_base = f"https://{dominio_proprio}"
+        prefixo = ""
+    elif slug == "tecnologia":
+        url_base = BASE
+        prefixo = ""
+    else:
+        url_base = BASE
+        prefixo = f"/{slug}"
+
+    urls = []
+
+    urls.append({
+        "loc": f"{url_base}{prefixo}/",
+        "lastmod": hoje,
+        "priority": "1.0",
+        "changefreq": "weekly"
+    })
+
+    try:
+        r_prod = requests.get(
+            f"{DIRECTUS_URL}/items/produtos?filter[loja_id][_eq]={loja_id}&filter[status][_eq]=published&fields=slug,date_updated,date_created&limit=200",
+            headers=headers_req, timeout=10
+        )
+        if r_prod.status_code == 200:
+            for p in r_prod.json()['data']:
+                slug_prod = p.get('slug')
+                if not slug_prod:
+                    continue
+                lastmod = (p.get('date_updated') or p.get('date_created') or hoje)[:10]
+                urls.append({
+                    "loc": f"{url_base}{prefixo}/tecnologia/produto/{slug_prod}",
+                    "lastmod": lastmod,
+                    "priority": "0.8",
+                    "changefreq": "monthly"
+                })
+    except Exception as e:
+        print(f"Sitemap erro produtos: {e}")
+
+    try:
+        r_posts = requests.get(
+            f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={loja_id}&filter[status][_eq]=published&fields=slug,date_updated,date_created&limit=200",
+            headers=headers_req, timeout=10
+        )
+        if r_posts.status_code == 200:
+            for post in r_posts.json()['data']:
+                slug_post = post.get('slug')
+                if not slug_post:
+                    continue
+                lastmod = (post.get('date_updated') or post.get('date_created') or hoje)[:10]
+                urls.append({
+                    "loc": f"{url_base}{prefixo}/blog/{slug_post}",
+                    "lastmod": lastmod,
+                    "priority": "0.6",
+                    "changefreq": "monthly"
+                })
+    except Exception as e:
+        print(f"Sitemap erro posts: {e}")
+
+    xml_parts = ['<?xml version="1.0" encoding="UTF-8"?>']
+    xml_parts.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+    for u in urls:
+        xml_parts.append(f"""  <url>
+    <loc>{u['loc']}</loc>
+    <lastmod>{u['lastmod']}</lastmod>
+    <changefreq>{u['changefreq']}</changefreq>
+    <priority>{u['priority']}</priority>
+  </url>""")
+    xml_parts.append('</urlset>')
+
+    return Response('\n'.join(xml_parts), mimetype='application/xml')
+
+
+# ───────────────────────────────────────────────────────────────
+# ROTA ROBOTS.TXT
+# ───────────────────────────────────────────────────────────────
+@app.route('/robots.txt')
+def robots():
+    content = """User-agent: *
+Allow: /
+
+Sitemap: https://www.leanttro.com/sitemap.xml
+"""
+    return Response(content, mimetype='text/plain')
 
 # ROTA DE CADASTRO CRIAR NOVA LOJA
 @app.route('/cadastro', methods=['GET', 'POST'])
