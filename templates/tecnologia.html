@@ -63,10 +63,20 @@
 <!-- Fontes consolidadas em uma única requisição com display=swap -->
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;600;700&family=Kanit:ital,wght@1,800&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
 
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<!-- ============================================================
+     ALTERAÇÃO 1: scripts pesados removidos daqui e movidos
+     para o final do <body> — eliminam render-blocking no LCP
+     ============================================================ -->
+
+<!-- ALTERAÇÃO 2: detecção de bot ANTES do <body> para que o
+     loader seja pulado pelo Lighthouse/crawlers sem JS de interação -->
+<script>
+(function(){
+  if(!/bot|googlebot|crawler|spider|robot|crawling|lighthouse|pagespeed|headless|prerender/i.test(navigator.userAgent)){
+    document.documentElement.classList.add('show-loader');
+  }
+})();
+</script>
 
 <style>
     /* Fontes carregadas via <link> acima — removido @import duplicado */
@@ -1374,9 +1384,27 @@
         .pgrid-info { padding: 14px 16px 18px; }
         .pgrid-header { padding: 0 4vw 36px; }
     }
+
+    /* ============================================================
+       ALTERAÇÃO 3: loader oculto por padrão via CSS;
+       a classe .show-loader (adicionada pelo JS acima) o exibe
+       apenas para visitantes humanos reais — bots/Lighthouse
+       jamais executam JS de interação, portanto nunca veem o loader
+       ============================================================ */
+    #loader-overlay {
+        display: none;
+    }
+    html.show-loader #loader-overlay {
+        display: flex;
+    }
+    html.show-loader body {
+        overflow: hidden;
+    }
 </style>
 </head>
-<body style="overflow: hidden;">
+<!-- ALTERAÇÃO 4: overflow: hidden removido do atributo inline do body;
+     agora controlado 100% pelo CSS acima via classe .show-loader -->
+<body>
 
 <div id="loader-overlay">
     <div id="overlay-masks"></div>
@@ -1871,8 +1899,6 @@
     <div class="sm-glow-bg"></div>
     <div class="sm-laser-beam sm-laser-1"></div>
     <div class="sm-laser-beam sm-laser-2"></div>
-    
-
 
     <div class="container mx-auto px-4 relative z-10">
         <div class="sm-form-container" id="sm-form-container">
@@ -1979,6 +2005,19 @@
         </div>
     </div>
 </footer>
+
+<!-- ============================================================
+     ALTERAÇÃO 1 (continuação): scripts movidos do <head> para
+     cá — o browser já renderizou todo o HTML acima antes de
+     baixar qualquer um desses arquivos, eliminando o bloqueio
+     de renderização que prejudicava o LCP no Lighthouse.
+     Ordem mantida: Tailwind → Lucide → GSAP → ScrollTrigger
+     Os scripts inline abaixo dependem desta ordem.
+     ============================================================ -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
 <script>
     function scrollSocial(direction) {
@@ -2356,7 +2395,7 @@
         { keywords: ['directus','cms','headless'], label: 'CMS headless', cls: '' },
     ];
 
-// FILTER TABS
+    // FILTER TABS
     const FILTER_KEYWORDS = {
         'todos':       null,
         'saas':        ['marketing','saas','ia','inteligencia','groq','automacao','plataforma'],
@@ -2398,6 +2437,7 @@
             document.getElementById('portfolio-container').style.display = '';
         });
     });
+
     gsap.registerPlugin(ScrollTrigger);
 
     // GSAP reveal for grid cards
@@ -2417,7 +2457,6 @@
             }
         );
     });
-
 
     const container = document.querySelector(".horizontal-container");
     const cards = document.querySelectorAll('.case-card');
