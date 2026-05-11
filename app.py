@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, g, flash, Response
 import requests
+from concurrent.futures import ThreadPoolExecutor
 import os
 import json
 import uuid
@@ -210,7 +211,7 @@ def identificar_loja():
         if host not in ['leanttro.com', 'www.leanttro.com', 'catalogo.leanttro.com', 'localhost', '127.0.0.1']:
             try:
                 host_clean = host.replace('www.', '')
-                url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=*.*"
+                url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
                 resp = requests.get(url, headers=headers, timeout=7)
                 if resp.status_code == 200 and len(resp.json()['data']) > 0:
                     loja_encontrada = resp.json()['data'][0]
@@ -224,7 +225,7 @@ def identificar_loja():
         if not loja_encontrada and primeiro_segmento and primeiro_segmento not in BLACKLIST_ROTAS:
             g.slug_atual = primeiro_segmento
             try:
-                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]={g.slug_atual}&fields=*.*"
+                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]={g.slug_atual}&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
                 resp = requests.get(url, headers=headers, timeout=7)
                 if resp.status_code == 200 and len(resp.json()['data']) > 0:
                     loja_encontrada = resp.json()['data'][0]
@@ -235,7 +236,7 @@ def identificar_loja():
         if not loja_encontrada and host in ['leanttro.com', 'www.leanttro.com', 'localhost', '127.0.0.1'] and primeiro_segmento not in BLACKLIST_ROTAS:
             g.slug_atual = "tecnologia"
             try:
-                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=tecnologia&fields=*.*"
+                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=tecnologia&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
                 resp = requests.get(url, headers=headers, timeout=7)
                 if resp.status_code == 200 and len(resp.json()['data']) > 0:
                     loja_encontrada = resp.json()['data'][0]
@@ -411,34 +412,63 @@ def index(loja_slug):
         return "Loja não encontrada", 404
 
     headers = get_headers()
-    
-    # 1 Busca Categorias
-    categorias = []
-    try:
-        url_cat = f"{DIRECTUS_URL}/items/categorias?filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published&sort=sort"
-        r_cat = requests.get(url_cat, headers=headers, timeout=7)
-        if r_cat.status_code == 200: categorias = r_cat.json()['data']
-    except: pass
 
-    # 2 Busca Produtos
+    # 2 Parâmetros de busca/filtro (precisam ser lidos antes do cache)
     cat_filter = request.args.get('categoria')
-    busca_query = request.args.get('busca') 
-    
-    filter_str = f"filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published"
-        
-    if busca_query:
-        filter_str += f"filter[nome][_icontains]={busca_query}"
+    busca_query = request.args.get('busca')
 
-    produtos = []
-    novidades = []
+    # CACHE: chave por loja e busca apenas — cat_filter é aplicado depois, fora do cache
+    cache_key = f"index_data_{g.loja_id}_{busca_query or ''}"
+    cached = cache.get(cache_key)
+    if cached:
+        categorias = cached["categorias"]
+        produtos = cached["produtos"]
+        novidades = cached["novidades"]
+        posts = cached["posts"]
+        agenda = cached["agenda"]
+        # aplica filtro de categoria mesmo no cache
+        if cat_filter:
+            produtos = [p for p in produtos if str(p.get('categoria_id')) == str(cat_filter) or not p.get('categoria_id')]
+            novidades = [p for p in novidades if str(p.get('categoria_id')) == str(cat_filter) or not p.get('categoria_id')]
+    else:
+        # PARALELISMO: busca os 4 recursos ao mesmo tempo
+        def fetch_categorias():
+            url = f"{DIRECTUS_URL}/items/categorias?filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published&sort=sort"
+            r = requests.get(url, headers=headers, timeout=7)
+            return r.json()['data'] if r.status_code == 200 else []
 
-    try:
-        url_prod = f"{DIRECTUS_URL}/items/produtos?{filter_str}&fields=*.*"
-        r_prod = requests.get(url_prod, headers=headers, timeout=7)
-        
-        if r_prod.status_code == 200:
-            raw_prods = r_prod.json()['data']
-            
+        def fetch_produtos():
+            url = f"{DIRECTUS_URL}/items/produtos?filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published"
+            if busca_query:
+                url += f"&filter[nome][_icontains]={busca_query}"
+            url += "&fields=id,nome,slug,preco,estoque,imagem_destaque,imagem1,imagem2,imagem_secundaria,imagem3,imagem4,imagem5,categoria_id,variantes,origem,status_urgencia,classe_frete,consulte,a_partir_de,layout_case,link_projeto,whatsapp_projeto,descricao,sort"
+            r = requests.get(url, headers=headers, timeout=7)
+            return r.json()['data'] if r.status_code == 200 else []
+
+        def fetch_posts():
+            url = f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published&limit=6&sort=-date_created"
+            r = requests.get(url, headers=headers, timeout=7)
+            return r.json()['data'] if r.status_code == 200 else []
+
+        def fetch_agenda():
+            url = f"{DIRECTUS_URL}/items/agenda?filter[loja_id][_eq]={g.loja_id}&sort=data_hora"
+            r = requests.get(url, headers=headers, timeout=7)
+            return r.json()['data'] if r.status_code == 200 else []
+
+        with ThreadPoolExecutor(max_workers=4) as ex:
+            f_cat   = ex.submit(fetch_categorias)
+            f_prod  = ex.submit(fetch_produtos)
+            f_posts = ex.submit(fetch_posts)
+            f_ag    = ex.submit(fetch_agenda)
+            categorias = f_cat.result()
+            raw_prods  = f_prod.result()
+            posts_raw  = f_posts.result()
+            agenda_raw = f_ag.result()
+
+        produtos = []
+        novidades = []
+
+        try:
             # Filtra categoria no Python para garantir que produtos sem categoria apareçam sempre
             if cat_filter:
                 filtered_prods = []
@@ -448,25 +478,25 @@ def index(loja_slug):
                     if str(cv) == str(cat_filter) or not p.get('categoria_id'):
                         filtered_prods.append(p)
                 raw_prods = filtered_prods
-                
+
             # Ordena pela posição e previne erros se o campo sort não existir no banco
             def get_sort_val(p):
                 try:
                     return int(p.get('sort')) if p.get('sort') is not None else 999999
                 except:
                     return 999999
-                    
+
             raw_prods.sort(key=get_sort_val)
 
             for p in raw_prods:
                 img = get_img_url(p.get('imagem_destaque') or p.get('imagem1'))
-                
+
                 # Repassamos as variantes cruas, sem processar fotos
                 variantes = p.get('variantes') or []
 
                 try: preco_float = float(p.get('preco', 0))
                 except: preco_float = 0.0
-                
+
                 try: estoque_val = int(p.get('estoque')) if p.get('estoque') is not None else 0
                 except: estoque_val = 0
 
@@ -476,7 +506,7 @@ def index(loja_slug):
                 prod_obj = {
                     "id": p['id'], "nome": p['nome'], "slug": p['slug'],
                     "preco": preco_float,
-                    "imagem": img, 
+                    "imagem": img,
                     "imagem1": get_img_url(p.get('imagem1')),
                     "imagem2": get_img_url(p.get('imagem2')),
                     "imagem_secundaria": get_img_url(p.get('imagem_secundaria')),
@@ -494,35 +524,29 @@ def index(loja_slug):
                     "descricao": p.get('descricao')
                 }
                 produtos.append(prod_obj)
-                
+
                 if p.get('status_urgencia') in ['Alta Procura', 'Lancamento']:
                     novidades.append(prod_obj)
 
-    except Exception as e:
-        print(f"Erro produtos: {e}")
+        except Exception as e:
+            print(f"Erro produtos: {e}")
 
-    # 3 Busca Posts
-    posts = []
-    try:
-        url_blog = f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&filter[status][_eq]=published&limit=100&sort=-date_created"
-        r_blog = requests.get(url_blog, headers=headers, timeout=7)
-        if r_blog.status_code == 200:
-            for post in r_blog.json()['data']:
+        # Processa posts
+        posts = []
+        try:
+            for post in posts_raw:
                 posts.append({
                     "titulo": post['titulo'], "slug": post['slug'],
                     "resumo": post.get('resumo', ''),
                     "capa": get_img_url(post.get('capa')),
                     "data": datetime.fromisoformat(post['date_created'].split('T')[0]).strftime('%d/%m/%Y')
                 })
-    except: pass
+        except: pass
 
-    # 4 Busca Agenda
-    agenda = []
-    try:
-        url_agenda = f"{DIRECTUS_URL}/items/agenda?filter[loja_id][_eq]={g.loja_id}&sort=data_hora"
-        r_agenda = requests.get(url_agenda, headers=headers, timeout=7)
-        if r_agenda.status_code == 200:
-            for item in r_agenda.json()['data']:
+        # Processa agenda
+        agenda = []
+        try:
+            for item in agenda_raw:
                 try:
                     if item.get('data_hora'):
                         dt = datetime.fromisoformat(item['data_hora'].replace('Z', '').replace(' ', 'T'))
@@ -532,7 +556,16 @@ def index(loja_slug):
                 except:
                     item['data_hora_formatada'] = item.get('data_hora')
                 agenda.append(item)
-    except: pass
+        except: pass
+
+        # Salva no cache por 2 minutos
+        cache.set(cache_key, {
+            "categorias": categorias,
+            "produtos": produtos,
+            "novidades": novidades,
+            "posts": posts,
+            "agenda": agenda
+        }, timeout=120)
 
     # Recupera o objeto da categoria selecionada (para passar o nome e dados dela pro HTML)
     cat_obj = None
