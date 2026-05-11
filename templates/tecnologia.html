@@ -1610,15 +1610,15 @@
 
     {% if secao == 'sobre' and not loja.ocultar_sobre %}
     <section class="w-full relative bg-[#050505] overflow-hidden" id="sobre">
-        <div class="h-screen w-full relative" id="sobre-container">
-            <div class="absolute inset-0 w-full h-full transform scale-125 origin-center" id="sobre-bg-img">
-                <img src="{{ loja.sobre_imagem_url or 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000' }}" class="w-full h-full object-cover filter brightness-50">
+        <div class="h-screen w-full relative">
+            <div class="absolute inset-0 w-full h-full">
+                <img src="{{ loja.sobre_imagem_url or 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000' }}" class="w-full h-full object-cover filter brightness-50" loading="lazy" decoding="async">
             </div>
             <div class="absolute inset-0 bg-black/60"></div>
             <div class="absolute inset-0 flex items-center justify-center p-8 z-10">
-                <div class="max-w-5xl text-center opacity-0 translate-y-20" id="sobre-content">
+                <div class="max-w-5xl text-center">
                     <h2 class="text-3xl md:text-5xl font-display text-white mb-8 uppercase tracking-tighter">{{ loja.sobre_titulo or 'Sobre Nós' }}</h2>
-                    <p class="text-lg md:text-xl text-gray-300 leading-relaxed font-light" id="sobre-desc-text">
+                    <p class="text-lg md:text-xl text-gray-300 leading-relaxed font-light">
                         {{ loja.sobre_texto or 'Adicione a história através do painel na aba Sobre a Empresa' }}
                     </p>
                 </div>
@@ -2665,57 +2665,6 @@ function initApp() {
             const rect = heroSec.getBoundingClientRect();
             createTrail(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
         }, {passive: true});
-    }
-
-    if (document.getElementById('sobre')) {
-        let sobreTl = gsap.timeline({
-            scrollTrigger: {
-                trigger: "#sobre",
-                start: "top top",
-                end: "+=100%",
-                pin: true,
-                scrub: 1
-            }
-        });
-        
-        sobreTl.to("#sobre-bg-img", { 
-            scale: 1, 
-            duration: 1 
-        }).to("#sobre-content", { 
-            opacity: 1, 
-            y: 0, 
-            duration: 1 
-        }, "-=0.5");
-
-        const sobreDescText = document.getElementById("sobre-desc-text");
-        if (sobreDescText) {
-            const originalText = sobreDescText.innerText.trim();
-            sobreDescText.innerText = "";
-            let isTyping = false;
-
-            ScrollTrigger.create({
-                trigger: "#sobre",
-                start: "top top",
-                onUpdate: (self) => {
-                    if (self.progress > 0.4 && !isTyping) {
-                        isTyping = true;
-                        let i = 0;
-                        sobreDescText.innerHTML = "";
-                        sobreDescText.classList.add("typing-cursor");
-                        function type() {
-                            if (i < originalText.length) {
-                                sobreDescText.innerHTML = originalText.substring(0, i + 1);
-                                i++;
-                                setTimeout(type, 20);
-                            } else {
-                                setTimeout(() => sobreDescText.classList.remove("typing-cursor"), 3000);
-                            }
-                        }
-                        type();
-                    }
-                }
-            });
-        }
     }
 
     // Efeito SplitText reverso baseado no vídeo
