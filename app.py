@@ -446,7 +446,7 @@ def index(loja_slug):
             url = f"{_directus_url}/items/produtos?filter[loja_id][_eq]={_loja_id}&filter[status][_eq]=published"
             if _busca_query:
                 url += f"&filter[nome][_icontains]={_busca_query}"
-            url += "&fields=id,nome,slug,preco,estoque,imagem_destaque,imagem1,imagem2,imagem_secundaria,imagem3,imagem4,imagem5,categoria_id,variantes,origem,status_urgencia,classe_frete,consulte,a_partir_de,layout_case,link_projeto,whatsapp_projeto,descricao,sort"
+            url += "&fields=*.*"
             r = requests.get(url, headers=_headers, timeout=7)
             return r.json()['data'] if r.status_code == 200 else []
 
