@@ -2044,7 +2044,14 @@
      Ordem mantida: Tailwind → Lucide → GSAP → ScrollTrigger
      Os scripts inline abaixo dependem desta ordem.
      ============================================================ -->
-<link rel="stylesheet" href="/static/css/tailwind.min.css">
+<script>
+/* Tailwind carregado de forma não-bloqueante */
+(function(){
+  var s = document.createElement('script');
+  s.src = 'https://cdn.tailwindcss.com';
+  document.head.appendChild(s);
+})();
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
