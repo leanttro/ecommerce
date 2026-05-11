@@ -56,6 +56,13 @@
 <meta name="twitter:image" content="{{ loja.banner1 or loja.logo or '' }}">
 <meta name="twitter:image:alt" content="{{ loja.nome }} — Automação com IA">
 
+<!-- LCP: Preload da imagem principal para acelerar o Largest Contentful Paint -->
+{% if loja.banner1 %}
+<link rel="preload" as="image" href="{{ loja.banner1 }}" fetchpriority="high">
+{% elif loja.logo %}
+<link rel="preload" as="image" href="{{ loja.logo }}" fetchpriority="high">
+{% endif %}
+
 <!-- Performance: Preconnect para fontes externas -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -395,6 +402,9 @@
         z-index: 999999;
         font-family: 'Kanit', sans-serif;
         perspective: 1200px;
+        contain: strict;
+        will-change: opacity;
+        transform: translateZ(0);
     }
 
     #overlay-masks {
@@ -403,6 +413,7 @@
         background: #050505; 
         z-index: -2;
         pointer-events: none;
+        contain: strict;
         
         -webkit-mask-image: 
             radial-gradient(circle 350px at var(--x, 50vw) var(--y, 50vh), transparent 0%, rgba(0,0,0,1) 50%),
@@ -1445,7 +1456,7 @@
     </div>
     <div id="scroll-prompt">
         <span>Role para entrar</span>
-        <i data-lucide="chevron-down" class="w-6 h-6 animate-bounce"></i>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-bounce"><path d="m6 9 6 6 6-6"/></svg>
     </div>
 </div>
 
@@ -1467,7 +1478,7 @@
                 {% if not loja.ocultar_produtos %}
                 <div class="relative group py-2">
                     <a href="#portfolio" class="opacity-70 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 cursor-pointer">
-                        {{ loja.titulo_produtos or 'Nossos Cases' }} <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                        {{ loja.titulo_produtos or 'Nossos Cases' }} <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                     </a>
                     <div class="absolute left-0 top-full mt-2 w-56 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-[999] flex flex-col shadow-2xl overflow-hidden" style="background-color: var(--bg-color); border: 1px solid rgba(0,0,0,0.1);">
                         <a href="/{{ loja.slug_url }}/#portfolio" class="px-5 py-3 transition hover:opacity-70 font-bold" style="color: var(--text-color); border-bottom: 1px solid rgba(0,0,0,0.05);">Todos os Segmentos</a>
@@ -1483,7 +1494,7 @@
 
             <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" rel="noopener noreferrer" class="flex items-center">
                 <div class="md:hidden p-3 rounded-full border border-black/10 hover:bg-black/5 transition">
-                    <i data-lucide="message-circle" class="w-5 h-5 text-[var(--text-color)]"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--text-color)]"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
                 </div>
                 <span class="hidden md:block bg-[var(--text-color)] text-[var(--bg-color)] px-6 py-3 rounded-full text-[12px] font-bold uppercase tracking-widest hover:scale-105 transition shadow-lg">
                     Fale Conosco
@@ -1498,7 +1509,7 @@
                 {% if not loja.ocultar_produtos %}
                 <div class="relative group flex flex-col items-center">
                     <button class="opacity-80 hover:opacity-100 transition text-[var(--text-color)] flex items-center gap-1 uppercase tracking-widest" onclick="document.getElementById('mobile-cat-menu').classList.toggle('hidden')">
-                        {{ loja.titulo_produtos or 'Nossos Cases' }} <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                        {{ loja.titulo_produtos or 'Nossos Cases' }} <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                     </button>
                 </div>
                 {% endif %}
@@ -1697,7 +1708,7 @@
                     {% if p.descricao_curta %}
                     <p class="pgrid-desc">{{ p.descricao_curta }}</p>
                     {% endif %}
-                    <span class="pgrid-cta">Ver projeto <i data-lucide="arrow-up-right" class="w-4 h-4"></i></span>
+                    <span class="pgrid-cta">Ver projeto <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></span>
                 </div>
             </a>
             {% else %}
@@ -1721,12 +1732,12 @@
                     <button id="blog-btn-carrossel" onclick="setBlogView('carrossel')" title="Carrossel"
                         class="blog-view-btn active-view flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest border transition-all duration-300"
                         style="border-color: var(--primary); color: var(--primary); background: transparent;">
-                        <i data-lucide="layout-list" class="w-4 h-4"></i> Carrossel
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/><path d="M14 4h7"/><path d="M14 9h7"/><path d="M14 15h7"/><path d="M14 20h7"/></svg> Carrossel
                     </button>
                     <button id="blog-btn-grade" onclick="setBlogView('grade')" title="Grade"
                         class="blog-view-btn flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest border transition-all duration-300"
                         style="border-color: rgba(0,0,0,0.15); color: var(--text-color); background: transparent;">
-                        <i data-lucide="layout-grid" class="w-4 h-4"></i> Grade
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/></svg> Grade
                     </button>
                 </div>
                 {% endif %}
@@ -1754,7 +1765,7 @@
                             <p class="text-sm leading-relaxed opacity-50 line-clamp-2" style="color:var(--text-color);">{{ post.resumo }}</p>
                             {% endif %}
                             <span class="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest transition-all duration-300 group-hover:gap-3" style="color:var(--primary);">
-                                Ler artigo <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                                Ler artigo <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
                             </span>
                         </div>
                     </a>
@@ -1781,7 +1792,7 @@
                             <p class="text-sm leading-relaxed opacity-50 line-clamp-2" style="color:var(--text-color);">{{ post.resumo }}</p>
                             {% endif %}
                             <span class="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest transition-all duration-300 group-hover:gap-3" style="color:var(--primary);">
-                                Ler artigo <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                                Ler artigo <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
                             </span>
                         </div>
                     </a>
@@ -1891,7 +1902,7 @@
 
         <div class="relative" style="padding: 0 20px;">
             <button onclick="scrollSocial(-1)" style="position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:10;width:44px;height:44px;border-radius:50%;background:var(--primary);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(124,58,237,0.4);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-50%) scale(1.1)'" onmouseout="this.style.transform='translateY(-50%)'">
-                <i data-lucide="chevron-left" style="width:22px;height:22px;color:#fff;"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px;color:#fff;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
             </button>
 
             <div id="social-container" style="display:flex;gap:20px;overflow-x:auto;scroll-behavior:smooth;padding-bottom:16px;scrollbar-width:thin;scrollbar-color:var(--primary) rgba(255,255,255,0.05);">
@@ -1905,7 +1916,7 @@
             </div>
 
             <button onclick="scrollSocial(1)" style="position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:10;width:44px;height:44px;border-radius:50%;background:var(--primary);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(124,58,237,0.4);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-50%) scale(1.1)'" onmouseout="this.style.transform='translateY(-50%)'">
-                <i data-lucide="chevron-right" style="width:22px;height:22px;color:#fff;"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px;color:#fff;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
             </button>
         </div>
     </div>
@@ -1938,7 +1949,7 @@
                 </form>
                 
                 <div id="leadSuccessMsg" class="hidden mt-6 bg-green-500/20 border border-green-500/50 text-green-400 p-4 rounded-xl text-center font-bold tracking-widest uppercase text-sm items-center justify-center gap-2" style="transform: translateZ(30px);">
-                    <i data-lucide="check-circle" class="w-6 h-6"></i> Recebemos seus dados! Em breve nossa equipe entra em contato.
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> Recebemos seus dados! Em breve nossa equipe entra em contato.
                 </div>
             </div>
         </div>
@@ -1963,7 +1974,7 @@
             
             {% if loja.instagram_url %}
             <a href="{{ loja.instagram_url if loja.instagram_url.startswith('http') else 'https://instagram.com/' + loja.instagram_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-xl hover:opacity-70 transition">
-                <i data-lucide="instagram" class="w-6 h-6"></i> Instagram
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg> Instagram
             </a>
             {% endif %}
         </div>
@@ -1975,7 +1986,7 @@
                 <img src="{{ loja.logo }}" class="w-20 h-20 md:w-24 md:h-24 object-contain filter brightness-0 absolute z-20 hover:scale-110 transition-transform duration-500">
                 {% else %}
                 <div class="w-20 h-20 md:w-24 md:h-24 bg-black text-white rounded-full flex items-center justify-center absolute z-20 hover:scale-110 transition-transform duration-500">
-                    <i data-lucide="zap" class="w-10 h-10"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
                 </div>
                 {% endif %}
                 
@@ -2019,7 +2030,7 @@
         
         <div class="mt-8 pt-8 border-t border-white/10">
             <a href="/{{ loja.slug_url }}/admin" class="text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 opacity-20 hover:opacity-100 transition">
-                <i data-lucide="lock" class="w-3 h-3"></i> Acesso Lojista
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Acesso Lojista
             </a>
         </div>
     </div>
@@ -2033,15 +2044,8 @@
      Ordem mantida: Tailwind → Lucide → GSAP → ScrollTrigger
      Os scripts inline abaixo dependem desta ordem.
      ============================================================ -->
-<script>
-/* Tailwind carregado de forma não-bloqueante */
-(function(){
-  var s = document.createElement('script');
-  s.src = 'https://cdn.tailwindcss.com';
-  document.head.appendChild(s);
-})();
-</script>
-<script src="https://unpkg.com/lucide@latest" defer></script>
+<link rel="stylesheet" href="/static/css/tailwind.min.css">
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
 
@@ -2056,7 +2060,7 @@
 <script>
 /* Aguarda GSAP e Lucide carregarem (defer) antes de inicializar */
 function initApp() {
-    if (typeof gsap === 'undefined' || typeof lucide === 'undefined') {
+    if (typeof gsap === 'undefined') {
         return setTimeout(initApp, 50);
     }
     const loaderOverlay = document.getElementById('loader-overlay');
@@ -2174,7 +2178,9 @@ function initApp() {
                 const dataCanvas = document.getElementById('data-canvas');
                 
                 if (dataCanvas && heroWrapper) {
-                    if(typeof startDataWarp === 'function') startDataWarp();
+                    if(typeof startDataWarp === 'function') {
+                        requestIdleCallback(() => startDataWarp(), { timeout: 2000 });
+                    }
                     
                     setTimeout(() => {
                         gsap.to(dataCanvas, { opacity: 0, duration: 1.5 });
@@ -2408,8 +2414,6 @@ function initApp() {
             });
         }
     });
-
-    lucide.createIcons();
 
     // BADGE GENERATION
     const BADGE_MAP = [
