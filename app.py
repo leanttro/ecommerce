@@ -211,7 +211,7 @@ def identificar_loja():
         if host not in ['leanttro.com', 'www.leanttro.com', 'catalogo.leanttro.com', 'localhost', '127.0.0.1']:
             try:
                 host_clean = host.replace('www.', '')
-                url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
+                url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,ocultar_agenda,ocultar_formulario,ocultar_banners_menores,titulo_produtos,titulo_blog,titulo_novidades,titulo_agenda,titulo_formulario,titulo_categorias,titulo_menu_sobre,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio,clean_cards_mode,hide_card_title,hide_explore_button,disable_card_shadow,linkbannerprincipal1,linkbannerprincipal2,linkbannermenor1,linkbannermenor2,banner1_titulo,banner1_subtitulo,banner1_botao,banner2_titulo,banner2_subtitulo,banner2_botao,frase1,frase2,frase3,sobre_titulo,sobre_slogan"
                 resp = requests.get(url, headers=headers, timeout=7)
                 if resp.status_code == 200 and len(resp.json()['data']) > 0:
                     loja_encontrada = resp.json()['data'][0]
@@ -225,7 +225,7 @@ def identificar_loja():
         if not loja_encontrada and primeiro_segmento and primeiro_segmento not in BLACKLIST_ROTAS:
             g.slug_atual = primeiro_segmento
             try:
-                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]={g.slug_atual}&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
+                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]={g.slug_atual}&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,ocultar_agenda,ocultar_formulario,ocultar_banners_menores,titulo_produtos,titulo_blog,titulo_novidades,titulo_agenda,titulo_formulario,titulo_categorias,titulo_menu_sobre,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio,clean_cards_mode,hide_card_title,hide_explore_button,disable_card_shadow,linkbannerprincipal1,linkbannerprincipal2,linkbannermenor1,linkbannermenor2,banner1_titulo,banner1_subtitulo,banner1_botao,banner2_titulo,banner2_subtitulo,banner2_botao,frase1,frase2,frase3,sobre_titulo,sobre_slogan"
                 resp = requests.get(url, headers=headers, timeout=7)
                 if resp.status_code == 200 and len(resp.json()['data']) > 0:
                     loja_encontrada = resp.json()['data'][0]
@@ -236,7 +236,7 @@ def identificar_loja():
         if not loja_encontrada and host in ['leanttro.com', 'www.leanttro.com', 'localhost', '127.0.0.1'] and primeiro_segmento not in BLACKLIST_ROTAS:
             g.slug_atual = "tecnologia"
             try:
-                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=tecnologia&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
+                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=tecnologia&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,ocultar_agenda,ocultar_formulario,ocultar_banners_menores,titulo_produtos,titulo_blog,titulo_novidades,titulo_agenda,titulo_formulario,titulo_categorias,titulo_menu_sobre,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio,clean_cards_mode,hide_card_title,hide_explore_button,disable_card_shadow,linkbannerprincipal1,linkbannerprincipal2,linkbannermenor1,linkbannermenor2,banner1_titulo,banner1_subtitulo,banner1_botao,banner2_titulo,banner2_subtitulo,banner2_botao,frase1,frase2,frase3,sobre_titulo,sobre_slogan"
                 resp = requests.get(url, headers=headers, timeout=7)
                 if resp.status_code == 200 and len(resp.json()['data']) > 0:
                     loja_encontrada = resp.json()['data'][0]
@@ -841,8 +841,7 @@ def admin_painel(loja_slug):
             "frase2": request.form.get('frase2'),
             "frase3": request.form.get('frase3'),
             "layout_order": request.form.get('layout_order'),
-			"layout_portfolio": request.form.get('layout_portfolio'),
-	    	"layout_portfolio": request.form.get('layout_portfolio'),
+            "layout_portfolio": request.form.get('layout_portfolio'),
             "titulo_produtos": sanitize_input(request.form.get('titulo_produtos')),
             "ocultar_produtos": True if request.form.get('ocultar_produtos') else False,
             "titulo_categorias": sanitize_input(request.form.get('titulo_categorias')),
@@ -881,8 +880,11 @@ def admin_painel(loja_slug):
         payload.update(files_map)
 
         try:
-            requests.patch(f"{DIRECTUS_URL}/items/lojas/{g.loja_id}", headers=headers, json=payload, timeout=7)
-            flash('Loja atualizada com sucesso!', 'success')
+            r_patch = requests.patch(f"{DIRECTUS_URL}/items/lojas/{g.loja_id}", headers=headers, json=payload, timeout=7)
+            if r_patch.status_code in [200, 201, 204]:
+                flash('Loja atualizada com sucesso!', 'success')
+            else:
+                flash(f'Erro ao salvar no Directus: {r_patch.status_code} - {r_patch.text}', 'error')
             cache.clear()
         except Exception as e:
             flash(f'Erro ao salvar: {e}', 'error')
