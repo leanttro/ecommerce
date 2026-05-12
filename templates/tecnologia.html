@@ -76,11 +76,21 @@ body.ready { visibility: visible; }
 <!-- Tailwind nao-bloqueante -->
 <script>
 (function(){
-  // Fallback: mostra body em 800ms mesmo se Tailwind travar
-  var fallback = setTimeout(function(){ document.body.classList.add("ready"); }, 800);
+  // FIX: document.body pode ser null se o Tailwind carregar do cache
+  // antes do <body> ser parseado. Aguarda DOMContentLoaded nesse caso.
+  function makeReady() {
+    if (document.body) {
+      document.body.classList.add("ready");
+    } else {
+      document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.add("ready");
+      });
+    }
+  }
+  var fallback = setTimeout(makeReady, 800);
   var s = document.createElement("script");
   s.src = "https://cdn.tailwindcss.com";
-  s.onload = function(){ clearTimeout(fallback); document.body.classList.add("ready"); };
+  s.onload = function(){ clearTimeout(fallback); makeReady(); };
   document.head.appendChild(s);
 })();
 </script>
