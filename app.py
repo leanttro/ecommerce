@@ -189,15 +189,6 @@ def identificar_loja():
     if request.path.startswith('/static'):
         return
 
-    # Ignora subdomínio catalogo — ele só serve a landing page, não tem loja
-    host_check = request.host.split(':')[0]
-    if 'catalogo.leanttro.com' in host_check:
-        g.loja = None
-        g.loja_id = None
-        g.slug_atual = None
-        g.layout_list = []
-        return
-
     # Reinicia variáveis globais
     g.loja = None
     g.loja_id = None
@@ -220,7 +211,7 @@ def identificar_loja():
         if host not in ['leanttro.com', 'www.leanttro.com', 'catalogo.leanttro.com', 'localhost', '127.0.0.1']:
             try:
                 host_clean = host.replace('www.', '')
-                url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_categorias,titulo_novidades,titulo_blog,titulo_formulario,titulo_agenda,titulo_menu_sobre,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio,linkbannerprincipal1,linkbannerprincipal2,linkbannermenor1,linkbannermenor2,banner1_titulo,banner1_subtitulo,banner1_botao,banner2_titulo,banner2_subtitulo,banner2_botao,frase1,frase2,frase3,clean_cards_mode,hide_card_title,hide_explore_button,disable_card_shadow,ocultar_banners_menores,ocultar_formulario,ocultar_agenda,sobre_titulo"
+                url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
                 resp = requests.get(url, headers=headers, timeout=7)
                 if resp.status_code == 200 and len(resp.json()['data']) > 0:
                     loja_encontrada = resp.json()['data'][0]
@@ -234,7 +225,7 @@ def identificar_loja():
         if not loja_encontrada and primeiro_segmento and primeiro_segmento not in BLACKLIST_ROTAS:
             g.slug_atual = primeiro_segmento
             try:
-                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]={g.slug_atual}&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_categorias,titulo_novidades,titulo_blog,titulo_formulario,titulo_agenda,titulo_menu_sobre,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio,linkbannerprincipal1,linkbannerprincipal2,linkbannermenor1,linkbannermenor2,banner1_titulo,banner1_subtitulo,banner1_botao,banner2_titulo,banner2_subtitulo,banner2_botao,frase1,frase2,frase3,clean_cards_mode,hide_card_title,hide_explore_button,disable_card_shadow,ocultar_banners_menores,ocultar_formulario,ocultar_agenda,sobre_titulo"
+                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]={g.slug_atual}&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
                 resp = requests.get(url, headers=headers, timeout=7)
                 if resp.status_code == 200 and len(resp.json()['data']) > 0:
                     loja_encontrada = resp.json()['data'][0]
@@ -245,7 +236,7 @@ def identificar_loja():
         if not loja_encontrada and host in ['leanttro.com', 'www.leanttro.com', 'localhost', '127.0.0.1'] and primeiro_segmento not in BLACKLIST_ROTAS:
             g.slug_atual = "tecnologia"
             try:
-                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=tecnologia&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_categorias,titulo_novidades,titulo_blog,titulo_formulario,titulo_agenda,titulo_menu_sobre,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio,linkbannerprincipal1,linkbannerprincipal2,linkbannermenor1,linkbannermenor2,banner1_titulo,banner1_subtitulo,banner1_botao,banner2_titulo,banner2_subtitulo,banner2_botao,frase1,frase2,frase3,clean_cards_mode,hide_card_title,hide_explore_button,disable_card_shadow,ocultar_banners_menores,ocultar_formulario,ocultar_agenda,sobre_titulo"
+                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=tecnologia&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
                 resp = requests.get(url, headers=headers, timeout=7)
                 if resp.status_code == 200 and len(resp.json()['data']) > 0:
                     loja_encontrada = resp.json()['data'][0]
@@ -417,10 +408,7 @@ Sitemap: https://www.leanttro.com/sitemap.xml
 # Atualizado removeu prefixo loja
 @app.route('/<loja_slug>/')
 def index(loja_slug):
-    if not g.loja:
-        # Se for o subdomínio catalogo, mostra a landing page em vez de 404
-        if 'catalogo.leanttro.com' in request.host:
-            return render_template('catalogo.html')
+    if not g.loja: 
         return "Loja não encontrada", 404
 
     headers = get_headers()
