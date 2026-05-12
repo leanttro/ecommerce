@@ -67,6 +67,24 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+<!-- CSS critico inline: evita flash de HTML puro enquanto Tailwind carrega -->
+<style>
+body { visibility: hidden; }
+body.ready { visibility: visible; }
+</style>
+
+<!-- Tailwind nao-bloqueante -->
+<script>
+(function(){
+  // Fallback: mostra body em 800ms mesmo se Tailwind travar
+  var fallback = setTimeout(function(){ document.body.classList.add("ready"); }, 800);
+  var s = document.createElement("script");
+  s.src = "https://cdn.tailwindcss.com";
+  s.onload = function(){ clearTimeout(fallback); document.body.classList.add("ready"); };
+  document.head.appendChild(s);
+})();
+</script>
+
 <!-- Fontes: Archivo Black (display) + Inter (body) + Kanit (loader) — display=swap elimina FOIT -->
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;700&family=Kanit:ital,wght@1,800&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;700&family=Kanit:ital,wght@1,800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
@@ -380,14 +398,7 @@
         animation: arrow-move 1.5s ease-in-out infinite;
     }
 
-    #chic-preloader {
-        transition: transform 1s;
-    }
 
-    .preloader-progress {
-        transform-origin: left;
-        transform: scaleX(0);
-    }
 
     .typing-cursor::after {
         content: '|';
@@ -1218,6 +1229,13 @@
         contain: layout style;
     }
 
+    /* Fallback: garante que produtos aparecem mesmo sem GSAP */
+    .pgrid-card {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.5s, border-color 0.3s, opacity 0.5s;
+    }
+
     /* ============================================================
        ALTERAÇÃO 3: loader oculto por padrão via CSS;
        a classe .show-loader (adicionada pelo JS acima) o exibe
@@ -1231,18 +1249,7 @@
      agora controlado 100% pelo CSS acima via classe .show-loader -->
 <body>
 
-<div id="chic-preloader" class="fixed inset-0 z-[9999] flex items-center justify-center transition-transform duration-1000" style="background-color: var(--bg-color);">
-    <div class="preloader-content text-center transform scale-90 opacity-0 flex flex-col items-center justify-center">
-        {% if loja.logo %}
-            <img src="{{ loja.logo }}" class="h-20 md:h-28 w-auto object-contain mx-auto" style="filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.05));">
-        {% else %}
-            <span class="text-4xl md:text-6xl font-bold tracking-tighter text-[var(--text-color)] font-display">{{ loja.nome }}</span>
-        {% endif %}
-        <div class="mt-8 w-48 h-[2px] overflow-hidden bg-black/10 rounded-full">
-            <div class="h-full bg-[var(--primary)] preloader-progress origin-left scale-x-0"></div>
-        </div>
-    </div>
-</div>
+
 
 <header class="fixed top-0 w-full z-[1000] py-2 md:py-3">
     <div class="container mx-auto px-4 md:px-8">
@@ -1828,14 +1835,7 @@
      Ordem mantida: Tailwind → Lucide → GSAP → ScrollTrigger
      Os scripts inline abaixo dependem desta ordem.
      ============================================================ -->
-<script>
-/* Tailwind carregado de forma não-bloqueante */
-(function(){
-  var s = document.createElement('script');
-  s.src = 'https://cdn.tailwindcss.com';
-  document.head.appendChild(s);
-})();
-</script>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
@@ -1849,74 +1849,26 @@
 </script>
 
 <script>
-/* Aguarda GSAP e Lucide carregarem (defer) antes de inicializar */
+/* Aguarda GSAP carregar (defer) antes de inicializar */
 function initApp() {
     if (typeof gsap === 'undefined') {
         return setTimeout(initApp, 50);
     }
-    // Chic Preloader Animation
-    const preloader = document.getElementById('chic-preloader');
-    const preloaderContent = document.querySelector('.preloader-content');
-    const preloaderProgress = document.querySelector('.preloader-progress');
 
-    if (preloader && preloaderContent) {
-        document.body.style.overflow = 'hidden';
-        window.scrollTo(0, 0);
-
-        const tlPreloader = gsap.timeline({
-            onComplete: () => {
-                preloader.style.display = 'none';
-                document.body.style.overflow = '';
-
-                const heroWrapper = document.getElementById('hero-banner-wrapper');
-                const dataCanvas = document.getElementById('data-canvas');
-                if (dataCanvas && heroWrapper) {
-                    if (typeof startDataWarp === 'function') {
-                        requestIdleCallback(() => startDataWarp(), { timeout: 2000 });
-                    }
-                    setTimeout(() => {
-                        gsap.to(dataCanvas, { opacity: 0, duration: 1.5 });
-                        gsap.to(heroWrapper, {
-                            opacity: 1,
-                            z: 0,
-                            scale: 1,
-                            duration: 2.5,
-                            ease: "power4.out"
-                        });
-                        gsap.to('.hero-title', {
-                            scale: 1.03,
-                            duration: 6,
-                            repeat: -1,
-                            yoyo: true,
-                            ease: "sine.inOut"
-                        });
-                    }, 1000);
-                }
-            }
+    // Vai direto ao hero — sem preloader
+    const heroWrapper = document.getElementById('hero-banner-wrapper');
+    const dataCanvas = document.getElementById('data-canvas');
+    if (dataCanvas && heroWrapper) {
+        if (typeof startDataWarp === 'function') {
+            requestIdleCallback(() => startDataWarp(), { timeout: 2000 });
+        }
+        gsap.to('.hero-title', {
+            scale: 1.03,
+            duration: 6,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
         });
-
-        tlPreloader.to(preloaderContent, {
-            opacity: 1,
-            scale: 1,
-            duration: 1.2,
-            ease: "power3.out"
-        })
-        .to(preloaderProgress, {
-            scaleX: 1,
-            duration: 1.5,
-            ease: "power2.inOut"
-        }, "-=0.5")
-        .to(preloaderContent, {
-            opacity: 0,
-            y: -30,
-            duration: 0.6,
-            ease: "power2.in"
-        })
-        .to(preloader, {
-            yPercent: -100,
-            duration: 1.2,
-            ease: "power4.inOut"
-        }, "-=0.1");
     }
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -2189,19 +2141,21 @@ function initApp() {
 
     gsap.registerPlugin(ScrollTrigger);
 
-    // GSAP reveal for grid cards
+    // GSAP reveal for grid cards — usa CSS como base, GSAP só anima entrada
     gsap.utils.toArray('.pgrid-card').forEach((card, i) => {
         gsap.fromTo(card,
-            { opacity: 0, y: 50, scale: 0.96 },
+            { opacity: 0, y: 40, scale: 0.97 },
             {
                 opacity: 1, y: 0, scale: 1,
-                duration: 0.7,
-                delay: (i % 3) * 0.1,
+                duration: 0.6,
+                delay: (i % 3) * 0.08,
                 ease: 'power3.out',
+                clearProps: 'opacity,transform',
                 scrollTrigger: {
                     trigger: card,
-                    start: 'top 88%',
-                    toggleActions: 'play none none none'
+                    start: 'top 90%',
+                    toggleActions: 'play none none none',
+                    once: true
                 }
             }
         );
@@ -2420,19 +2374,7 @@ function initApp() {
 } // end initApp
 document.addEventListener('DOMContentLoaded', initApp);
 
-// Fallback: garante que o hero aparece mesmo se o GSAP falhar ou travar
-setTimeout(function() {
-    const heroWrapper = document.getElementById('hero-banner-wrapper');
-    const preloader = document.getElementById('chic-preloader');
-    if (heroWrapper && heroWrapper.style.opacity !== '1' && getComputedStyle(heroWrapper).opacity < 0.5) {
-        heroWrapper.style.opacity = '1';
-        heroWrapper.style.transform = '';
-    }
-    if (preloader && preloader.style.display !== 'none') {
-        preloader.style.display = 'none';
-        document.body.style.overflow = '';
-    }
-}, 4000);
+
 </script>
 
 <!-- Schema Organization -->
