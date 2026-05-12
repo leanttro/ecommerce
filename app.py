@@ -189,6 +189,15 @@ def identificar_loja():
     if request.path.startswith('/static'):
         return
 
+    # Ignora subdomínio catalogo — ele só serve a landing page, não tem loja
+    host_check = request.host.split(':')[0]
+    if 'catalogo.leanttro.com' in host_check:
+        g.loja = None
+        g.loja_id = None
+        g.slug_atual = None
+        g.layout_list = []
+        return
+
     # Reinicia variáveis globais
     g.loja = None
     g.loja_id = None
@@ -408,7 +417,10 @@ Sitemap: https://www.leanttro.com/sitemap.xml
 # Atualizado removeu prefixo loja
 @app.route('/<loja_slug>/')
 def index(loja_slug):
-    if not g.loja: 
+    if not g.loja:
+        # Se for o subdomínio catalogo, mostra a landing page em vez de 404
+        if 'catalogo.leanttro.com' in request.host:
+            return render_template('catalogo.html')
         return "Loja não encontrada", 404
 
     headers = get_headers()
