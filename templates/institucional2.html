@@ -34,7 +34,7 @@
     }
 
     /* Cards ligeiramente mais escuros/claros que o fundo */
-    .portfolio-card, .agenda-card, #contato, .cliente-logo {
+    .portfolio-card, #contato, .cliente-logo {
         background: color-mix(in srgb, var(--bg) 85%, #000 15%);
     }
     #contato {
@@ -701,82 +701,6 @@
         color: var(--bg);
     }
 
-    /* ─── SEÇÃO AGENDA ─── */
-    #agenda {
-        padding: 140px 48px;
-        border-top: 1px solid var(--border);
-        max-width: 1400px;
-        margin: 0 auto;
-    }
-    @media (max-width: 768px) { #agenda { padding: 80px 24px; } }
-
-    .agenda-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 2px;
-        margin-top: 64px;
-    }
-
-    .agenda-card {
-        padding: 40px 32px;
-        border: 1px solid var(--border);
-        text-decoration: none;
-        display: block;
-        transition: all 0.4s ease;
-        position: relative;
-        overflow: hidden;
-    }
-    .agenda-card::before {
-        content: '';
-        position: absolute; inset: 0;
-        background: var(--gold);
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
-        z-index: 0;
-    }
-    .agenda-card:hover::before { transform: scaleX(1); }
-    .agenda-card > * { position: relative; z-index: 1; }
-    .agenda-card:hover .agenda-time,
-    .agenda-card:hover .agenda-label,
-    .agenda-card:hover .agenda-status { color: var(--bg) !important; }
-
-    .agenda-time {
-        font-family: var(--font-titulo), serif;
-        font-size: 2.5rem;
-        font-weight: 300;
-        color: var(--gold);
-        line-height: 1;
-        margin-bottom: 16px;
-        transition: color 0.3s;
-    }
-    .agenda-label {
-        font-size: 9px;
-        letter-spacing: 0.25em;
-        text-transform: uppercase;
-        color: color-mix(in srgb, var(--text) 40%, transparent);
-        font-weight: 500;
-        margin-bottom: 24px;
-        transition: color 0.3s;
-    }
-    .agenda-status {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 9px;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: color-mix(in srgb, var(--text) 60%, transparent);
-        font-weight: 500;
-        transition: color 0.3s;
-    }
-    .agenda-status .dot {
-        width: 6px; height: 6px;
-        border-radius: 50%;
-        background: #4ADE80;
-        display: block;
-    }
-
     /* ─── FORMULÁRIO DE CONTATO ─── */
     #contato {
         padding: 140px 48px;
@@ -1190,7 +1114,6 @@
 <div id="mobile-nav">
     {% if not loja.ocultar_sobre %}<a href="#sobre" onclick="closeMobileNav()">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
     {% if not loja.ocultar_produtos %}<a href="#portfolio-section" onclick="closeMobileNav()">{{ loja.titulo_produtos or 'Projetos' }}</a>{% endif %}
-    {% if not loja.ocultar_agenda %}<a href="#agenda" onclick="closeMobileNav()">{{ loja.titulo_agenda or 'Agenda' }}</a>{% endif %}
     {% if not loja.ocultar_formulario %}<a href="#contato" onclick="closeMobileNav()">Contato</a>{% endif %}
     <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" style="color:var(--gold);font-size:1rem;font-family:var(--font-corpo),sans-serif;letter-spacing:0.15em;" target="_blank">WhatsApp →</a>
 </div>
@@ -1228,7 +1151,6 @@
         </div>
         {% endif %}
 
-        {% if not loja.ocultar_agenda %}<a href="#agenda" class="nav-link">{{ loja.titulo_agenda or 'Agenda' }}</a>{% endif %}
         {% if not loja.ocultar_formulario %}<a href="#contato" class="nav-link">Contato</a>{% endif %}
     </nav>
 
@@ -1443,44 +1365,6 @@
         </div>
     </div>
 </section>
-{% endif %}
-
-<!-- ─── AGENDA ─── -->
-{% if secao == 'agenda' and not loja.ocultar_agenda %}
-<div style="border-top:1px solid var(--border);">
-<section>
-    <div id="agenda" class="container mx-auto">
-        <div class="section-label reveal">Disponibilidade</div>
-        <h2 class="portfolio-title reveal" style="margin-bottom:0;">
-            {{ loja.titulo_agenda or 'Agende' }}<br>
-            <em>sua Consulta</em>
-        </h2>
-        <p style="color:color-mix(in srgb, var(--text) 40%, transparent);font-weight:300;margin-top:16px;font-size:0.9rem;" class="reveal">
-            {{ loja.subtitulo_agenda or 'Selecione um horário disponível e confirme via WhatsApp.' }}
-        </p>
-
-        <div class="agenda-grid">
-            {% for horario in agenda %}
-                {% if horario.disponivel %}
-                <a href="https://wa.me/55{{ loja.whatsapp_comercial }}?text=Olá! Gostaria de reservar o horário de {{ horario.data_hora_formatada or horario.data_hora }}" target="_blank" class="agenda-card reveal">
-                    <div class="agenda-time">{{ horario.data_hora_formatada.split(' ')[2] if horario.data_hora_formatada and 'às' in horario.data_hora_formatada else horario.data_hora_formatada }}</div>
-                    <div class="agenda-label">{{ horario.data_hora_formatada }}</div>
-                    <div class="agenda-status">
-                        <span class="dot"></span>
-                        Disponível — Clique para reservar
-                    </div>
-                </a>
-                {% endif %}
-            {% else %}
-            <div style="grid-column:1/-1;padding:80px 40px;border:1px solid var(--border);text-align:center;">
-                <i data-lucide="calendar-x" style="width:32px;height:32px;color:color-mix(in srgb, var(--text) 20%, transparent);margin:0 auto 16px;display:block;"></i>
-                <p style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:color-mix(in srgb, var(--text) 20%, transparent);">Nenhum horário disponível</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
-</div>
 {% endif %}
 
 <!-- ─── MAPA ─── -->
@@ -1764,7 +1648,6 @@
             <nav class="footer-links" style="padding-top:8px;">
                 {% if not loja.ocultar_sobre %}<a href="#sobre" class="footer-link">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
                 {% if not loja.ocultar_produtos %}<a href="#portfolio-section" class="footer-link">{{ loja.titulo_produtos or 'Projetos' }}</a>{% endif %}
-                {% if not loja.ocultar_agenda %}<a href="#agenda" class="footer-link">{{ loja.titulo_agenda or 'Agenda' }}</a>{% endif %}
                 {% if not loja.ocultar_formulario %}<a href="#contato" class="footer-link">Contato</a>{% endif %}
                 {% if loja.instagram_url %}<a href="{{ loja.instagram_url }}" target="_blank" class="footer-link">Instagram</a>{% endif %}
                 <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" class="footer-link">WhatsApp</a>
@@ -1816,7 +1699,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     animateCursor();
 
-    document.querySelectorAll('a, button, .portfolio-card, .agenda-card').forEach(el => {
+    document.querySelectorAll('a, button, .portfolio-card').forEach(el => {
         el.addEventListener('mouseenter', () => {
             if (outline) { outline.style.width = '56px'; outline.style.height = '56px'; outline.style.borderColor = 'var(--gold)'; }
             if (dot) { dot.style.width = '4px'; dot.style.height = '4px'; }
