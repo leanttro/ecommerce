@@ -79,13 +79,7 @@
 
 <!-- ALTERAÇÃO 2: detecção de bot ANTES do <body> para que o
      loader seja pulado pelo Lighthouse/crawlers sem JS de interação -->
-<script>
-(function(){
-  if(!/bot|googlebot|crawler|spider|robot|crawling|lighthouse|pagespeed|headless|prerender/i.test(navigator.userAgent)){
-    document.documentElement.classList.add('show-loader');
-  }
-})();
-</script>
+
 
 <style>
     /* Fontes carregadas via <link> acima — removido @import duplicado */
