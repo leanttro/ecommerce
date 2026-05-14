@@ -122,96 +122,56 @@
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 9000;
-    padding: 20px 48px;
+    padding: 14px 48px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: color-mix(in srgb, var(--bg) 92%, transparent);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-bottom: 1px solid var(--border);
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
   }
-  @media (max-width: 768px) { header { padding: 16px 20px; } }
+  @media (max-width: 768px) { header { padding: 12px 20px; } }
 
-  .header-logo img { height: 56px; width: auto; object-fit: contain; display: block; }
+  .header-logo { text-decoration: none; display: flex; align-items: center; }
+  .header-logo img { height: 48px; width: auto; object-fit: contain; display: block; }
   .header-logo span {
     font-family: var(--font-titulo), serif;
-    font-size: 1.4rem;
-    font-weight: 400;
-    color: var(--text);
-    letter-spacing: 0.05em;
-    text-decoration: none;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #1B3A6B;
+    letter-spacing: 0.02em;
   }
 
-  .nav-links { display: flex; align-items: center; gap: 32px; }
-  .nav-link {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.2em;
+  .header-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: #6B7A8D;
     text-decoration: none;
-    transition: color 0.3s;
+    transition: color 0.2s, gap 0.2s;
   }
-  .nav-link:hover, .nav-link.active { color: var(--primary); }
+  .header-back:hover { color: #1B3A6B; gap: 12px; }
 
   .header-cta {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 20px;
-    border: 1px solid var(--border);
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--primary);
-    text-decoration: none;
-    transition: all 0.3s;
-  }
-  .header-cta:hover { background: var(--primary); color: var(--bg); border-color: var(--primary); }
-
-  /* MOBILE MENU */
-  .menu-toggle {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    background: none;
+    padding: 10px 22px;
+    background: #1B3A6B;
     border: none;
-    cursor: pointer;
-    padding: 6px;
-  }
-  .menu-toggle span { display: block; width: 22px; height: 1px; background: var(--text); transition: all 0.3s; }
-  .menu-toggle.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-  .menu-toggle.active span:nth-child(2) { opacity: 0; }
-  .menu-toggle.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-
-  #mobile-nav {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: color-mix(in srgb, var(--bg) 98%, transparent);
-    z-index: 8999;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 36px;
-  }
-  #mobile-nav a {
-    font-family: var(--font-titulo), serif;
-    font-size: clamp(2.2rem, 8vw, 3.5rem);
-    color: var(--text);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #fff;
     text-decoration: none;
-    font-weight: 300;
-    letter-spacing: 0.02em;
-    transition: color 0.3s;
+    border-radius: 6px;
+    transition: background 0.2s;
   }
-  #mobile-nav a:hover { color: var(--primary); }
-
-  @media (max-width: 768px) {
-    .menu-toggle { display: flex; }
-    .desktop-nav { display: none !important; }
-  }
+  .header-cta:hover { background: #142d54; }
 
   /* ─── SCROLL PROGRESS ─── */
   #scroll-progress {
@@ -494,81 +454,7 @@
   }
   .share-btn:hover { border-color: var(--primary); color: var(--primary); }
 
-  /* ─── FOOTER ─── */
-  footer {
-    background: color-mix(in srgb, var(--bg) 70%, #000 30%);
-    border-top: 1px solid var(--border);
-    padding: 60px 48px 40px;
-  }
-  @media (max-width: 768px) { footer { padding: 48px 20px 32px; } }
-
-  .footer-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 48px;
-    flex-wrap: wrap;
-  }
-
-  .footer-brand img { height: 40px; width: auto; object-fit: contain; display: block; margin-bottom: 16px; }
-  .footer-brand-name {
-    font-family: var(--font-titulo), serif;
-    font-size: 1.5rem;
-    font-weight: 300;
-    color: var(--text);
-    margin-bottom: 16px;
-  }
-  .footer-tagline {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    font-weight: 300;
-    line-height: 1.7;
-  }
-
-  .footer-nav { display: flex; flex-direction: column; gap: 12px; }
-  .footer-nav a {
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: var(--text-muted);
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-  .footer-nav a:hover { color: var(--primary); }
-
-  .footer-bottom {
-    max-width: 1200px;
-    margin: 48px auto 0;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  .footer-copy {
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: color-mix(in srgb, var(--text) 20%, transparent);
-    font-weight: 500;
-  }
-  .footer-admin {
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: color-mix(in srgb, var(--text) 15%, transparent);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: color 0.3s;
-  }
-  .footer-admin:hover { color: var(--text-muted); }
+  /* ─── FOOTER ─── (estilos inline no HTML) ───*/
 
   /* ─── WHATSAPP FLUTUANTE ─── */
   .wa-float {
@@ -601,21 +487,14 @@
 <!-- Scroll Progress -->
 <div id="scroll-progress"></div>
 
-<!-- ─── MOBILE NAV ─── -->
-<div id="mobile-nav">
-  <a href="/{{ loja.slug_url }}/">Início</a>
-  {% if not loja.ocultar_sobre %}<a href="/{{ loja.slug_url }}/#sobre">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
-  {% if not loja.ocultar_produtos %}<a href="/{{ loja.slug_url }}/#portfolio-section">{{ loja.titulo_produtos or 'Projetos' }}</a>{% endif %}
-  {% if not loja.ocultar_formulario %}<a href="/{{ loja.slug_url }}/#contato">Contato</a>{% endif %}
-  <a href="/{{ loja.slug_url }}/" style="color:var(--primary);">Início</a>
-  {% if loja.whatsapp_comercial %}
-  <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank" style="font-family:var(--font-corpo),sans-serif;font-size:1rem;letter-spacing:0.15em;color:var(--primary);">WhatsApp →</a>
-  {% endif %}
-</div>
-
 <!-- ─── HEADER ─── -->
 <header>
-  <a href="/{{ loja.slug_url }}/" class="header-logo" style="text-decoration:none;">
+  <a href="/{{ loja.slug_url }}/" class="header-back">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Voltar ao site
+  </a>
+
+  <a href="/{{ loja.slug_url }}/" class="header-logo">
     {% if loja.logo %}
       <img src="{{ loja.logo }}" alt="{{ loja.nome }}">
     {% else %}
@@ -623,31 +502,14 @@
     {% endif %}
   </a>
 
-  <nav class="nav-links desktop-nav">
-    <a href="/{{ loja.slug_url }}/" class="nav-link">Início</a>
-    {% if not loja.ocultar_sobre %}
-    <a href="/{{ loja.slug_url }}/#sobre" class="nav-link">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>
-    {% endif %}
-    {% if not loja.ocultar_produtos %}
-    <a href="/{{ loja.slug_url }}/#portfolio-section" class="nav-link">{{ loja.titulo_produtos or 'Projetos' }}</a>
-    {% endif %}
-    {% if not loja.ocultar_formulario %}
-    <a href="/{{ loja.slug_url }}/#contato" class="nav-link">Contato</a>
-    {% endif %}
-    <a href="/{{ loja.slug_url }}/" class="nav-link">Início</a>
-  </nav>
-
-  <div style="display:flex;align-items:center;gap:16px;">
-    {% if loja.whatsapp_comercial %}
-    <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="header-cta desktop-nav">
-      <i data-lucide="phone" style="width:11px;height:11px;"></i>
-      Fale Conosco
-    </a>
-    {% endif %}
-    <button class="menu-toggle" id="menuToggle" onclick="toggleMobileNav()">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
+  {% if loja.whatsapp_comercial %}
+  <a href="https://wa.me/55{{ loja.whatsapp_comercial }}" class="header-cta">
+    <i data-lucide="phone" style="width:12px;height:12px;"></i>
+    Fale Conosco
+  </a>
+  {% else %}
+  <div></div>
+  {% endif %}
 </header>
 
 <!-- ─── HERO ─── -->
@@ -722,37 +584,45 @@
 </div>
 
 <!-- ─── FOOTER ─── -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-brand">
-      {% if loja.logo %}
-      <img src="{{ loja.logo }}" alt="{{ loja.nome }}">
-      {% else %}
-      <div class="footer-brand-name">{{ loja.nome }}</div>
+<footer style="background:#111827;border-top:none;padding:3rem 48px 2rem;">
+  <div style="max-width:900px;margin:0 auto;">
+
+    <!-- Contatos -->
+    <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin-bottom:2.5rem;">
+      {% if loja.whatsapp_comercial %}
+      <a href="https://wa.me/55{{ loja.whatsapp_comercial | replace('(','') | replace(')','') | replace(' ','') | replace('-','') }}" target="_blank"
+         style="display:inline-flex;align-items:center;gap:8px;background:#1f2937;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-size:.85rem;font-weight:600;transition:background .2s;"
+         onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#1f2937'">
+        <i data-lucide="message-circle" style="width:16px;height:16px;color:#25D366;"></i>
+        {{ loja.whatsapp_comercial }}
+      </a>
       {% endif %}
-      <p class="footer-tagline">
-        {% if loja.chamada_rodape %}{{ loja.chamada_rodape }}{% else %}Excelência como padrão.{% endif %}
-      </p>
+      {% if loja.email %}
+      <a href="mailto:{{ loja.email }}" target="_blank"
+         style="display:inline-flex;align-items:center;gap:8px;background:#1f2937;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-size:.85rem;font-weight:600;transition:background .2s;"
+         onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#1f2937'">
+        <i data-lucide="mail" style="width:16px;height:16px;color:#B8923A;"></i>
+        {{ loja.email }}
+      </a>
+      {% endif %}
+      {% if loja.instagram_url %}
+      <a href="{{ loja.instagram_url }}" target="_blank"
+         style="display:inline-flex;align-items:center;gap:8px;background:#1f2937;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-size:.85rem;font-weight:600;transition:background .2s;"
+         onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#1f2937'">
+        <i data-lucide="instagram" style="width:16px;height:16px;color:#e1306c;"></i>
+        Instagram
+      </a>
+      {% endif %}
     </div>
 
-    <nav class="footer-nav">
-      <a href="/{{ loja.slug_url }}/">Início</a>
-      {% if not loja.ocultar_sobre %}<a href="/{{ loja.slug_url }}/#sobre">{{ loja.titulo_menu_sobre or loja.sobre_titulo or 'Sobre' }}</a>{% endif %}
-      {% if not loja.ocultar_produtos %}<a href="/{{ loja.slug_url }}/#portfolio-section">{{ loja.titulo_produtos or 'Projetos' }}</a>{% endif %}
-      {% if not loja.ocultar_agenda %}<a href="/{{ loja.slug_url }}/#agenda">{{ loja.titulo_agenda or 'Agenda' }}</a>{% endif %}
-      {% if not loja.ocultar_formulario %}<a href="/{{ loja.slug_url }}/#contato">Contato</a>{% endif %}
-      <a href="/{{ loja.slug_url }}/">Início</a>
-      {% if loja.instagram_url %}<a href="{{ loja.instagram_url }}" target="_blank">Instagram</a>{% endif %}
-      {% if loja.whatsapp_comercial %}<a href="https://wa.me/55{{ loja.whatsapp_comercial }}" target="_blank">WhatsApp</a>{% endif %}
-    </nav>
-  </div>
-
-  <div class="footer-bottom">
-    <span class="footer-copy">© 2026 {{ loja.nome }}. Todos os direitos reservados.</span>
-    <a href="/{{ loja.slug_url }}/admin" class="footer-admin">
-      <i data-lucide="lock" style="width:10px;height:10px;"></i>
-      Admin
-    </a>
+    <!-- Bottom -->
+    <div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+      <span style="color:rgba(255,255,255,0.28);font-size:.75rem;">© 2026 {{ loja.nome }}. Todos os direitos reservados.</span>
+      <a href="https://leanttro.com" target="_blank" style="color:rgba(255,255,255,0.35);font-size:.75rem;text-decoration:none;transition:color .2s;"
+         onmouseover="this.style.color='#B8923A'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">
+        Desenvolvido por Leanttro
+      </a>
+    </div>
   </div>
 </footer>
 
@@ -771,25 +641,6 @@
     if (!el) return;
     const total = document.documentElement.scrollHeight - window.innerHeight;
     el.style.width = (window.scrollY / total * 100) + '%';
-  });
-
-  // ─── MOBILE NAV ───
-  function toggleMobileNav() {
-    const nav = document.getElementById('mobile-nav');
-    const btn = document.getElementById('menuToggle');
-    const open = nav.style.display === 'flex';
-    nav.style.display = open ? 'none' : 'flex';
-    btn.classList.toggle('active', !open);
-    document.body.style.overflow = open ? '' : 'hidden';
-  }
-
-  // Fecha ao clicar em link
-  document.querySelectorAll('#mobile-nav a').forEach(a => {
-    a.addEventListener('click', () => {
-      document.getElementById('mobile-nav').style.display = 'none';
-      document.getElementById('menuToggle').classList.remove('active');
-      document.body.style.overflow = '';
-    });
   });
 
   // ─── COPIAR LINK ───
