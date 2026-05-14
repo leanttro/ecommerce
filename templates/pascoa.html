@@ -1647,30 +1647,30 @@ footer {
       <div class="form-card reveal-right">
         <h3>Solicite um orçamento</h3>
         <p>Preencha o formulário e entraremos em contato em até 24h.</p>
-        <form id="contactForm" onsubmit="submitForm(event)">
+        <form id="leadForm">
           <div class="form-row">
             <div class="form-group">
               <label>Nome completo *</label>
-              <input type="text" id="f-nome" required placeholder="Seu nome">
+              <input type="text" id="f-nome" name="nome" required placeholder="Seu nome">
             </div>
             <div class="form-group">
               <label>Empresa</label>
-              <input type="text" id="f-empresa" placeholder="Nome da empresa">
+              <input type="text" id="f-empresa" name="empresa" placeholder="Nome da empresa">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label>E-mail *</label>
-              <input type="email" id="f-email" required placeholder="seu@email.com">
+              <input type="email" id="f-email" name="email" required placeholder="seu@email.com">
             </div>
             <div class="form-group">
               <label>WhatsApp</label>
-              <input type="tel" id="f-fone" placeholder="(11) 99999-9999">
+              <input type="tel" id="f-fone" name="whatsapp" placeholder="(11) 99999-9999">
             </div>
           </div>
           <div class="form-group">
             <label>Serviço de interesse</label>
-            <select id="f-servico">
+            <select id="f-servico" name="servico">
               <option value="">Selecione...</option>
               <option>Adequação NR-01</option>
               <option>PBEC — Programa de Bem-Estar</option>
@@ -1682,14 +1682,17 @@ footer {
           </div>
           <div class="form-group">
             <label>Mensagem</label>
-            <textarea id="f-msg" placeholder="Conte sobre sua empresa e o que você precisa..."></textarea>
+            <textarea id="f-msg" name="mensagem" placeholder="Conte sobre sua empresa e o que você precisa..."></textarea>
           </div>
           <button type="submit" class="btn-navy" style="width:100%;justify-content:center">
-            <i data-lucide="send" style="width:16px;height:16px"></i>
-            Enviar mensagem
+            <span class="btn-text-wrapper" style="display:inline-flex;align-items:center;gap:.5rem"><i data-lucide="send" style="width:16px;height:16px"></i> Enviar mensagem</span>
           </button>
-          <div id="form-msg"></div>
         </form>
+
+        <div id="leadSuccessMsg" style="display:none;margin-top:1.5rem;padding:1.25rem 1.5rem;background:rgba(27,58,107,0.07);border:1px solid rgba(27,58,107,0.2);border-radius:10px;text-align:center;font-weight:600;color:var(--navy);align-items:center;justify-content:center;gap:.5rem">
+          <i data-lucide="check-circle" style="width:20px;height:20px;color:#2e7d32;vertical-align:middle;margin-right:.4rem"></i>
+          Dados enviados com sucesso! Nossa equipe entrará em contato.
+        </div>
       </div>
     </div>
   </div>
@@ -1799,56 +1802,44 @@ function toggleFaq(btn) {
   if(!isOpen) item.classList.add('open');
 }
 
-// ─── Formulário de contato
-async function submitForm(e) {
-  e.preventDefault();
-  const btn = e.target.querySelector('button[type=submit]');
-  const msg = document.getElementById('form-msg');
-  btn.disabled = true;
-  btn.innerHTML = '<i data-lucide="loader-2" style="width:16px;height:16px;animation:spin 1s linear infinite"></i> Enviando...';
-  lucide.createIcons();
+// ─── Formulário de contato (mesmo esquema do template institucional)
+const leadForm = document.getElementById('leadForm');
+if (leadForm) {
+  leadForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('button[type=submit]');
+    const textWrapper = btn.querySelector('.btn-text-wrapper');
+    const originalHTML = textWrapper.innerHTML;
 
-  const payload = {
-    nome: document.getElementById('f-nome').value,
-    empresa: document.getElementById('f-empresa').value,
-    email: document.getElementById('f-email').value,
-    fone: document.getElementById('f-fone').value,
-    servico: document.getElementById('f-servico').value,
-    mensagem: document.getElementById('f-msg').value,
-    slug: '{{ loja.slug_url }}'
-  };
+    textWrapper.innerHTML = 'ENVIANDO...';
+    btn.disabled = true;
 
-  try {
-    const res = await fetch('/api/lead', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    msg.style.display = 'block';
-    if(res.ok) {
-      msg.className = 'success';
-      msg.textContent = '✓ Mensagem enviada com sucesso! Entraremos em contato em breve.';
-      e.target.reset();
-    } else {
-      msg.className = 'error';
-      msg.textContent = '✗ Erro ao enviar. Por favor, tente pelo WhatsApp.';
+    const formData = new FormData(this);
+    try {
+      const response = await fetch('/{{ loja.slug_url }}/captura-lead', {
+        method: 'POST',
+        body: formData
+      });
+      const result = await response.json();
+      if (result.sucesso || response.ok) {
+        this.style.display = 'none';
+        const successMsg = document.getElementById('leadSuccessMsg');
+        successMsg.style.display = 'flex';
+        lucide.createIcons();
+      } else {
+        alert('Erro ao enviar. Tente novamente.');
+        textWrapper.innerHTML = originalHTML;
+        btn.disabled = false;
+        lucide.createIcons();
+      }
+    } catch(err) {
+      alert('Erro de conexão. Verifique sua internet e tente novamente.');
+      textWrapper.innerHTML = originalHTML;
+      btn.disabled = false;
+      lucide.createIcons();
     }
-  } catch {
-    msg.style.display = 'block';
-    msg.className = 'error';
-    msg.textContent = '✗ Erro de conexão. Por favor, tente pelo WhatsApp.';
-  }
-
-  btn.disabled = false;
-  btn.innerHTML = '<i data-lucide="send" style="width:16px;height:16px"></i> Enviar mensagem';
-  lucide.createIcons();
-  setTimeout(() => { msg.style.display = 'none'; }, 6000);
+  });
 }
-
-// ─── Spin animation para loader
-const style = document.createElement('style');
-style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
-document.head.appendChild(style);
 </script>
 </body>
 </html>
