@@ -3,21 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+<!-- ═══════════════════════════════════════════
+     SEO PRIMÁRIO
+═══════════════════════════════════════════ -->
 <title>{{ loja.nome }} | {{ loja.sobre_slogan or 'Saúde Mental Corporativa & RH Estratégico' }}</title>
 <meta name="description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else 'Avaliação Organizacional, Saúde Mental Corporativa e RH Estratégico. Conformidade com a NR-01 e PBEC.' }}">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://{{ request.host }}{{ loja.base_url }}/">
-<meta property="og:title" content="{{ loja.nome }}">
-<meta property="og:description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else 'Avaliação Organizacional, Saúde Mental Corporativa e RH Estratégico.' }}">
-<meta property="og:image" content="{{ loja.logo }}">
+<meta name="keywords" content="saúde mental corporativa, RH estratégico, NR-01, bem-estar organizacional, PBEC, avaliação organizacional, riscos psicossociais, gestão de pessoas">
+<meta name="author" content="{{ loja.nome }}">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<link rel="canonical" href="https://www.soscorporativa.com.br/">
+
+<!-- ═══════════════════════════════════════════
+     GOOGLE SEARCH CONSOLE — cole aqui sua meta tag de verificação
+     Exemplo: <meta name="google-site-verification" content="SEU_CODIGO_AQUI">
+═══════════════════════════════════════════ -->
+{% if loja.google_site_verification %}
+<meta name="google-site-verification" content="{{ loja.google_site_verification }}">
+{% endif %}
+
+<!-- ═══════════════════════════════════════════
+     OPEN GRAPH (Facebook, WhatsApp, LinkedIn)
+═══════════════════════════════════════════ -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://{{ request.host }}{{ loja.base_url }}/">
+<meta property="og:site_name" content="{{ loja.nome }}">
+<meta property="og:title" content="{{ loja.nome }} | {{ loja.sobre_slogan or 'Saúde Mental Corporativa & RH Estratégico' }}">
+<meta property="og:description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else 'Avaliação Organizacional, Saúde Mental Corporativa e RH Estratégico. Conformidade com a NR-01 e PBEC.' }}">
+<meta property="og:url" content="https://www.soscorporativa.com.br/">
+<meta property="og:image" content="{{ loja.logo }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{ loja.nome }}">
 <meta property="og:locale" content="pt_BR">
 
+<!-- ═══════════════════════════════════════════
+     TWITTER CARD
+═══════════════════════════════════════════ -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ loja.nome }} | {{ loja.sobre_slogan or 'Saúde Mental Corporativa & RH Estratégico' }}">
+<meta name="twitter:description" content="{{ loja.sobre_texto | truncate(155) if loja.sobre_texto else 'Avaliação Organizacional, Saúde Mental Corporativa e RH Estratégico. Conformidade com a NR-01 e PBEC.' }}">
+<meta name="twitter:image" content="{{ loja.logo }}">
+<meta name="twitter:image:alt" content="{{ loja.nome }}">
+
+<!-- ═══════════════════════════════════════════
+     SCHEMA.ORG JSON-LD — Rich Results Google
+═══════════════════════════════════════════ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "{{ loja.nome }}",
+  "description": "{{ loja.sobre_texto | truncate(200) if loja.sobre_texto else 'Avaliação Organizacional, Saúde Mental Corporativa e RH Estratégico. Conformidade com a NR-01 e PBEC.' }}",
+  "url": "https://www.soscorporativa.com.br/",
+  "logo": "{{ loja.logo }}",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "{{ loja.whatsapp_comercial or '' }}",
+    "contactType": "customer service",
+    "availableLanguage": "Portuguese"
+  },
+  "sameAs": [
+    {% if loja.instagram %}"https://instagram.com/{{ loja.instagram | replace('@','') }}"{% endif %}
+  ]
+}
+</script>
+
+<!-- ═══════════════════════════════════════════
+     GOOGLE ANALYTICS 4
+═══════════════════════════════════════════ -->
 {% if loja.ga4_id %}
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ loja.ga4_id }}"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','{{ loja.ga4_id }}');</script>
 {% endif %}
+
+<!-- ═══════════════════════════════════════════
+     META PIXEL (Facebook)
+═══════════════════════════════════════════ -->
 {% if loja.fb_pixel %}
 <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','{{ loja.fb_pixel }}');fbq('track','PageView');</script>
 {% endif %}
@@ -132,7 +193,7 @@ img { max-width: 100%; display: block; }
 #navbar.scrolled .hamburger span { background: #fff; }
 
 .nav-inner { display: flex; align-items: center; justify-content: space-between; }
-.nav-logo img { height: 48px; object-fit: contain; }
+.nav-logo img { height: 48px; object-fit: contain; filter: brightness(0) invert(1); }
 .nav-logo-text {
   font-family: 'Cormorant Garamond', serif;
   color: #fff; font-size: 1.4rem; font-weight: 700;
@@ -766,7 +827,7 @@ footer {
   gap: 3rem; padding-bottom: 3rem;
   border-bottom: 1px solid rgba(255,255,255,0.07);
 }
-.footer-brand img { height: 48px; margin-bottom: 1rem; }
+.footer-brand img { height: 48px; margin-bottom: 1rem; filter: brightness(0) invert(1); }
 .footer-brand p { color: rgba(255,255,255,0.4); font-size: .85rem; line-height: 1.75; margin-bottom: 1.5rem; }
 .footer-social { display: flex; gap: .65rem; }
 .footer-social a {
