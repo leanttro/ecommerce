@@ -185,64 +185,18 @@
   }
 
   /* ─── HERO DA POSTAGEM ─── */
-  .post-hero {
-    padding-top: 100px;
-    position: relative;
-    overflow: hidden;
+  .post-header {
+    padding: 110px 48px 40px;
+    max-width: 860px;
+    margin: 0 auto;
   }
+  @media (max-width: 768px) { .post-header { padding: 90px 20px 32px; } }
 
   .post-hero-cover {
     width: 100%;
-    max-height: 540px;
+    max-height: 560px;
     object-fit: cover;
     display: block;
-    filter: brightness(0.6);
-  }
-
-  .post-hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top,
-      var(--bg) 0%,
-      color-mix(in srgb, var(--bg) 50%, transparent) 50%,
-      transparent 100%
-    );
-  }
-
-  .post-hero-content {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    padding: 0 48px 60px;
-    max-width: 860px;
-  }
-  @media (max-width: 768px) {
-    .post-hero-content { padding: 0 20px 40px; }
-  }
-
-  /* Hero sem imagem */
-  .post-hero-nocover {
-    padding: 100px 48px 0;
-    min-height: 340px;
-    display: flex;
-    align-items: flex-end;
-    position: relative;
-  }
-  .post-hero-nocover::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 30% 80%, color-mix(in srgb, var(--primary) 6%, transparent), transparent 70%);
-    pointer-events: none;
-  }
-  .post-hero-nocoverinner {
-    max-width: 860px;
-    padding-bottom: 60px;
-    position: relative;
-    z-index: 1;
-  }
-  @media (max-width: 768px) {
-    .post-hero-nocover { padding: 100px 20px 0; min-height: 260px; }
-    .post-hero-nocoverinner { padding-bottom: 40px; }
   }
 
   /* META (categoria + data) */
@@ -512,44 +466,25 @@
   {% endif %}
 </header>
 
-<!-- ─── HERO ─── -->
-{% if post.capa %}
-<section class="post-hero">
-  <img src="{{ post.capa }}" alt="{{ post.titulo }} — {{ loja.nome }}" class="post-hero-cover" width="1200" height="540" fetchpriority="high" decoding="async">
-  <div class="post-hero-overlay"></div>
-  <div class="post-hero-content">
-    <div class="post-meta">
-      {% if post.categoria_nome %}
-      <span class="post-cat">{{ post.categoria_nome }}</span>
-      {% endif %}
-      {% if post.data_publicacao %}
-      <span class="post-date">{{ post.data_publicacao }}</span>
-      {% endif %}
-    </div>
-    <h1 class="post-titulo">{{ post.titulo }}</h1>
-    {% if post.resumo %}
-    <p class="post-resumo">{{ post.resumo }}</p>
+<!-- ─── HEADER DO POST: título + resumo ─── -->
+<div class="post-header">
+  <div class="post-meta">
+    {% if post.categoria_nome %}
+    <span class="post-cat">{{ post.categoria_nome }}</span>
+    {% endif %}
+    {% if post.data_publicacao %}
+    <span class="post-date">{{ post.data_publicacao }}</span>
     {% endif %}
   </div>
-</section>
+  <h1 class="post-titulo">{{ post.titulo }}</h1>
+  {% if post.resumo %}
+  <p class="post-resumo">{{ post.resumo }}</p>
+  {% endif %}
+</div>
 
-{% else %}
-<section class="post-hero-nocover">
-  <div class="post-hero-nocoverinner">
-    <div class="post-meta">
-      {% if post.categoria_nome %}
-      <span class="post-cat">{{ post.categoria_nome }}</span>
-      {% endif %}
-      {% if post.data_publicacao %}
-      <span class="post-date">{{ post.data_publicacao }}</span>
-      {% endif %}
-    </div>
-    <h1 class="post-titulo">{{ post.titulo }}</h1>
-    {% if post.resumo %}
-    <p class="post-resumo">{{ post.resumo }}</p>
-    {% endif %}
-  </div>
-</section>
+<!-- ─── IMAGEM LIMPA SEM TEXTO E SEM SOMBRA ─── -->
+{% if post.capa %}
+<img src="{{ post.capa }}" alt="{{ post.titulo }} — {{ loja.nome }}" class="post-hero-cover" width="1200" height="560" fetchpriority="high" decoding="async">
 {% endif %}
 
 <!-- ─── CONTEÚDO ─── -->
@@ -605,8 +540,8 @@
         {{ loja.email }}
       </a>
       {% endif %}
-      {% if loja.instagram_url %}
-      <a href="{{ loja.instagram_url }}" target="_blank"
+      {% if loja.instagram_url or loja.instagram %}
+      <a href="{% if loja.instagram_url %}{{ loja.instagram_url }}{% else %}https://instagram.com/{{ loja.instagram | replace('@','') }}{% endif %}" target="_blank"
          style="display:inline-flex;align-items:center;gap:8px;background:#1f2937;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-size:.85rem;font-weight:600;transition:background .2s;"
          onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#1f2937'">
         <i data-lucide="instagram" style="width:16px;height:16px;color:#e1306c;"></i>
