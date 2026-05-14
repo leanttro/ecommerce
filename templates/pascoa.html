@@ -1114,7 +1114,7 @@ footer {
         <div class="produto-card reveal" style="transition-delay:{{ loop.index0 * 0.08 }}s">
           <div class="produto-img">
             {% if p.imagem %}
-              <img src="{{ directus_url }}/assets/{{ p.imagem }}?width=600&format=webp" alt="{{ p.nome }}" loading="lazy">
+              <img src="{{ p.imagem }}" alt="{{ p.nome }}" loading="lazy">
             {% elif p.imagens and p.imagens[0] %}
               <img src="{{ directus_url }}/assets/{{ p.imagens[0] }}?width=600&format=webp" alt="{{ p.nome }}" loading="lazy">
             {% else %}
@@ -1426,7 +1426,7 @@ footer {
           <div class="blog-card-body">
             {% if post.data_publicacao %}
               <span class="blog-card-date">
-                {{ post.data_publicacao | strftime('%d/%m/%Y') if post.data_publicacao else '' }}
+                {{ post.data if post.data else '' }}
               </span>
             {% endif %}
             <h3>
@@ -1694,7 +1694,7 @@ footer {
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© {{ "now" | strftime('%Y') if "now" | strftime else '2025' }} {{ loja.nome }}. Todos os direitos reservados.</p>
+      <p>© 2025 {{ loja.nome }}. Todos os direitos reservados.</p>
       <p>Desenvolvido por <a href="https://leanttro.com" target="_blank">Leanttro</a></p>
     </div>
   </div>
