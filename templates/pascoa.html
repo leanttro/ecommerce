@@ -121,15 +121,15 @@ img { max-width: 100%; display: block; }
   background: transparent;
 }
 #navbar.scrolled {
-  background: rgba(255,255,255,0.97);
+  background: rgba(13,32,64,0.97);
   backdrop-filter: blur(20px);
   padding: .8rem 0;
-  box-shadow: 0 2px 20px rgba(0,0,0,0.08);
-  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
-#navbar.scrolled .nav-links a { color: var(--text); }
-#navbar.scrolled .nav-links a:hover { color: var(--navy); }
-#navbar.scrolled .hamburger span { background: var(--navy); }
+#navbar.scrolled .nav-links a { color: rgba(255,255,255,0.88); }
+#navbar.scrolled .nav-links a:hover { color: #fff; }
+#navbar.scrolled .hamburger span { background: #fff; }
 
 .nav-inner { display: flex; align-items: center; justify-content: space-between; }
 .nav-logo img { height: 48px; object-fit: contain; }
@@ -137,7 +137,7 @@ img { max-width: 100%; display: block; }
   font-family: 'Cormorant Garamond', serif;
   color: #fff; font-size: 1.4rem; font-weight: 700;
 }
-#navbar.scrolled .nav-logo-text { color: var(--navy); }
+#navbar.scrolled .nav-logo-text { color: #fff; }
 
 .nav-links { display: flex; align-items: center; gap: 1.75rem; list-style: none; }
 .nav-links a {
@@ -1407,7 +1407,7 @@ footer {
       {% if posts and posts|length > 0 %}
         {% for post in posts[:3] %}
         <article class="blog-card reveal" style="transition-delay:{{ loop.index0 * 0.1 }}s">
-          <a href="{{ loja.base_url }}/post/{{ post.slug }}">
+          <a href="{{ loja.base_url }}/blog/{{ post.slug }}">
             <div class="blog-card-img">
               {% if post.imagem %}
                 <img src="{{ directus_url }}/assets/{{ post.imagem }}?width=600&format=webp" alt="{{ post.titulo }}" loading="lazy">
@@ -1430,12 +1430,12 @@ footer {
               </span>
             {% endif %}
             <h3>
-              <a href="{{ loja.base_url }}/post/{{ post.slug }}">{{ post.titulo }}</a>
+              <a href="{{ loja.base_url }}/blog/{{ post.slug }}">{{ post.titulo }}</a>
             </h3>
             {% if post.resumo %}
               <p>{{ post.resumo | truncate(110) }}</p>
             {% endif %}
-            <a href="{{ loja.base_url }}/post/{{ post.slug }}" class="blog-card-link">
+            <a href="{{ loja.base_url }}/blog/{{ post.slug }}" class="blog-card-link">
               Ler artigo <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
             </a>
           </div>
