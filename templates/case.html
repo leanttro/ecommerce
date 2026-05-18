@@ -129,7 +129,7 @@
                 
                 <div class="prose-custom text-reveal-container" style="color: var(--color-text);">
                     {% if p.descricao %}
-                        {{ p.descricao | safe }}
+                        {{ p.descricao | replace('\n', '<br>') | safe }}
                     {% else %}
                         <p>Descubra os detalhes deste case de sucesso. Uma abordagem focada na excelência, design apurado e resultados reais para o cliente.</p>
                     {% endif %}
