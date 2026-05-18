@@ -63,7 +63,7 @@
     "availableLanguage": "Portuguese"
   },
   "sameAs": [
-    {% if loja.instagram %}"https://instagram.com/{{ loja.instagram | replace('@','') }}"{% endif %}
+    "https://instagram.com/soscorporativa"
   ]
 }
 </script>
@@ -1355,6 +1355,7 @@ footer {
       <div class="pbec-list-item">Mentores de Equipes: desenvolvimento de lideranças e fortalecimento da criação.</div>
       <div class="pbec-list-item">Palestrantes: abordando temas relevantes para a saúde mental e desenvolvimento profissional.</div>
       <div class="pbec-list-item">Equipe de Treinamento e Desenvolvimento: capacitando colaboradores e líderes para alta performance.</div>
+      <div class="pbec-list-item">Expositores de Feira de Bem-Estar Corporativo: organização e participação em feiras e eventos corporativos de bem-estar, integrando fornecedores, especialistas e empresas em experiências imersivas de saúde e qualidade de vida.</div>
     </div>
   </div>
 </section>
@@ -1380,23 +1381,24 @@ footer {
         </div>
         <div class="membro-body">
           <h3>Leila Apipe</h3>
-          <span class="membro-sub">Executiva de RH | Especialista em NR-01</span>
+          <span class="membro-sub">Conselheira em Saúde Mental Corporativa, Cultura Organizacional e Liderança Estratégica | Especialista em NR-01</span>
           <div class="membro-formacao">
-            <div class="membro-form-item">Graduada em Gestão de Recursos Humanos, Pós-Graduada em Pedagogia com Ênfase em Gestão de Conflitos</div>
-            <div class="membro-form-item">Cursando MBA em Saúde Mental Corporativa, Cultura Organizacional e Liderança Estratégica</div>
+            <div class="membro-form-item">MBA em Saúde Mental Corporativa, Cultura Organizacional e Liderança Estratégica</div>
+            <div class="membro-form-item">Pós-Graduada em Psicopedagogia com Ênfase em Gestão de Conflitos</div>
+            <div class="membro-form-item">Graduada em Gestão de Recursos Humanos</div>
             <div class="membro-form-item">Certificada em NR-01</div>
           </div>
           <p>
-            Trajetória Profissional: Executiva de RH com <strong>3 décadas de experiência</strong> consolidada, marcada pela liderança humanizada e por um perfil analítico e estratégico com profundo conhecimento das Relações Humanas e Corporativas.
+            Trajetória Profissional: Executiva de Recursos Humanos com <strong>25 anos de trajetória consolidada</strong> no alinhamento da gestão de pessoas aos objetivos de negócio. Experiência multissetorial na condução de transformações organizacionais, gestão de conflitos de alta complexidade e implementação de culturas focadas em bem-estar e performance.
           </p>
           <p>
-            Especialista em transformações organizacionais através do alinhamento estratégico da Gestão de Pessoas aos objetivos do negócio. Atuou em Múltiplos Segmentos — ao longo de sua carreira, desenvolveu expertise sólida e diversificada em ambientes de múltiplos e variados segmentos.
+            Especialista na aplicação estratégica da NR-01, integrando saúde mental, segurança do trabalho e governança corporativa.
           </p>
           <div class="membro-chips">
-            <span class="membro-chip">Recursos Humanos</span>
-            <span class="membro-chip">Cultura Org.</span>
+            <span class="membro-chip">Alinhamento Estratégico</span>
+            <span class="membro-chip">Saúde Mental Corporativa</span>
             <span class="membro-chip">NR-01</span>
-            <span class="membro-chip">Liderança</span>
+            <span class="membro-chip">Mediação &amp; Conflitos</span>
             <span class="membro-chip">RH Estratégico</span>
           </div>
         </div>
@@ -1610,15 +1612,13 @@ footer {
             </div>
           </div>
           {% endif %}
-          {% if loja.instagram %}
           <div class="contato-item">
             <div class="contato-item-icon"><i data-lucide="instagram" style="width:18px;height:18px"></i></div>
             <div class="contato-item-text">
               <strong>Instagram</strong>
-              <a href="https://instagram.com/{{ loja.instagram | replace('@','') }}" target="_blank">{{ loja.instagram }}</a>
+              <a href="https://instagram.com/soscorporativa" target="_blank">@soscorporativa</a>
             </div>
           </div>
-          {% endif %}
         </div>
         <a href="https://wa.me/55{{ loja.whatsapp_comercial | replace('(','') | replace(')','') | replace(' ','') | replace('-','') if loja.whatsapp_comercial else '5511999999999' }}" target="_blank" class="btn-navy">
           <i data-lucide="message-circle" style="width:16px;height:16px"></i>
@@ -1675,6 +1675,18 @@ footer {
           <i data-lucide="check-circle" style="width:20px;height:20px;color:#2e7d32;vertical-align:middle;margin-right:.4rem"></i>
           Dados enviados com sucesso! Nossa equipe entrará em contato.
         </div>
+
+        <!-- INSTAGRAM BANNER -->
+        <a href="https://instagram.com/soscorporativa" target="_blank" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:1.5rem;padding:1rem 1.25rem;background:linear-gradient(135deg,#1B3A6B 0%,#24508A 100%);border-radius:10px;text-decoration:none;transition:opacity .2s" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+          <div style="display:flex;align-items:center;gap:.75rem">
+            <i data-lucide="instagram" style="width:22px;height:22px;color:#d4a84b;flex-shrink:0"></i>
+            <div>
+              <strong style="display:block;color:#fff;font-size:.82rem;letter-spacing:.04em">SIGA-NOS NO INSTAGRAM</strong>
+              <span style="color:rgba(255,255,255,0.6);font-size:.76rem">@soscorporativa — conteúdo sobre saúde mental e RH</span>
+            </div>
+          </div>
+          <i data-lucide="arrow-right" style="width:16px;height:16px;color:#d4a84b;flex-shrink:0"></i>
+        </a>
       </div>
     </div>
   </div>
@@ -1692,11 +1704,9 @@ footer {
         {% endif %}
         <p>Avaliação Organizacional, Saúde Mental Corporativa e RH Estratégico. Conformidade com a NR-01 e Programas de Bem-Estar Corporativo — PBEC.</p>
         <div class="footer-social">
-          {% if loja.instagram %}
-          <a href="https://instagram.com/{{ loja.instagram | replace('@','') }}" target="_blank" aria-label="Instagram">
+          <a href="https://instagram.com/soscorporativa" target="_blank" aria-label="Instagram">
             <i data-lucide="instagram" style="width:15px;height:15px"></i>
           </a>
-          {% endif %}
           {% if loja.whatsapp_comercial %}
           <a href="https://wa.me/55{{ loja.whatsapp_comercial | replace('(','') | replace(')','') | replace(' ','') | replace('-','') }}" target="_blank" aria-label="WhatsApp">
             <i data-lucide="message-circle" style="width:15px;height:15px"></i>
