@@ -1378,7 +1378,14 @@ def esqueci_senha(loja_slug):
     if request.method == 'POST':
         email = request.form.get('email', '').strip()
         
-        if email == g.loja.get('email'):
+        # Busca o email direto do banco para evitar problema de cache desatualizado
+        try:
+            r_email = requests.get(f"{DIRECTUS_URL}/items/lojas/{g.loja_id}?fields=email", headers=get_headers(), timeout=7)
+            email_cadastrado = r_email.json().get('data', {}).get('email', '') if r_email.status_code == 200 else g.loja.get('email', '')
+        except:
+            email_cadastrado = g.loja.get('email', '')
+        
+        if email and email_cadastrado and email.lower() == email_cadastrado.lower():
             token = serializer.dumps(email, salt='email-reset-salt')
             
             # Usando url_for com _external=True igual no app Copia
