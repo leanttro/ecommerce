@@ -817,6 +817,7 @@ def admin_painel(loja_slug):
         payload = {
             "nome": request.form.get('nome'),
             "whatsapp_comercial": request.form.get('whatsapp'),
+			"email": request.form.get('email'),
 			"ga4_id": request.form.get('ga4_id'),
 			"facebook_pixel": request.form.get('facebook_pixel'),
             "template_ativo": request.form.get('template_ativo') or 'index',
