@@ -208,7 +208,9 @@ def identificar_loja():
 
         # 1 VERIFICAÇÃO DE DOMÍNIO PRÓPRIO
         # Se não for o domínio principal do SaaS nem localhost
-        if host not in ['leanttro.com', 'www.leanttro.com', 'catalogo.leanttro.com', 'localhost', '127.0.0.1']:
+        # NOTA: hosts com domínio próprio de clientes são identificados aqui
+        if host not in ['leanttro.com', 'www.leanttro.com', 'catalogo.leanttro.com', 'localhost', '127.0.0.1'] or \
+           host in ['creapes.com.br', 'www.creapes.com.br']:
             try:
                 host_clean = host.replace('www.', '')
                 url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
