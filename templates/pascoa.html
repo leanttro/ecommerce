@@ -863,6 +863,109 @@ footer {
   50%{box-shadow:0 8px 40px rgba(37,211,102,0.7),0 0 0 10px rgba(37,211,102,0.08)}
 }
 
+/* ─── HUB DE PARCEIROS ─── */
+#hub { padding: 8rem 0; background: var(--cream); }
+.hub-header { text-align: center; margin-bottom: 4rem; }
+.hub-header h2 { font-size: clamp(2.2rem,3vw,3rem); color: var(--navy); }
+.hub-header p { color: var(--muted); max-width: 580px; margin: 1rem auto 0; font-size: .96rem; line-height: 1.75; }
+
+.hub-inner {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 5rem; align-items: center;
+}
+.hub-text .tag-label { color: var(--gold); }
+.hub-text h2 { font-size: clamp(2rem,3vw,2.8rem); color: var(--navy); margin-bottom: 1.25rem; line-height: 1.15; }
+.hub-text h2 em { color: var(--gold); font-style: italic; }
+.hub-text p { font-size: .95rem; line-height: 1.9; color: var(--muted); margin-bottom: 1rem; }
+.hub-text p strong { color: var(--text); font-weight: 600; }
+
+.hub-cats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: .75rem; margin: 1.75rem 0 2rem;
+}
+.hub-cat {
+  display: flex; align-items: center; gap: .65rem;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 8px; padding: .85rem 1rem;
+  transition: border-color .2s, box-shadow .2s;
+}
+.hub-cat:hover { border-color: rgba(27,58,107,0.25); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.hub-cat-icon {
+  width: 32px; height: 32px; border-radius: 7px;
+  background: rgba(27,58,107,0.08);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--navy); flex-shrink: 0;
+}
+.hub-cat-text { font-size: .82rem; font-weight: 600; color: var(--text); line-height: 1.35; }
+.hub-cat-count { font-size: .72rem; color: var(--muted); font-weight: 400; display: block; }
+
+.hub-visual {
+  display: flex; flex-direction: column; gap: 1.25rem;
+}
+.hub-card-main {
+  background: var(--navy); border-radius: 16px;
+  padding: 2.5rem; position: relative; overflow: hidden;
+}
+.hub-card-main::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:4px;
+  background: linear-gradient(90deg, var(--gold), var(--gold2));
+}
+.hub-card-main-logo {
+  display: flex; align-items: center; gap: .75rem; margin-bottom: 1.75rem;
+}
+.hub-card-main-logo-dot {
+  width: 10px; height: 10px; border-radius: 50%; background: var(--gold2);
+}
+.hub-card-main-logo span {
+  color: rgba(255,255,255,0.5); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
+}
+.hub-stats-row {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 1.5rem;
+}
+.hub-stat {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 1.1rem; text-align: center;
+}
+.hub-stat-num {
+  font-family: 'Cormorant Garamond',serif; font-size: 2rem;
+  font-weight: 700; color: var(--gold2); display: block; line-height: 1;
+}
+.hub-stat-lbl { font-size: .68rem; color: rgba(255,255,255,0.45); margin-top: .3rem; display: block; }
+.hub-card-main-cta {
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(184,146,58,0.12); border: 1px solid rgba(184,146,58,0.25);
+  border-radius: 10px; padding: 1rem 1.25rem;
+  color: rgba(255,255,255,0.8); font-size: .85rem; font-weight: 600;
+  transition: background .2s;
+}
+.hub-card-main-cta:hover { background: rgba(184,146,58,0.22); color: #fff; }
+.hub-card-main-cta span { display: flex; align-items: center; gap: .5rem; }
+
+.hub-card-sub {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.5rem;
+  display: flex; align-items: center; gap: 1rem;
+  transition: box-shadow .2s, border-color .2s;
+}
+.hub-card-sub:hover { border-color: rgba(27,58,107,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
+.hub-card-sub-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: rgba(27,58,107,0.07);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--navy); flex-shrink: 0;
+}
+.hub-card-sub-text strong { display: block; color: var(--navy); font-size: .88rem; font-weight: 700; margin-bottom: .2rem; }
+.hub-card-sub-text span { color: var(--muted); font-size: .82rem; }
+
+@media(max-width:1024px){
+  .hub-inner { grid-template-columns:1fr; gap:3rem; }
+  .hub-visual { max-width:500px; }
+}
+@media(max-width:768px){
+  .hub-cats { grid-template-columns:1fr; }
+  .hub-stats-row { grid-template-columns:repeat(3,1fr); }
+}
+
 /* ─── SECTION SEPARATORS ─── */
 .sep {
   height: 6px;
@@ -920,6 +1023,7 @@ footer {
   <a href="#nr01" onclick="closeMobile()">NR-01</a>
   <a href="#pbec" onclick="closeMobile()">PBEC</a>
   <a href="#equipe" onclick="closeMobile()">Equipe</a>
+  <a href="#hub" onclick="closeMobile()">Indica</a>
   <a href="#blog" onclick="closeMobile()">Blog</a>
   <a href="#contato" onclick="closeMobile()" style="color:var(--gold2)">Fale Conosco</a>
 </div>
@@ -942,6 +1046,7 @@ footer {
         <li><a href="#nr01">NR-01</a></li>
         <li><a href="#pbec">PBEC</a></li>
         <li><a href="#equipe">Equipe</a></li>
+        <li><a href="#hub">Indica</a></li>
         <li><a href="#blog">Blog</a></li>
         <li><a href="#contato" class="nav-cta-btn">Fale Conosco</a></li>
       </ul>
@@ -1317,6 +1422,89 @@ footer {
 
 <div class="sep"></div>
 
+<!-- ═══ HUB DE PARCEIROS ═══ -->
+<section id="hub">
+  <div class="container">
+    <div class="hub-inner">
+
+      <div class="hub-text reveal-left">
+        <span class="tag-label">Ecossistema de negócios</span>
+        <h2>Conheça nosso<br><em>Hub de Parceiros</em><br>Zona Sul</h2>
+        <p>
+          A SOS Corporativa vai além da consultoria. Criamos um <strong>diretório B2B gratuito</strong> com os melhores fornecedores e parceiros para empresas da Zona Sul de São Paulo.
+        </p>
+        <p>
+          São <strong>120 negócios verificados</strong> em 32 bairros, organizados por categoria — contabilidade, jurídico, segurança do trabalho e terceirização. Tudo para facilitar a vida do RH e dos gestores que precisam de fornecedores confiáveis na região.
+        </p>
+        <div class="hub-cats">
+          <div class="hub-cat">
+            <div class="hub-cat-icon"><i data-lucide="calculator" style="width:15px;height:15px"></i></div>
+            <div class="hub-cat-text">Contabilidade <span class="hub-cat-count">27 escritórios</span></div>
+          </div>
+          <div class="hub-cat">
+            <div class="hub-cat-icon"><i data-lucide="scale" style="width:15px;height:15px"></i></div>
+            <div class="hub-cat-text">Jurídico <span class="hub-cat-count">35 escritórios</span></div>
+          </div>
+          <div class="hub-cat">
+            <div class="hub-cat-icon"><i data-lucide="hard-hat" style="width:15px;height:15px"></i></div>
+            <div class="hub-cat-text">Segurança do Trabalho <span class="hub-cat-count">32 empresas</span></div>
+          </div>
+          <div class="hub-cat">
+            <div class="hub-cat-icon"><i data-lucide="briefcase" style="width:15px;height:15px"></i></div>
+            <div class="hub-cat-text">Terceirização <span class="hub-cat-count">26 empresas</span></div>
+          </div>
+        </div>
+        <a href="https://indica.soscorporativa.com.br/" target="_blank" class="btn-navy">
+          <i data-lucide="map-pin" style="width:16px;height:16px"></i>
+          Explorar o Hub de Parceiros
+        </a>
+      </div>
+
+      <div class="hub-visual reveal-right">
+        <div class="hub-card-main">
+          <div class="hub-card-main-logo">
+            <div class="hub-card-main-logo-dot"></div>
+            <span>Hub de Parceiros — Zona Sul SP</span>
+          </div>
+          <div class="hub-stats-row">
+            <div class="hub-stat">
+              <span class="hub-stat-num">120</span>
+              <span class="hub-stat-lbl">Negócios cadastrados</span>
+            </div>
+            <div class="hub-stat">
+              <span class="hub-stat-num">32</span>
+              <span class="hub-stat-lbl">Bairros cobertos</span>
+            </div>
+            <div class="hub-stat">
+              <span class="hub-stat-num">4</span>
+              <span class="hub-stat-lbl">Categorias B2B</span>
+            </div>
+          </div>
+          <a href="https://indica.soscorporativa.com.br/" target="_blank" class="hub-card-main-cta">
+            <span>
+              <i data-lucide="external-link" style="width:15px;height:15px;color:var(--gold2)"></i>
+              indica.soscorporativa.com.br
+            </span>
+            <i data-lucide="arrow-right" style="width:15px;height:15px;color:var(--gold2)"></i>
+          </a>
+        </div>
+        <div class="hub-card-sub">
+          <div class="hub-card-sub-icon">
+            <i data-lucide="star" style="width:18px;height:18px"></i>
+          </div>
+          <div class="hub-card-sub-text">
+            <strong>100% gratuito para usar</strong>
+            <span>Acesse, filtre por bairro ou categoria e encontre o parceiro certo para sua empresa.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
 <!-- ═══ PBEC ═══ -->
 <section id="pbec">
   <div class="container">
@@ -1572,8 +1760,6 @@ footer {
   </div>
 </section>
 
-<div class="sep"></div>
-
 <!-- ═══ CONTATO ═══ -->
 <section id="contato">
   <div class="container">
@@ -1733,6 +1919,7 @@ footer {
           <li><a href="#quem-somos">Quem Somos</a></li>
           <li><a href="#mvv">Missão &amp; Valores</a></li>
           <li><a href="#equipe">Nossa Equipe</a></li>
+          <li><a href="#hub">Indica — Hub de Parceiros</a></li>
           <li><a href="#blog">Blog</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
