@@ -60,7 +60,7 @@ SMTP_PASS = os.getenv("SMTP_PASS", "")
 # BLACKLIST DE ROTAS PALAVRAS RESERVADAS
 # Rotas que não devem ser tratadas como SLUG de loja
 # ADICIONADO catalogo AQUI PARA NÃO CONFUNDIR COM LOJA
-BLACKLIST_ROTAS = ['static', 'cadastro', 'catalogo', 'login', 'logout', 'api', 'admin', 'favicon.ico', 'sitemap.xml', 'robots.txt']
+BLACKLIST_ROTAS = ['static', 'cadastro', 'catalogo', 'login', 'logout', 'api', 'admin', 'favicon.ico', 'sitemap.xml', 'robots.txt', 'reset-senha']
 
 # SEGURANÇA RATE LIMITING NA MEMÓRIA
 RATE_LIMIT_DATA = {}
