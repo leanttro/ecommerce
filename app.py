@@ -926,7 +926,7 @@ def admin_painel(loja_slug):
                 
                 produtos.append(p)
 
-        r_post = requests.get(f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&limit=20&sort=-date_created&fields=id,titulo,date_created", headers=headers, timeout=7)
+        r_post = requests.get(f"{DIRECTUS_URL}/items/posts?filter[loja_id][_eq]={g.loja_id}&limit=20&sort=-date_created&fields=id,titulo,resumo,conteudo,date_created", headers=headers, timeout=7)
         if r_post.status_code == 200: posts = r_post.json()['data']
         
         r_leads = requests.get(f"{DIRECTUS_URL}/items/clientes_loja?filter[loja_id][_eq]={g.loja_id}&sort=-date_created", headers=headers, timeout=7)
