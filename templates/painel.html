@@ -1405,11 +1405,30 @@
             document.getElementById('postModalTitle').innerText = 'Novo Post';
             toggleModal('postModal');
         }
+        function stripHtml(html) {
+            if (!html) return '';
+            // cria elemento temporário para fazer parse do HTML
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            // converte <br>, <p>, <li> em quebras de linha antes de pegar o texto
+            tmp.querySelectorAll('p, div, li, br').forEach(el => {
+                if (el.tagName === 'BR') {
+                    el.replaceWith('\n');
+                } else {
+                    el.insertAdjacentText('afterend', '\n');
+                }
+            });
+            // retorna texto limpo, removendo linhas em branco duplicadas
+            return tmp.innerText.replace(/\n{3,}/g, '\n\n').trim();
+        }
+
         function editarPost(post) {
             document.getElementById('postId').value = post.id;
             document.getElementById('postTitulo').value = post.titulo;
             document.getElementById('postResumo').value = post.resumo || '';
-            document.getElementById('postConteudo').value = post.conteudo || '';
+            // se o conteúdo contiver tags HTML, faz o strip para mostrar texto limpo
+            const conteudo = post.conteudo || '';
+            document.getElementById('postConteudo').value = conteudo.includes('<') ? stripHtml(conteudo) : conteudo;
             document.querySelector('#postForm input[name="capa"]').value = '';
             document.getElementById('postModalTitle').innerText = 'Editar Post';
             toggleModal('postModal');
