@@ -672,12 +672,74 @@ img { max-width: 100%; display: block; }
 }
 
 /* ─── BLOG ─── */
+/* ─── BLOG ─── */
 #blog { padding: 8rem 0; background: var(--white); }
-.blog-header { text-align: center; margin-bottom: 4rem; }
+.blog-header { text-align: center; margin-bottom: 3rem; }
 .blog-header h2 { font-size: clamp(2.2rem,3vw,3rem); color: var(--navy); }
 .blog-header p { color: var(--muted); max-width: 480px; margin: 1rem auto 0; }
 
-.blog-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.75rem; }
+/* controles de view */
+.blog-controls {
+  display: flex; align-items: center; justify-content: center;
+  gap: .6rem; margin-bottom: 2.5rem;
+}
+.blog-view-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: 8px;
+  border: 1.5px solid var(--border); background: transparent;
+  color: var(--muted); cursor: pointer; transition: all .2s;
+}
+.blog-view-btn:hover { border-color: var(--navy); color: var(--navy); }
+.blog-view-btn.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+/* ── CARROSSEL ── */
+.blog-carousel-wrap { position: relative; }
+.blog-carousel {
+  display: flex; gap: 1.75rem;
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+  padding-bottom: .5rem;
+  /* esconde scrollbar */
+  scrollbar-width: none;
+}
+.blog-carousel::-webkit-scrollbar { display: none; }
+.blog-carousel .blog-card {
+  flex: 0 0 calc(33.333% - 1.2rem);
+  min-width: 280px;
+  scroll-snap-align: start;
+}
+
+/* nav arrows */
+.blog-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--white); border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .2s; z-index: 2; color: var(--navy);
+  box-shadow: 0 2px 10px rgba(0,0,0,.08);
+}
+.blog-nav:hover { background: var(--navy); color: #fff; border-color: var(--navy); }
+.blog-nav.prev { left: -20px; }
+.blog-nav.next { right: -20px; }
+.blog-nav:disabled { opacity: .3; pointer-events: none; }
+
+/* dots */
+.blog-dots {
+  display: flex; gap: .45rem; justify-content: center; margin-top: 1.5rem;
+}
+.blog-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--border); border: none; cursor: pointer;
+  transition: all .25s; padding: 0;
+}
+.blog-dot.active { background: var(--navy); width: 22px; border-radius: 4px; }
+
+/* ── GRADE ── */
+.blog-grid {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 1.75rem;
+}
+
+/* card (compartilhado) */
 .blog-card {
   background: var(--white); border: 1px solid var(--border);
   border-radius: 12px; overflow: hidden; display: flex;
@@ -716,10 +778,8 @@ img { max-width: 100%; display: block; }
 .blog-card:hover .blog-card-link { gap: .7rem; color: var(--gold); }
 
 .blog-empty {
-  grid-column: 1/-1; text-align: center; padding: 5rem 2rem;
-  color: var(--muted);
+  grid-column: 1/-1; text-align: center; padding: 5rem 2rem; color: var(--muted);
 }
-.blog-view-all { text-align: center; margin-top: 3rem; }
 
 /* ─── FAQ ─── */
 #faq { padding: 8rem 0; background: var(--cream); }
@@ -990,6 +1050,9 @@ footer {
   .pbec-seal { display:none; }
   .equipe-grid { grid-template-columns:1fr; }
   .blog-grid { grid-template-columns:1fr 1fr; }
+  .blog-carousel .blog-card { flex: 0 0 calc(50% - .9rem); }
+  .blog-nav.prev { left: -10px; }
+  .blog-nav.next { right: -10px; }
   .contato-grid { grid-template-columns:1fr; }
   .footer-grid { grid-template-columns:1fr 1fr; }
   .pbec-list-cols { grid-template-columns:1fr; }
@@ -1001,6 +1064,8 @@ footer {
   .stat-cell { border-right:none; border-bottom:1px solid rgba(255,255,255,0.07); }
   .servicos-grid { grid-template-columns:1fr; }
   .blog-grid { grid-template-columns:1fr; }
+  .blog-carousel .blog-card { flex: 0 0 85%; }
+  .blog-nav { display: none; }
   .nr01-cards { grid-template-columns:1fr; }
   .valores-strip { grid-template-columns:1fr 1fr; }
   .footer-grid { grid-template-columns:1fr; }
@@ -1636,10 +1701,27 @@ footer {
       <h2>Blog &amp; Artigos</h2>
       <p>Insights sobre saúde mental corporativa, RH estratégico e bem-estar organizacional.</p>
     </div>
-    <div class="blog-grid">
-      {% if posts and posts|length > 0 %}
-        {% for post in posts[:3] %}
-        <article class="blog-card reveal" style="transition-delay:{{ loop.index0 * 0.1 }}s">
+
+    {% if posts and posts|length > 0 %}
+
+    <!-- controles -->
+    <div class="blog-controls reveal">
+      <button class="blog-view-btn active" id="btnCarrossel" title="Carrossel" onclick="setBlogView('carousel')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="6" height="10" rx="1"/><rect x="9" y="7" width="6" height="10" rx="1"/><rect x="16" y="7" width="6" height="10" rx="1"/></svg>
+      </button>
+      <button class="blog-view-btn" id="btnGrade" title="Grade" onclick="setBlogView('grid')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </button>
+    </div>
+
+    <!-- CARROSSEL -->
+    <div id="blogCarouselWrap" class="blog-carousel-wrap reveal">
+      <button class="blog-nav prev" id="blogPrev" onclick="slideCarousel(-1)" aria-label="Anterior">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="blog-carousel" id="blogCarousel">
+        {% for post in posts %}
+        <article class="blog-card">
           <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}">
             <div class="blog-card-img">
               {% if post.capa %}
@@ -1649,42 +1731,61 @@ footer {
                   <i data-lucide="newspaper" style="width:48px;height:48px"></i>
                 </div>
               {% endif %}
-              {% if post.categoria %}
-                <span class="blog-card-cat">{{ post.categoria }}</span>
-              {% else %}
-                <span class="blog-card-cat">Artigo</span>
-              {% endif %}
+              <span class="blog-card-cat">{{ post.categoria or 'Artigo' }}</span>
             </div>
           </a>
           <div class="blog-card-body">
-            {% if post.data_publicacao %}
-              <span class="blog-card-date">
-                {{ post.data if post.data else '' }}
-              </span>
-            {% endif %}
-            <h3>
-              <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}">{{ post.titulo }}</a>
-            </h3>
-            {% if post.resumo %}
-              <p>{{ post.resumo | truncate(110) }}</p>
-            {% endif %}
+            {% if post.data %}<span class="blog-card-date">{{ post.data }}</span>{% endif %}
+            <h3><a href="/{{ loja.slug_url }}/blog/{{ post.slug }}">{{ post.titulo }}</a></h3>
+            {% if post.resumo %}<p>{{ post.resumo | truncate(110) }}</p>{% endif %}
             <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}" class="blog-card-link">
               Ler artigo <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
             </a>
           </div>
         </article>
         {% endfor %}
-      {% else %}
-        <div class="blog-empty">
-          <i data-lucide="pencil-line" style="width:40px;height:40px;color:var(--border);display:block;margin:0 auto 1rem"></i>
-          <p>Em breve, publicações sobre saúde mental corporativa, NR-01 e RH estratégico.</p>
-          <p style="margin-top:.5rem;font-size:.85rem;">Fique atento — novos conteúdos em breve!</p>
-        </div>
-      {% endif %}
+      </div>
+      <button class="blog-nav next" id="blogNext" onclick="slideCarousel(1)" aria-label="Próximo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <div class="blog-dots" id="blogDots"></div>
     </div>
-    {% if posts and posts|length > 3 %}
-    <div class="blog-view-all reveal">
-      <a href="/{{ loja.slug_url }}/blog" class="btn-outline">Ver todos os artigos</a>
+
+    <!-- GRADE -->
+    <div id="blogGridWrap" style="display:none">
+      <div class="blog-grid">
+        {% for post in posts %}
+        <article class="blog-card reveal" style="transition-delay:{{ loop.index0 * 0.07 }}s">
+          <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}">
+            <div class="blog-card-img">
+              {% if post.capa %}
+                <img src="{{ post.capa }}" alt="{{ post.titulo }}" loading="lazy">
+              {% else %}
+                <div class="blog-card-img-placeholder">
+                  <i data-lucide="newspaper" style="width:48px;height:48px"></i>
+                </div>
+              {% endif %}
+              <span class="blog-card-cat">{{ post.categoria or 'Artigo' }}</span>
+            </div>
+          </a>
+          <div class="blog-card-body">
+            {% if post.data %}<span class="blog-card-date">{{ post.data }}</span>{% endif %}
+            <h3><a href="/{{ loja.slug_url }}/blog/{{ post.slug }}">{{ post.titulo }}</a></h3>
+            {% if post.resumo %}<p>{{ post.resumo | truncate(110) }}</p>{% endif %}
+            <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}" class="blog-card-link">
+              Ler artigo <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
+            </a>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% else %}
+    <div class="blog-empty">
+      <i data-lucide="pencil-line" style="width:40px;height:40px;color:var(--border);display:block;margin:0 auto 1rem"></i>
+      <p>Em breve, publicações sobre saúde mental corporativa, NR-01 e RH estratégico.</p>
+      <p style="margin-top:.5rem;font-size:.85rem;">Fique atento — novos conteúdos em breve!</p>
     </div>
     {% endif %}
   </div>
@@ -1979,6 +2080,103 @@ function toggleFaq(btn) {
   const isOpen = item.classList.contains('open');
   document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
   if(!isOpen) item.classList.add('open');
+}
+
+// ─── Blog Carrossel
+(function() {
+  const carousel = document.getElementById('blogCarousel');
+  if (!carousel) return;
+
+  const dotsWrap = document.getElementById('blogDots');
+  const prevBtn  = document.getElementById('blogPrev');
+  const nextBtn  = document.getElementById('blogNext');
+  const cards    = carousel.querySelectorAll('.blog-card');
+  let currentDot = 0;
+
+  // calcula quantos cards visíveis por vez
+  function visibleCount() {
+    const w = carousel.offsetWidth;
+    if (w < 500) return 1;
+    if (w < 900) return 2;
+    return 3;
+  }
+
+  function totalPages() {
+    return Math.max(1, cards.length - visibleCount() + 1);
+  }
+
+  function buildDots() {
+    dotsWrap.innerHTML = '';
+    const total = totalPages();
+    for (let i = 0; i < total; i++) {
+      const d = document.createElement('button');
+      d.className = 'blog-dot' + (i === currentDot ? ' active' : '');
+      d.setAttribute('aria-label', 'Ir para slide ' + (i + 1));
+      d.addEventListener('click', () => goTo(i));
+      dotsWrap.appendChild(d);
+    }
+  }
+
+  function goTo(idx) {
+    if (!cards.length) return;
+    idx = Math.max(0, Math.min(idx, totalPages() - 1));
+    currentDot = idx;
+    const cardWidth = cards[0].offsetWidth + 28; // gap 1.75rem ≈ 28px
+    carousel.scrollTo({ left: cardWidth * idx, behavior: 'smooth' });
+    updateDots();
+    updateArrows();
+  }
+
+  function updateDots() {
+    dotsWrap.querySelectorAll('.blog-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === currentDot);
+    });
+  }
+
+  function updateArrows() {
+    if (prevBtn) prevBtn.disabled = currentDot === 0;
+    if (nextBtn) nextBtn.disabled = currentDot >= totalPages() - 1;
+  }
+
+  window.slideCarousel = function(dir) { goTo(currentDot + dir); };
+
+  // sync dot on scroll
+  carousel.addEventListener('scroll', () => {
+    if (!cards.length) return;
+    const cardWidth = cards[0].offsetWidth + 28;
+    const idx = Math.round(carousel.scrollLeft / cardWidth);
+    if (idx !== currentDot) { currentDot = idx; updateDots(); updateArrows(); }
+  }, { passive: true });
+
+  // rebuild on resize
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => { buildDots(); goTo(0); }, 200);
+  });
+
+  buildDots();
+  updateArrows();
+})();
+
+function setBlogView(view) {
+  const carousel = document.getElementById('blogCarouselWrap');
+  const grid     = document.getElementById('blogGridWrap');
+  const btnC     = document.getElementById('btnCarrossel');
+  const btnG     = document.getElementById('btnGrade');
+  if (!carousel || !grid) return;
+  if (view === 'carousel') {
+    carousel.style.display = '';
+    grid.style.display = 'none';
+    btnC.classList.add('active');
+    btnG.classList.remove('active');
+  } else {
+    carousel.style.display = 'none';
+    grid.style.display = '';
+    btnG.classList.add('active');
+    btnC.classList.remove('active');
+    lucide.createIcons();
+  }
 }
 
 // ─── Formulário de contato (mesmo esquema do template institucional)
