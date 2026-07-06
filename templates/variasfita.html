@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ loja.nome }} | Produtora Audiovisual</title>
+<meta name="description" content="{{ loja.sobre_texto or (loja.nome ~ ' — produtora audiovisual.') }}">
+
+<!-- ══ OPEN GRAPH ══ -->
+<meta property="og:title" content="{{ loja.nome }}">
+<meta property="og:description" content="{{ loja.sobre_texto or '' }}">
+{% if loja.logo_url %}<meta property="og:image" content="{{ loja.logo_url }}">{% endif %}
+<meta property="og:type" content="website">
+
+<!-- ══ SCHEMA.ORG ══ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MovieTheater",
+  "name": "{{ loja.nome }}",
+  "description": "{{ loja.sobre_texto or '' }}"
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg: {{ loja.cor_fundo or '#16120F' }};
+  --ink: {{ loja.cor_texto or '#F1ECE0' }};
+  --tape: {{ loja.cor_primaria or '#C1272D' }};
+  --olive: #6E7350;
+  --card: #221C16;
+  --line: rgba(241,236,224,0.14);
+  --ink-dim: rgba(241,236,224,0.62);
+  --f-title: {{ loja.fonte_titulo or "'Fraunces', serif" }};
+  --f-body: {{ loja.fonte_texto or "'Work Sans', sans-serif" }};
+  --f-mono: 'IBM Plex Mono', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--f-body);
+  overflow-x:hidden; -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%; display:block;}
+a{color:inherit; text-decoration:none;}
+.wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+.eyebrow{
+  font-family:var(--f-mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--tape); display:flex; align-items:center; gap:10px; margin-bottom:18px;
+}
+.eyebrow::before{content:''; width:20px; height:1px; background:var(--tape);}
+h1,h2,h3{font-family:var(--f-title); font-weight:600; line-height:1.05; letter-spacing:-0.01em;}
+
+/* film perforation rail */
+.reel-rail{
+  position:fixed; top:0; left:0; width:26px; height:100vh; z-index:40; pointer-events:none;
+  display:flex; flex-direction:column; align-items:center; justify-content:space-evenly;
+  background:linear-gradient(180deg, transparent, rgba(0,0,0,0.25), transparent);
+}
+.reel-rail span{width:8px; height:8px; border-radius:2px; background:var(--ink); opacity:0.18;}
+@media(max-width:860px){.reel-rail{display:none;}}
+
+/* loader */
+#loader{
+  position:fixed; inset:0; background:var(--bg); z-index:9999;
+  display:flex; align-items:center; justify-content:center;
+  transition:opacity .6s ease, visibility .6s ease;
+}
+#loader.hide{opacity:0; visibility:hidden;}
+.loader-mark{font-family:var(--f-mono); font-size:13px; letter-spacing:.2em; color:var(--tape);}
+
+/* nav */
+header.topbar{
+  position:fixed; top:0; left:0; right:0; z-index:50; padding:22px 0;
+  display:flex; justify-content:center;
+  background:linear-gradient(180deg, rgba(22,18,15,0.9), transparent);
+}
+.topbar .wrap{display:flex; align-items:center; justify-content:space-between;}
+.brand{display:flex; align-items:center; gap:10px; font-family:var(--f-title); font-weight:600; font-size:20px;}
+.brand img{height:34px; width:auto;}
+.menu-btn{
+  font-family:var(--f-mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+  border:1px solid var(--line); padding:9px 16px; border-radius:2px; cursor:pointer; background:transparent; color:var(--ink);
+  display:flex; align-items:center; gap:8px;
+}
+.menu-btn:hover{border-color:var(--tape); color:var(--tape);}
+
+#nav-overlay{
+  position:fixed; inset:0; z-index:60; background:var(--bg);
+  display:flex; flex-direction:column; justify-content:center; padding:0 32px;
+  transform:translateY(-100%); transition:transform .55s cubic-bezier(.16,1,.3,1);
+}
+#nav-overlay.open{transform:translateY(0);}
+#nav-overlay a{
+  font-family:var(--f-title); font-size:clamp(32px,7vw,64px); font-weight:600; padding:10px 0;
+  border-bottom:1px solid var(--line); width:fit-content;
+}
+#nav-overlay a:hover{color:var(--tape);}
+.nav-close{
+  position:absolute; top:26px; right:32px; font-family:var(--f-mono); font-size:12px;
+  letter-spacing:.12em; cursor:pointer; border:1px solid var(--line); padding:9px 16px; border-radius:2px;
+}
+
+/* hero */
+.hero{
+  min-height:100vh; display:flex; flex-direction:column; justify-content:flex-end;
+  position:relative; padding:160px 0 70px;
+  background-image:
+    radial-gradient(ellipse at top right, rgba(193,39,45,0.14), transparent 55%);
+}
+.hero .wrap{width:100%;}
+.hero h1{font-size:clamp(40px,7vw,104px); max-width:900px;}
+.hero p.lede{font-size:18px; color:var(--ink-dim); max-width:480px; margin-top:22px; line-height:1.6;}
+.hero-meta{
+  display:flex; gap:40px; margin-top:56px; padding-top:26px; border-top:1px solid var(--line);
+  font-family:var(--f-mono); font-size:12px; color:var(--ink-dim); flex-wrap:wrap;
+}
+.hero-meta b{color:var(--ink); font-weight:500; display:block; font-family:var(--f-body); font-size:14px; margin-top:4px;}
+
+/* clients marquee */
+.clients{padding:50px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); overflow:hidden;}
+.clients-track{display:flex; gap:70px; width:max-content; animation:scroll 32s linear infinite;}
+.clients-track img{height:26px; width:auto; opacity:.55; filter:grayscale(1) brightness(2);}
+@keyframes scroll{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+
+/* section shell */
+section.block{padding:120px 0;}
+.block-head{display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:56px; flex-wrap:wrap;}
+.block-head h2{font-size:clamp(30px,4vw,48px);}
+
+/* quem somos */
+#quemsomos{border-top:1px solid var(--line);}
+.qs-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:70px; align-items:center;}
+.qs-text p{font-size:17px; line-height:1.75; color:var(--ink-dim); white-space:pre-line;}
+.qs-photos{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+.qs-photos .ph1{grid-column:1/-1; aspect-ratio:16/10; overflow:hidden; border-radius:2px;}
+.qs-photos .ph2,.qs-photos .ph3{aspect-ratio:1/1; overflow:hidden; border-radius:2px;}
+.qs-photos img{width:100%; height:100%; object-fit:cover;}
+@media(max-width:860px){.qs-grid{grid-template-columns:1fr;}}
+
+/* portfolio */
+#trabalhos{border-top:1px solid var(--line);}
+.filters{display:flex; gap:10px; flex-wrap:wrap;}
+.filter-btn{
+  font-family:var(--f-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+  padding:9px 16px; border:1px solid var(--line); border-radius:2px; cursor:pointer; background:transparent; color:var(--ink-dim);
+}
+.filter-btn.active,.filter-btn:hover{border-color:var(--tape); color:var(--tape);}
+.grid-work{display:grid; grid-template-columns:repeat(2,1fr); gap:3px;}
+.work-card{position:relative; aspect-ratio:4/3; overflow:hidden; cursor:pointer; background:#000;}
+.work-card img{width:100%; height:100%; object-fit:cover; transition:transform .6s ease, opacity .4s ease;}
+.work-card:hover img{transform:scale(1.05); opacity:.55;}
+.work-info{position:absolute; left:0; right:0; bottom:0; padding:22px; background:linear-gradient(0deg, rgba(0,0,0,0.85), transparent);}
+.work-info .yr{font-family:var(--f-mono); font-size:11px; color:var(--tape); letter-spacing:.1em;}
+.work-info h3{font-size:20px; margin-top:6px;}
+.work-info .tag{font-size:13px; color:var(--ink-dim); margin-top:2px;}
+@media(max-width:700px){.grid-work{grid-template-columns:1fr;}}
+
+/* servicos */
+#servicos{border-top:1px solid var(--line);}
+.serv-list{border-top:1px solid var(--line);}
+.serv-row{
+  display:grid; grid-template-columns:70px 1fr; gap:24px; padding:32px 0; border-bottom:1px solid var(--line);
+}
+.serv-row .num{font-family:var(--f-mono); color:var(--tape); font-size:14px; padding-top:4px;}
+.serv-row h3{font-size:24px; margin-bottom:8px;}
+.serv-row p{color:var(--ink-dim); font-size:15px; line-height:1.65; max-width:640px;}
+
+/* video modal */
+.video-modal{
+  position:fixed; inset:0; z-index:70; background:rgba(0,0,0,.92); display:none;
+  align-items:center; justify-content:center; padding:24px;
+}
+.video-modal.open{display:flex;}
+.video-modal .box{width:100%; max-width:960px; aspect-ratio:16/9; position:relative;}
+.video-modal iframe{width:100%; height:100%; border:0;}
+.video-close{position:absolute; top:-40px; right:0; font-family:var(--f-mono); font-size:13px; cursor:pointer; color:var(--ink);}
+
+/* contato / footer */
+footer#contato{border-top:1px solid var(--line); padding:120px 0 50px;}
+.cta-line{font-size:clamp(28px,5vw,56px); font-family:var(--f-title); font-weight:600; max-width:760px; margin-bottom:56px;}
+.cf-grid{display:grid; grid-template-columns:1fr 1fr; gap:60px;}
+.cf-form{display:flex; flex-direction:column; gap:20px;}
+.cf-label{font-family:var(--f-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-dim);}
+.cf-input{
+  background:transparent; border:none; border-bottom:1px solid var(--line); color:var(--ink);
+  font-family:var(--f-body); font-size:17px; padding:10px 0; outline:none;
+}
+.cf-input:focus{border-color:var(--tape);}
+.cf-submit{
+  margin-top:16px; align-self:flex-start; font-family:var(--f-mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase;
+  padding:14px 28px; background:var(--tape); color:#1a0d0d; border:none; border-radius:2px; cursor:pointer;
+}
+.cf-submit:hover{opacity:.88;}
+.cf-success{display:none; color:var(--tape); font-family:var(--f-mono); font-size:13px; margin-top:12px;}
+.cf-success.show{display:block;}
+.contact-info{font-family:var(--f-mono); font-size:14px; color:var(--ink-dim); line-height:2.2;}
+.contact-info a:hover{color:var(--tape);}
+.foot-bottom{
+  display:flex; justify-content:space-between; margin-top:100px; padding-top:24px; border-top:1px solid var(--line);
+  font-family:var(--f-mono); font-size:11px; color:var(--ink-dim); flex-wrap:wrap; gap:10px;
+}
+@media(max-width:860px){.cf-grid{grid-template-columns:1fr;}}
+
+.fade-in{opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease;}
+.fade-in.visible{opacity:1; transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="reel-rail">
+  {% for i in range(14) %}<span></span>{% endfor %}
+</div>
+
+<div id="loader"><div class="loader-mark">{{ loja.nome or 'CARREGANDO' }} — REC ●</div></div>
+
+<header class="topbar">
+  <div class="wrap">
+    <a href="#hero" class="brand">
+      {% if loja.logo_url %}<img src="{{ loja.logo_url }}" alt="{{ loja.nome }}">{% else %}{{ loja.nome }}{% endif %}
+    </a>
+    <button class="menu-btn" id="menuOpenBtn"><i>☰</i> Menu</button>
+  </div>
+</header>
+
+<div id="nav-overlay">
+  <div class="nav-close" id="menuCloseBtn">Fechar ✕</div>
+  <a href="#quemsomos" class="nav-link">Quem Somos</a>
+  <a href="#trabalhos" class="nav-link">Trabalhos</a>
+  <a href="#servicos" class="nav-link">O Que Fazemos</a>
+  <a href="#contato" class="nav-link">Contato</a>
+</div>
+
+<header class="hero" id="hero">
+  <div class="wrap">
+    <div class="eyebrow">Produtora audiovisual</div>
+    <h1>{{ loja.sobre_titulo or (loja.nome ~ ' conta histórias que precisam ser vistas.') }}</h1>
+    <p class="lede">{{ loja.sobre_texto[:180] if loja.sobre_texto else 'Filmes, séries e projetos que nascem de território, comunidade e talento real.' }}</p>
+    <div class="hero-meta">
+      <div>Base <b>São Paulo, SP</b></div>
+      <div>Foco <b>Filmes e Séries</b></div>
+      <div>Contato <b><a href="#contato">Fale com a gente</a></b></div>
+    </div>
+  </div>
+</header>
+
+{% if loja.logos_clientes %}
+<section class="clients fade-in">
+  <div class="clients-track">
+    {% for url in loja.logos_clientes.split('\n') %}{% if url.strip() %}<img src="{{ url.strip() }}" alt="parceiro">{% endif %}{% endfor %}
+    {% for url in loja.logos_clientes.split('\n') %}{% if url.strip() %}<img src="{{ url.strip() }}" alt="parceiro">{% endif %}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="block fade-in" id="quemsomos">
+  <div class="wrap">
+    <div class="qs-grid">
+      <div class="qs-text">
+        <div class="eyebrow">Quem somos</div>
+        <h2 style="margin-bottom:24px;">{{ loja.sobre_titulo or 'A produtora' }}</h2>
+        <p>{{ loja.sobre_texto or 'Somos uma produtora audiovisual dedicada a transformar histórias reais em filmes e séries de impacto, unindo técnica, território e talento em cada projeto.' }}</p>
+      </div>
+      <div class="qs-photos">
+        {% if loja.banner1_url %}<div class="ph1"><img src="{{ loja.banner1_url }}" alt="Time"></div>{% endif %}
+        {% if loja.bannermenor1_url %}<div class="ph2"><img src="{{ loja.bannermenor1_url }}" alt="Direção"></div>{% endif %}
+        {% if loja.bannermenor2_url %}<div class="ph3"><img src="{{ loja.bannermenor2_url }}" alt="Direção"></div>{% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="trabalhos">
+  <div class="wrap">
+    <div class="block-head">
+      <div>
+        <div class="eyebrow">Trampos em desenvolvimento</div>
+        <h2>Filmes e séries</h2>
+      </div>
+      <div class="filters" id="filterBar">
+        <button class="filter-btn active" data-cat="all">Todos</button>
+        {% for cat in categorias %}
+        <button class="filter-btn" data-cat="{{ cat.id }}">{{ cat.nome }}</button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="grid-work" id="workGrid">
+      {% for p in produtos %}
+      <div class="work-card" data-cat="{{ p.categoria_id }}" {% if p.whatsapp_projeto %}data-video="{{ p.whatsapp_projeto }}"{% elif p.link_projeto %}data-link="{{ p.link_projeto }}"{% endif %}>
+        {% if p.imagem_destaque %}<img src="{{ p.imagem_destaque }}" alt="{{ p.nome }}">{% endif %}
+        <div class="work-info">
+          {% if p.estoque %}<div class="yr">{{ p.estoque }}</div>{% endif %}
+          <h3>{{ p.nome }}</h3>
+          {% if p.descricao %}<div class="tag">{{ p.descricao }}</div>{% endif %}
+        </div>
+      </div>
+      {% else %}
+      <p style="color:var(--ink-dim); grid-column:1/-1;">Em breve, os primeiros trabalhos entram aqui.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if posts %}
+<section class="block" id="servicos">
+  <div class="wrap">
+    <div class="block-head">
+      <div>
+        <div class="eyebrow">O que fazemos</div>
+        <h2>Frentes de atuação</h2>
+      </div>
+    </div>
+    <div class="serv-list">
+      {% for post in posts %}
+      <div class="serv-row">
+        <div class="num">{{ '%02d'|format(loop.index) }}</div>
+        <div>
+          <h3>{{ post.titulo }}</h3>
+          {% if post.resumo %}<p>{{ post.resumo }}</p>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<div class="video-modal" id="videoModal">
+  <div class="box">
+    <div class="video-close" id="videoCloseBtn">Fechar ✕</div>
+    <iframe id="videoFrame" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
+  </div>
+</div>
+
+<footer id="contato">
+  <div class="wrap">
+    <div class="eyebrow">Contato</div>
+    <div class="cta-line">Tem um projeto, uma história ou uma ideia? Vamos conversar.</div>
+    <div class="cf-grid">
+      <form class="cf-form" id="cfForm">
+        <div>
+          <label class="cf-label">Nome</label>
+          <input class="cf-input" type="text" name="nome" required>
+        </div>
+        <div>
+          <label class="cf-label">WhatsApp</label>
+          <input class="cf-input" type="text" name="whatsapp" required>
+        </div>
+        <div>
+          <label class="cf-label">E-mail</label>
+          <input class="cf-input" type="email" name="email" required>
+        </div>
+        <div>
+          <label class="cf-label">Sobre o projeto</label>
+          <input class="cf-input" type="text" name="profissao" placeholder="Conte rapidamente do que se trata">
+        </div>
+        <button type="submit" class="cf-submit">Enviar mensagem</button>
+        <div class="cf-success" id="cfSuccess">Recebido! Vamos te responder em breve.</div>
+      </form>
+      <div class="contact-info">
+        {{ loja.nome }}<br>
+        {% if loja.email %}{{ loja.email }}<br>{% endif %}
+        {% if loja.telefone %}{{ loja.telefone }}<br>{% endif %}
+        São Paulo — SP
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div>© {{ loja.nome }}</div>
+      <div>Produtora audiovisual</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('load', () => { document.getElementById('loader').classList.add('hide'); });
+
+const menuOpen = document.getElementById('menuOpenBtn');
+const menuClose = document.getElementById('menuCloseBtn');
+const navOverlay = document.getElementById('nav-overlay');
+menuOpen.addEventListener('click', () => navOverlay.classList.add('open'));
+menuClose.addEventListener('click', () => navOverlay.classList.remove('open'));
+document.querySelectorAll('.nav-link').forEach(a => a.addEventListener('click', () => navOverlay.classList.remove('open')));
+
+const filterBtns = document.querySelectorAll('.filter-btn');
+const workCards = document.querySelectorAll('.work-card');
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cat = btn.dataset.cat;
+    workCards.forEach(card => {
+      card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+    });
+  });
+});
+
+const videoModal = document.getElementById('videoModal');
+const videoFrame = document.getElementById('videoFrame');
+document.getElementById('videoCloseBtn').addEventListener('click', () => {
+  videoModal.classList.remove('open'); videoFrame.src = '';
+});
+workCards.forEach(card => {
+  card.addEventListener('click', () => {
+    if (card.dataset.video) {
+      videoFrame.src = card.dataset.video;
+      videoModal.classList.add('open');
+    } else if (card.dataset.link) {
+      window.open(card.dataset.link, '_blank');
+    }
+  });
+});
+
+const cfForm = document.getElementById('cfForm');
+const cfSuccess = document.getElementById('cfSuccess');
+cfForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = cfForm.querySelector('.cf-submit');
+  btn.textContent = 'Enviando...';
+  try {
+    const formData = new FormData(cfForm);
+    const resp = await fetch('/{{ loja.slug_url }}/captura-lead', { method: 'POST', body: formData });
+    const data = await resp.json();
+    if (data.sucesso) {
+      cfForm.reset();
+      cfSuccess.classList.add('show');
+      btn.textContent = 'Enviar mensagem';
+    } else {
+      btn.textContent = 'Tentar novamente';
+    }
+  } catch (err) {
+    btn.textContent = 'Tentar novamente';
+  }
+});
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+document.querySelectorAll('#quemsomos, #trabalhos, #servicos').forEach(el => { el.classList.add('fade-in'); io.observe(el); });
+</script>
+
+</body>
+</html>
