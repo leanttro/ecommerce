@@ -121,11 +121,6 @@ header.topbar{
 .hero .wrap{width:100%; position:relative; z-index:2;}
 .hero h1{font-size:clamp(40px,7vw,104px); max-width:900px;}
 .hero p.lede{font-size:18px; color:var(--ink-dim); max-width:480px; margin-top:22px; line-height:1.6;}
-.hero-meta{
-  display:flex; gap:40px; margin-top:56px; padding-top:26px; border-top:1px solid var(--line);
-  font-family:var(--f-mono); font-size:12px; color:var(--ink-dim); flex-wrap:wrap;
-}
-.hero-meta b{color:var(--ink); font-weight:500; display:block; font-family:var(--f-body); font-size:14px; margin-top:4px;}
 @media(max-width:860px){
   .hero{min-height:auto; padding:140px 0 0 0; justify-content:flex-start;}
   .hero-bg{position:relative; inset:auto; height:50vh; order:2;}
@@ -303,11 +298,6 @@ footer#contato{border-top:1px solid var(--line); padding:120px 0 50px;}
   <div class="wrap">
     <h1>{{ loja.sobre_titulo or (loja.nome ~ ' conta histórias que precisam ser vistas.') }}</h1>
     <p class="lede">{{ loja.sobre_texto[:180] if loja.sobre_texto else 'Filmes, séries e projetos que nascem de território, comunidade e talento real.' }}</p>
-    <div class="hero-meta">
-      <div>Base <b>São Paulo, SP</b></div>
-      <div>Foco <b>Filmes e Séries</b></div>
-      <div>Contato <b><a href="#contato">Fale com a gente</a></b></div>
-    </div>
   </div>
 </header>
 
