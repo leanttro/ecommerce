@@ -446,6 +446,13 @@
                             <label class="block text-sm font-bold mb-2 text-gray-300">Título do Projeto</label>
                             <input type="text" name="nome" id="prodNome" class="w-full bg-neutral-800 border border-neutral-700 rounded p-3 text-white focus:border-yellow-500 outline-none" required>
                         </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-bold mb-2 text-gray-300">Imagem de Capa / Thumbnail</label>
+                            <img id="prodImagemPreview" src="" class="hidden w-32 h-20 object-cover rounded mb-2 border border-neutral-700">
+                            <input type="file" name="imagem" id="prodImagem" accept="image/*" class="text-sm text-gray-400 w-full">
+                            <p class="text-xs text-gray-500 mt-1">Imagem que aparece no card do portfólio. Se não enviar uma nova, a atual é mantida.</p>
+                        </div>
                         
                         <div>
                             <label class="block text-sm font-bold mb-2 text-gray-300">Seção (Onde aparece)</label>
@@ -654,6 +661,9 @@
             document.getElementById('prodDescricao').value = '';
             document.getElementById('prodLinkProjeto').value = '';
             document.getElementById('prodWhatsappProjeto').value = '';
+            document.getElementById('prodImagem').value = '';
+            document.getElementById('prodImagemPreview').classList.add('hidden');
+            document.getElementById('prodImagemPreview').src = '';
             document.getElementById('prodModalTitle').innerText = 'Novo Projeto / Vídeo';
             toggleModal('produtoModal');
         }
@@ -673,6 +683,14 @@
             document.getElementById('prodDescricao').value = prod.descricao || '';
             document.getElementById('prodLinkProjeto').value = prod.link_projeto || '';
             document.getElementById('prodWhatsappProjeto').value = prod.whatsapp_projeto || '';
+            document.getElementById('prodImagem').value = '';
+            if (prod.imagem_destaque) {
+                document.getElementById('prodImagemPreview').src = prod.imagem_destaque;
+                document.getElementById('prodImagemPreview').classList.remove('hidden');
+            } else {
+                document.getElementById('prodImagemPreview').classList.add('hidden');
+                document.getElementById('prodImagemPreview').src = '';
+            }
             document.getElementById('prodModalTitle').innerText = 'Editar Projeto / Vídeo';
             toggleModal('produtoModal');
         }
