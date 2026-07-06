@@ -9,7 +9,7 @@
 <!-- ══ OPEN GRAPH ══ -->
 <meta property="og:title" content="{{ loja.nome }}">
 <meta property="og:description" content="{{ loja.sobre_texto or '' }}">
-{% if loja.logo_url %}<meta property="og:image" content="{{ loja.logo_url }}">{% endif %}
+{% if loja.logo %}<meta property="og:image" content="{{ loja.logo }}">{% endif %}
 <meta property="og:type" content="website">
 
 <!-- ══ SCHEMA.ORG ══ -->
@@ -35,8 +35,8 @@
   --card: #221C16;
   --line: rgba(241,236,224,0.14);
   --ink-dim: rgba(241,236,224,0.62);
-  --f-title: {{ loja.fonte_titulo or "'Fraunces', serif" }};
-  --f-body: {{ loja.fonte_texto or "'Work Sans', sans-serif" }};
+  --f-title: 'Fraunces', serif;
+  --f-body: 'Work Sans', sans-serif;
   --f-mono: 'IBM Plex Mono', monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -108,11 +108,17 @@ header.topbar{
 /* hero */
 .hero{
   min-height:100vh; display:flex; flex-direction:column; justify-content:flex-end;
-  position:relative; padding:160px 0 70px;
+  position:relative; overflow:hidden; padding:160px 0 70px;
   background-image:
     radial-gradient(ellipse at top right, rgba(193,39,45,0.14), transparent 55%);
 }
-.hero .wrap{width:100%;}
+.hero-bg{position:absolute; inset:0; z-index:0; overflow:hidden; background:#000;}
+.hero-bg-media{position:absolute; top:50%; left:50%; width:100%; height:100%; min-width:100%; min-height:100%; transform:translate(-50%,-50%); object-fit:cover; border:0; pointer-events:none;}
+.hero-bg-overlay{
+  position:absolute; inset:0; z-index:1;
+  background:linear-gradient(180deg, rgba(22,18,15,0.45) 0%, rgba(22,18,15,0.6) 55%, var(--bg) 97%);
+}
+.hero .wrap{width:100%; position:relative; z-index:2;}
 .hero h1{font-size:clamp(40px,7vw,104px); max-width:900px;}
 .hero p.lede{font-size:18px; color:var(--ink-dim); max-width:480px; margin-top:22px; line-height:1.6;}
 .hero-meta{
@@ -221,7 +227,7 @@ footer#contato{border-top:1px solid var(--line); padding:120px 0 50px;}
 <header class="topbar">
   <div class="wrap">
     <a href="#hero" class="brand">
-      {% if loja.logo_url %}<img src="{{ loja.logo_url }}" alt="{{ loja.nome }}">{% else %}{{ loja.nome }}{% endif %}
+      {% if loja.logo %}<img src="{{ loja.logo }}" alt="{{ loja.nome }}">{% else %}{{ loja.nome }}{% endif %}
     </a>
     <button class="menu-btn" id="menuOpenBtn"><i>☰</i> Menu</button>
   </div>
@@ -235,7 +241,34 @@ footer#contato{border-top:1px solid var(--line); padding:120px 0 50px;}
   <a href="#contato" class="nav-link">Contato</a>
 </div>
 
+{% set ns = namespace(hero_cat_id=None, hero_produto=None) %}
+{% for cat in categorias %}
+  {% if cat.nome and cat.nome.strip()|lower == 'hero' %}
+    {% set ns.hero_cat_id = cat.id %}
+  {% endif %}
+{% endfor %}
+{% set produtos_grid = [] %}
+{% for p in produtos %}
+  {% if ns.hero_cat_id and (p.categoria_id|string) == (ns.hero_cat_id|string) and not ns.hero_produto %}
+    {% set ns.hero_produto = p %}
+  {% else %}
+    {% set _ = produtos_grid.append(p) %}
+  {% endif %}
+{% endfor %}
+
 <header class="hero" id="hero">
+  {% if ns.hero_produto %}
+  <div class="hero-bg">
+    {% if ns.hero_produto.link_projeto %}
+    <video class="hero-bg-media" autoplay muted loop playsinline>
+      <source src="{{ ns.hero_produto.link_projeto }}" type="video/mp4">
+    </video>
+    {% elif ns.hero_produto.whatsapp_projeto %}
+    <iframe class="hero-bg-media" src="{{ ns.hero_produto.whatsapp_projeto }}{{ '&' if '?' in ns.hero_produto.whatsapp_projeto else '?' }}background=1&autoplay=1&loop=1&muted=1&byline=0&title=0&portrait=0" frameborder="0" allow="autoplay; fullscreen"></iframe>
+    {% endif %}
+    <div class="hero-bg-overlay"></div>
+  </div>
+  {% endif %}
   <div class="wrap">
     <div class="eyebrow">Produtora audiovisual</div>
     <h1>{{ loja.sobre_titulo or (loja.nome ~ ' conta histórias que precisam ser vistas.') }}</h1>
@@ -266,9 +299,9 @@ footer#contato{border-top:1px solid var(--line); padding:120px 0 50px;}
         <p>{{ loja.sobre_texto or 'Somos uma produtora audiovisual dedicada a transformar histórias reais em filmes e séries de impacto, unindo técnica, território e talento em cada projeto.' }}</p>
       </div>
       <div class="qs-photos">
-        {% if loja.banner1_url %}<div class="ph1"><img src="{{ loja.banner1_url }}" alt="Time"></div>{% endif %}
-        {% if loja.bannermenor1_url %}<div class="ph2"><img src="{{ loja.bannermenor1_url }}" alt="Direção"></div>{% endif %}
-        {% if loja.bannermenor2_url %}<div class="ph3"><img src="{{ loja.bannermenor2_url }}" alt="Direção"></div>{% endif %}
+        {% if loja.banner1 %}<div class="ph1"><img src="{{ loja.banner1 }}" alt="Time"></div>{% endif %}
+        {% if loja.bannermenor1 %}<div class="ph2"><img src="{{ loja.bannermenor1 }}" alt="Direção"></div>{% endif %}
+        {% if loja.bannermenor2 %}<div class="ph3"><img src="{{ loja.bannermenor2 }}" alt="Direção"></div>{% endif %}
       </div>
     </div>
   </div>
@@ -284,15 +317,17 @@ footer#contato{border-top:1px solid var(--line); padding:120px 0 50px;}
       <div class="filters" id="filterBar">
         <button class="filter-btn active" data-cat="all">Todos</button>
         {% for cat in categorias %}
+        {% if not (cat.nome and cat.nome.strip()|lower == 'hero') %}
         <button class="filter-btn" data-cat="{{ cat.id }}">{{ cat.nome }}</button>
+        {% endif %}
         {% endfor %}
       </div>
     </div>
 
     <div class="grid-work" id="workGrid">
-      {% for p in produtos %}
+      {% for p in produtos_grid %}
       <div class="work-card" data-cat="{{ p.categoria_id }}" {% if p.whatsapp_projeto %}data-video="{{ p.whatsapp_projeto }}"{% elif p.link_projeto %}data-link="{{ p.link_projeto }}"{% endif %}>
-        {% if p.imagem_destaque %}<img src="{{ p.imagem_destaque }}" alt="{{ p.nome }}">{% endif %}
+        {% if p.imagem %}<img src="{{ p.imagem }}" alt="{{ p.nome }}">{% endif %}
         <div class="work-info">
           {% if p.estoque %}<div class="yr">{{ p.estoque }}</div>{% endif %}
           <h3>{{ p.nome }}</h3>
