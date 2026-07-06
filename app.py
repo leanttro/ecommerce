@@ -213,7 +213,7 @@ def identificar_loja():
            host in ['creapes.com.br', 'www.creapes.com.br']:
             try:
                 host_clean = host.replace('www.', '')
-                url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
+                url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_titulo,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
                 resp = requests.get(url, headers=headers, timeout=7)
                 if resp.status_code == 200 and len(resp.json()['data']) > 0:
                     loja_encontrada = resp.json()['data'][0]
@@ -227,7 +227,7 @@ def identificar_loja():
         if not loja_encontrada and primeiro_segmento and primeiro_segmento not in BLACKLIST_ROTAS:
             g.slug_atual = primeiro_segmento
             try:
-                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]={g.slug_atual}&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
+                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]={g.slug_atual}&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_titulo,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
                 resp = requests.get(url, headers=headers, timeout=7)
                 if resp.status_code == 200 and len(resp.json()['data']) > 0:
                     loja_encontrada = resp.json()['data'][0]
@@ -238,7 +238,7 @@ def identificar_loja():
         if not loja_encontrada and host in ['leanttro.com', 'www.leanttro.com', 'localhost', '127.0.0.1'] and primeiro_segmento not in BLACKLIST_ROTAS:
             g.slug_atual = "tecnologia"
             try:
-                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=tecnologia&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
+                url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=tecnologia&fields=id,nome,slug,dominio_proprio,template_ativo,cor_primaria,cor_titulo,cor_texto,cor_fundo,font_tamanho_base,font_titulo,font_corpo,logo,bannerprincipal1,bannerprincipal2,bannermenor1,bannermenor2,sobre_imagem,sobre_titulo,sobre_texto,sobre_slogan,whatsapp_comercial,layout_order,ga4_id,facebook_pixel,mostrar_mapa,mostrar_whatsapp_flutuante,senha_admin,ocultar_produtos,ocultar_categorias,ocultar_novidades,ocultar_blog,ocultar_busca,ocultar_banner,ocultar_sobre,titulo_produtos,titulo_blog,chamada_rodape,instagram_url,endereco_fisico,logos_clientes,email,layout_portfolio"
                 resp = requests.get(url, headers=headers, timeout=7)
                 if resp.status_code == 200 and len(resp.json()['data']) > 0:
                     loja_encontrada = resp.json()['data'][0]
@@ -596,6 +596,8 @@ def index(loja_slug):
     # DEFINE QUAL TEMPLATE RENDERIZAR
     if loja_slug == 'creapes':
         template_name = 'creapes'
+    elif loja_slug == 'variasfita':
+        template_name = 'variasfita'
     elif loja_slug == 'onepiece':
         template_name = 'onepiece'
     elif loja_slug == 'oscar':
@@ -828,8 +830,8 @@ def admin_painel(loja_slug):
             "cor_texto": request.form.get('cor_texto'),
             "cor_fundo": request.form.get('cor_fundo'),
             "font_tamanho_base": request.form.get('font_tamanho_base'),
-            "font_titulo": request.form.get('font_titulo'),
-            "font_corpo": request.form.get('font_corpo'),
+            "font_titulo": request.form.get('font_titulo') or request.form.get('fonte_titulo'),
+            "font_corpo": request.form.get('font_corpo') or request.form.get('fonte_texto'),
             "linkbannerprincipal1": request.form.get('link1'),
             "linkbannerprincipal2": request.form.get('link2'),
             "banner1_titulo": sanitize_input(request.form.get('banner1_titulo')),
@@ -974,6 +976,8 @@ def admin_painel(loja_slug):
 
     template_painel = 'painel.html'
     if loja_slug == 'creapes':
+        template_painel = 'painel_creapes.html'
+    elif loja_slug == 'variasfita':
         template_painel = 'painel_creapes.html'
 
     return render_template(template_painel, 
