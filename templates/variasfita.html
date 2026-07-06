@@ -24,7 +24,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -35,7 +35,7 @@
   --card: #221C16;
   --line: rgba(241,236,224,0.14);
   --ink-dim: rgba(241,236,224,0.62);
-  --f-title: 'Fraunces', serif;
+  --f-title: 'Montserrat', sans-serif;
   --f-body: 'Work Sans', sans-serif;
   --f-mono: 'IBM Plex Mono', monospace;
 }
@@ -126,7 +126,11 @@ header.topbar{
   font-family:var(--f-mono); font-size:12px; color:var(--ink-dim); flex-wrap:wrap;
 }
 .hero-meta b{color:var(--ink); font-weight:500; display:block; font-family:var(--f-body); font-size:14px; margin-top:4px;}
-@media(max-width:860px){.hero{justify-content:flex-start;}}
+@media(max-width:860px){
+  .hero{min-height:auto; padding:140px 0 0 0; justify-content:flex-start;}
+  .hero-bg{position:relative; inset:auto; height:50vh; order:2;}
+  .hero .wrap{order:1; padding-bottom:40px;}
+}
 
 /* clients marquee */
 .clients{padding:50px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); overflow:hidden;}
@@ -297,7 +301,6 @@ footer#contato{border-top:1px solid var(--line); padding:120px 0 50px;}
   </div>
   {% endif %}
   <div class="wrap">
-    <div class="eyebrow">Produtora audiovisual</div>
     <h1>{{ loja.sobre_titulo or (loja.nome ~ ' conta histórias que precisam ser vistas.') }}</h1>
     <p class="lede">{{ loja.sobre_texto[:180] if loja.sobre_texto else 'Filmes, séries e projetos que nascem de território, comunidade e talento real.' }}</p>
     <div class="hero-meta">
