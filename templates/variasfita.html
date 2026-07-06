@@ -255,16 +255,28 @@ footer#contato{border-top:1px solid var(--line); padding:120px 0 50px;}
     {% set _ = produtos_grid.append(p) %}
   {% endif %}
 {% endfor %}
+{% set video_exts = ('.mp4', '.webm', '.ogg', '.mov') %}
+{% set ns2 = namespace(mp4_url=None, embed_url=None) %}
+{% if ns.hero_produto %}
+  {% set lp = (ns.hero_produto.link_projeto or '')|lower %}
+  {% if ns.hero_produto.link_projeto and lp.endswith(video_exts) %}
+    {% set ns2.mp4_url = ns.hero_produto.link_projeto %}
+  {% elif ns.hero_produto.whatsapp_projeto %}
+    {% set ns2.embed_url = ns.hero_produto.whatsapp_projeto %}
+  {% elif ns.hero_produto.link_projeto %}
+    {% set ns2.embed_url = ns.hero_produto.link_projeto %}
+  {% endif %}
+{% endif %}
 
 <header class="hero" id="hero">
   {% if ns.hero_produto %}
   <div class="hero-bg">
-    {% if ns.hero_produto.link_projeto %}
+    {% if ns2.mp4_url %}
     <video class="hero-bg-media" autoplay muted loop playsinline>
-      <source src="{{ ns.hero_produto.link_projeto }}" type="video/mp4">
+      <source src="{{ ns2.mp4_url }}" type="video/mp4">
     </video>
-    {% elif ns.hero_produto.whatsapp_projeto %}
-    <iframe class="hero-bg-media" src="{{ ns.hero_produto.whatsapp_projeto }}{{ '&' if '?' in ns.hero_produto.whatsapp_projeto else '?' }}background=1&autoplay=1&loop=1&muted=1&byline=0&title=0&portrait=0" frameborder="0" allow="autoplay; fullscreen"></iframe>
+    {% elif ns2.embed_url %}
+    <iframe class="hero-bg-media" src="{{ ns2.embed_url }}{{ '&' if '?' in ns2.embed_url else '?' }}background=1&autoplay=1&loop=1&muted=1&byline=0&title=0&portrait=0" frameborder="0" allow="autoplay; fullscreen"></iframe>
     {% endif %}
     <div class="hero-bg-overlay"></div>
   </div>
