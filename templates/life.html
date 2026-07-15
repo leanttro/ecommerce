@@ -1,0 +1,966 @@
+<!--
+  TEMPLATE: life_health.html
+  ─────────────────────────────────────────────────────────────
+  Bespoke para a Life Health (clínica que faz captação/organização
+  de pacientes para médicos parceiros — Dr. Rubens e Dr. Dantas).
+
+  Segue o MESMO contrato de variáveis que pascoa.html/index.html
+  recebem da rota index() do app.py — nada no app.py ou no
+  painel.html precisa mudar para este arquivo funcionar.
+
+  ANTES DE SUBIR PARA PRODUÇÃO:
+  1) Salvar este arquivo como /templates/<nome_do_template_ativo>.html
+  2) Adicionar esse mesmo nome na whitelist de template_ativo em
+     app.py (linha ~607, a lista dentro do "if template_name not in [...]")
+     — é uma inclusão simples, não altera nada que já existe.
+  3) O texto todo já está escrito. O único campo que deixei em aberto
+     foi "CRM/RQE a confirmar" nos cards dos médicos — é um registro
+     oficial, só vocês têm esse número certo, não posso inventar.
+  4) Assim que vocês mandarem fotos reais dos doutores, troco os
+     avatares-iniciais (DR / DD) pela foto (procure por "AVATAR PLACEHOLDER").
+     Endereço, whatsapp, sobre, banners etc já puxam do painel — se
+     estiverem vazios, o site mostra os textos padrão que escrevi aqui.
+  ─────────────────────────────────────────────────────────────
+-->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- SEO PRIMÁRIO -->
+<title>Life Health | Clínica parceira em Ortopedia e Neurocirurgia</title>
+<meta name="description" content="A Life Health conecta você aos especialistas certos em Ortopedia e Neurocirurgia. Agendamento facilitado e acompanhamento humanizado do início ao fim.">
+<meta name="keywords" content="ortopedista, neurocirurgião, clínica de ortopedia, dor na coluna, cirurgia de coluna, dor de cabeça, hérnia de disco, Life Health">
+<meta name="author" content="Life Health">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<link rel="canonical" href="https://exemplo-preview.com.br/life-health/">
+
+
+
+<!-- OPEN GRAPH -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Life Health">
+<meta property="og:title" content="Life Health | Clínica parceira em Ortopedia e Neurocirurgia">
+<meta property="og:description" content="Conectamos você aos especialistas certos em Ortopedia e Neurocirurgia.">
+<meta property="og:url" content="https://exemplo-preview.com.br/life-health/">
+<meta property="og:image" content="">
+<meta property="og:locale" content="pt_BR">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Life Health">
+<meta name="twitter:image" content="">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MedicalBusiness",
+  "name": "Life Health",
+  "description": "Clínica parceira que conecta pacientes a especialistas em Ortopedia e Neurocirurgia.",
+  "url": "https://exemplo-preview.com.br/life-health/",
+  "logo": "",
+  "telephone": "(11) 99999-9999",
+  "address": "Av. Placeholder, 1000 – São Paulo/SP"
+}
+</script>
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<style>
+:root{
+  --ink:      #14213D;
+  --ink-2:    #0B1626;
+  --gold:     #B8923A;
+  --gold-2:   #D9BA6E;
+  --paper:    #FBF9F4;
+  --stone:    #F1ECE1;
+  --line:     #E4DCC8;
+  --text:     #33363F;
+  --title:    #14213D;
+  --muted:    #726D61;
+  --white:    #FFFFFF;
+  --radius:   14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;overflow-x:hidden;}
+body{
+  font-family:'Inter',sans-serif;
+  font-size:16px;
+  background:var(--paper);
+  color:var(--text);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{
+  font-family:'Fraunces',serif;
+  color:var(--title);
+  line-height:1.14;
+  font-weight:600;
+}
+p{ font-family:'Inter',sans-serif; }
+a{text-decoration:none;color:inherit;}
+img{max-width:100%;display:block;}
+ul{list-style:none;}
+button{font-family:inherit;}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important;}
+}
+
+.container{max-width:1180px;margin:0 auto;padding:0 1.75rem;}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:.6rem;
+  color:var(--gold);font-size:.72rem;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;margin-bottom:1.1rem;
+}
+.eyebrow::before{content:'';width:26px;height:1.5px;background:var(--gold);}
+.section{padding:6.5rem 0;}
+.section-head{max-width:640px;margin:0 auto 3.5rem;text-align:center;}
+.section-head p{color:var(--muted);font-size:.98rem;line-height:1.8;margin-top:.9rem;}
+.section-head.left{text-align:left;margin:0 0 3.5rem;}
+
+/* ─ botões ─ */
+.btn{
+  display:inline-flex;align-items:center;gap:.55rem;
+  font-weight:600;font-size:.9rem;letter-spacing:.01em;
+  padding:.95rem 1.9rem;border-radius:999px;border:1.5px solid transparent;
+  cursor:pointer;transition:transform .25s ease, box-shadow .25s ease, background .25s ease, color .25s ease;
+  white-space:nowrap;
+}
+.btn-gold{background:var(--gold);color:#fff;}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(184,146,58,.32);}
+.btn-ink{background:var(--ink);color:#fff;}
+.btn-ink:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(20,33,61,.28);}
+.btn-outline{background:transparent;border-color:rgba(20,33,61,.25);color:var(--ink);}
+.btn-outline:hover{border-color:var(--ink);background:var(--ink);color:#fff;}
+.btn-outline.on-dark{border-color:rgba(255,255,255,.35);color:#fff;}
+.btn-outline.on-dark:hover{background:#fff;color:var(--ink);}
+
+/* ─ motivo assinatura: arco dourado (do logo) ─ */
+.arc-divider{width:100%;display:flex;justify-content:center;opacity:.55;margin:0 0 -1px;}
+.arc-ring{position:relative;}
+.arc-ring::after{
+  content:'';position:absolute;inset:-14px;
+  border:1.5px solid var(--gold);border-radius:50%;
+  border-left-color:transparent;border-bottom-color:transparent;
+  transform:rotate(-38deg);
+}
+
+/* ═══ NAVBAR ═══ */
+#navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1.15rem 0;transition:all .35s;background:transparent;}
+#navbar.scrolled{background:rgba(11,22,38,.96);backdrop-filter:blur(16px);padding:.75rem 0;box-shadow:0 2px 24px rgba(0,0,0,.18);}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;}
+.nav-logo{display:flex;align-items:center;gap:.6rem;}
+.nav-logo img{height:78px;width:auto;filter:brightness(0) invert(1);}
+.nav-logo-text{font-family:'Fraunces',serif;font-weight:600;font-size:1.2rem;color:var(--ink);}
+#navbar.scrolled .nav-logo-text{color:#fff;}
+.nav-links{display:flex;align-items:center;gap:2.1rem;}
+.nav-links a{font-size:.86rem;font-weight:500;color:var(--ink);opacity:.85;transition:opacity .2s;}
+#navbar.scrolled .nav-links a{color:#fff;}
+.nav-links a:hover{opacity:1;}
+.nav-cta{background:var(--gold);color:#fff!important;padding:.7rem 1.5rem;border-radius:999px;font-weight:600;opacity:1!important;font-size:.85rem;}
+.nav-cta:hover{background:var(--gold-2);}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:.4rem;}
+.hamburger span{width:24px;height:2px;background:var(--ink);}
+#navbar.scrolled .hamburger span{background:#fff;}
+
+.mobile-menu{
+  position:fixed;inset:0;background:var(--ink-2);z-index:2000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.8rem;
+  transform:translateY(-100%);transition:transform .4s ease;
+}
+.mobile-menu.open{transform:translateY(0);}
+.mobile-menu a{color:#fff;font-size:1.25rem;font-family:'Fraunces',serif;}
+.close-menu{position:absolute;top:1.6rem;right:1.6rem;background:none;border:none;color:#fff;font-size:1.6rem;cursor:pointer;}
+
+@media(max-width:860px){
+  .nav-links{display:none;}
+  .hamburger{display:flex;}
+}
+
+/* ═══ HERO ═══ */
+#hero{
+  position:relative;min-height:92vh;display:flex;align-items:center;
+  padding:9rem 0 5rem;overflow:hidden;isolation:isolate;
+}
+.hero-bg{position:absolute;inset:0;z-index:-2;overflow:hidden;}
+.hero-bg img{
+  width:100%;height:100%;object-fit:cover;object-position:center;
+  transform:scale(1.08);animation:heroKenBurns 22s ease-in-out infinite alternate;
+  filter:saturate(1.05);
+}
+.hero-bg::after{
+  content:'';position:absolute;inset:0;
+  background:
+    linear-gradient(180deg, rgba(11,22,38,.55) 0%, rgba(11,22,38,.72) 55%, rgba(11,22,38,.9) 100%),
+    linear-gradient(90deg, rgba(11,22,38,.55) 0%, rgba(11,22,38,.15) 55%, rgba(11,22,38,.05) 100%);
+}
+@keyframes heroKenBurns{
+  0%{transform:scale(1.08) translate(0,0);}
+  100%{transform:scale(1.16) translate(-1.5%,-1%);}
+}
+@media (prefers-reduced-motion: reduce){ .hero-bg img{animation:none;transform:scale(1.02);} }
+
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:4rem;align-items:center;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);color:var(--gold-2);border:1px solid rgba(255,255,255,.18);
+  font-size:.74rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.55rem 1.05rem;border-radius:999px;margin-bottom:1.4rem;}
+.hero-title{font-size:clamp(2.3rem,4.4vw,3.7rem);font-weight:600;letter-spacing:-.015em;margin-bottom:1.3rem;color:#fff;}
+.hero-title em{font-style:italic;color:var(--gold-2);}
+.hero-subtitle{font-size:1.08rem;line-height:1.85;color:rgba(255,255,255,.78);max-width:520px;margin-bottom:2.2rem;}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2.6rem;}
+.hero-tags{display:flex;flex-wrap:wrap;gap:.6rem;}
+.hero-tag{font-size:.76rem;font-weight:600;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(6px);padding:.45rem .9rem;border-radius:999px;}
+
+.hero-card{
+  position:relative;background:rgba(20,33,61,.5);backdrop-filter:blur(22px) saturate(140%);
+  border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:2.6rem;color:#fff;
+  box-shadow:0 40px 90px rgba(0,0,0,.35);
+}
+.hero-card::before{content:'';position:absolute;top:0;left:2.6rem;right:2.6rem;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-2));border-radius:0 0 3px 3px;}
+.hero-card-top{display:flex;align-items:center;gap:.7rem;margin-bottom:2rem;color:rgba(255,255,255,.6);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;}
+.hero-card-top span.dot{width:8px;height:8px;border-radius:50%;background:var(--gold-2);}
+.hero-card-quote{font-family:'Fraunces',serif;font-size:1.35rem;font-style:italic;line-height:1.5;color:#fff;margin-bottom:2rem;}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem;}
+.hero-stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:1rem .8rem;text-align:center;}
+.hero-stat p{font-size:.74rem;line-height:1.4;color:rgba(255,255,255,.8);}
+.hero-stat i{color:var(--gold-2);margin-bottom:.5rem;}
+
+/* entrada suave, estilo Apple: fade + slide + easing custom, sem depender de scroll */
+.hero-grid > *{opacity:0;transform:translateY(22px);animation:heroRise 1s cubic-bezier(.16,1,.3,1) forwards;}
+.hero-grid > *:nth-child(1){animation-delay:.15s;}
+.hero-grid > *:nth-child(2){animation-delay:.35s;}
+@keyframes heroRise{to{opacity:1;transform:translateY(0);}}
+@media (prefers-reduced-motion: reduce){ .hero-grid > *{animation:none;opacity:1;transform:none;} }
+
+@media(max-width:980px){
+  .hero-grid{grid-template-columns:1fr;text-align:center;}
+  .hero-subtitle{margin-left:auto;margin-right:auto;}
+  .hero-actions,.hero-tags{justify-content:center;}
+}
+@media(max-width:560px){
+  .hero-stats{grid-template-columns:1fr;}
+}
+
+/* ═══ ESPECIALIDADES ═══ */
+#especialidades{padding:6.5rem 0;background:var(--white);}
+.esp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.4rem;}
+.esp-card{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  padding:2rem 1.6rem;transition:border-color .25s,transform .25s,box-shadow .25s;
+}
+.esp-card:hover{transform:translateY(-4px);border-color:rgba(184,146,58,.4);box-shadow:0 16px 36px rgba(20,33,61,.08);}
+.esp-icon{width:48px;height:48px;border-radius:12px;background:rgba(20,33,61,.06);display:flex;align-items:center;justify-content:center;color:var(--ink);margin-bottom:1.2rem;}
+.esp-card h3{font-size:1.08rem;margin-bottom:.5rem;}
+.esp-card p{font-size:.85rem;color:var(--muted);line-height:1.6;}
+.esp-empty{
+  text-align:center;padding:3rem 1.5rem;border:1.5px dashed var(--line);border-radius:var(--radius);color:var(--muted);font-size:.9rem;
+}
+
+/* ═══ SOBRE ═══ */
+#sobre{padding:6.5rem 0;background:var(--stone);}
+.sobre-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:4rem;align-items:center;}
+.sobre-visual{position:relative;}
+.sobre-visual .arc-ring{border-radius:22px;overflow:hidden;}
+.sobre-visual img{border-radius:22px;aspect-ratio:4/5;object-fit:cover;}
+.sobre-visual-badge{
+  position:absolute;bottom:-1.4rem;left:-1.4rem;background:#fff;border-radius:14px;padding:1.1rem 1.4rem;
+  box-shadow:0 20px 40px rgba(20,33,61,.14);display:flex;align-items:center;gap:.8rem;max-width:230px;
+}
+.sobre-visual-badge i{color:var(--gold);flex-shrink:0;}
+.sobre-visual-badge span{font-size:.78rem;font-weight:600;color:var(--ink);line-height:1.4;}
+.sobre-text p{font-size:.97rem;line-height:1.85;color:var(--muted);margin-bottom:1.1rem;}
+.sobre-text p strong{color:var(--text);font-weight:600;}
+.sobre-chips{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.6rem;}
+.sobre-chip{display:flex;align-items:center;gap:.5rem;background:#fff;border:1px solid var(--line);border-radius:999px;padding:.55rem 1rem;font-size:.78rem;font-weight:600;color:var(--ink);}
+.sobre-chip i{color:var(--gold);width:14px;height:14px;}
+
+@media(max-width:900px){
+  .sobre-grid{grid-template-columns:1fr;gap:3rem;}
+  .sobre-visual{max-width:380px;margin:0 auto;}
+  .sobre-visual-badge{position:static;margin-top:1rem;max-width:100%;}
+}
+
+/* ═══ DIFERENCIAIS ═══ */
+#diferenciais{padding:6rem 0;background:var(--ink);color:#fff;}
+#diferenciais .section-head p{color:rgba(255,255,255,.6);}
+#diferenciais .eyebrow{color:var(--gold-2);}
+.dif-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;}
+.dif-card{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:var(--radius);padding:2rem 1.6rem;}
+.dif-icon{width:46px;height:46px;border-radius:11px;background:rgba(217,186,110,.14);display:flex;align-items:center;justify-content:center;color:var(--gold-2);margin-bottom:1.3rem;}
+.dif-card h3{color:#fff;font-size:1.05rem;margin-bottom:.55rem;}
+.dif-card p{font-size:.85rem;color:rgba(255,255,255,.62);line-height:1.65;}
+
+/* ═══ EQUIPE MÉDICA ═══ */
+#equipe{padding:6.5rem 0;background:var(--white);}
+.equipe-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;}
+.doc-card{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--paper);transition:box-shadow .3s,transform .3s;}
+.doc-card:hover{box-shadow:0 24px 48px rgba(20,33,61,.1);transform:translateY(-4px);}
+.doc-top{padding:2.2rem 2.2rem 0;display:flex;gap:1.3rem;align-items:center;}
+.doc-avatar{
+  width:78px;height:78px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--ink),var(--ink-2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-size:1.5rem;color:var(--gold-2);font-weight:600;
+  position:relative;
+}
+.doc-avatar::after{content:'';position:absolute;inset:-6px;border:1.5px solid var(--gold);border-radius:50%;border-left-color:transparent;transform:rotate(-30deg);}
+.doc-id h3{font-size:1.18rem;margin-bottom:.2rem;}
+.doc-id span{display:block;font-size:.8rem;color:var(--gold);font-weight:700;letter-spacing:.02em;}
+.doc-crm{font-size:.72rem;color:var(--muted);margin-top:.25rem;}
+.doc-body{padding:1.5rem 2.2rem 2.2rem;}
+.doc-body p{font-size:.9rem;line-height:1.75;color:var(--muted);margin-bottom:1.3rem;}
+.doc-focus{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;}
+.doc-focus span{font-size:.72rem;font-weight:600;color:var(--ink);background:#fff;border:1px solid var(--line);padding:.4rem .8rem;border-radius:999px;}
+.doc-cta{font-size:.84rem;font-weight:600;color:var(--ink);display:inline-flex;align-items:center;gap:.4rem;border-bottom:1.5px solid var(--gold);padding-bottom:.15rem;}
+.doc-cta:hover{color:var(--gold);}
+.equipe-note{
+  margin-top:2rem;font-size:.8rem;color:var(--muted);text-align:center;
+  border-top:1px dashed var(--line);padding-top:1.5rem;
+}
+
+@media(max-width:860px){ .equipe-grid{grid-template-columns:1fr;} }
+
+/* ═══ UNIDADES / BANNERS MENORES ═══ */
+#unidades{padding:5.5rem 0;background:var(--stone);}
+.unidades-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.unidade-card{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:16/10;background:var(--ink);}
+.unidade-card img{width:100%;height:100%;object-fit:cover;opacity:.85;}
+.unidade-overlay{
+  position:absolute;inset:0;background:linear-gradient(0deg,rgba(11,22,38,.85) 0%,rgba(11,22,38,.1) 55%);
+  display:flex;align-items:flex-end;padding:1.6rem;
+}
+.unidade-overlay span{color:#fff;font-weight:600;font-size:1rem;}
+@media(max-width:768px){ .unidades-grid{grid-template-columns:1fr;} }
+
+/* ═══ AGENDA ═══ */
+#agenda-sec{padding:6rem 0;background:var(--white);}
+.agenda-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;}
+.agenda-slot{
+  display:flex;align-items:center;gap:1rem;border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.4rem;
+  background:var(--paper);transition:border-color .2s;
+}
+.agenda-slot:hover{border-color:var(--gold);}
+.agenda-slot i{color:var(--gold);flex-shrink:0;}
+.agenda-slot div{flex:1;}
+.agenda-slot strong{display:block;font-size:.9rem;color:var(--ink);}
+.agenda-slot a{font-size:.76rem;font-weight:700;color:var(--gold);white-space:nowrap;}
+
+/* ═══ BLOG ═══ */
+#blog{padding:6.5rem 0;background:var(--stone);}
+.blog-toolbar{display:flex;justify-content:center;gap:.5rem;margin-bottom:2.6rem;}
+.blog-toolbar button{
+  border:1px solid var(--line);background:#fff;color:var(--muted);font-size:.78rem;font-weight:600;
+  padding:.55rem 1.1rem;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;transition:all .2s;
+}
+.blog-toolbar button.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;}
+.blog-carousel-wrap{position:relative;}
+.blog-carousel{display:flex;gap:1.6rem;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:.4rem;}
+.blog-carousel::-webkit-scrollbar{display:none;}
+.blog-card{
+  background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  flex:0 0 calc(33.333% - 1.07rem);scroll-snap-align:start;transition:box-shadow .25s,transform .25s;
+}
+.blog-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(20,33,61,.1);}
+.blog-card-img{aspect-ratio:16/10;background:var(--line);overflow:hidden;}
+.blog-card-img img{width:100%;height:100%;object-fit:cover;}
+.blog-card-body{padding:1.5rem;}
+.blog-date{font-size:.72rem;color:var(--gold);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.6rem;display:block;}
+.blog-card h3{font-size:1.02rem;line-height:1.4;margin-bottom:.6rem;}
+.blog-card p{font-size:.84rem;color:var(--muted);line-height:1.6;margin-bottom:1rem;}
+.blog-read{font-size:.8rem;font-weight:700;color:var(--ink);display:inline-flex;align-items:center;gap:.35rem;}
+.blog-nav-arrows{display:flex;justify-content:center;gap:1.4rem;margin-top:2rem;}
+.blog-nav-arrows button{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.blog-nav-arrows button:hover{background:var(--ink);color:#fff;}
+.blog-nav-arrows button:disabled{opacity:.35;cursor:default;}
+.blog-nav-arrows button:disabled:hover{background:#fff;color:var(--ink);}
+.blog-empty{text-align:center;color:var(--muted);font-size:.9rem;padding:3rem;border:1.5px dashed var(--line);border-radius:var(--radius);}
+
+@media(max-width:900px){ .blog-grid{grid-template-columns:1fr 1fr;} .blog-card{flex:0 0 calc(50% - .8rem);} }
+@media(max-width:600px){ .blog-grid{grid-template-columns:1fr;} .blog-card{flex:0 0 86%;} }
+
+/* ═══ CONTATO ═══ */
+#contato{padding:6.5rem 0;background:var(--ink);color:#fff;position:relative;overflow:hidden;}
+#contato::before{content:'';position:absolute;bottom:-140px;left:-140px;width:420px;height:420px;border-radius:50%;border:1px solid rgba(217,186,110,.14);}
+.contato-grid{position:relative;z-index:1;display:grid;grid-template-columns:.85fr 1.15fr;gap:4rem;}
+.contato-info h2{color:#fff;font-size:2rem;margin-bottom:1rem;}
+.contato-info p{color:rgba(255,255,255,.62);font-size:.95rem;line-height:1.8;margin-bottom:2rem;}
+.contato-item{display:flex;gap:1rem;align-items:flex-start;margin-bottom:1.4rem;}
+.contato-item i{color:var(--gold-2);flex-shrink:0;margin-top:.15rem;}
+.contato-item strong{display:block;color:#fff;font-size:.86rem;margin-bottom:.15rem;}
+.contato-item span,.contato-item a{color:rgba(255,255,255,.6);font-size:.84rem;}
+.contato-item a:hover{color:var(--gold-2);}
+.contato-map{border-radius:14px;overflow:hidden;margin-top:1.6rem;border:1px solid rgba(255,255,255,.12);aspect-ratio:16/9;}
+.contato-map iframe{width:100%;height:100%;border:0;filter:grayscale(.2);}
+
+.form-card{background:#fff;border-radius:20px;padding:2.6rem;color:var(--text);}
+.form-card h3{font-size:1.3rem;margin-bottom:.4rem;}
+.form-card > p{color:var(--muted);font-size:.86rem;margin-bottom:1.8rem;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.form-group{margin-bottom:1.1rem;}
+.form-group label{display:block;font-size:.78rem;font-weight:600;color:var(--ink);margin-bottom:.4rem;}
+.form-group input,.form-group textarea{
+  width:100%;border:1.5px solid var(--line);border-radius:10px;padding:.8rem 1rem;font-size:.9rem;font-family:inherit;
+  background:var(--paper);transition:border-color .2s;
+}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--gold);outline:none;}
+.form-card button[type=submit]{width:100%;justify-content:center;margin-top:.4rem;}
+.form-success{
+  display:none;align-items:center;gap:1rem;background:rgba(184,146,58,.09);border:1px solid rgba(184,146,58,.3);
+  border-radius:12px;padding:1.4rem;color:var(--ink);
+}
+.form-success i{color:var(--gold);flex-shrink:0;}
+.form-success strong{display:block;font-size:.95rem;}
+.form-success span{font-size:.82rem;color:var(--muted);}
+
+@media(max-width:960px){ .contato-grid{grid-template-columns:1fr;gap:3rem;} }
+@media(max-width:520px){ .form-row{grid-template-columns:1fr;} }
+
+/* ═══ FOOTER ═══ */
+footer{background:var(--ink-2);color:rgba(255,255,255,.55);padding:4rem 0 1.6rem;}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;gap:3rem;flex-wrap:wrap;padding-bottom:2.6rem;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:1.8rem;}
+.footer-brand img{height:56px;margin-bottom:1rem;}
+.footer-brand p{max-width:280px;font-size:.83rem;line-height:1.7;}
+.footer-cols{display:flex;gap:3.5rem;flex-wrap:wrap;}
+.footer-col h4{color:#fff;font-size:.76rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.1rem;}
+.footer-col ul{display:flex;flex-direction:column;gap:.6rem;}
+.footer-col a{font-size:.83rem;transition:color .2s;}
+.footer-col a:hover{color:var(--gold-2);}
+.footer-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:.76rem;}
+.footer-bottom a{color:rgba(255,255,255,.5);}
+.footer-bottom a:hover{color:var(--gold-2);}
+
+/* ═══ WHATSAPP FLUTUANTE ═══ */
+.wa-float{position:fixed;bottom:2rem;right:2rem;z-index:900;}
+.wa-btn{width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 25px rgba(37,211,102,.4);animation:waPulse 2.6s ease-in-out infinite;}
+.wa-btn:hover{transform:scale(1.08);}
+@keyframes waPulse{0%,100%{box-shadow:0 8px 25px rgba(37,211,102,.4)}50%{box-shadow:0 8px 38px rgba(37,211,102,.65),0 0 0 9px rgba(37,211,102,.08)}}
+
+/* ═══ REVEAL ═══ */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1);}
+.reveal.visible{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="close-menu" onclick="closeMobile()" aria-label="Fechar">✕</button>
+  <a href="#especialidades" onclick="closeMobile()">Especialidades</a>
+  <a href="#sobre" onclick="closeMobile()">Sobre</a>
+  <a href="#equipe" onclick="closeMobile()">Equipe Médica</a>
+  <a href="#blog" onclick="closeMobile()">Blog</a>
+  <a href="#contato" onclick="closeMobile()" style="color:var(--gold-2)">Agendar Consulta</a>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="container nav-inner">
+    <a href="/life-health" class="nav-logo">
+      <img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784145349/Massas_Sabores_20_qyypsi.png" alt="Life Health" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+      <span class="nav-logo-text" style="display:none">Life Health</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#especialidades">Especialidades</a></li>
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#equipe">Equipe Médica</a></li>
+      <li><a href="#blog">Blog</a></li>
+      <li><a href="#contato" class="nav-cta">Agendar Consulta</a></li>
+    </ul>
+    <button class="hamburger" onclick="openMobile()" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+
+<section id="hero">
+  <div class="hero-bg"><img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784147685/Open_Sauce_-_VISUAL_syqkmq.png" alt=""></div>
+  <div class="container hero-grid">
+    <div>
+      <h1 class="hero-title">Conectamos você ao especialista certo, na hora certa.</h1>
+      <p class="hero-subtitle">A Life Health organiza toda a sua jornada de cuidado — do primeiro contato até o acompanhamento pós-consulta — junto aos médicos parceiros da nossa rede.</p>
+      <div class="hero-actions">
+        
+        <a href="https://wa.me/5511999999999?text=Olá! Vim pelo site e gostaria de agendar uma consulta pela Life Health." target="_blank" class="btn btn-gold">
+          Agendar Consulta <i data-lucide="arrow-right" style="width:16px;height:16px"></i>
+        </a>
+        
+        <a href="#especialidades" class="btn btn-outline">Ver especialidades</a>
+      </div>
+      <div class="hero-tags">
+        <span class="hero-tag">Rede de especialistas</span>
+        <span class="hero-tag">Agendamento facilitado</span>
+        <span class="hero-tag">Acompanhamento humanizado</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="hero-card">
+        <div class="hero-card-top"><span class="dot"></span> Life Health · Rede de Cuidado</div>
+        <p class="hero-card-quote">"Cuidamos de cada etapa para que você só precise se preocupar em melhorar."</p>
+        <div class="hero-stats">
+          <div class="hero-stat"><i data-lucide="stethoscope" style="width:18px;height:18px"></i><p>Médicos parceiros selecionados</p></div>
+          <div class="hero-stat"><i data-lucide="calendar-check" style="width:18px;height:18px"></i><p>Agendamento sem burocracia</p></div>
+          <div class="hero-stat"><i data-lucide="heart-pulse" style="width:18px;height:18px"></i><p>Acompanhamento em cada etapa</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ ESPECIALIDADES ═══ -->
+
+<section id="especialidades" class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" style="justify-content:center;display:inline-flex">Como podemos ajudar</span>
+      <h2>Especialidades atendidas</h2>
+      <p>Nossa rede reúne médicos parceiros para cuidar de você em cada uma dessas frentes.</p>
+    </div>
+
+    
+    <div class="esp-grid">
+      
+      
+      <div class="esp-card reveal" style="transition-delay:0.0s">
+        <div class="esp-icon"><i data-lucide="bone" style="width:22px;height:22px"></i></div>
+        <h3>Ortopedia</h3>
+        <p>Fale com a nossa equipe e agende uma avaliação com o especialista parceiro dessa área.</p>
+      </div>
+      
+      <div class="esp-card reveal" style="transition-delay:0.08s">
+        <div class="esp-icon"><i data-lucide="brain" style="width:22px;height:22px"></i></div>
+        <h3>Neurocirurgia</h3>
+        <p>Fale com a nossa equipe e agende uma avaliação com o especialista parceiro dessa área.</p>
+      </div>
+      
+      <div class="esp-card reveal" style="transition-delay:0.16s">
+        <div class="esp-icon"><i data-lucide="activity" style="width:22px;height:22px"></i></div>
+        <h3>Coluna e Dor Crônica</h3>
+        <p>Fale com a nossa equipe e agende uma avaliação com o especialista parceiro dessa área.</p>
+      </div>
+      
+      <div class="esp-card reveal" style="transition-delay:0.24s">
+        <div class="esp-icon"><i data-lucide="heart-pulse" style="width:22px;height:22px"></i></div>
+        <h3>Doenças do Sistema Nervoso</h3>
+        <p>Fale com a nossa equipe e agende uma avaliação com o especialista parceiro dessa área.</p>
+      </div>
+      
+    </div>
+    
+  </div>
+</section>
+
+
+<!-- ═══ SOBRE A LIFE HEALTH ═══ -->
+
+<section id="sobre">
+  <div class="container sobre-grid">
+    <div class="sobre-visual reveal">
+      <div class="arc-ring">
+        
+        <div style="aspect-ratio:4/5;border-radius:22px;background:var(--ink);display:flex;align-items:center;justify-content:center;">
+          
+        </div>
+        
+      </div>
+      <div class="sobre-visual-badge">
+        <i data-lucide="users" style="width:22px;height:22px"></i>
+        <span>Uma equipe cuidando de cada detalhe da sua jornada</span>
+      </div>
+    </div>
+
+    <div class="sobre-text reveal" style="transition-delay:.1s">
+      <span class="eyebrow">Quem é a Life Health</span>
+      <h2 style="font-size:clamp(1.8rem,3vw,2.5rem);margin-bottom:1.3rem;">A ponte entre você e o cuidado certo</h2>
+      
+      <p>A <strong>Life Health</strong> não é um consultório — somos a equipe que organiza toda a sua jornada de cuidado. Cuidamos do agendamento, do acolhimento e do acompanhamento, enquanto conectamos você aos médicos parceiros certos para o seu caso.</p>
+      <p>Trabalhamos ao lado de especialistas como o <strong>Dr. Rubens</strong> e o <strong>Dr. Dantas</strong>, cada um com sua própria forma de cuidar — e a nossa missão é garantir que essa experiência seja simples, humana e sem burocracia do início ao fim.</p>
+      
+      <div class="sobre-chips">
+        <span class="sobre-chip"><i data-lucide="check-circle"></i> Curadoria de especialistas</span>
+        <span class="sobre-chip"><i data-lucide="check-circle"></i> Agendamento facilitado</span>
+        <span class="sobre-chip"><i data-lucide="check-circle"></i> Acompanhamento contínuo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ DIFERENCIAIS ═══ -->
+<section id="diferenciais" class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" style="justify-content:center;display:inline-flex">Por que a Life Health</span>
+      <h2>Cuidado organizado, do primeiro contato ao retorno</h2>
+    </div>
+    <div class="dif-grid">
+      <div class="dif-card reveal"><div class="dif-icon"><i data-lucide="shield-check" style="width:22px;height:22px"></i></div><h3>Especialistas selecionados</h3><p>Trabalhamos apenas com médicos parceiros de confiança, avaliados pela nossa equipe.</p></div>
+      <div class="dif-card reveal" style="transition-delay:.08s"><div class="dif-icon"><i data-lucide="calendar-check" style="width:22px;height:22px"></i></div><h3>Agendamento sem complicação</h3><p>Você fala com a gente pelo WhatsApp e cuidamos de todo o resto do agendamento.</p></div>
+      <div class="dif-card reveal" style="transition-delay:.16s"><div class="dif-icon"><i data-lucide="heart-pulse" style="width:22px;height:22px"></i></div><h3>Acompanhamento humanizado</h3><p>Ficamos com você em cada etapa, não só na hora de marcar a consulta.</p></div>
+      <div class="dif-card reveal" style="transition-delay:.24s"><div class="dif-icon"><i data-lucide="book-open" style="width:22px;height:22px"></i></div><h3>Conteúdo confiável</h3><p>No blog, trazemos informação de saúde séria para te ajudar a entender seu caso.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ EQUIPE MÉDICA PARCEIRA ═══ -->
+<section id="equipe" class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" style="justify-content:center;display:inline-flex">Médicos parceiros</span>
+      <h2>Profissionais que atendem através da Life Health</h2>
+      <p>Cada especialista tem sua própria forma de cuidar. A Life Health cuida de toda a organização em volta disso.</p>
+    </div>
+
+    <div class="equipe-grid">
+      <!-- AVATAR PLACEHOLDER — trocar por <img src="foto-dr-rubens.jpg"> assim que vocês enviarem a foto -->
+      <div class="doc-card reveal">
+        <div class="doc-top">
+          <div class="doc-avatar">DR</div>
+          <div class="doc-id">
+            <h3>Dr. Rubens</h3>
+            <span>Neurocirurgia</span>
+            <div class="doc-crm">CRM/RQE a confirmar</div>
+          </div>
+        </div>
+        <div class="doc-body">
+          <p>O Dr. Rubens atende pela Life Health em Neurocirurgia, cuidando de casos que vão de dores de cabeça persistentes a doenças da coluna e do sistema nervoso. Seu trabalho começa sempre por entender a origem real do problema, evitando exames e procedimentos desnecessários, para chegar a um diagnóstico preciso e a um plano de tratamento seguro e individualizado.</p>
+          <div class="doc-focus">
+            <span>Coluna e dor crônica</span>
+            <span>Doenças cerebrais</span>
+            <span>Neurocirurgia</span>
+          </div>
+          
+          <a href="https://wa.me/5511999999999?text=Olá! Gostaria de agendar uma consulta com o Dr. Rubens pela Life Health." target="_blank" class="doc-cta">Agendar com Dr. Rubens <i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
+          
+        </div>
+      </div>
+
+      <!-- AVATAR PLACEHOLDER — trocar por <img src="foto-dr-dantas.jpg"> assim que vocês enviarem a foto -->
+      <div class="doc-card reveal" style="transition-delay:.1s">
+        <div class="doc-top">
+          <div class="doc-avatar">DD</div>
+          <div class="doc-id">
+            <h3>Dr. Dantas</h3>
+            <span>Ortopedia</span>
+            <div class="doc-crm">CRM/RQE a confirmar</div>
+          </div>
+        </div>
+        <div class="doc-body">
+          <p>O Dr. Dantas atende pela Life Health em Ortopedia, cuidando de dores e lesões que afetam a coluna, as articulações e o movimento no dia a dia. Une avaliação clínica detalhada a condutas atualizadas, priorizando sempre que possível tratamentos conservadores antes de indicar cirurgia, e acompanha o paciente de perto em toda a recuperação.</p>
+          <div class="doc-focus">
+            <span>Coluna e articulações</span>
+            <span>Traumas e lesões</span>
+            <span>Ortopedia</span>
+          </div>
+          
+          <a href="https://wa.me/5511999999999?text=Olá! Gostaria de agendar uma consulta com o Dr. Dantas pela Life Health." target="_blank" class="doc-cta">Agendar com Dr. Dantas <i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
+          
+        </div>
+      </div>
+    </div>
+
+    <p class="equipe-note">Todos os agendamentos são feitos diretamente pela Life Health — nossa equipe organiza o encontro entre você e o especialista certo.</p>
+  </div>
+</section>
+
+<!-- ═══ UNIDADES / BANNERS MENORES ═══ -->
+
+
+<!-- ═══ AGENDA ═══ -->
+
+
+<!-- ═══ BLOG ═══ -->
+
+<section id="blog" class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" style="justify-content:center;display:inline-flex">Conteúdo</span>
+      <h2>Blog da Life Health</h2>
+      <p>Informação de saúde para te ajudar a entender melhor o seu cuidado.</p>
+    </div>
+
+    
+    <div class="blog-toolbar">
+      <button id="btnCarrossel" class="active" onclick="setBlogView('carousel')"><i data-lucide="layout-list" style="width:14px;height:14px"></i> Carrossel</button>
+      <button id="btnGrade" onclick="setBlogView('grid')"><i data-lucide="grid-3x3" style="width:14px;height:14px"></i> Grade</button>
+    </div>
+
+    <div id="blogCarouselWrap" class="blog-carousel-wrap">
+      <div class="blog-carousel" id="blogCarousel">
+        
+        <a href="/life-health/blog/exemplo-1" class="blog-card">
+          <div class="blog-card-img">
+            
+          </div>
+          <div class="blog-card-body">
+            <span class="blog-date">10 Jul 2026</span>
+            <h3>Dor nas costas: quando procurar um especialista</h3>
+            <p>Entenda os sinais que indicam a hora certa de buscar avaliação com um especialista.</p>
+            <span class="blog-read">Ler artigo <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
+          </div>
+        </a>
+        
+        <a href="/life-health/blog/exemplo-2" class="blog-card">
+          <div class="blog-card-img">
+            
+          </div>
+          <div class="blog-card-body">
+            <span class="blog-date">02 Jul 2026</span>
+            <h3>Hérnia de disco tem cura sem cirurgia?</h3>
+            <p>Entenda tratamentos conservadores e quando a cirurgia é realmente indicada.</p>
+            <span class="blog-read">Ler artigo <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
+          </div>
+        </a>
+        
+        <a href="/life-health/blog/exemplo-3" class="blog-card">
+          <div class="blog-card-img">
+            
+          </div>
+          <div class="blog-card-body">
+            <span class="blog-date">24 Jun 2026</span>
+            <h3>Dor de cabeça persistente: o que pode ser</h3>
+            <p>Conheça causas comuns e sinais de alerta que merecem atenção médica.</p>
+            <span class="blog-read">Ler artigo <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
+          </div>
+        </a>
+        
+      </div>
+      <div class="blog-nav-arrows">
+        <button id="blogPrev" onclick="slideCarousel(-1)" aria-label="Anterior"><i data-lucide="chevron-left" style="width:18px;height:18px"></i></button>
+        <button id="blogNext" onclick="slideCarousel(1)" aria-label="Próximo"><i data-lucide="chevron-right" style="width:18px;height:18px"></i></button>
+      </div>
+    </div>
+
+    <div id="blogGridWrap" class="blog-grid" style="display:none">
+      
+      <a href="/life-health/blog/exemplo-1" class="blog-card">
+        <div class="blog-card-img">
+          
+        </div>
+        <div class="blog-card-body">
+          <span class="blog-date">10 Jul 2026</span>
+          <h3>Dor nas costas: quando procurar um especialista</h3>
+          <p>Entenda os sinais que indicam a hora certa de buscar avaliação com um especialista.</p>
+          <span class="blog-read">Ler artigo <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
+        </div>
+      </a>
+      
+      <a href="/life-health/blog/exemplo-2" class="blog-card">
+        <div class="blog-card-img">
+          
+        </div>
+        <div class="blog-card-body">
+          <span class="blog-date">02 Jul 2026</span>
+          <h3>Hérnia de disco tem cura sem cirurgia?</h3>
+          <p>Entenda tratamentos conservadores e quando a cirurgia é realmente indicada.</p>
+          <span class="blog-read">Ler artigo <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
+        </div>
+      </a>
+      
+      <a href="/life-health/blog/exemplo-3" class="blog-card">
+        <div class="blog-card-img">
+          
+        </div>
+        <div class="blog-card-body">
+          <span class="blog-date">24 Jun 2026</span>
+          <h3>Dor de cabeça persistente: o que pode ser</h3>
+          <p>Conheça causas comuns e sinais de alerta que merecem atenção médica.</p>
+          <span class="blog-read">Ler artigo <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
+        </div>
+      </a>
+      
+    </div>
+    
+  </div>
+</section>
+
+
+<!-- ═══ CONTATO ═══ -->
+
+<section id="contato">
+  <div class="container contato-grid">
+    <div class="contato-info reveal">
+      <span class="eyebrow" style="color:var(--gold-2)">Fale com a gente</span>
+      <h2>Vamos organizar o seu cuidado</h2>
+      <p>Preencha o formulário ou fale direto pelo WhatsApp — nossa equipe responde rápido e cuida de todo o agendamento.</p>
+
+      
+      <div class="contato-item"><i data-lucide="phone" style="width:18px;height:18px"></i><div><strong>WhatsApp</strong><a href="https://wa.me/5511999999999" target="_blank">(11) 99999-9999</a></div></div>
+      
+      
+      <div class="contato-item"><i data-lucide="mail" style="width:18px;height:18px"></i><div><strong>E-mail</strong><a href="mailto:contato@lifehealth.com.br">contato@lifehealth.com.br</a></div></div>
+      
+      
+      <div class="contato-item"><i data-lucide="map-pin" style="width:18px;height:18px"></i><div><strong>Endereço</strong><span>Av. Placeholder, 1000 – São Paulo/SP</span></div></div>
+      
+      
+      <div class="contato-item"><i data-lucide="instagram" style="width:18px;height:18px"></i><div><strong>Instagram</strong><a href="https://instagram.com/lifehealth" target="_blank">Acompanhe nosso conteúdo</a></div></div>
+      
+
+      
+    </div>
+
+    <div class="form-card reveal" style="transition-delay:.1s">
+      <h3>Solicitar agendamento</h3>
+      <p>Responderemos o mais rápido possível pelo WhatsApp ou e-mail informado.</p>
+
+      <form id="leadForm">
+        <input type="hidden" name="profissao" value="Paciente">
+        <div class="form-row">
+          <div class="form-group"><label>Nome completo</label><input type="text" name="nome" required></div>
+          <div class="form-group"><label>WhatsApp</label><input type="tel" name="whatsapp" required></div>
+        </div>
+        <div class="form-group"><label>E-mail</label><input type="email" name="email" required></div>
+        <button type="submit" class="btn btn-ink"><span class="btn-text-wrapper">Enviar Solicitação</span> <i data-lucide="send" style="width:15px;height:15px"></i></button>
+      </form>
+
+      <div class="form-success" id="leadSuccessMsg">
+        <i data-lucide="check-circle" style="width:26px;height:26px"></i>
+        <div><strong>Recebemos sua solicitação!</strong><span>Nossa equipe vai entrar em contato em breve.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784145349/Massas_Sabores_20_qyypsi.png" alt="Life Health" style="filter:brightness(0) invert(1);opacity:.9">
+        <p>Life Health organiza a sua jornada de cuidado junto a médicos parceiros de confiança.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Navegação</h4>
+          <ul>
+            <li><a href="#especialidades">Especialidades</a></li>
+            <li><a href="#sobre">Sobre</a></li>
+            <li><a href="#equipe">Equipe Médica</a></li>
+            <li><a href="#blog">Blog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contato</h4>
+          <ul>
+            <li><a href="https://wa.me/5511999999999" target="_blank">WhatsApp</a></li>
+            <li><a href="mailto:contato@lifehealth.com.br">contato@lifehealth.com.br</a></li>
+            <li><a href="https://instagram.com/lifehealth" target="_blank">Instagram</a></li>
+            <li><a href="#contato">Agendar Consulta</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© Life Health. Todos os direitos reservados.</p>
+      <p>Desenvolvido por <a href="https://leanttro.com" target="_blank">Leanttro</a></p>
+    </div>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLUTUANTE -->
+
+<div class="wa-float">
+  <a href="https://wa.me/5511999999999?text=Olá! Vim pelo site e gostaria de agendar uma consulta pela Life Health." target="_blank" class="wa-btn" aria-label="Falar pelo WhatsApp">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.119.554 4.107 1.523 5.836L.057 23.925 6.29 22.48A11.939 11.939 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.659-.503-5.184-1.381l-.372-.22-3.866.95.994-3.756-.243-.386A9.94 9.94 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" fill-rule="evenodd" clip-rule="evenodd"/></svg>
+  </a>
+</div>
+
+
+<script>
+lucide.createIcons();
+
+// navbar scroll
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 60); }, { passive:true });
+
+// mobile menu
+function openMobile(){ document.getElementById('mobileMenu').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeMobile(){ document.getElementById('mobileMenu').classList.remove('open'); document.body.style.overflow=''; }
+
+// reveal on scroll
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+}, { threshold:.1, rootMargin:'0px 0px -60px 0px' });
+revealEls.forEach(el => revealObs.observe(el));
+
+// blog carousel
+(function(){
+  const carousel = document.getElementById('blogCarousel');
+  if(!carousel) return;
+  const prevBtn = document.getElementById('blogPrev');
+  const nextBtn = document.getElementById('blogNext');
+  const cards = carousel.querySelectorAll('.blog-card');
+  let currentDot = 0;
+
+  function visibleCount(){ const w = carousel.offsetWidth; if(w<500) return 1; if(w<900) return 2; return 3; }
+  function totalPages(){ return Math.max(1, cards.length - visibleCount() + 1); }
+  function goTo(idx){
+    if(!cards.length) return;
+    idx = Math.max(0, Math.min(idx, totalPages()-1));
+    currentDot = idx;
+    const cardWidth = cards[0].offsetWidth + 26;
+    carousel.scrollTo({ left: cardWidth*idx, behavior:'smooth' });
+    updateArrows();
+  }
+  function updateArrows(){
+    if(prevBtn) prevBtn.disabled = currentDot === 0;
+    if(nextBtn) nextBtn.disabled = currentDot >= totalPages()-1;
+  }
+  window.slideCarousel = function(dir){ goTo(currentDot + dir); };
+  carousel.addEventListener('scroll', () => {
+    if(!cards.length) return;
+    const cardWidth = cards[0].offsetWidth + 26;
+    const idx = Math.round(carousel.scrollLeft / cardWidth);
+    if(idx !== currentDot){ currentDot = idx; updateArrows(); }
+  }, { passive:true });
+  let resizeTimer;
+  window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(()=>goTo(0), 200); });
+  updateArrows();
+})();
+
+function setBlogView(view){
+  const carousel = document.getElementById('blogCarouselWrap');
+  const grid = document.getElementById('blogGridWrap');
+  const btnC = document.getElementById('btnCarrossel');
+  const btnG = document.getElementById('btnGrade');
+  if(!carousel || !grid) return;
+  if(view === 'carousel'){
+    carousel.style.display=''; grid.style.display='none';
+    btnC.classList.add('active'); btnG.classList.remove('active');
+  } else {
+    carousel.style.display='none'; grid.style.display='';
+    btnG.classList.add('active'); btnC.classList.remove('active');
+  }
+}
+
+// PREVIEW ESTÁTICO: sem app.py rodando aqui, então só simula o envio.
+// Na versão final publicada como template Flask, isto volta a chamar
+// fetch('/<loja>/captura-lead', ...) — rota que já existe no app.py.
+const leadForm = document.getElementById('leadForm');
+if(leadForm){
+  leadForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    const btn = this.querySelector('button[type=submit]');
+    const textWrapper = btn.querySelector('.btn-text-wrapper');
+    textWrapper.innerHTML = 'ENVIANDO...';
+    btn.disabled = true;
+    setTimeout(() => {
+      this.style.display = 'none';
+      document.getElementById('leadSuccessMsg').style.display = 'flex';
+    }, 600);
+  });
+}
+</script>
+</body>
+</html>
