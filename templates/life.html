@@ -300,20 +300,19 @@ button{font-family:inherit;}
 #equipe{padding:6.5rem 0;background:var(--white);}
 .equipe-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;}
 .doc-card{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--paper);transition:box-shadow .3s,transform .3s;}
-.doc-card:hover{box-shadow:0 24px 48px rgba(20,33,61,.1);transform:translateY(-4px);}
-.doc-top{padding:2.2rem 2.2rem 0;display:flex;gap:1.3rem;align-items:center;}
-.doc-avatar{
-  width:78px;height:78px;border-radius:50%;flex-shrink:0;
+.doc-card:hover{box-shadow:0 24px 48px rgba(20,33,61,.14);transform:translateY(-4px);}
+.doc-photo{
+  position:relative;width:100%;aspect-ratio:4/5;overflow:hidden;
   background:linear-gradient(135deg,var(--ink),var(--ink-2));
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Fraunces',serif;font-size:1.5rem;color:var(--gold-2);font-weight:600;
-  position:relative;
 }
-.doc-avatar::after{content:'';position:absolute;inset:-6px;border:1.5px solid var(--gold);border-radius:50%;border-left-color:transparent;transform:rotate(-30deg);}
-.doc-id h3{font-size:1.18rem;margin-bottom:.2rem;}
-.doc-id span{display:block;font-size:.8rem;color:var(--gold);font-weight:700;letter-spacing:.02em;}
-.doc-crm{font-size:.72rem;color:var(--muted);margin-top:.25rem;}
-.doc-body{padding:1.5rem 2.2rem 2.2rem;}
+.doc-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;}
+.doc-photo.doc-photo-contain img{object-fit:contain;}
+.doc-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,22,38,0) 55%,rgba(11,22,38,.72) 100%);pointer-events:none;}
+.doc-photo-badge{position:absolute;left:1.6rem;bottom:1.3rem;z-index:1;color:#fff;}
+.doc-photo-badge h3{font-size:1.4rem;margin-bottom:.15rem;color:#fff;}
+.doc-photo-badge span{display:block;font-size:.82rem;color:var(--gold-2);font-weight:700;letter-spacing:.02em;}
+.doc-crm{font-size:.72rem;color:rgba(255,255,255,.75);margin-top:.3rem;}
+.doc-body{padding:1.8rem 2.2rem 2.2rem;}
 .doc-body p{font-size:.9rem;line-height:1.75;color:var(--muted);margin-bottom:1.3rem;}
 .doc-focus{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;}
 .doc-focus span{font-size:.72rem;font-weight:600;color:var(--ink);background:#fff;border:1px solid var(--line);padding:.4rem .8rem;border-radius:999px;}
@@ -480,7 +479,7 @@ footer{background:var(--ink-2);color:rgba(255,255,255,.55);padding:4rem 0 1.6rem
 <!-- ═══ HERO ═══ -->
 
 <section id="hero">
-  <div class="hero-bg"><img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784147685/Open_Sauce_-_VISUAL_syqkmq.png" alt=""></div>
+  <div class="hero-bg"><img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784154932/Open_Sauce_-_VISUAL_i5tiuh.png" alt=""></div>
   <div class="container hero-grid">
     <div>
       <h1 class="hero-title">Conectamos você ao especialista certo, na hora certa.</h1>
@@ -620,11 +619,11 @@ footer{background:var(--ink-2);color:rgba(255,255,255,.55);padding:4rem 0 1.6rem
     </div>
 
     <div class="equipe-grid">
-      <!-- AVATAR PLACEHOLDER — trocar por <img src="foto-dr-rubens.jpg"> assim que vocês enviarem a foto -->
+      <!-- Foto do Dr. Rubens -->
       <div class="doc-card reveal">
-        <div class="doc-top">
-          <div class="doc-avatar">DR</div>
-          <div class="doc-id">
+        <div class="doc-photo">
+          <img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784154028/IOT_8_kxoath.jpg" alt="Dr. Rubens">
+          <div class="doc-photo-badge">
             <h3>Dr. Rubens</h3>
             <span>Neurocirurgia</span>
             <div class="doc-crm">CRM/RQE a confirmar</div>
@@ -643,11 +642,11 @@ footer{background:var(--ink-2);color:rgba(255,255,255,.55);padding:4rem 0 1.6rem
         </div>
       </div>
 
-      <!-- AVATAR PLACEHOLDER — trocar por <img src="foto-dr-dantas.jpg"> assim que vocês enviarem a foto -->
+      <!-- Foto do Dr. Dantas (formato diferente — usando 'contain' para não cortar) -->
       <div class="doc-card reveal" style="transition-delay:.1s">
-        <div class="doc-top">
-          <div class="doc-avatar">DD</div>
-          <div class="doc-id">
+        <div class="doc-photo doc-photo-contain">
+          <img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784154027/taianne_e_dantas-2_gtiycx.jpg" alt="Dr. Dantas">
+          <div class="doc-photo-badge">
             <h3>Dr. Dantas</h3>
             <span>Ortopedia</span>
             <div class="doc-crm">CRM/RQE a confirmar</div>
