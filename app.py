@@ -1432,6 +1432,7 @@ def reset_senha(token):
             requests.patch(f"{DIRECTUS_URL}/items/lojas/{loja_alvo['id']}", 
                          headers=get_headers(),
                          json={'senha_admin': hash_senha}, timeout=7)
+            cache.clear()
             success = "Sua senha foi atualizada com sucesso! Você já pode fazer login."
         else:
             error = "A senha não pode ficar em branco."
