@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ p.nome }} | {{ loja.nome or 'Micasa Hostel' }}</title>
+
+    <!--
+      TEMPLATE: case_micasa.html
+      ─────────────────────────────────────────────────────────────
+      Página de detalhe de acomodação/projeto EXCLUSIVA da Micasa Hostel.
+      Ao contrário do case.html genérico (que lê cores/fontes dinâmicas
+      de loja.cor_primaria, loja.font_titulo etc.), este arquivo usa a
+      identidade visual fixa da marca Micasa — mesma paleta e tipografia
+      do template principal (micasa.html): olive #859266, terracota
+      #C9744A, Fraunces + Mulish.
+
+      Roteamento em app.py: quando g.loja.template_ativo == 'micasa',
+      a rota de produto usa template_produto = 'case_micasa.html' em vez
+      do case.html padrão (mesma lógica já usada para 'tecnologia' →
+      case_tecnologia.html). Contrato de variáveis idêntico ao case.html:
+      recebe p (produto/quarto) e loja via render_template(template_produto,
+      p=p, loja=loja_visual, directus_url=DIRECTUS_URL).
+
+      Campos usados de "p": p.nome, p.imagem_destaque, p.imagem1..5,
+      p.descricao, p.preco, p.variantes (grupos/opções → mostrados como
+      comodidades), p.link_projeto, p.whatsapp_projeto.
+      Campos usados de "loja": loja.nome, loja.slug_url, loja.whatsapp_comercial.
+      ─────────────────────────────────────────────────────────────
+    -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Mulish:wght@400;500;600;700;800&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --olive:      #859266;
+            --olive-dk:   #5F6A49;
+            --olive-dker: #454E34;
+            --terracotta: #C9744A;
+            --terracotta-dk: #A85C38;
+            --cream:      #F7F3EC;
+            --cream-2:    #EFE7D8;
+            --line:       #DFD5BF;
+            --ink:        #3A3A2E;
+            --muted:      #7C7A67;
+
+            --font-head: 'Fraunces', serif;
+            --font-body: 'Mulish', sans-serif;
+        }
+
+        body{
+            font-family: var(--font-body);
+            background-color: var(--cream);
+            color: var(--ink);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, .font-display{
+            font-family: var(--font-head);
+            color: var(--olive-dker);
+        }
+
+        /* Mix Blend Mode para o botão de voltar flutuante */
+        .mix-blend-nav{
+            mix-blend-mode: difference;
+            color: #ffffff;
+            z-index: 100;
+        }
+
+        .clip-reveal{
+            clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0% 100%);
+        }
+
+        .prose-custom{
+            font-size: 1.1rem;
+            line-height: 1.85;
+            font-weight: 400;
+            white-space: normal;
+            color: var(--ink);
+        }
+        .prose-custom p{ margin-bottom: 1.6rem; }
+        .prose-custom strong{ font-weight: 700; color: var(--olive-dker); }
+        .prose-custom h1, .prose-custom h2, .prose-custom h3{ margin-top: 2.6rem; margin-bottom: 1rem; font-weight: 700; letter-spacing: -0.01em; }
+
+        /* Imagem sem corte: exibe no formato original, com o "recorte" assimétrico da marca */
+        .img-natural-container{
+            border-radius: 46px 6px 46px 6px;
+            overflow: hidden;
+            width: 100%;
+            box-shadow: 0 24px 48px rgba(69,78,52,.14);
+        }
+        .img-natural-container img{
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        ::-webkit-scrollbar{ width: 8px; }
+        ::-webkit-scrollbar-track{ background: var(--cream); }
+        ::-webkit-scrollbar-thumb{ background: rgba(69,78,52,.18); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover{ background: rgba(69,78,52,.32); }
+
+        /* Selo de preço/diária */
+        .price-badge{
+            font-family: var(--font-head); font-weight: 600; font-size: 1.2rem; color: var(--olive-dker);
+        }
+        .price-badge small{ font-family: var(--font-body); font-weight: 700; font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+
+        .leaf-line{ fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+    </style>
+</head>
+<body>
+
+    <nav class="fixed top-0 left-0 w-full p-6 md:p-10 flex justify-between items-center mix-blend-nav pointer-events-none">
+        <a href="/{{ loja.slug_url }}" class="flex items-center gap-3 font-bold uppercase tracking-[0.2em] text-xs md:text-sm transition-transform hover:-translate-x-2 pointer-events-auto">
+            <i data-lucide="arrow-left" class="w-5 h-5"></i> Voltar ao {{ loja.nome or 'Micasa Hostel' }}
+        </a>
+    </nav>
+
+    <section class="relative w-full overflow-hidden" id="hero-section" style="height: 85vh; background-color: var(--olive-dker);">
+
+        <!-- Fundo desfocado para preencher espaços laterais com elegância -->
+        <div id="hero-bg-blur" class="absolute inset-0 scale-110" style="background-image: url('{{ p.imagem_destaque or p.imagem1 }}'); background-size: cover; background-position: center; filter: blur(28px); opacity: 0.4;"></div>
+
+        <!-- Imagem principal: visível por inteiro, sem corte, sem esticamento -->
+        <img src="{{ p.imagem_destaque or p.imagem1 }}" alt="{{ p.nome }}" id="hero-img"
+             class="relative z-10 mx-auto block h-full w-auto"
+             style="object-fit: contain; max-width: 100%;">
+
+        <!-- Gradiente sobre tudo para o texto ficar legível -->
+        <div class="absolute inset-0 z-20" style="background:linear-gradient(to top, rgba(37,42,26,.92) 0%, rgba(37,42,26,.25) 55%, transparent 100%);"></div>
+
+        <!-- Motivo de folha (mesmo ramo do logo, ecoando o site principal) -->
+        <svg class="absolute z-20 leaf-anim" viewBox="0 0 150 210" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="top:2.5rem;right:2.5rem;width:70px;color:#E7B79A;opacity:.5;">
+            <path class="leaf-line" d="M70 205 C55 150 70 95 60 55 C55 35 75 18 95 8"/>
+            <path class="leaf-line" d="M68 185 Q95 158 120 165 Q98 180 68 185"/>
+            <path class="leaf-line" d="M62 150 Q35 123 10 130 Q32 145 62 150"/>
+            <path class="leaf-line" d="M65 115 Q92 88 118 98 Q95 112 65 115"/>
+            <path class="leaf-line" d="M60 80 Q33 54 12 63 Q35 77 60 80"/>
+            <path class="leaf-line" d="M72 45 Q95 20 115 30 Q95 42 72 45"/>
+            <path class="leaf-line" d="M80 20 Q62 2 48 5 Q65 17 80 20"/>
+        </svg>
+
+        <!-- Texto do hero -->
+        <div class="absolute inset-0 z-30 flex flex-col justify-end p-8 md:p-20 container mx-auto">
+            <div class="overflow-hidden mb-2">
+                <p class="text-[#E7B79A] uppercase tracking-[0.3em] font-extrabold text-xs md:text-sm transform translate-y-full hero-elem">
+                    Nossa Acomodação
+                </p>
+            </div>
+            <div class="overflow-hidden">
+                <h1 class="text-white text-5xl md:text-7xl lg:text-[5.5rem] font-semibold tracking-tight leading-[0.95] transform translate-y-full hero-elem drop-shadow-lg" style="font-family:var(--font-head);">
+                    {{ p.nome }}
+                </h1>
+            </div>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-6 md:px-20 py-24 md:py-32">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
+
+            <div class="lg:col-span-7 xl:col-span-8 order-2 lg:order-1">
+                <div class="overflow-hidden mb-8">
+                    <h2 class="text-3xl md:text-5xl font-semibold tracking-tight section-title" style="color: var(--olive-dker);">
+                        Sobre o quarto
+                    </h2>
+                </div>
+
+                <div class="prose-custom text-reveal-container">
+                    {% if p.descricao %}
+                        {{ p.descricao | replace('\n', '<br>') | safe }}
+                    {% else %}
+                        <p>Um espaço pensado pra você se sentir em casa: conforto, limpeza e aquele clima acolhedor que é a cara da Micasa.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 xl:col-span-4 order-1 lg:order-2">
+                <div class="sticky top-32 space-y-10 block-reveal opacity-0 translate-y-10">
+
+                    {% if p.preco and p.preco > 0 %}
+                    <div class="price-badge">
+                        <small>A partir de</small><br>
+                        US$ {{ '%.0f'|format(p.preco) }} <span style="font-family:var(--font-body);font-weight:600;font-size:.85rem;color:var(--muted);">/ noite</span>
+                    </div>
+                    {% endif %}
+
+                    <div>
+                        <h4 class="text-xs uppercase tracking-[0.2em] font-extrabold mb-5" style="color: var(--muted);">
+                            Comodidades
+                        </h4>
+                        <div class="flex flex-wrap gap-2">
+                            {% if p.variantes %}
+                                {% for grupo in p.variantes %}
+                                    {% for op in grupo.opcoes %}
+                                        <span class="px-4 py-2 rounded-full text-xs font-bold tracking-wide border" style="border-color: var(--line); color: var(--olive-dker); background-color: var(--cream-2);">
+                                            {{ op.nome }}
+                                        </span>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% else %}
+                                <span class="px-4 py-2 rounded-full text-xs font-bold tracking-wide border" style="border-color: var(--line); color: var(--olive-dker); background-color: var(--cream-2);">
+                                    Ótimo custo-benefício
+                                </span>
+                                <span class="px-4 py-2 rounded-full text-xs font-bold tracking-wide border" style="border-color: var(--line); color: var(--olive-dker); background-color: var(--cream-2);">
+                                    Limpeza garantida
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 pt-8 border-t" style="border-color: var(--line);">
+
+                        {% if p.link_projeto %}
+                        <a href="{{ p.link_projeto }}" target="_blank" class="w-full flex items-center justify-center gap-3 py-5 px-6 rounded-2xl text-xs md:text-sm font-bold uppercase tracking-[0.1em] transition-all duration-300 hover:scale-[1.02] shadow-sm hover:shadow-md" style="background-color: var(--olive-dker); color: #fff;">
+                            Ver mais detalhes <i data-lucide="external-link" class="w-4 h-4"></i>
+                        </a>
+                        {% endif %}
+
+                        <button onclick="window.open('https://wa.me/55{{ p.whatsapp_projeto or loja.whatsapp_comercial }}?text=Oi! Vi o quarto {{ p.nome }} no site e queria saber mais sobre disponibilidade e valores.')" class="w-full flex items-center justify-center gap-3 py-5 px-6 rounded-2xl text-xs md:text-sm font-bold uppercase tracking-[0.1em] transition-all duration-300 hover:scale-[1.02] shadow-sm hover:shadow-md" style="background-color: var(--terracotta); color: #fff;">
+                            <i data-lucide="message-circle" class="w-5 h-5"></i> Reservar no WhatsApp
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    {% if p.imagem1 or p.imagem2 or p.imagem_secundaria or p.imagem3 or p.imagem4 or p.imagem5 %}
+    <section class="container mx-auto px-6 md:px-10 pb-32 space-y-8 md:space-y-12">
+
+        {% if p.imagem1 %}
+        <div class="img-natural-container clip-reveal-box">
+            <img src="{{ p.imagem1 }}" alt="Detalhe do quarto 1">
+        </div>
+        {% endif %}
+
+        {% if p.imagem2 or p.imagem_secundaria %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+            {% if p.imagem2 %}
+            <div class="img-natural-container clip-reveal-box">
+                <img src="{{ p.imagem2 }}" alt="Detalhe do quarto 2">
+            </div>
+            {% endif %}
+
+            {% if p.imagem_secundaria %}
+            <div class="img-natural-container clip-reveal-box md:mt-24">
+                <img src="{{ p.imagem_secundaria }}" alt="Detalhe do quarto 3">
+            </div>
+            {% else %}
+            <div class="hidden md:flex flex-col justify-center px-12 block-reveal opacity-0 translate-y-10">
+                <i data-lucide="quote" class="w-12 h-12 mb-6" style="color: var(--terracotta); opacity: 0.4;"></i>
+                <p class="text-2xl font-light italic" style="color: var(--olive-dker); font-family: var(--font-head);">"Menos corredor de hotel, mais quintal de casa."</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if p.imagem3 or p.imagem4 or p.imagem5 %}
+        <div class="grid grid-cols-1 md:grid-cols-{% if p.imagem3 and p.imagem4 and p.imagem5 %}3{% elif p.imagem3 and p.imagem4 %}2{% else %}1{% endif %} gap-8 md:gap-12 items-start">
+            {% if p.imagem3 %}
+            <div class="img-natural-container clip-reveal-box">
+                <img src="{{ p.imagem3 }}" alt="Detalhe do quarto 4">
+            </div>
+            {% endif %}
+
+            {% if p.imagem4 %}
+            <div class="img-natural-container clip-reveal-box md:mt-12">
+                <img src="{{ p.imagem4 }}" alt="Detalhe do quarto 5">
+            </div>
+            {% endif %}
+
+            {% if p.imagem5 %}
+            <div class="img-natural-container clip-reveal-box">
+                <img src="{{ p.imagem5 }}" alt="Detalhe do quarto 6">
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </section>
+    {% endif %}
+
+    <footer class="py-12 border-t text-center" style="border-color: var(--line); background-color: var(--cream);">
+        <h4 class="font-semibold text-2xl tracking-tight mb-2" style="color: var(--olive-dker); font-family: var(--font-head);">{{ loja.nome or 'Micasa Hostel' }}</h4>
+        <p class="text-xs font-bold uppercase tracking-[0.2em]" style="color: var(--muted);">Mi Casa, Su Casa</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 1. Animação de Entrada do Hero
+        const tlHero = gsap.timeline();
+
+        tlHero.fromTo("#hero-img",
+            { scale: 1.2 },
+            { scale: 1, duration: 2, ease: "power3.out" }
+        );
+
+        tlHero.to(".hero-elem", {
+            y: 0,
+            duration: 1.2,
+            stagger: 0.2,
+            ease: "power4.out"
+        }, "-=1.5");
+
+        // 2. Reveal dos Títulos da Seção
+        gsap.set(".section-title", { y: "100%", overflow: "hidden" });
+        gsap.to(".section-title", {
+            scrollTrigger: {
+                trigger: ".section-title",
+                start: "top 85%",
+            },
+            y: 0,
+            duration: 1,
+            ease: "power4.out"
+        });
+
+        // 3. Reveal em fade/slide up dos blocos de texto e barra lateral
+        gsap.utils.toArray('.block-reveal').forEach(block => {
+            gsap.to(block, {
+                scrollTrigger: {
+                    trigger: block,
+                    start: "top 85%",
+                },
+                y: 0,
+                opacity: 1,
+                duration: 1,
+                ease: "power3.out"
+            });
+        });
+
+        // 4. O Grande Reveal das Imagens (Clip-Path "Cortina")
+        gsap.utils.toArray('.clip-reveal-box').forEach(box => {
+            gsap.set(box, { clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0% 100%)" });
+
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: box,
+                    start: "top 80%",
+                }
+            }).to(box, {
+                clipPath: "polygon(0 0%, 100% 0%, 100% 100%, 0% 100%)",
+                duration: 1.5,
+                ease: "power4.inOut"
+            });
+        });
+    </script>
+</body>
+</html>
