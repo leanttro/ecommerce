@@ -328,6 +328,7 @@ button{font-family:inherit;}
 .ajudar-row{
   display:grid;grid-template-columns:70px 1fr 2fr 30px;gap:2rem;align-items:center;
   padding:2rem 0;border-bottom:1px solid var(--line);transition:background .25s;
+  text-decoration:none;color:inherit;cursor:pointer;
 }
 .ajudar-row:hover{background:var(--paper-2);}
 .ajudar-num{font-family:'Newsreader',serif;font-size:1rem;color:var(--muted);}
@@ -598,6 +599,17 @@ setTimeout(function(){
     <p class="section-lede">Da avaliação inicial ao pós-operatório, a IOT acompanha você com foco em coluna e quadril.</p>
 
     <div class="ajudar-list">
+      {% if produtos and produtos|length > 0 %}
+        {% for p in produtos %}
+        <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}" class="ajudar-row reveal" style="transition-delay:{{ loop.index0 * 0.05 }}s">
+          <span class="ajudar-num">0{{ loop.index }}</span>
+          <h3>{{ p.nome }}</h3>
+          <p>{{ p.descricao | truncate(140) if p.descricao else '' }}</p>
+          <i data-lucide="arrow-right" class="arrow" style="width:20px;height:20px"></i>
+        </a>
+        {% endfor %}
+      {% else %}
+      <!-- Itens padrão exibidos até que os serviços sejam cadastrados no painel -->
       <div class="ajudar-row reveal" style="transition-delay:0s">
         <span class="ajudar-num">01</span>
         <h3>Coluna</h3>
@@ -622,6 +634,7 @@ setTimeout(function(){
         <p>Avaliação clínica detalhada para chegar a um diagnóstico correto e a um plano de tratamento seguro.</p>
         <i data-lucide="arrow-right" class="arrow" style="width:20px;height:20px"></i>
       </div>
+      {% endif %}
     </div>
   </div>
 </section>
