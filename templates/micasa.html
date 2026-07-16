@@ -26,7 +26,7 @@
 
   EXCEÇÃO — seção "Nossas Acomodações" (id="acomodacoes"): É DINÂMICA,
   puxando de `produtos` exatamente como os cases em pascoa.html
-  (`{% for p in produtos %}`, com `p.imagem`/`p.imagem1`, `p.descricao`,
+  (loop "for p in produtos"), com `p.imagem`/`p.imagem1`, `p.descricao`,
   `p.preco`, `p.categoria_id` resolvido contra `categorias` para exibir
   o nome da categoria no card). Enquanto não houver produtos cadastrados
   no painel para esta loja, aparecem 3 cards padrão como fallback
@@ -298,7 +298,7 @@ button{font-family:inherit;}
 .hero-photo-wrap{position:relative;aspect-ratio:4/5;z-index:1;}
 .hero-photo-frame{
   position:absolute;inset:0;border-radius:6px 60px 6px 60px;overflow:hidden;
-  box-shadow:0 30px 60px rgba(0,0,0,.35);
+  box-shadow:0 30px 60px rgba(0,0,0,.35);z-index:1;
 }
 /* FOTO PLACEHOLDER — trocar por foto real do jardim/fachada do Micasa Hostel */
 .hero-photo-frame .photo-fallback{
@@ -308,14 +308,14 @@ button{font-family:inherit;}
 }
 .hero-photo-frame .photo-fallback i{width:64px;height:64px;color:rgba(247,243,236,.5);}
 .hero-leaf-bleed{
-  position:absolute;top:-8%;left:-16%;width:60%;z-index:2;color:var(--terracotta);
+  position:absolute;top:-9%;left:-15%;width:44%;z-index:0;color:var(--terracotta);
   filter:drop-shadow(0 8px 18px rgba(0,0,0,.28));
   transform:rotate(-8deg);
 }
 @media(max-width:960px){
   .hero-grid{grid-template-columns:1fr;padding-bottom:2.6rem;}
   .hero-photo-wrap{order:-1;aspect-ratio:16/10;max-width:480px;}
-  .hero-leaf-bleed{width:38%;top:-10%;left:-10%;}
+  .hero-leaf-bleed{width:30%;top:-11%;left:-9%;}
 }
 @media(max-width:560px){
   .hero-headline{font-size:2.1rem;}
@@ -584,10 +584,14 @@ footer{background:var(--olive-dker);padding:3.2rem 0 1.6rem;color:rgba(247,243,2
 </div>
 <script>
 document.documentElement.style.overflow='hidden';
+var pre=document.getElementById('preloader');
 setTimeout(function(){
   document.documentElement.style.overflow='';
-  var pre=document.getElementById('preloader');
-  if(pre) pre.addEventListener('animationend', function(){ pre.remove(); });
+  if(pre){
+    pre.style.pointerEvents='none'; // libera clique/scroll imediatamente, sem depender da animação
+    pre.addEventListener('animationend', function(){ pre.remove(); });
+    setTimeout(function(){ if(pre && pre.parentNode) pre.remove(); }, 900); // failsafe: remove mesmo se animationend não disparar
+  }
 }, 1750);
 </script>
 
@@ -625,7 +629,7 @@ setTimeout(function(){
   <div class="container">
     <div class="hero-grid">
       <div class="hero-text">
-        <h1 class="hero-headline"><span class="script">Mi Casa, Su Casa</span>Sua casa em São Paulo, a 12 min do Congonhas</h1>
+        <h1 class="hero-headline"><span class="script">Mi Casa,<br>Su Casa</span>Sua casa em São Paulo, a 12 min do Congonhas</h1>
         <p class="hero-subtitle">Quartos coletivos e privados, jardim, varanda e cozinha compartilhada em Campo Belo. O tipo de lugar onde você chega de mochila nas costas e sai com endereço de gente nova pra visitar no mundo todo.</p>
         <div class="hero-actions">
           <!-- WHATSAPP A CONFIRMAR: trocar 5511999999999 pelo número real -->
@@ -1130,7 +1134,16 @@ try{ if(window.lucide) lucide.createIcons(); }catch(e){ console.warn('lucide fal
 
 // navbar scroll
 const nav = document.getElementById('navbar');
-window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 60); }, { passive:true });
+let navTicking = false;
+function updateNav(){
+  // histerese: liga em 80px, só desliga abaixo de 40px — evita "tremidinha" perto do limite
+  if (window.scrollY > 80) nav.classList.add('scrolled');
+  else if (window.scrollY < 40) nav.classList.remove('scrolled');
+  navTicking = false;
+}
+window.addEventListener('scroll', () => {
+  if (!navTicking){ window.requestAnimationFrame(updateNav); navTicking = true; }
+}, { passive:true });
 
 // mobile menu
 function openMobile(){ document.getElementById('mobileMenu').classList.add('open'); document.body.style.overflow='hidden'; }
