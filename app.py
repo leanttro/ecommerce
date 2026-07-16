@@ -604,7 +604,7 @@ def index(loja_slug):
         template_name = 'oscar'
     else:
         template_name = g.loja.get('template_ativo') or 'index'
-        if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional', 'institucional2', 'tecnologia', 'onepiece', 'oscar', 'portal_cliente', 'life']:
+        if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional', 'institucional2', 'tecnologia', 'onepiece', 'oscar', 'portal_cliente','iot', '']:
             template_name = 'index'
             
         # Se for o tema de tecnologia e clicar em uma categoria específica, vai para a página exclusiva de categoria
