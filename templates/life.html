@@ -153,7 +153,7 @@ button{font-family:inherit;}
 }
 
 /* ═══ NAVBAR ═══ */
-#navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1.15rem 0;transition:background .35s,padding .35s,box-shadow .35s;background:transparent;transform:translateZ(0);will-change:transform;backface-visibility:hidden;}
+#navbar{position:sticky;position:-webkit-sticky;top:0;left:0;right:0;z-index:1000;padding:.25rem 0;transition:background .35s,padding .35s,box-shadow .35s;background:rgba(11,22,38,.96);backdrop-filter:blur(16px);box-shadow:0 2px 24px rgba(0,0,0,.18);}
 #navbar.scrolled{background:rgba(11,22,38,.96);backdrop-filter:blur(16px);padding:.75rem 0;box-shadow:0 2px 24px rgba(0,0,0,.18);}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;}
 .nav-logo{display:flex;align-items:center;gap:.6rem;}
@@ -245,10 +245,11 @@ button{font-family:inherit;}
 }
 @media(max-width:560px){
   .hero-stats{grid-template-columns:1fr;}
+  #hero{min-height:auto;padding:3rem 0 3rem;}
 }
 
 /* ═══ ESPECIALIDADES ═══ */
-#especialidades{padding:6.5rem 0;background:var(--white);}
+#especialidades{padding:3rem 0 6.5rem;background:var(--white);}
 .esp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.4rem;}
 .esp-card{
   background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
@@ -287,7 +288,8 @@ button{font-family:inherit;}
 }
 
 /* ═══ DIFERENCIAIS ═══ */
-#diferenciais{padding:6rem 0;background:var(--ink);color:#fff;}
+#diferenciais{padding:3.5rem 0;background:var(--ink);color:#fff;}
+#diferenciais .section-head{margin-bottom:2rem;}
 #diferenciais .section-head p{color:rgba(255,255,255,.6);}
 #diferenciais .eyebrow{color:var(--gold-2);}
 .dif-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;}
@@ -297,7 +299,7 @@ button{font-family:inherit;}
 .dif-card p{font-size:.85rem;color:rgba(255,255,255,.62);line-height:1.65;}
 
 /* ═══ EQUIPE MÉDICA ═══ */
-#equipe{padding:6.5rem 0;background:var(--white);}
+#equipe{padding:3rem 0 6.5rem;background:var(--white);}
 .equipe-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;}
 .doc-card{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--paper);transition:box-shadow .3s,transform .3s;}
 .doc-card:hover{box-shadow:0 24px 48px rgba(20,33,61,.14);transform:translateY(-4px);}
@@ -351,7 +353,7 @@ button{font-family:inherit;}
 .agenda-slot a{font-size:.76rem;font-weight:700;color:var(--gold);white-space:nowrap;}
 
 /* ═══ BLOG ═══ */
-#blog{padding:6.5rem 0;background:var(--stone);}
+#blog{padding:3rem 0 6.5rem;background:var(--stone);}
 .blog-toolbar{display:flex;justify-content:center;gap:.5rem;margin-bottom:2.6rem;}
 .blog-toolbar button{
   border:1px solid var(--line);background:#fff;color:var(--muted);font-size:.78rem;font-weight:600;
@@ -369,6 +371,7 @@ button{font-family:inherit;}
 .blog-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(20,33,61,.1);}
 .blog-card-img{aspect-ratio:16/10;background:var(--line);overflow:hidden;}
 .blog-card-img img{width:100%;height:100%;object-fit:cover;}
+.blog-card-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);background:var(--line);}
 .blog-card-body{padding:1.5rem;}
 .blog-date{font-size:.72rem;color:var(--gold);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.6rem;display:block;}
 .blog-card h3{font-size:1.02rem;line-height:1.4;margin-bottom:.6rem;}
@@ -385,7 +388,7 @@ button{font-family:inherit;}
 @media(max-width:600px){ .blog-grid{grid-template-columns:1fr;} .blog-card{flex:0 0 86%;} }
 
 /* ═══ CONTATO ═══ */
-#contato{padding:6.5rem 0;background:var(--ink);color:#fff;position:relative;overflow:hidden;}
+#contato{padding:3rem 0 6.5rem;background:var(--ink);color:#fff;position:relative;overflow:hidden;}
 #contato::before{content:'';position:absolute;bottom:-140px;left:-140px;width:420px;height:420px;border-radius:50%;border:1px solid rgba(217,186,110,.14);}
 .contato-grid{position:relative;z-index:1;display:grid;grid-template-columns:.85fr 1.15fr;gap:4rem;}
 .contato-info h2{color:#fff;font-size:2rem;margin-bottom:1rem;}
@@ -490,7 +493,7 @@ footer{background:var(--ink-2);color:rgba(255,255,255,.55);padding:4rem 0 1.6rem
           Agendar Consulta <i data-lucide="arrow-right" style="width:16px;height:16px"></i>
         </a>
         
-        <a href="#especialidades" class="btn btn-outline">Ver especialidades</a>
+        <a href="#especialidades" class="btn btn-outline on-dark">Ver especialidades</a>
       </div>
       <div class="hero-tags">
         <span class="hero-tag">Rede de especialistas</span>
@@ -684,7 +687,8 @@ footer{background:var(--ink-2);color:rgba(255,255,255,.55);padding:4rem 0 1.6rem
       <p>Informação de saúde para te ajudar a entender melhor o seu cuidado.</p>
     </div>
 
-    
+    {% if posts and posts|length > 0 %}
+
     <div class="blog-toolbar">
       <button id="btnCarrossel" class="active" onclick="setBlogView('carousel')"><i data-lucide="layout-list" style="width:14px;height:14px"></i> Carrossel</button>
       <button id="btnGrade" onclick="setBlogView('grid')"><i data-lucide="grid-3x3" style="width:14px;height:14px"></i> Grade</button>
@@ -692,43 +696,23 @@ footer{background:var(--ink-2);color:rgba(255,255,255,.55);padding:4rem 0 1.6rem
 
     <div id="blogCarouselWrap" class="blog-carousel-wrap">
       <div class="blog-carousel" id="blogCarousel">
-        
-        <a href="/life-health/blog/exemplo-1" class="blog-card">
+        {% for post in posts %}
+        <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}" class="blog-card">
           <div class="blog-card-img">
-            
+            {% if post.capa %}
+              <img src="{{ post.capa }}" alt="{{ post.titulo }}" loading="lazy">
+            {% else %}
+              <div class="blog-card-img-placeholder"><i data-lucide="newspaper" style="width:40px;height:40px"></i></div>
+            {% endif %}
           </div>
           <div class="blog-card-body">
-            <span class="blog-date">10 Jul 2026</span>
-            <h3>Dor nas costas: quando procurar um especialista</h3>
-            <p>Entenda os sinais que indicam a hora certa de buscar avaliação com um especialista.</p>
+            {% if post.data %}<span class="blog-date">{{ post.data }}</span>{% endif %}
+            <h3>{{ post.titulo }}</h3>
+            {% if post.resumo %}<p>{{ post.resumo | truncate(110) }}</p>{% endif %}
             <span class="blog-read">Ler artigo <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
           </div>
         </a>
-        
-        <a href="/life-health/blog/exemplo-2" class="blog-card">
-          <div class="blog-card-img">
-            
-          </div>
-          <div class="blog-card-body">
-            <span class="blog-date">02 Jul 2026</span>
-            <h3>Hérnia de disco tem cura sem cirurgia?</h3>
-            <p>Entenda tratamentos conservadores e quando a cirurgia é realmente indicada.</p>
-            <span class="blog-read">Ler artigo <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
-          </div>
-        </a>
-        
-        <a href="/life-health/blog/exemplo-3" class="blog-card">
-          <div class="blog-card-img">
-            
-          </div>
-          <div class="blog-card-body">
-            <span class="blog-date">24 Jun 2026</span>
-            <h3>Dor de cabeça persistente: o que pode ser</h3>
-            <p>Conheça causas comuns e sinais de alerta que merecem atenção médica.</p>
-            <span class="blog-read">Ler artigo <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
-          </div>
-        </a>
-        
+        {% endfor %}
       </div>
       <div class="blog-nav-arrows">
         <button id="blogPrev" onclick="slideCarousel(-1)" aria-label="Anterior"><i data-lucide="chevron-left" style="width:18px;height:18px"></i></button>
@@ -737,45 +721,31 @@ footer{background:var(--ink-2);color:rgba(255,255,255,.55);padding:4rem 0 1.6rem
     </div>
 
     <div id="blogGridWrap" class="blog-grid" style="display:none">
-      
-      <a href="/life-health/blog/exemplo-1" class="blog-card">
+      {% for post in posts %}
+      <a href="/{{ loja.slug_url }}/blog/{{ post.slug }}" class="blog-card">
         <div class="blog-card-img">
-          
+          {% if post.capa %}
+            <img src="{{ post.capa }}" alt="{{ post.titulo }}" loading="lazy">
+          {% else %}
+            <div class="blog-card-img-placeholder"><i data-lucide="newspaper" style="width:40px;height:40px"></i></div>
+          {% endif %}
         </div>
         <div class="blog-card-body">
-          <span class="blog-date">10 Jul 2026</span>
-          <h3>Dor nas costas: quando procurar um especialista</h3>
-          <p>Entenda os sinais que indicam a hora certa de buscar avaliação com um especialista.</p>
+          {% if post.data %}<span class="blog-date">{{ post.data }}</span>{% endif %}
+          <h3>{{ post.titulo }}</h3>
+          {% if post.resumo %}<p>{{ post.resumo | truncate(110) }}</p>{% endif %}
           <span class="blog-read">Ler artigo <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
         </div>
       </a>
-      
-      <a href="/life-health/blog/exemplo-2" class="blog-card">
-        <div class="blog-card-img">
-          
-        </div>
-        <div class="blog-card-body">
-          <span class="blog-date">02 Jul 2026</span>
-          <h3>Hérnia de disco tem cura sem cirurgia?</h3>
-          <p>Entenda tratamentos conservadores e quando a cirurgia é realmente indicada.</p>
-          <span class="blog-read">Ler artigo <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
-        </div>
-      </a>
-      
-      <a href="/life-health/blog/exemplo-3" class="blog-card">
-        <div class="blog-card-img">
-          
-        </div>
-        <div class="blog-card-body">
-          <span class="blog-date">24 Jun 2026</span>
-          <h3>Dor de cabeça persistente: o que pode ser</h3>
-          <p>Conheça causas comuns e sinais de alerta que merecem atenção médica.</p>
-          <span class="blog-read">Ler artigo <i data-lucide="arrow-right" style="width:13px;height:13px"></i></span>
-        </div>
-      </a>
-      
+      {% endfor %}
     </div>
-    
+
+    {% else %}
+    <div class="blog-empty">
+      <i data-lucide="pencil-line" style="width:40px;height:40px;color:var(--line);display:block;margin:0 auto 1rem"></i>
+      <p>Em breve, novos conteúdos sobre ortopedia e neurocirurgia.</p>
+    </div>
+    {% endif %}
   </div>
 </section>
 
