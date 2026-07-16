@@ -153,21 +153,21 @@ button{font-family:inherit;}
 }
 
 /* ═══ NAVBAR ═══ */
-#navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1.15rem 0;transition:all .35s;background:transparent;}
+#navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1.15rem 0;transition:background .35s,padding .35s,box-shadow .35s;background:transparent;transform:translateZ(0);will-change:transform;backface-visibility:hidden;}
 #navbar.scrolled{background:rgba(11,22,38,.96);backdrop-filter:blur(16px);padding:.75rem 0;box-shadow:0 2px 24px rgba(0,0,0,.18);}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;}
 .nav-logo{display:flex;align-items:center;gap:.6rem;}
-.nav-logo img{height:78px;width:auto;filter:brightness(0) invert(1);}
-.nav-logo-text{font-family:'Fraunces',serif;font-weight:600;font-size:1.2rem;color:var(--ink);}
+.nav-logo img{height:104px;width:auto;filter:brightness(0) invert(1);}
+.nav-logo-text{font-family:'Fraunces',serif;font-weight:600;font-size:1.2rem;color:#fff;}
 #navbar.scrolled .nav-logo-text{color:#fff;}
 .nav-links{display:flex;align-items:center;gap:2.1rem;}
-.nav-links a{font-size:.86rem;font-weight:500;color:var(--ink);opacity:.85;transition:opacity .2s;}
+.nav-links a{font-size:.86rem;font-weight:500;color:#fff;opacity:.9;transition:opacity .2s;}
 #navbar.scrolled .nav-links a{color:#fff;}
 .nav-links a:hover{opacity:1;}
 .nav-cta{background:var(--gold);color:#fff!important;padding:.7rem 1.5rem;border-radius:999px;font-weight:600;opacity:1!important;font-size:.85rem;}
 .nav-cta:hover{background:var(--gold-2);}
 .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:.4rem;}
-.hamburger span{width:24px;height:2px;background:var(--ink);}
+.hamburger span{width:24px;height:2px;background:#fff;}
 #navbar.scrolled .hamburger span{background:#fff;}
 
 .mobile-menu{
@@ -267,7 +267,7 @@ button{font-family:inherit;}
 .sobre-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:4rem;align-items:center;}
 .sobre-visual{position:relative;}
 .sobre-visual .arc-ring{border-radius:22px;overflow:hidden;}
-.sobre-visual img{border-radius:22px;aspect-ratio:4/5;object-fit:cover;}
+.sobre-visual img{border-radius:22px;aspect-ratio:4/5;object-fit:cover;display:block;width:100%;border:6px solid #fff;box-shadow:0 20px 45px rgba(20,33,61,.18);}
 .sobre-visual-badge{
   position:absolute;bottom:-1.4rem;left:-1.4rem;background:#fff;border-radius:14px;padding:1.1rem 1.4rem;
   box-shadow:0 20px 40px rgba(20,33,61,.14);display:flex;align-items:center;gap:.8rem;max-width:230px;
@@ -565,9 +565,7 @@ footer{background:var(--ink-2);color:rgba(255,255,255,.55);padding:4rem 0 1.6rem
     <div class="sobre-visual reveal">
       <div class="arc-ring">
         
-        <div style="aspect-ratio:4/5;border-radius:22px;background:var(--ink);display:flex;align-items:center;justify-content:center;">
-          
-        </div>
+        <img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784162236/ChatGPT_Image_15_de_jul._de_2026_21_35_52_bacmhw.png" alt="Equipe Life Health cuidando de cada detalhe">
         
       </div>
       <div class="sobre-visual-badge">
@@ -622,7 +620,7 @@ footer{background:var(--ink-2);color:rgba(255,255,255,.55);padding:4rem 0 1.6rem
       <!-- Foto do Dr. Rubens -->
       <div class="doc-card reveal">
         <div class="doc-photo">
-          <img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784154028/IOT_8_kxoath.jpg" alt="Dr. Rubens">
+          <img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784161554/Massas_Sabores_22_cij933.png" alt="Dr. Rubens">
           <div class="doc-photo-badge">
             <h3>Dr. Rubens</h3>
             <span>Neurocirurgia</span>
@@ -644,8 +642,8 @@ footer{background:var(--ink-2);color:rgba(255,255,255,.55);padding:4rem 0 1.6rem
 
       <!-- Foto do Dr. Dantas (formato diferente — usando 'contain' para não cortar) -->
       <div class="doc-card reveal" style="transition-delay:.1s">
-        <div class="doc-photo doc-photo-contain">
-          <img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784154027/taianne_e_dantas-2_gtiycx.jpg" alt="Dr. Dantas">
+        <div class="doc-photo">
+          <img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784161553/Massas_Sabores_21_x2qfvz.png" alt="Dr. Dantas">
           <div class="doc-photo-badge">
             <h3>Dr. Dantas</h3>
             <span>Ortopedia</span>
@@ -876,7 +874,7 @@ footer{background:var(--ink-2);color:rgba(255,255,255,.55);padding:4rem 0 1.6rem
 
 
 <script>
-lucide.createIcons();
+try{ if(window.lucide) lucide.createIcons(); }catch(e){ console.warn('lucide falhou ao carregar, ícones ficarão ocultos:', e); }
 
 // navbar scroll
 const nav = document.getElementById('navbar');
