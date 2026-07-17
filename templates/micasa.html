@@ -365,6 +365,7 @@ button{font-family:inherit;}
 .quarto-card{
   background:rgba(247,243,236,.06);border:1px solid rgba(247,243,236,.14);border-radius:22px;
   overflow:hidden;transform-style:preserve-3d;will-change:transform;transition:transform .12s ease,box-shadow .3s ease;
+  display:block;text-decoration:none;color:inherit;cursor:pointer;
 }
 .quarto-card:hover{box-shadow:0 24px 44px rgba(0,0,0,.32);}
 .quarto-photo{aspect-ratio:4/3;position:relative;overflow:hidden;}
@@ -723,7 +724,7 @@ setTimeout(function(){
       {% for p in produtos %}
       {% set ns = namespace(cat_nome='') %}
       {% for c in categorias %}{% if c.id == p.categoria_id %}{% set ns.cat_nome = c.nome %}{% endif %}{% endfor %}
-      <div class="quarto-card reveal" style="transition-delay:{{ loop.index0 * 0.08 }}s">
+      <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}" class="quarto-card reveal" style="transition-delay:{{ loop.index0 * 0.08 }}s">
         <div class="quarto-photo tone-{{ (loop.index0 % 3) + 1 }}">
           {% if p.imagem %}
             <img src="{{ p.imagem }}" alt="{{ p.nome }}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
@@ -742,13 +743,13 @@ setTimeout(function(){
           <span class="quarto-price">A partir de US$ {{ '%.0f'|format(p.preco) }} <small>/ noite</small></span>
           {% endif %}
         </div>
-      </div>
+      </a>
       {% endfor %}
     </div>
     {% else %}
     <!-- Acomodações padrão exibidas somente enquanto nenhum quarto foi cadastrado no painel -->
     <div class="quarto-grid">
-      <div class="quarto-card reveal" style="transition-delay:0s">
+      <a href="https://wa.me/5511999999999?text=Oi!%20Vim%20pelo%20site%20e%20queria%20saber%20mais%20sobre%20o%20Quarto%20Coletivo%20Feminino." target="_blank" class="quarto-card reveal" style="transition-delay:0s">
         <div class="quarto-photo tone-1">
           <!-- FOTO PLACEHOLDER — trocar pela foto real do quarto coletivo feminino -->
           <div class="photo-fallback"><i data-lucide="bed" aria-hidden="true"></i></div>
@@ -758,9 +759,9 @@ setTimeout(function(){
           <h3>Quarto Coletivo Feminino</h3>
           <p>Camas em beliche num ambiente só pras mulheres, com armário individual e ventilação natural.</p>
         </div>
-      </div>
+      </a>
 
-      <div class="quarto-card reveal" style="transition-delay:.08s">
+      <a href="https://wa.me/5511999999999?text=Oi!%20Vim%20pelo%20site%20e%20queria%20saber%20mais%20sobre%20o%20Quarto%20Coletivo%20Masculino." target="_blank" class="quarto-card reveal" style="transition-delay:.08s">
         <div class="quarto-photo tone-2">
           <!-- FOTO PLACEHOLDER — trocar pela foto real do quarto coletivo masculino -->
           <div class="photo-fallback"><i data-lucide="bed" aria-hidden="true"></i></div>
@@ -770,9 +771,9 @@ setTimeout(function(){
           <h3>Quarto Coletivo Masculino</h3>
           <p>Ambiente compartilhado, ideal pra viajante solo que quer economizar e fazer amizade fácil.</p>
         </div>
-      </div>
+      </a>
 
-      <div class="quarto-card reveal" style="transition-delay:.16s">
+      <a href="https://wa.me/5511999999999?text=Oi!%20Vim%20pelo%20site%20e%20queria%20saber%20mais%20sobre%20o%20Quarto%20Privado." target="_blank" class="quarto-card reveal" style="transition-delay:.16s">
         <div class="quarto-photo tone-3">
           <!-- FOTO PLACEHOLDER — trocar pela foto real do quarto privado -->
           <div class="photo-fallback"><i data-lucide="door-open" aria-hidden="true"></i></div>
@@ -782,7 +783,7 @@ setTimeout(function(){
           <h3>Quarto Privado</h3>
           <p>Mais privacidade pra casais ou quem viaja a trabalho, com a mesma vibe aconchegante da casa.</p>
         </div>
-      </div>
+      </a>
     </div>
     {% endif %}
   </div>
@@ -1016,45 +1017,14 @@ setTimeout(function(){
 </section>
 
 <!-- ═══ INSTAGRAM ═══ -->
-<section id="instagram" class="section">
-  <div class="container">
-    <div class="insta-head">
-      <div>
-        <span class="eyebrow">Siga a gente</span>
-        <h2 class="section-title" style="margin-bottom:0;">Bastidores do Micasa no Instagram</h2>
-      </div>
-      <a href="https://www.instagram.com/micasahostel.congonhas/" target="_blank" class="btn btn-ghost">
-        <i data-lucide="instagram" style="width:16px;height:16px"></i> @micasahostel.congonhas
-      </a>
-    </div>
-
-    <div class="insta-grid">
-      <!-- FOTO PLACEHOLDER (6x) — trocar pelas fotos reais do feed do Instagram assim que disponíveis -->
-      <a href="https://www.instagram.com/micasahostel.congonhas/" target="_blank" class="insta-item reveal" style="transition-delay:0s">
-        <div class="photo-fallback"><i data-lucide="image" aria-hidden="true"></i></div>
-        <div class="insta-overlay"><i data-lucide="instagram" aria-hidden="true"></i></div>
-      </a>
-      <a href="https://www.instagram.com/micasahostel.congonhas/" target="_blank" class="insta-item reveal" style="transition-delay:.05s">
-        <div class="photo-fallback"><i data-lucide="image" aria-hidden="true"></i></div>
-        <div class="insta-overlay"><i data-lucide="instagram" aria-hidden="true"></i></div>
-      </a>
-      <a href="https://www.instagram.com/micasahostel.congonhas/" target="_blank" class="insta-item reveal" style="transition-delay:.1s">
-        <div class="photo-fallback"><i data-lucide="image" aria-hidden="true"></i></div>
-        <div class="insta-overlay"><i data-lucide="instagram" aria-hidden="true"></i></div>
-      </a>
-      <a href="https://www.instagram.com/micasahostel.congonhas/" target="_blank" class="insta-item reveal" style="transition-delay:.15s">
-        <div class="photo-fallback"><i data-lucide="image" aria-hidden="true"></i></div>
-        <div class="insta-overlay"><i data-lucide="instagram" aria-hidden="true"></i></div>
-      </a>
-      <a href="https://www.instagram.com/micasahostel.congonhas/" target="_blank" class="insta-item reveal" style="transition-delay:.2s">
-        <div class="photo-fallback"><i data-lucide="image" aria-hidden="true"></i></div>
-        <div class="insta-overlay"><i data-lucide="instagram" aria-hidden="true"></i></div>
-      </a>
-      <a href="https://www.instagram.com/micasahostel.congonhas/" target="_blank" class="insta-item reveal" style="transition-delay:.25s">
-        <div class="photo-fallback"><i data-lucide="image" aria-hidden="true"></i></div>
-        <div class="insta-overlay"><i data-lucide="instagram" aria-hidden="true"></i></div>
-      </a>
-    </div>
+<section id="instagram" class="section" style="text-align:center;">
+  <div class="container contato-wrap">
+    <span class="eyebrow" style="justify-content:center;">Siga a gente</span>
+    <h2 class="section-title" style="margin:0 auto 1rem;">Bastidores do Micasa no Instagram</h2>
+    <p class="section-lede" style="margin:0 auto 2rem;">Rotina da casa, hóspedes de todo o mundo e dicas de São Paulo — a gente posta por lá.</p>
+    <a href="https://www.instagram.com/micasahostel.congonhas/" target="_blank" class="btn btn-whats">
+      <i data-lucide="instagram" style="width:18px;height:18px"></i> Seguir @micasahostel.congonhas
+    </a>
   </div>
 </section>
 
