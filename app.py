@@ -681,12 +681,12 @@ def produto(loja_slug, slug):
         
         if template_ativo in ['direto', 'direto_index']:
             template_produto = 'direto_produto.html'
-        elif template_ativo == 'institucional' or p.get('layout_case'):
-            template_produto = 'case.html'
         elif template_ativo == 'tecnologia':
             template_produto = 'case_tecnologia.html'
         elif template_ativo == 'micasa':
             template_produto = 'case_micasa.html'
+        elif template_ativo == 'institucional' or p.get('layout_case'):
+            template_produto = 'case.html'
 
         return render_template(template_produto, p=p, loja=loja_visual, directus_url=DIRECTUS_URL)
 
