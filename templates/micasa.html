@@ -62,7 +62,7 @@
   7) MAPA: iframe do Google Maps usa o endereço em texto (funciona sem
      API key).
   8) Se um dia o cliente quiser puxar telefone/endereço/preço do painel
-     em vez de texto fixo, é só trocar pelo `{{ loja.campo }}`
+     em vez de texto fixo, é só trocar pelo campo "loja.campo"
      correspondente — a estrutura do app.py já suporta isso.
   ─────────────────────────────────────────────────────────────
 -->
@@ -907,8 +907,8 @@ setTimeout(function(){
 
 <!-- ═══ BLOG — Conhecendo São Paulo ═══ -->
 <!-- SEÇÃO DINÂMICA: puxa de 'posts', mesmo contrato usado no template pascoa.html
-     ({{ post.titulo }}, {{ post.slug }}, {{ post.capa }}, {{ post.categoria }}, {{ post.data }}, {{ post.resumo }}
-     e {{ loja.slug_url }} pra montar a URL /{{ loja.slug_url }}/blog/{{ post.slug }}).
+     (campos post.titulo, post.slug, post.capa, post.categoria, post.data, post.resumo
+     e loja.slug_url pra montar a URL /slug-da-loja/blog/slug-do-post).
      Cadastre os posts no painel (dicas de bairros, passeios, restaurantes etc. em São Paulo) e os
      cards substituem automaticamente o estado vazio abaixo — sem precisar editar este arquivo. -->
 <section id="blog" class="section" style="position:relative;">
@@ -1059,6 +1059,7 @@ setTimeout(function(){
 </section>
 
 <!-- ═══ CONTATO ═══ -->
+{% if not loja.ocultar_formulario %}
 <section id="contato" class="section">
   <svg class="leaf-anim" viewBox="0 0 150 210" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="position:absolute;bottom:1rem;left:1.5rem;width:80px;color:var(--terracotta);opacity:.4;">
     <path class="leaf-line" d="M70 205 C55 150 70 95 60 55 C55 35 75 18 95 8"/>
@@ -1083,6 +1084,7 @@ setTimeout(function(){
     </div>
   </div>
 </section>
+{% endif %}
 
 <!-- ═══ FOOTER ═══ -->
 <footer>
