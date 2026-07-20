@@ -552,55 +552,76 @@ footer{background:var(--ink-2);color:rgba(255,255,255,.55);padding:4rem 0 1.6rem
 @media(max-width:560px){ .esp-grid{grid-template-columns:1fr;} }
 
 /* ═══ VÍDEO INSTITUCIONAL ═══ */
-#video-sec{padding:0 0 6.5rem;background:var(--stone);position:relative;}
+#video-sec{padding:0 0 6.5rem;background:var(--stone);position:relative;overflow:hidden;}
 #video-sec .container{position:relative;}
+#video-sec::before,#video-sec::after{
+  content:'';position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0;
+}
+#video-sec::before{width:340px;height:340px;background:rgba(184,146,58,.16);top:-40px;left:6%;}
+#video-sec::after{width:260px;height:260px;background:rgba(217,186,110,.14);bottom:-20px;right:8%;}
+
+.video-frame-wrap{
+  position:relative;display:flex;justify-content:center;
+  perspective:1600px;
+}
 .video-frame{
-  position:relative;border-radius:26px;overflow:hidden;aspect-ratio:16/8;
-  box-shadow:0 30px 70px rgba(20,33,61,.22);border:6px solid #fff;
-  background:var(--ink);
+  position:relative;border-radius:32px;overflow:hidden;
+  aspect-ratio:9/16;width:100%;max-width:420px;
+  box-shadow:0 40px 90px rgba(20,33,61,.28),0 0 0 1px rgba(20,33,61,.04);
+  border:7px solid #fff;background:var(--ink);
+  transform-style:preserve-3d;
+  transform:rotateY(-18deg) rotateX(6deg) scale(.9);
+  opacity:0;
+  transition:transform 1.3s cubic-bezier(.16,1,.3,1),opacity 1.1s ease,box-shadow 1.3s ease;
 }
-.video-frame video{width:100%;height:100%;object-fit:cover;display:block;}
-.video-play{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(180deg,rgba(11,22,38,.15),rgba(11,22,38,.45));
-  cursor:pointer;transition:opacity .4s ease;
+.video-frame.in-view{
+  transform:rotateY(0deg) rotateX(0deg) scale(1);
+  opacity:1;
+  box-shadow:0 50px 110px rgba(20,33,61,.32),0 0 0 1px rgba(20,33,61,.04);
 }
-.video-play-btn{
-  position:relative;width:84px;height:84px;border-radius:50%;background:rgba(255,255,255,.16);
-  backdrop-filter:blur(6px);border:1.5px solid rgba(255,255,255,.5);
-  display:flex;align-items:center;justify-content:center;color:#fff;
+.video-frame::before{
+  content:'';position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:24px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
 }
-.video-play-btn::after{
-  content:'';position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(255,255,255,.55);
-  animation:playPulse 2.2s ease-out infinite;
+.video-frame::after{
+  content:'';position:absolute;left:50%;top:14px;transform:translateX(-50%);
+  width:74px;height:5px;border-radius:999px;background:rgba(255,255,255,.35);z-index:3;
 }
-@keyframes playPulse{0%{transform:scale(1);opacity:.9;}100%{transform:scale(1.6);opacity:0;}}
-.video-play.hidden{opacity:0;pointer-events:none;}
-.video-caption{display:flex;align-items:center;gap:.7rem;justify-content:center;margin-top:1.6rem;color:var(--muted);font-size:.85rem;}
+.video-frame video{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;}
+.video-glow{
+  position:absolute;inset:-30px;z-index:-1;border-radius:44px;
+  background:radial-gradient(60% 60% at 50% 40%,rgba(217,186,110,.35),transparent 72%);
+  opacity:0;transition:opacity 1.3s ease .2s;filter:blur(10px);
+}
+.video-frame.in-view ~ .video-glow,.video-frame-wrap.in-view .video-glow{opacity:1;}
+.video-caption{display:flex;align-items:center;gap:.7rem;justify-content:center;margin-top:1.8rem;color:var(--muted);font-size:.85rem;}
 .video-caption i{color:var(--gold);}
+@media (prefers-reduced-motion: reduce){ .video-frame{transition:opacity .4s ease;transform:none!important;} }
 
 /* ═══ EQUIPE MÉDICA — cartão escuro, estilo referência ═══ */
+.equipe-grid{align-items:stretch;}
 .doc-card{
   position:relative;border-radius:24px;overflow:hidden;
   background:linear-gradient(165deg,var(--ink) 0%,var(--ink-2) 100%);
   border:1px solid rgba(217,186,110,.18);
   transition:box-shadow .4s ease,transform .4s ease;
+  display:flex;flex-direction:column;height:100%;
 }
 .doc-card:hover{transform:translateY(-6px);box-shadow:0 30px 60px rgba(11,22,38,.3);}
-.doc-card-head{padding:2.2rem 2.2rem 1.4rem;}
+.doc-card-head{padding:2.2rem 2.2rem 1.4rem;flex-shrink:0;}
 .doc-card-head h3{color:var(--gold-2);font-size:1.35rem;margin-bottom:.35rem;}
 .doc-card-head .doc-crm{font-size:.76rem;color:rgba(255,255,255,.55);letter-spacing:.03em;margin-bottom:1.1rem;}
 .doc-card-head p{font-size:.87rem;line-height:1.75;color:rgba(255,255,255,.68);margin-bottom:1.3rem;}
 .doc-focus{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.4rem;}
 .doc-focus span{font-size:.7rem;font-weight:600;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);padding:.38rem .75rem;border-radius:999px;}
-.doc-photo{position:relative;width:100%;aspect-ratio:4/5;overflow:hidden;}
-.doc-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;transition:transform .6s cubic-bezier(.16,1,.3,1);}
+.doc-photo{position:relative;width:100%;flex:1 1 auto;min-height:320px;overflow:hidden;}
+.doc-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;display:block;transition:transform .6s cubic-bezier(.16,1,.3,1);}
 .doc-card:hover .doc-photo img{transform:scale(1.05);}
 .doc-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(11,22,38,.55) 0%,rgba(11,22,38,0) 32%);pointer-events:none;}
 .doc-cta-wrap{position:absolute;bottom:1.2rem;left:1.2rem;right:1.2rem;display:flex;justify-content:flex-end;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s;}
 .doc-card:hover .doc-cta-wrap{opacity:1;transform:translateY(0);}
 .doc-cta{font-size:.82rem;font-weight:700;color:var(--ink);display:inline-flex;align-items:center;gap:.4rem;background:var(--gold-2);padding:.65rem 1.15rem;border-radius:999px;box-shadow:0 12px 26px rgba(0,0,0,.3);}
-@media(max-width:860px){ .equipe-grid{grid-template-columns:1fr;} }
+@media(max-width:860px){ .equipe-grid{grid-template-columns:1fr;} .doc-card{height:auto;} .doc-photo{min-height:380px;} }
 
 /* ═══ PARA QUEM É ═══ */
 #paraquem{padding:6.5rem 0;background:var(--white);position:relative;overflow:hidden;}
@@ -793,12 +814,12 @@ setTimeout(function(){
       <span class="eyebrow" style="justify-content:center;display:inline-flex">Conheça a Life Health</span>
       <h2>Um cuidado que você sente desde o primeiro contato</h2>
     </div>
-    <div class="video-frame reveal zoom">
-      <video id="lifeVideo" playsinline preload="metadata" poster="https://res.cloudinary.com/dec2b0u1/image/upload/v1784162236/ChatGPT_Image_15_de_jul._de_2026_21_35_52_bacmhw.png">
-        <source src="https://res.cloudinary.com/dec2b0u1/video/upload/v1784557680/IMG_0003_1_rvhrw7.mp4" type="video/mp4">
-      </video>
-      <div class="video-play" id="videoPlayOverlay" onclick="toggleLifeVideo()">
-        <div class="video-play-btn"><i data-lucide="play" style="width:30px;height:30px;margin-left:4px" fill="white"></i></div>
+    <div class="video-frame-wrap">
+      <div class="video-glow"></div>
+      <div class="video-frame" id="lifeVideoFrame">
+        <video id="lifeVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="https://res.cloudinary.com/dec2b0u1/image/upload/v1784162236/ChatGPT_Image_15_de_jul._de_2026_21_35_52_bacmhw.png">
+          <source src="https://res.cloudinary.com/dec2b0u1/video/upload/v1784557680/IMG_0003_1_rvhrw7.mp4" type="video/mp4">
+        </video>
       </div>
     </div>
     <div class="video-caption"><i data-lucide="sparkles" style="width:16px;height:16px"></i> Bastidores da rotina de cuidado organizada pela nossa equipe.</div>
@@ -1067,6 +1088,26 @@ const revealObs = new IntersectionObserver((entries) => {
   entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
 }, { threshold:.1, rootMargin:'0px 0px -60px 0px' });
 revealEls.forEach(el => revealObs.observe(el));
+
+// vídeo institucional: entrada em 3D ao chegar na seção + garante autoplay em loop
+(function(){
+  const frame = document.getElementById('lifeVideoFrame');
+  const vid = document.getElementById('lifeVideo');
+  if(!frame) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        frame.classList.add('in-view');
+        if(vid){ vid.muted = true; const p = vid.play(); if(p && p.catch) p.catch(()=>{}); }
+      }
+    });
+  }, { threshold:.35 });
+  io.observe(frame);
+  if(vid){
+    vid.addEventListener('pause', () => { vid.play().catch(()=>{}); });
+    document.addEventListener('visibilitychange', () => { if(!document.hidden) vid.play().catch(()=>{}); });
+  }
+})();
 
 // blog carousel
 (function(){
