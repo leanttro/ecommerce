@@ -1,363 +1,579 @@
 <!DOCTYPE html>
-<html lang="pt-br" class="scroll-smooth">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ p.nome }} | {{ loja.nome or 'Micasa Hostel' }}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ p.nome }} | {{ loja.nome or 'Micasa Hostel' }}</title>
 
-    <!--
-      TEMPLATE: case_micasa.html
-      ─────────────────────────────────────────────────────────────
-      Página de detalhe de acomodação/projeto EXCLUSIVA da Micasa Hostel.
-      Ao contrário do case.html genérico (que lê cores/fontes dinâmicas
-      de loja.cor_primaria, loja.font_titulo etc.), este arquivo usa a
-      identidade visual fixa da marca Micasa — mesma paleta e tipografia
-      do template principal (micasa.html): olive #859266, terracota
-      #C9744A, Fraunces + Mulish.
+<!--
+  TEMPLATE: case_micasa.html
+  ─────────────────────────────────────────────────────────────
+  Página de detalhe de acomodação/projeto EXCLUSIVA da Micasa Hostel.
+  Ao contrário do case.html genérico (que lê cores/fontes dinâmicas
+  de loja.cor_primaria, loja.font_titulo etc.), este arquivo usa a
+  identidade visual fixa da marca Micasa — mesma paleta, tipografia
+  e componentes (navbar, botões, cards, reveal on scroll) do
+  template principal (micasa.html): olive #859266, terracota
+  #C9744A, Fraunces + Mulish. Sem Tailwind/GSAP — CSS e JS puros,
+  igual ao site principal, pra manter consistência visual 1:1.
 
-      Roteamento em app.py: quando g.loja.template_ativo == 'micasa',
-      a rota de produto usa template_produto = 'case_micasa.html' em vez
-      do case.html padrão (mesma lógica já usada para 'tecnologia' →
-      case_tecnologia.html). Contrato de variáveis idêntico ao case.html:
-      recebe p (produto/quarto) e loja via render_template(template_produto,
-      p=p, loja=loja_visual, directus_url=DIRECTUS_URL).
+  Roteamento em app.py: quando g.loja.template_ativo == 'micasa',
+  a rota de produto usa template_produto = 'case_micasa.html' em vez
+  do case.html padrão (mesma lógica já usada para 'tecnologia' →
+  case_tecnologia.html). Contrato de variáveis idêntico ao case.html:
+  recebe p (produto/quarto) e loja via render_template(template_produto,
+  p=p, loja=loja_visual, directus_url=DIRECTUS_URL).
 
-      Campos usados de "p": p.nome, p.imagem_destaque, p.imagem1..5,
-      p.descricao, p.preco, p.variantes (grupos/opções → mostrados como
-      comodidades), p.link_projeto, p.whatsapp_projeto.
-      Campos usados de "loja": loja.nome, loja.slug_url, loja.whatsapp_comercial.
-      ─────────────────────────────────────────────────────────────
-    -->
+  Campos usados de "p": p.nome, p.imagem_destaque, p.imagem1..5,
+  p.imagem_secundaria, p.descricao, p.preco, p.variantes (grupos/opções
+  → mostrados como comodidades), p.link_projeto, p.whatsapp_projeto.
+  Campos usados de "loja": loja.nome, loja.slug_url, loja.whatsapp_comercial.
+  ─────────────────────────────────────────────────────────────
+-->
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Mulish:wght@400;500;600;700;800&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+:root{
+  --olive:      #859266;
+  --olive-dk:   #5F6A49;
+  --olive-dker: #454E34;
+  --terracotta: #C9744A;
+  --terracotta-dk: #A85C38;
+  --cream:      #F7F3EC;
+  --cream-2:    #EFE7D8;
+  --line:       #DFD5BF;
+  --line-dark:  rgba(247,243,236,.18);
+  --ink:        #3A3A2E;
+  --muted:      #7C7A67;
+  --white:      #FFFFFF;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;overflow-x:hidden;}
+body{
+  font-family:'Mulish',sans-serif;font-size:16px;background:var(--cream);color:var(--ink);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:'Fraunces',serif;color:var(--olive-dker);font-weight:600;line-height:1.15;}
+img{max-width:100%;display:block;}
+a{text-decoration:none;color:inherit;}
+.container{max-width:1220px;margin:0 auto;padding:0 2rem;}
+@media(max-width:600px){.container{padding:0 1.3rem;}}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Mulish:wght@400;500;600;700;800&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
+.eyebrow{font-family:'Mulish',sans-serif;font-size:.76rem;font-weight:800;color:var(--terracotta);
+  letter-spacing:.12em;text-transform:uppercase;display:inline-flex;align-items:center;gap:.6rem;margin-bottom:1rem;}
+.eyebrow.on-dark{color:#E7B79A;}
 
-    <style>
-        :root{
-            --olive:      #859266;
-            --olive-dk:   #5F6A49;
-            --olive-dker: #454E34;
-            --terracotta: #C9744A;
-            --terracotta-dk: #A85C38;
-            --cream:      #F7F3EC;
-            --cream-2:    #EFE7D8;
-            --line:       #DFD5BF;
-            --ink:        #3A3A2E;
-            --muted:      #7C7A67;
+/* ─ botões ─ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.65rem;font-weight:700;font-size:.92rem;
+  padding:1rem 1.8rem;border-radius:100px;border:none;cursor:pointer;
+  transition:transform .25s ease,box-shadow .25s ease,background .25s ease;white-space:nowrap;width:100%;}
+.btn i{width:18px;height:18px;flex-shrink:0;}
+.btn-whats{background:var(--terracotta);color:#fff;box-shadow:0 10px 24px rgba(201,116,74,.35);}
+.btn-whats:hover{background:var(--terracotta-dk);transform:translateY(-2px);box-shadow:0 14px 28px rgba(201,116,74,.42);}
+.btn-dark{background:var(--olive-dker);color:#fff;}
+.btn-dark:hover{background:var(--olive-dk);transform:translateY(-2px);}
 
-            --font-head: 'Fraunces', serif;
-            --font-body: 'Mulish', sans-serif;
-        }
+/* ═══ REVEAL ON SCROLL ═══ */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .75s cubic-bezier(.16,1,.3,1),transform .75s cubic-bezier(.16,1,.3,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
 
-        body{
-            font-family: var(--font-body);
-            background-color: var(--cream);
-            color: var(--ink);
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
+/* ═══ LEAF MOTIF (line-draw) ═══ */
+.leaf-line{fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:520;stroke-dashoffset:520;transition:stroke-dashoffset 1.6s cubic-bezier(.16,1,.3,1);}
+.leaf-anim.visible .leaf-line{stroke-dashoffset:0;}
 
-        h1, h2, h3, h4, .font-display{
-            font-family: var(--font-head);
-            color: var(--olive-dker);
-        }
+/* ═══ HEADER ═══ */
+#navbar{position:sticky;top:0;left:0;right:0;z-index:1000;background:rgba(247,243,236,.92);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line);transition:padding .3s;}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding:.5rem 0;}
+#navbar.scrolled .nav-inner{padding:.3rem 0;}
+#navbar.scrolled .logo-img{height:56px;}
+.nav-logo{display:flex;align-items:center;gap:.6rem;}
+.logo-img{height:76px;width:auto;display:block;transition:height .3s ease;}
+.nav-back{display:inline-flex;align-items:center;gap:.5rem;font-size:.86rem;font-weight:700;color:var(--olive-dker);
+  transition:gap .2s ease,color .2s ease;}
+.nav-back:hover{gap:.8rem;color:var(--terracotta);}
+.nav-back i{width:16px;height:16px;}
+.nav-cta{background:var(--terracotta);color:#fff;padding:.65rem 1.3rem;border-radius:100px;font-size:.84rem;font-weight:700;
+  display:inline-flex;align-items:center;gap:.5rem;transition:background .2s;}
+.nav-cta:hover{background:var(--terracotta-dk);}
+.nav-cta i{width:15px;height:15px;}
+@media(max-width:640px){.logo-img{height:56px;} #navbar.scrolled .logo-img{height:46px;} .nav-cta span{display:none;}}
 
-        /* Mix Blend Mode para o botão de voltar flutuante */
-        .mix-blend-nav{
-            mix-blend-mode: difference;
-            color: #ffffff;
-            z-index: 100;
-        }
+/* ═══ HERO (agora é o próprio carrossel de fotos) ═══ */
+#hero-detail{position:relative;background:var(--olive-dker);color:#fff;overflow:hidden;height:80vh;min-height:440px;}
+#heroTrack{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;}
+#heroTrack::-webkit-scrollbar{display:none;}
+.hero-slide{flex:0 0 100%;scroll-snap-align:start;height:100%;}
+.hero-slide img{width:100%;height:100%;object-fit:cover;}
+.hero-detail-overlay-top{position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:linear-gradient(to bottom,rgba(37,42,26,.85) 0%,rgba(37,42,26,.32) 32%,transparent 58%,rgba(37,42,26,.6) 100%);}
+.hero-detail-leaf{position:absolute;top:2rem;right:2rem;width:80px;color:#E7B79A;opacity:.5;z-index:2;pointer-events:none;}
+.hero-detail-inner{position:absolute;top:0;left:0;right:0;z-index:2;padding:3.2rem 0 0;pointer-events:none;}
+.hero-detail-title{font-size:clamp(2.2rem,5vw,4rem);max-width:760px;color:#fff;}
 
-        .clip-reveal{
-            clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0% 100%);
-        }
+.hero-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;
+  background:rgba(247,243,236,.14);border:1.5px solid rgba(247,243,236,.32);display:flex;align-items:center;
+  justify-content:center;cursor:pointer;transition:all .2s;z-index:3;color:#fff;}
+.hero-nav:hover{background:var(--terracotta);border-color:var(--terracotta);}
+.hero-nav.prev{left:1.4rem;}
+.hero-nav.next{right:1.4rem;}
+.hero-nav:disabled{opacity:.3;pointer-events:none;}
+.hero-dots{position:absolute;bottom:1.6rem;left:0;right:0;display:flex;gap:.5rem;justify-content:center;z-index:3;}
+.hero-dot{width:8px;height:8px;border-radius:50%;background:rgba(247,243,236,.38);border:none;cursor:pointer;
+  transition:all .25s;padding:0;}
+.hero-dot.active{background:var(--terracotta);width:24px;border-radius:4px;}
+@media(max-width:640px){#hero-detail{height:62vh;min-height:380px;} .hero-nav{display:none;}}
 
-        .prose-custom{
-            font-size: 1.1rem;
-            line-height: 1.85;
-            font-weight: 400;
-            white-space: normal;
-            color: var(--ink);
-        }
-        .prose-custom p{ margin-bottom: 1.6rem; }
-        .prose-custom strong{ font-weight: 700; color: var(--olive-dker); }
-        .prose-custom h1, .prose-custom h2, .prose-custom h3{ margin-top: 2.6rem; margin-bottom: 1rem; font-weight: 700; letter-spacing: -0.01em; }
+/* ═══ CONTEÚDO ═══ */
+.section{padding:5rem 0;}
+.detail-grid{display:grid;grid-template-columns:1.55fr 1fr;gap:3.6rem;align-items:start;}
+@media(max-width:900px){.detail-grid{grid-template-columns:1fr;gap:2.6rem;}}
 
-        /* Imagem sem corte: exibe no formato original, com o "recorte" assimétrico da marca */
-        .img-natural-container{
-            border-radius: 46px 6px 46px 6px;
-            overflow: hidden;
-            width: 100%;
-            box-shadow: 0 24px 48px rgba(69,78,52,.14);
-        }
-        .img-natural-container img{
-            width: 100%;
-            height: auto;
-            display: block;
-        }
+.section-title{font-size:clamp(1.7rem,2.8vw,2.1rem);margin-bottom:1.3rem;}
+.prose{font-size:1.04rem;line-height:1.85;color:var(--ink);}
+.prose p{margin-bottom:1.3rem;}
 
-        ::-webkit-scrollbar{ width: 8px; }
-        ::-webkit-scrollbar-track{ background: var(--cream); }
-        ::-webkit-scrollbar-thumb{ background: rgba(69,78,52,.18); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover{ background: rgba(69,78,52,.32); }
+.tag-pill{display:inline-block;padding:.55rem 1.1rem;border-radius:100px;font-size:.78rem;font-weight:700;
+  letter-spacing:.02em;border:1px solid var(--line);color:var(--olive-dker);background:var(--cream-2);}
+.tag-group{display:flex;flex-wrap:wrap;gap:.6rem;}
+.tag-heading{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem;}
 
-        /* Selo de preço/diária */
-        .price-badge{
-            font-family: var(--font-head); font-weight: 600; font-size: 1.2rem; color: var(--olive-dker);
-        }
-        .price-badge small{ font-family: var(--font-body); font-weight: 700; font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.sidebar-card{position:sticky;top:6.5rem;background:#fff;border:1px solid var(--line);border-radius:22px;
+  padding:2rem;box-shadow:0 18px 40px rgba(69,78,52,.1);}
+.price-badge{font-family:'Fraunces',serif;font-weight:600;font-size:1.5rem;color:var(--olive-dker);margin-bottom:1.6rem;}
+.price-badge small{display:block;font-family:'Mulish',sans-serif;font-weight:800;font-size:.68rem;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem;}
+.price-badge span{font-family:'Mulish',sans-serif;font-weight:600;font-size:.86rem;color:var(--muted);}
+.sidebar-card .tag-group{margin-bottom:1.8rem;}
+.sidebar-actions{display:flex;flex-direction:column;gap:.8rem;padding-top:1.6rem;border-top:1px solid var(--line);}
 
-        .leaf-line{ fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
-    </style>
+/* ═══ CITAÇÃO ═══ */
+.quote-block{display:flex;align-items:center;gap:1.2rem;padding:2.4rem 0;margin-top:1rem;border-top:1px solid var(--line);}
+.quote-block i{width:34px;height:34px;color:var(--terracotta);opacity:.5;flex-shrink:0;}
+.quote-block p{font-family:'Fraunces',serif;font-style:italic;font-size:1.28rem;color:var(--olive-dker);}
+
+/* ═══ FOOTER ═══ */
+#detail-footer{background:var(--cream);border-top:1px solid var(--line);padding:3rem 0;text-align:center;}
+#detail-footer .logo-img{height:52px;margin:0 auto 1rem;}
+#detail-footer p{font-size:.76rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+</style>
 </head>
 <body>
 
-    <nav class="fixed top-0 left-0 w-full p-6 md:p-10 flex justify-between items-center mix-blend-nav pointer-events-none">
-        <a href="/{{ loja.slug_url }}" class="flex items-center gap-3 font-bold uppercase tracking-[0.2em] text-xs md:text-sm transition-transform hover:-translate-x-2 pointer-events-auto">
-            <i data-lucide="arrow-left" class="w-5 h-5"></i> Voltar ao {{ loja.nome or 'Micasa Hostel' }}
-        </a>
-    </nav>
+<!-- HEADER FIXO -->
+<nav id="navbar">
+  <div class="container nav-inner">
+    <a href="/{{ loja.slug_url }}#home" class="nav-logo" aria-label="{{ loja.nome or 'Micasa Hostel' }}">
+      <img class="logo-img" src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1784235480/Massas_Sabores_36_pxcet2.png" alt="{{ loja.nome or 'Micasa Hostel' }}">
+    </a>
+    <a href="/{{ loja.slug_url }}" class="nav-back">
+      <i data-lucide="arrow-left" aria-hidden="true"></i> Voltar ao {{ loja.nome or 'Micasa Hostel' }}
+    </a>
+    <a href="/{{ loja.slug_url }}#contato" class="nav-cta">
+      <i data-lucide="message-circle" aria-hidden="true"></i> <span>Contato</span>
+    </a>
+  </div>
+</nav>
 
-    <section class="relative w-full overflow-hidden" id="hero-section" style="height: 85vh; background-color: var(--olive-dker);">
+<!-- ═══ HERO (carrossel de fotos + título) ═══ -->
+{% set hero_imgs = [] %}
+{% if p.imagem_destaque %}{% set _ = hero_imgs.append(p.imagem_destaque) %}{% endif %}
+{% if p.imagem1 and p.imagem1 != p.imagem_destaque %}{% set _ = hero_imgs.append(p.imagem1) %}{% endif %}
+{% if p.imagem2 %}{% set _ = hero_imgs.append(p.imagem2) %}{% endif %}
+{% if p.imagem_secundaria %}{% set _ = hero_imgs.append(p.imagem_secundaria) %}{% endif %}
+{% if p.imagem3 %}{% set _ = hero_imgs.append(p.imagem3) %}{% endif %}
+{% if p.imagem4 %}{% set _ = hero_imgs.append(p.imagem4) %}{% endif %}
+{% if p.imagem5 %}{% set _ = hero_imgs.append(p.imagem5) %}{% endif %}
+{% if hero_imgs|length == 0 and p.imagem1 %}{% set _ = hero_imgs.append(p.imagem1) %}{% endif %}
 
-        <!-- Fundo desfocado para preencher espaços laterais com elegância -->
-        <div id="hero-bg-blur" class="absolute inset-0 scale-110" style="background-image: url('{{ p.imagem_destaque or p.imagem1 }}'); background-size: cover; background-position: center; filter: blur(28px); opacity: 0.4;"></div>
+<section id="hero-detail">
+  <div id="heroTrack">
+    {% for img in hero_imgs %}
+    <div class="hero-slide"><img src="{{ img }}" alt="Foto {{ loop.index }} do quarto {{ p.nome }}" loading="{{ 'eager' if loop.first else 'lazy' }}"></div>
+    {% endfor %}
+  </div>
+  <div class="hero-detail-overlay-top"></div>
 
-        <!-- Imagem principal: visível por inteiro, sem corte, sem esticamento -->
-        <img src="{{ p.imagem_destaque or p.imagem1 }}" alt="{{ p.nome }}" id="hero-img"
-             class="relative z-10 mx-auto block h-full w-auto"
-             style="object-fit: contain; max-width: 100%;">
+  <svg class="hero-detail-leaf leaf-anim" viewBox="0 0 150 210" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path class="leaf-line" d="M70 205 C55 150 70 95 60 55 C55 35 75 18 95 8"/>
+    <path class="leaf-line" d="M68 185 Q95 158 120 165 Q98 180 68 185"/>
+    <path class="leaf-line" d="M62 150 Q35 123 10 130 Q32 145 62 150"/>
+    <path class="leaf-line" d="M65 115 Q92 88 118 98 Q95 112 65 115"/>
+    <path class="leaf-line" d="M60 80 Q33 54 12 63 Q35 77 60 80"/>
+    <path class="leaf-line" d="M72 45 Q95 20 115 30 Q95 42 72 45"/>
+    <path class="leaf-line" d="M80 20 Q62 2 48 5 Q65 17 80 20"/>
+  </svg>
 
-        <!-- Gradiente sobre tudo para o texto ficar legível -->
-        <div class="absolute inset-0 z-20" style="background:linear-gradient(to top, rgba(37,42,26,.92) 0%, rgba(37,42,26,.25) 55%, transparent 100%);"></div>
+  <div class="container hero-detail-inner">
+    <span class="eyebrow on-dark">Nossa acomodação</span>
+    <h1 class="hero-detail-title">{{ p.nome }}</h1>
+  </div>
 
-        <!-- Motivo de folha (mesmo ramo do logo, ecoando o site principal) -->
-        <svg class="absolute z-20 leaf-anim" viewBox="0 0 150 210" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="top:2.5rem;right:2.5rem;width:70px;color:#E7B79A;opacity:.5;">
-            <path class="leaf-line" d="M70 205 C55 150 70 95 60 55 C55 35 75 18 95 8"/>
-            <path class="leaf-line" d="M68 185 Q95 158 120 165 Q98 180 68 185"/>
-            <path class="leaf-line" d="M62 150 Q35 123 10 130 Q32 145 62 150"/>
-            <path class="leaf-line" d="M65 115 Q92 88 118 98 Q95 112 65 115"/>
-            <path class="leaf-line" d="M60 80 Q33 54 12 63 Q35 77 60 80"/>
-            <path class="leaf-line" d="M72 45 Q95 20 115 30 Q95 42 72 45"/>
-            <path class="leaf-line" d="M80 20 Q62 2 48 5 Q65 17 80 20"/>
-        </svg>
+  {% if hero_imgs|length > 1 %}
+  <button class="hero-nav prev" id="heroPrev" onclick="slideHero(-1)" aria-label="Foto anterior">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <button class="hero-nav next" id="heroNext" onclick="slideHero(1)" aria-label="Próxima foto">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+  <div class="hero-dots" id="heroDots"></div>
+  {% endif %}
+</section>
 
-        <!-- Texto do hero -->
-        <div class="absolute inset-0 z-30 flex flex-col justify-end p-8 md:p-20 container mx-auto">
-            <div class="overflow-hidden mb-2">
-                <p class="text-[#E7B79A] uppercase tracking-[0.3em] font-extrabold text-xs md:text-sm transform translate-y-full hero-elem">
-                    Nossa Acomodação
-                </p>
-            </div>
-            <div class="overflow-hidden">
-                <h1 class="text-white text-5xl md:text-7xl lg:text-[5.5rem] font-semibold tracking-tight leading-[0.95] transform translate-y-full hero-elem drop-shadow-lg" style="font-family:var(--font-head);">
-                    {{ p.nome }}
-                </h1>
-            </div>
-        </div>
-    </section>
+<!-- ═══ DETALHES + SIDEBAR ═══ -->
+<section class="section">
+  <div class="container detail-grid">
 
-    <main class="container mx-auto px-6 md:px-20 py-24 md:py-32">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
+    <div class="reveal">
+      <h2 class="section-title">Sobre o quarto</h2>
+      <div class="prose">
+        {% if p.descricao %}
+          {{ p.descricao | replace('\n', '<br>') | safe }}
+        {% else %}
+          <p>Um espaço pensado pra você se sentir em casa: conforto, limpeza e aquele clima acolhedor que é a cara da {{ loja.nome or 'Micasa' }}.</p>
+        {% endif %}
+      </div>
 
-            <div class="lg:col-span-7 xl:col-span-8 order-2 lg:order-1">
-                <div class="overflow-hidden mb-8">
-                    <h2 class="text-3xl md:text-5xl font-semibold tracking-tight section-title" style="color: var(--olive-dker);">
-                        Sobre o quarto
-                    </h2>
-                </div>
+      <div class="quote-block">
+        <i data-lucide="quote" aria-hidden="true"></i>
+        <p>"Menos corredor de hotel, mais quintal de casa."</p>
+      </div>
+    </div>
 
-                <div class="prose-custom text-reveal-container">
-                    {% if p.descricao %}
-                        {{ p.descricao | replace('\n', '<br>') | safe }}
-                    {% else %}
-                        <p>Um espaço pensado pra você se sentir em casa: conforto, limpeza e aquele clima acolhedor que é a cara da Micasa.</p>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="lg:col-span-5 xl:col-span-4 order-1 lg:order-2">
-                <div class="sticky top-32 space-y-10 block-reveal opacity-0 translate-y-10">
-
-                    {% if p.preco and p.preco > 0 %}
-                    <div class="price-badge">
-                        <small>A partir de</small><br>
-                        US$ {{ '%.0f'|format(p.preco) }} <span style="font-family:var(--font-body);font-weight:600;font-size:.85rem;color:var(--muted);">/ noite</span>
-                    </div>
-                    {% endif %}
-
-                    <div>
-                        <h4 class="text-xs uppercase tracking-[0.2em] font-extrabold mb-5" style="color: var(--muted);">
-                            Comodidades
-                        </h4>
-                        <div class="flex flex-wrap gap-2">
-                            {% if p.variantes %}
-                                {% for grupo in p.variantes %}
-                                    {% for op in grupo.opcoes %}
-                                        <span class="px-4 py-2 rounded-full text-xs font-bold tracking-wide border" style="border-color: var(--line); color: var(--olive-dker); background-color: var(--cream-2);">
-                                            {{ op.nome }}
-                                        </span>
-                                    {% endfor %}
-                                {% endfor %}
-                            {% else %}
-                                <span class="px-4 py-2 rounded-full text-xs font-bold tracking-wide border" style="border-color: var(--line); color: var(--olive-dker); background-color: var(--cream-2);">
-                                    Ótimo custo-benefício
-                                </span>
-                                <span class="px-4 py-2 rounded-full text-xs font-bold tracking-wide border" style="border-color: var(--line); color: var(--olive-dker); background-color: var(--cream-2);">
-                                    Limpeza garantida
-                                </span>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="space-y-4 pt-8 border-t" style="border-color: var(--line);">
-
-                        {% if p.link_projeto %}
-                        <a href="{{ p.link_projeto }}" target="_blank" class="w-full flex items-center justify-center gap-3 py-5 px-6 rounded-2xl text-xs md:text-sm font-bold uppercase tracking-[0.1em] transition-all duration-300 hover:scale-[1.02] shadow-sm hover:shadow-md" style="background-color: var(--olive-dker); color: #fff;">
-                            Ver mais detalhes <i data-lucide="external-link" class="w-4 h-4"></i>
-                        </a>
-                        {% endif %}
-
-                        <button onclick="window.open('https://wa.me/55{{ p.whatsapp_projeto or loja.whatsapp_comercial }}?text=Oi! Vi o quarto {{ p.nome }} no site e queria saber mais sobre disponibilidade e valores.')" class="w-full flex items-center justify-center gap-3 py-5 px-6 rounded-2xl text-xs md:text-sm font-bold uppercase tracking-[0.1em] transition-all duration-300 hover:scale-[1.02] shadow-sm hover:shadow-md" style="background-color: var(--terracotta); color: #fff;">
-                            <i data-lucide="message-circle" class="w-5 h-5"></i> Reservar no WhatsApp
-                        </button>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-    </main>
-
-    {% if p.imagem1 or p.imagem2 or p.imagem_secundaria or p.imagem3 or p.imagem4 or p.imagem5 %}
-    <section class="container mx-auto px-6 md:px-10 pb-32 space-y-8 md:space-y-12">
-
-        {% if p.imagem1 %}
-        <div class="img-natural-container clip-reveal-box">
-            <img src="{{ p.imagem1 }}" alt="Detalhe do quarto 1">
+    <aside>
+      <div class="sidebar-card reveal">
+        {% if p.preco and p.preco > 0 %}
+        <div class="price-badge">
+          <small>A partir de</small>
+          R$ {{ '%.0f'|format(p.preco) }} <span>/ noite</span>
         </div>
         {% endif %}
 
-        {% if p.imagem2 or p.imagem_secundaria %}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
-            {% if p.imagem2 %}
-            <div class="img-natural-container clip-reveal-box">
-                <img src="{{ p.imagem2 }}" alt="Detalhe do quarto 2">
-            </div>
-            {% endif %}
-
-            {% if p.imagem_secundaria %}
-            <div class="img-natural-container clip-reveal-box md:mt-24">
-                <img src="{{ p.imagem_secundaria }}" alt="Detalhe do quarto 3">
-            </div>
-            {% else %}
-            <div class="hidden md:flex flex-col justify-center px-12 block-reveal opacity-0 translate-y-10">
-                <i data-lucide="quote" class="w-12 h-12 mb-6" style="color: var(--terracotta); opacity: 0.4;"></i>
-                <p class="text-2xl font-light italic" style="color: var(--olive-dker); font-family: var(--font-head);">"Menos corredor de hotel, mais quintal de casa."</p>
-            </div>
-            {% endif %}
+        <p class="tag-heading">Comodidades</p>
+        <div class="tag-group">
+          {% if p.variantes %}
+            {% for grupo in p.variantes %}
+              {% for op in grupo.opcoes %}
+                <span class="tag-pill">{{ op.nome }}</span>
+              {% endfor %}
+            {% endfor %}
+          {% else %}
+            <span class="tag-pill">Ótimo custo-benefício</span>
+            <span class="tag-pill">Limpeza garantida</span>
+          {% endif %}
         </div>
-        {% endif %}
 
-        {% if p.imagem3 or p.imagem4 or p.imagem5 %}
-        <div class="grid grid-cols-1 md:grid-cols-{% if p.imagem3 and p.imagem4 and p.imagem5 %}3{% elif p.imagem3 and p.imagem4 %}2{% else %}1{% endif %} gap-8 md:gap-12 items-start">
-            {% if p.imagem3 %}
-            <div class="img-natural-container clip-reveal-box">
-                <img src="{{ p.imagem3 }}" alt="Detalhe do quarto 4">
-            </div>
-            {% endif %}
-
-            {% if p.imagem4 %}
-            <div class="img-natural-container clip-reveal-box md:mt-12">
-                <img src="{{ p.imagem4 }}" alt="Detalhe do quarto 5">
-            </div>
-            {% endif %}
-
-            {% if p.imagem5 %}
-            <div class="img-natural-container clip-reveal-box">
-                <img src="{{ p.imagem5 }}" alt="Detalhe do quarto 6">
-            </div>
-            {% endif %}
+        <div class="sidebar-actions">
+          {% if p.link_projeto %}
+          <a href="{{ p.link_projeto }}" target="_blank" class="btn btn-dark">
+            Ver mais detalhes <i data-lucide="external-link" aria-hidden="true"></i>
+          </a>
+          {% endif %}
+          <button onclick="window.open('https://wa.me/55{{ p.whatsapp_projeto or loja.whatsapp_comercial }}?text=Oi! Vi o quarto {{ p.nome }} no site e queria saber mais sobre disponibilidade e valores.')" class="btn btn-whats">
+            <i data-lucide="message-circle" aria-hidden="true"></i> Reservar no WhatsApp
+          </button>
         </div>
-        {% endif %}
+      </div>
+    </aside>
 
-    </section>
-    {% endif %}
+  </div>
+</section>
 
-    <footer class="py-12 border-t text-center" style="border-color: var(--line); background-color: var(--cream);">
-        <h4 class="font-semibold text-2xl tracking-tight mb-2" style="color: var(--olive-dker); font-family: var(--font-head);">{{ loja.nome or 'Micasa Hostel' }}</h4>
-        <p class="text-xs font-bold uppercase tracking-[0.2em]" style="color: var(--muted);">Mi Casa, Su Casa</p>
-    </footer>
+<!-- ═══ FOOTER ═══ -->
+<footer id="detail-footer">
+  <img class="logo-img" src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1784235480/Massas_Sabores_36_pxcet2.png" alt="{{ loja.nome or 'Micasa Hostel' }}">
+  <p>Mi Casa, Su Casa</p>
+</footer>
 
-    <script>
-        lucide.createIcons();
+<script>
+try{ if(window.lucide) lucide.createIcons(); }catch(e){ console.warn('lucide falhou ao carregar:', e); }
 
-        gsap.registerPlugin(ScrollTrigger);
+// navbar scroll (igual ao micasa.html)
+const nav = document.getElementById('navbar');
+let navTicking = false;
+function updateNav(){
+  if (window.scrollY > 80) nav.classList.add('scrolled');
+  else if (window.scrollY < 40) nav.classList.remove('scrolled');
+  navTicking = false;
+}
+window.addEventListener('scroll', () => {
+  if (!navTicking){ window.requestAnimationFrame(updateNav); navTicking = true; }
+}, { passive:true });
 
-        // 1. Animação de Entrada do Hero
-        const tlHero = gsap.timeline();
+// reveal on scroll (igual ao micasa.html)
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+}, { threshold:.1, rootMargin:'0px 0px -60px 0px' });
+revealEls.forEach(el => revealObs.observe(el));
 
-        tlHero.fromTo("#hero-img",
-            { scale: 1.2 },
-            { scale: 1, duration: 2, ease: "power3.out" }
-        );
+// leaf line-draw (igual ao micasa.html)
+const leafEls = document.querySelectorAll('.leaf-anim');
+const leafObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); leafObs.unobserve(e.target); } });
+}, { threshold:.2 });
+leafEls.forEach(el => leafObs.observe(el));
 
-        tlHero.to(".hero-elem", {
-            y: 0,
-            duration: 1.2,
-            stagger: 0.2,
-            ease: "power4.out"
-        }, "-=1.5");
+// ─ carrossel de fotos do quarto (agora no hero) ─
+(function(){
+  const track = document.getElementById('heroTrack');
+  if (!track) return;
+  const slides = track.children;
+  const prevBtn = document.getElementById('heroPrev');
+  const nextBtn = document.getElementById('heroNext');
+  const dotsWrap = document.getElementById('heroDots');
+  let index = 0;
 
-        // 2. Reveal dos Títulos da Seção
-        gsap.set(".section-title", { y: "100%", overflow: "hidden" });
-        gsap.to(".section-title", {
-            scrollTrigger: {
-                trigger: ".section-title",
-                start: "top 85%",
-            },
-            y: 0,
-            duration: 1,
-            ease: "power4.out"
-        });
+  if (dotsWrap) {
+    for (let i = 0; i < slides.length; i++) {
+      const dot = document.createElement('button');
+      dot.className = 'hero-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', 'Ir para foto ' + (i + 1));
+      dot.addEventListener('click', () => goToSlide(i));
+      dotsWrap.appendChild(dot);
+    }
+  }
 
-        // 3. Reveal em fade/slide up dos blocos de texto e barra lateral
-        gsap.utils.toArray('.block-reveal').forEach(block => {
-            gsap.to(block, {
-                scrollTrigger: {
-                    trigger: block,
-                    start: "top 85%",
-                },
-                y: 0,
-                opacity: 1,
-                duration: 1,
-                ease: "power3.out"
-            });
-        });
+  function updateUI(){
+    if (prevBtn) prevBtn.disabled = index === 0;
+    if (nextBtn) nextBtn.disabled = index === slides.length - 1;
+    if (dotsWrap) {
+      Array.from(dotsWrap.children).forEach((d, i) => d.classList.toggle('active', i === index));
+    }
+  }
 
-        // 4. O Grande Reveal das Imagens (Clip-Path "Cortina")
-        gsap.utils.toArray('.clip-reveal-box').forEach(box => {
-            gsap.set(box, { clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0% 100%)" });
+  function goToSlide(i){
+    index = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: slides[index].offsetLeft, behavior: 'smooth' });
+    updateUI();
+  }
 
-            gsap.timeline({
-                scrollTrigger: {
-                    trigger: box,
-                    start: "top 80%",
-                }
-            }).to(box, {
-                clipPath: "polygon(0 0%, 100% 0%, 100% 100%, 0% 100%)",
-                duration: 1.5,
-                ease: "power4.inOut"
-            });
-        });
-    </script>
+  window.slideHero = function(dir){ goToSlide(index + dir); };
+
+  let scrollTicking = false;
+  track.addEventListener('scroll', () => {
+    if (scrollTicking) return;
+    scrollTicking = true;
+    requestAnimationFrame(() => {
+      const trackCenter = track.scrollLeft + track.clientWidth / 2;
+      let closest = 0, closestDist = Infinity;
+      Array.from(slides).forEach((s, i) => {
+        const dist = Math.abs((s.offsetLeft + s.clientWidth / 2) - trackCenter);
+        if (dist < closestDist) { closestDist = dist; closest = i; }
+      });
+      index = closest;
+      updateUI();
+      scrollTicking = false;
+    });
+  }, { passive:true });
+
+  updateUI();
+})();
+</script>
+
+<!-- ── Google Translate (widget nativo oculto) ── -->
+<div id="google_translate_element"></div>
+<script>
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({ pageLanguage: 'pt', autoDisplay: false }, 'google_translate_element');
+}
+</script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<!-- ── Botão flutuante de tradução ── -->
+<button id="translate-btn" onclick="toggleTranslateDrawer()">
+    <i data-lucide="languages" aria-hidden="true"></i> Traduzir
+</button>
+
+<!-- ── Drawer de idiomas ── -->
+<div id="translate-drawer">
+    <div class="td-header">
+        <input class="td-search" id="td-search" type="text" placeholder="Buscar idioma…" oninput="filterLangs(this.value)">
+        <button class="td-close" onclick="toggleTranslateDrawer()">&#10005;</button>
+    </div>
+    <div class="td-list" id="td-list"></div>
+</div>
+
+<style>
+    #google_translate_element { position: absolute; visibility: hidden; pointer-events: none; }
+    .goog-te-banner-frame, .skiptranslate { display: none !important; }
+    body { top: 0 !important; }
+
+    #translate-btn {
+        position: fixed; bottom: 20px; left: 20px; z-index: 999;
+        background: var(--white); border: none; border-radius: 50px;
+        padding: 10px 18px; display: flex; align-items: center; gap: 8px;
+        font-family: 'Mulish', sans-serif; font-size: 14px; font-weight: 700;
+        color: var(--ink); cursor: pointer;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        transition: box-shadow 0.2s, transform 0.15s;
+    }
+    #translate-btn:hover { box-shadow: 0 6px 28px rgba(0,0,0,0.3); transform: translateY(-1px); }
+    #translate-btn i { width: 16px; height: 16px; color: var(--terracotta); }
+
+    #translate-drawer {
+        position: fixed; bottom: 70px; left: 20px; z-index: 1000;
+        background: var(--white); border-radius: 16px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+        width: 280px; max-height: 420px;
+        display: none; flex-direction: column;
+        overflow: hidden;
+    }
+    #translate-drawer.open { display: flex; }
+    .td-header {
+        padding: 12px 14px; border-bottom: 1px solid var(--line);
+        display: flex; align-items: center; gap: 8px;
+    }
+    .td-search {
+        flex: 1; border: 1.5px solid var(--line);
+        border-radius: 8px; padding: 8px 12px;
+        font-family: 'Mulish', sans-serif; font-size: 13px;
+        outline: none; transition: border-color 0.2s;
+        color: var(--ink);
+    }
+    .td-search:focus { border-color: var(--terracotta); }
+    .td-close {
+        background: none; border: none; color: var(--muted);
+        font-size: 18px; cursor: pointer; line-height: 1; padding: 2px 4px;
+    }
+    .td-close:hover { color: var(--ink); }
+    .td-list { overflow-y: auto; flex: 1; padding: 6px 0; }
+    .td-item {
+        padding: 9px 18px; font-size: 14px; cursor: pointer;
+        color: var(--ink); transition: background 0.1s;
+        display: flex; align-items: center; gap: 10px;
+    }
+    .td-item:hover { background: var(--cream-2); }
+    .td-item.active { color: var(--terracotta-dk); font-weight: 700; background: var(--cream-2); }
+    .td-item .flag { font-size: 18px; flex-shrink: 0; }
+    .td-empty { padding: 24px; text-align: center; color: var(--muted); font-size: 13px; }
+
+    @media (max-width: 480px) {
+        #translate-drawer { width: calc(100vw - 32px); left: 16px; bottom: 72px; max-height: 55vh; }
+        #translate-btn { bottom: 16px; left: 16px; }
+    }
+</style>
+
+<script>
+const LANGS = [
+    {code:'af',name:'Afrikaans',flag:'🇿🇦'},{code:'sq',name:'Albanian',flag:'🇦🇱'},{code:'am',name:'Amharic',flag:'🇪🇹'},
+    {code:'ar',name:'Arabic',flag:'🇸🇦'},{code:'hy',name:'Armenian',flag:'🇦🇲'},{code:'az',name:'Azerbaijani',flag:'🇦🇿'},
+    {code:'eu',name:'Basque',flag:'🏴'},{code:'be',name:'Belarusian',flag:'🇧🇾'},{code:'bn',name:'Bengali',flag:'🇧🇩'},
+    {code:'bs',name:'Bosnian',flag:'🇧🇦'},{code:'bg',name:'Bulgarian',flag:'🇧🇬'},{code:'ca',name:'Catalan',flag:'🏴'},
+    {code:'ceb',name:'Cebuano',flag:'🇵🇭'},{code:'zh-CN',name:'Chinese (Simplified)',flag:'🇨🇳'},{code:'zh-TW',name:'Chinese (Traditional)',flag:'🇹🇼'},
+    {code:'co',name:'Corsican',flag:'🇫🇷'},{code:'hr',name:'Croatian',flag:'🇭🇷'},{code:'cs',name:'Czech',flag:'🇨🇿'},
+    {code:'da',name:'Danish',flag:'🇩🇰'},{code:'nl',name:'Dutch',flag:'🇳🇱'},{code:'en',name:'English',flag:'🇬🇧'},
+    {code:'eo',name:'Esperanto',flag:'🌍'},{code:'et',name:'Estonian',flag:'🇪🇪'},{code:'fi',name:'Finnish',flag:'🇫🇮'},
+    {code:'fr',name:'French',flag:'🇫🇷'},{code:'fy',name:'Frisian',flag:'🏴'},{code:'gl',name:'Galician',flag:'🏴'},
+    {code:'ka',name:'Georgian',flag:'🇬🇪'},{code:'de',name:'German',flag:'🇩🇪'},{code:'el',name:'Greek',flag:'🇬🇷'},
+    {code:'gu',name:'Gujarati',flag:'🇮🇳'},{code:'ht',name:'Haitian Creole',flag:'🇭🇹'},{code:'ha',name:'Hausa',flag:'🇳🇬'},
+    {code:'haw',name:'Hawaiian',flag:'🇺🇸'},{code:'he',name:'Hebrew',flag:'🇮🇱'},{code:'hi',name:'Hindi',flag:'🇮🇳'},
+    {code:'hmn',name:'Hmong',flag:'🌏'},{code:'hu',name:'Hungarian',flag:'🇭🇺'},{code:'is',name:'Icelandic',flag:'🇮🇸'},
+    {code:'ig',name:'Igbo',flag:'🇳🇬'},{code:'id',name:'Indonesian',flag:'🇮🇩'},{code:'ga',name:'Irish',flag:'🇮🇪'},
+    {code:'it',name:'Italian',flag:'🇮🇹'},{code:'ja',name:'Japanese',flag:'🇯🇵'},{code:'jv',name:'Javanese',flag:'🇮🇩'},
+    {code:'kn',name:'Kannada',flag:'🇮🇳'},{code:'kk',name:'Kazakh',flag:'🇰🇿'},{code:'km',name:'Khmer',flag:'🇰🇭'},
+    {code:'rw',name:'Kinyarwanda',flag:'🇷🇼'},{code:'ko',name:'Korean',flag:'🇰🇷'},{code:'ku',name:'Kurdish',flag:'🌍'},
+    {code:'ky',name:'Kyrgyz',flag:'🇰🇬'},{code:'lo',name:'Lao',flag:'🇱🇦'},{code:'la',name:'Latin',flag:'🏛️'},
+    {code:'lv',name:'Latvian',flag:'🇱🇻'},{code:'lt',name:'Lithuanian',flag:'🇱🇹'},{code:'lb',name:'Luxembourgish',flag:'🇱🇺'},
+    {code:'mk',name:'Macedonian',flag:'🇲🇰'},{code:'mg',name:'Malagasy',flag:'🇲🇬'},{code:'ms',name:'Malay',flag:'🇲🇾'},
+    {code:'ml',name:'Malayalam',flag:'🇮🇳'},{code:'mt',name:'Maltese',flag:'🇲🇹'},{code:'mi',name:'Maori',flag:'🇳🇿'},
+    {code:'mr',name:'Marathi',flag:'🇮🇳'},{code:'mn',name:'Mongolian',flag:'🇲🇳'},{code:'my',name:'Myanmar (Burmese)',flag:'🇲🇲'},
+    {code:'ne',name:'Nepali',flag:'🇳🇵'},{code:'no',name:'Norwegian',flag:'🇳🇴'},{code:'ny',name:'Nyanja (Chichewa)',flag:'🇲🇼'},
+    {code:'or',name:'Odia (Oriya)',flag:'🇮🇳'},{code:'ps',name:'Pashto',flag:'🇦🇫'},{code:'fa',name:'Persian',flag:'🇮🇷'},
+    {code:'pl',name:'Polish',flag:'🇵🇱'},{code:'pt',name:'Português',flag:'🇧🇷'},{code:'pa',name:'Punjabi',flag:'🇮🇳'},
+    {code:'ro',name:'Romanian',flag:'🇷🇴'},{code:'ru',name:'Russian',flag:'🇷🇺'},{code:'sm',name:'Samoan',flag:'🇼🇸'},
+    {code:'gd',name:'Scots Gaelic',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿'},{code:'sr',name:'Serbian',flag:'🇷🇸'},{code:'st',name:'Sesotho',flag:'🇱🇸'},
+    {code:'sn',name:'Shona',flag:'🇿🇼'},{code:'sd',name:'Sindhi',flag:'🇵🇰'},{code:'si',name:'Sinhala',flag:'🇱🇰'},
+    {code:'sk',name:'Slovak',flag:'🇸🇰'},{code:'sl',name:'Slovenian',flag:'🇸🇮'},{code:'so',name:'Somali',flag:'🇸🇴'},
+    {code:'es',name:'Spanish',flag:'🇪🇸'},{code:'su',name:'Sundanese',flag:'🇮🇩'},{code:'sw',name:'Swahili',flag:'🇰🇪'},
+    {code:'sv',name:'Swedish',flag:'🇸🇪'},{code:'tl',name:'Tagalog (Filipino)',flag:'🇵🇭'},{code:'tg',name:'Tajik',flag:'🇹🇯'},
+    {code:'ta',name:'Tamil',flag:'🇮🇳'},{code:'tt',name:'Tatar',flag:'🇷🇺'},{code:'te',name:'Telugu',flag:'🇮🇳'},
+    {code:'th',name:'Thai',flag:'🇹🇭'},{code:'tr',name:'Turkish',flag:'🇹🇷'},{code:'tk',name:'Turkmen',flag:'🇹🇲'},
+    {code:'uk',name:'Ukrainian',flag:'🇺🇦'},{code:'ur',name:'Urdu',flag:'🇵🇰'},{code:'ug',name:'Uyghur',flag:'🇨🇳'},
+    {code:'uz',name:'Uzbek',flag:'🇺🇿'},{code:'vi',name:'Vietnamese',flag:'🇻🇳'},{code:'cy',name:'Welsh',flag:'🏴󠁧󠁢󠁷󠁬󠁳󠁿'},
+    {code:'xh',name:'Xhosa',flag:'🇿🇦'},{code:'yi',name:'Yiddish',flag:'🌍'},{code:'yo',name:'Yoruba',flag:'🇳🇬'},
+    {code:'zu',name:'Zulu',flag:'🇿🇦'}
+];
+
+let currentLang = 'pt';
+let drawerOpen  = false;
+
+function renderLangs(list) {
+    const el = document.getElementById('td-list');
+    if (!list.length) {
+        el.innerHTML = '<div class="td-empty">Nenhum idioma encontrado</div>';
+        return;
+    }
+    el.innerHTML = list.map(l =>
+        '<div class="td-item ' + (l.code === currentLang ? 'active' : '') + '" onclick="selectLang(\'' + l.code + '\',\'' + l.name + '\')"><span class="flag">' + l.flag + '</span> ' + l.name + '</div>'
+    ).join('');
+}
+
+function filterLangs(q) {
+    const filtered = LANGS.filter(function(l){ return l.name.toLowerCase().includes(q.toLowerCase()); });
+    renderLangs(filtered);
+}
+
+function selectLang(code, name) {
+    currentLang = code;
+    drawerOpen  = false;
+    document.getElementById('translate-drawer').classList.remove('open');
+
+    var lang = LANGS.find(function(l){ return l.code === code; });
+    document.getElementById('translate-btn').innerHTML =
+        '<i data-lucide="languages" aria-hidden="true"></i> ' + (lang ? lang.flag + ' ' + name : name);
+    try{ if(window.lucide) lucide.createIcons(); }catch(e){}
+
+    if (code === 'pt') {
+        var sel = document.querySelector('.goog-te-combo');
+        if (sel) { sel.value = ''; sel.dispatchEvent(new Event('change')); }
+        document.getElementById('translate-btn').innerHTML = '<i data-lucide="languages" aria-hidden="true"></i> Traduzir';
+        try{ if(window.lucide) lucide.createIcons(); }catch(e){}
+        return;
+    }
+
+    var tryTranslate = function(attempts) {
+        var sel = document.querySelector('.goog-te-combo');
+        if (sel) {
+            sel.value = code;
+            sel.dispatchEvent(new Event('change'));
+        } else if (attempts > 0) {
+            setTimeout(function(){ tryTranslate(attempts - 1); }, 300);
+        }
+    };
+    tryTranslate(10);
+}
+
+function toggleTranslateDrawer() {
+    drawerOpen = !drawerOpen;
+    var drawer = document.getElementById('translate-drawer');
+    if (drawerOpen) {
+        drawer.classList.add('open');
+        renderLangs(LANGS);
+        var search = document.getElementById('td-search');
+        search.value = '';
+        setTimeout(function(){ search.focus(); }, 50);
+    } else {
+        drawer.classList.remove('open');
+    }
+}
+
+document.addEventListener('click', function(e) {
+    if (drawerOpen &&
+        !document.getElementById('translate-drawer').contains(e.target) &&
+        !document.getElementById('translate-btn').contains(e.target)) {
+        drawerOpen = false;
+        document.getElementById('translate-drawer').classList.remove('open');
+    }
+});
+
+try{ if(window.lucide) lucide.createIcons(); }catch(e){}
+</script>
 </body>
 </html>
