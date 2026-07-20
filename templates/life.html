@@ -233,8 +233,8 @@ button{font-family:inherit;}
 
 /* ═══ HERO ═══ */
 #hero{
-  position:relative;min-height:92vh;display:flex;align-items:center;
-  padding:9rem 0 5rem;overflow:hidden;isolation:isolate;
+  position:relative;min-height:86vh;display:flex;align-items:center;
+  padding:9rem 0 9rem;overflow:hidden;isolation:isolate;
 }
 .hero-bg{position:absolute;inset:0;z-index:-2;overflow:hidden;}
 .hero-bg img{
@@ -522,9 +522,120 @@ footer{background:var(--ink-2);color:rgba(255,255,255,.55);padding:4rem 0 1.6rem
 /* ═══ REVEAL ═══ */
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1);}
 .reveal.visible{opacity:1;transform:none;}
+.reveal.zoom{transform:scale(.92);}
+.reveal.zoom.visible{transform:scale(1);}
+
+/* ═══ BARRA DE PROGRESSO DE SCROLL ═══ */
+#scrollProgress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-2));z-index:2100;transition:width .1s linear;box-shadow:0 0 12px rgba(217,186,110,.6);}
+
+/* ═══ BLOBS DECORATIVOS FLUTUANTES ═══ */
+.blob{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none;z-index:0;opacity:.35;animation:blobFloat 14s ease-in-out infinite;}
+@keyframes blobFloat{
+  0%,100%{transform:translate(0,0) scale(1);}
+  33%{transform:translate(30px,-24px) scale(1.08);}
+  66%{transform:translate(-22px,18px) scale(.95);}
+}
+@media (prefers-reduced-motion: reduce){ .blob{animation:none;} }
+
+/* ═══ FEATURE CARDS (sobrepostos ao hero, estilo Neuroschumann) ═══ */
+#especialidades{position:relative;z-index:3;padding:0 0 6.5rem;background:transparent;margin-top:-5.5rem;}
+.esp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;}
+.esp-card{
+  background:#fff;border:1px solid var(--line);border-radius:18px;
+  padding:2.2rem 1.4rem;text-align:center;
+  box-shadow:0 24px 50px rgba(11,22,38,.14);
+}
+.esp-card h3{font-size:1rem;margin-bottom:.4rem;}
+.esp-card p{display:none;}
+.esp-icon{width:88px;height:88px;margin:0 auto 1.2rem;border-radius:50%;background:linear-gradient(155deg,var(--paper),var(--stone));}
+@media(max-width:980px){ .esp-grid{grid-template-columns:1fr 1fr;} #especialidades{margin-top:-3.5rem;} }
+@media(max-width:560px){ .esp-grid{grid-template-columns:1fr;} }
+
+/* ═══ VÍDEO INSTITUCIONAL ═══ */
+#video-sec{padding:0 0 6.5rem;background:var(--stone);position:relative;}
+#video-sec .container{position:relative;}
+.video-frame{
+  position:relative;border-radius:26px;overflow:hidden;aspect-ratio:16/8;
+  box-shadow:0 30px 70px rgba(20,33,61,.22);border:6px solid #fff;
+  background:var(--ink);
+}
+.video-frame video{width:100%;height:100%;object-fit:cover;display:block;}
+.video-play{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,rgba(11,22,38,.15),rgba(11,22,38,.45));
+  cursor:pointer;transition:opacity .4s ease;
+}
+.video-play-btn{
+  position:relative;width:84px;height:84px;border-radius:50%;background:rgba(255,255,255,.16);
+  backdrop-filter:blur(6px);border:1.5px solid rgba(255,255,255,.5);
+  display:flex;align-items:center;justify-content:center;color:#fff;
+}
+.video-play-btn::after{
+  content:'';position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(255,255,255,.55);
+  animation:playPulse 2.2s ease-out infinite;
+}
+@keyframes playPulse{0%{transform:scale(1);opacity:.9;}100%{transform:scale(1.6);opacity:0;}}
+.video-play.hidden{opacity:0;pointer-events:none;}
+.video-caption{display:flex;align-items:center;gap:.7rem;justify-content:center;margin-top:1.6rem;color:var(--muted);font-size:.85rem;}
+.video-caption i{color:var(--gold);}
+
+/* ═══ EQUIPE MÉDICA — cartão escuro, estilo referência ═══ */
+.doc-card{
+  position:relative;border-radius:24px;overflow:hidden;
+  background:linear-gradient(165deg,var(--ink) 0%,var(--ink-2) 100%);
+  border:1px solid rgba(217,186,110,.18);
+  transition:box-shadow .4s ease,transform .4s ease;
+}
+.doc-card:hover{transform:translateY(-6px);box-shadow:0 30px 60px rgba(11,22,38,.3);}
+.doc-card-head{padding:2.2rem 2.2rem 1.4rem;}
+.doc-card-head h3{color:var(--gold-2);font-size:1.35rem;margin-bottom:.35rem;}
+.doc-card-head .doc-crm{font-size:.76rem;color:rgba(255,255,255,.55);letter-spacing:.03em;margin-bottom:1.1rem;}
+.doc-card-head p{font-size:.87rem;line-height:1.75;color:rgba(255,255,255,.68);margin-bottom:1.3rem;}
+.doc-focus{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.4rem;}
+.doc-focus span{font-size:.7rem;font-weight:600;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);padding:.38rem .75rem;border-radius:999px;}
+.doc-photo{position:relative;width:100%;aspect-ratio:4/5;overflow:hidden;}
+.doc-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;transition:transform .6s cubic-bezier(.16,1,.3,1);}
+.doc-card:hover .doc-photo img{transform:scale(1.05);}
+.doc-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(11,22,38,.55) 0%,rgba(11,22,38,0) 32%);pointer-events:none;}
+.doc-cta-wrap{position:absolute;bottom:1.2rem;left:1.2rem;right:1.2rem;display:flex;justify-content:flex-end;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s;}
+.doc-card:hover .doc-cta-wrap{opacity:1;transform:translateY(0);}
+.doc-cta{font-size:.82rem;font-weight:700;color:var(--ink);display:inline-flex;align-items:center;gap:.4rem;background:var(--gold-2);padding:.65rem 1.15rem;border-radius:999px;box-shadow:0 12px 26px rgba(0,0,0,.3);}
+@media(max-width:860px){ .equipe-grid{grid-template-columns:1fr;} }
+
+/* ═══ PARA QUEM É ═══ */
+#paraquem{padding:6.5rem 0;background:var(--white);position:relative;overflow:hidden;}
+.paraquem-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+.paraquem-list{display:flex;flex-direction:column;gap:1rem;}
+.paraquem-item{
+  display:flex;align-items:flex-start;gap:1rem;background:var(--paper);border:1px solid var(--line);
+  border-radius:14px;padding:1.2rem 1.4rem;transition:transform .35s cubic-bezier(.16,1,.3,1),border-color .3s,box-shadow .3s;
+}
+.paraquem-item:hover{transform:translateX(6px);border-color:rgba(184,146,58,.4);box-shadow:0 14px 30px rgba(20,33,61,.08);}
+.paraquem-item .chk{
+  flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--gold);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+}
+.paraquem-item p{font-size:.92rem;color:var(--text);font-weight:500;line-height:1.5;}
+.paraquem-card{
+  background:var(--ink);border-radius:24px;padding:2.6rem;color:#fff;position:relative;overflow:hidden;
+  box-shadow:0 30px 70px rgba(20,33,61,.25);
+}
+.paraquem-card::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(217,186,110,.25),transparent 70%);}
+.paraquem-card h3{color:#fff;font-size:1.5rem;margin-bottom:1rem;position:relative;}
+.paraquem-card p{color:rgba(255,255,255,.72);font-size:.95rem;line-height:1.85;margin-bottom:1.8rem;position:relative;}
+@media(max-width:900px){ .paraquem-grid{grid-template-columns:1fr;gap:2.5rem;} }
+
+/* ═══ MICRO ANIMAÇÕES EXTRA ═══ */
+.nav-links a{position:relative;}
+.nav-links a:not(.nav-cta)::after{content:'';position:absolute;left:0;right:0;bottom:-6px;height:2px;background:var(--gold-2);transform:scaleX(0);transform-origin:right;transition:transform .3s ease;}
+.nav-links a:not(.nav-cta):hover::after{transform:scaleX(1);transform-origin:left;}
+.eyebrow{animation:eyebrowIn .7s ease both;}
+@keyframes eyebrowIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
 </style>
 </head>
 <body>
+
+<div id="scrollProgress"></div>
 
 <!-- ═══ PRELOADER / SPLASH ═══ -->
 <div id="preloader">
@@ -610,44 +721,35 @@ setTimeout(function(){
 
 <!-- ═══ ESPECIALIDADES ═══ -->
 
-<section id="especialidades" class="section">
+<section id="especialidades">
   <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow" style="justify-content:center;display:inline-flex">Como podemos ajudar</span>
-      <h2>Especialidades atendidas</h2>
-      <p>Nossa rede reúne médicos parceiros para cuidar de você em cada uma dessas frentes.</p>
-    </div>
-
-    
     <div class="esp-grid">
-      
-      
-      <div class="esp-card reveal" style="transition-delay:0.0s">
+
+      <div class="esp-card reveal zoom" style="transition-delay:0.0s">
         <div class="esp-icon"><img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784167678/Massas_Sabores_25_k45agt.png" alt="Ortopedia" loading="lazy"></div>
         <h3>Ortopedia</h3>
         <p>Fale com a nossa equipe e agende uma avaliação com o especialista parceiro dessa área.</p>
       </div>
-      
-      <div class="esp-card reveal" style="transition-delay:0.08s">
+
+      <div class="esp-card reveal zoom" style="transition-delay:0.1s">
         <div class="esp-icon"><img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784167749/Massas_Sabores_27_bnoeyj.png" alt="Neurocirurgia" loading="lazy"></div>
         <h3>Neurocirurgia</h3>
         <p>Fale com a nossa equipe e agende uma avaliação com o especialista parceiro dessa área.</p>
       </div>
-      
-      <div class="esp-card reveal" style="transition-delay:0.16s">
+
+      <div class="esp-card reveal zoom" style="transition-delay:0.2s">
         <div class="esp-icon"><img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784167748/Massas_Sabores_29_lplw7h.png" alt="Coluna e Dor Crônica" loading="lazy"></div>
         <h3>Coluna e Dor Crônica</h3>
         <p>Fale com a nossa equipe e agende uma avaliação com o especialista parceiro dessa área.</p>
       </div>
-      
-      <div class="esp-card reveal" style="transition-delay:0.24s">
+
+      <div class="esp-card reveal zoom" style="transition-delay:0.3s">
         <div class="esp-icon"><img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784167746/Massas_Sabores_28_x6adcx.png" alt="Doenças do Sistema Nervoso" loading="lazy"></div>
         <h3>Doenças do Sistema Nervoso</h3>
         <p>Fale com a nossa equipe e agende uma avaliação com o especialista parceiro dessa área.</p>
       </div>
-      
+
     </div>
-    
   </div>
 </section>
 
@@ -684,6 +786,24 @@ setTimeout(function(){
   </div>
 </section>
 
+<!-- ═══ VÍDEO INSTITUCIONAL ═══ -->
+<section id="video-sec">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" style="justify-content:center;display:inline-flex">Conheça a Life Health</span>
+      <h2>Um cuidado que você sente desde o primeiro contato</h2>
+    </div>
+    <div class="video-frame reveal zoom">
+      <video id="lifeVideo" playsinline preload="metadata" poster="https://res.cloudinary.com/dec2b0u1/image/upload/v1784162236/ChatGPT_Image_15_de_jul._de_2026_21_35_52_bacmhw.png">
+        <source src="https://res.cloudinary.com/dec2b0u1/video/upload/v1784557680/IMG_0003_1_rvhrw7.mp4" type="video/mp4">
+      </video>
+      <div class="video-play" id="videoPlayOverlay" onclick="toggleLifeVideo()">
+        <div class="video-play-btn"><i data-lucide="play" style="width:30px;height:30px;margin-left:4px" fill="white"></i></div>
+      </div>
+    </div>
+    <div class="video-caption"><i data-lucide="sparkles" style="width:16px;height:16px"></i> Bastidores da rotina de cuidado organizada pela nossa equipe.</div>
+  </div>
+</section>
 
 <!-- ═══ DIFERENCIAIS ═══ -->
 <section id="diferenciais" class="section">
@@ -697,6 +817,8 @@ setTimeout(function(){
       <div class="dif-card reveal" style="transition-delay:.08s"><div class="dif-icon"><i data-lucide="calendar-check" style="width:22px;height:22px"></i></div><h3>Agendamento sem complicação</h3><p>Você fala com a gente pelo WhatsApp e cuidamos de todo o resto do agendamento.</p></div>
       <div class="dif-card reveal" style="transition-delay:.16s"><div class="dif-icon"><i data-lucide="heart-pulse" style="width:22px;height:22px"></i></div><h3>Acompanhamento humanizado</h3><p>Ficamos com você em cada etapa, não só na hora de marcar a consulta.</p></div>
       <div class="dif-card reveal" style="transition-delay:.24s"><div class="dif-icon"><i data-lucide="book-open" style="width:22px;height:22px"></i></div><h3>Conteúdo confiável</h3><p>No blog, trazemos informação de saúde séria para te ajudar a entender seu caso.</p></div>
+      <div class="dif-card reveal" style="transition-delay:.32s"><div class="dif-icon"><i data-lucide="users" style="width:22px;height:22px"></i></div><h3>Rede única e integrada</h3><p>Ortopedia e neurocirurgia conversam entre si, evitando encaminhamentos perdidos.</p></div>
+      <div class="dif-card reveal" style="transition-delay:.4s"><div class="dif-icon"><i data-lucide="message-circle-heart" style="width:22px;height:22px"></i></div><h3>Atendimento próximo</h3><p>Você fala com pessoas de verdade, prontas para entender o seu caso com calma.</p></div>
     </div>
   </div>
 </section>
@@ -711,49 +833,43 @@ setTimeout(function(){
     </div>
 
     <div class="equipe-grid">
-      <!-- Foto do Dr. Rubens -->
+      <!-- Dr. Rubens -->
       <div class="doc-card reveal">
-        <div class="doc-photo">
-          <img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784161554/Massas_Sabores_22_cij933.png" alt="Dr. Rubens">
-          <div class="doc-photo-badge">
-            <h3>Dr. Rubens</h3>
-            <span>Ortopedia</span>
-            <div class="doc-crm">CRM/RQE a confirmar</div>
-          </div>
-        </div>
-        <div class="doc-body">
-          <p>O Dr. Rubens Rodrigues atua desde 1980 na área de Ortopedia, com especialização em cirurgia minimamente invasiva. Formado pela USP e com residência médica no Instituto de Ortopedia e Traumatologia do Hospital das Clínicas da Faculdade de Medicina da USP, construiu uma trajetória sólida marcada pela experiência, atualização constante e dedicação ao cuidado do paciente. Reconhecido em sua área, também é membro da Sociedade Brasileira do Quadril e da Academia Americana de Cirurgiões Ortopédicos, reunindo conhecimento técnico e ampla vivência clínica no tratamento de condições relacionadas ao quadril, à coluna e à dor.</p>
+        <div class="doc-card-head">
+          <h3>Dr. Rubens</h3>
+          <div class="doc-crm">Ortopedia · CRM/RQE a confirmar</div>
+          <p>Atua desde 1980 na área de Ortopedia, com especialização em cirurgia minimamente invasiva. Formado pela USP, com residência no Instituto de Ortopedia e Traumatologia do HC-FMUSP, construiu uma trajetória marcada pela experiência e dedicação ao cuidado do paciente. Membro da Sociedade Brasileira do Quadril e da Academia Americana de Cirurgiões Ortopédicos.</p>
           <div class="doc-focus">
             <span>Coluna e articulações</span>
             <span>Traumas e lesões</span>
             <span>Ortopedia</span>
           </div>
-          
-          <a href="https://wa.me/5511971899972?text=Olá! Gostaria de agendar uma consulta com o Dr. Rubens pela Life Health." target="_blank" class="doc-cta">Agendar com Dr. Rubens <i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
-          
+        </div>
+        <div class="doc-photo">
+          <img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784161554/Massas_Sabores_22_cij933.png" alt="Dr. Rubens">
+          <div class="doc-cta-wrap">
+            <a href="https://wa.me/5511971899972?text=Olá! Gostaria de agendar uma consulta com o Dr. Rubens pela Life Health." target="_blank" class="doc-cta">Agendar <i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
+          </div>
         </div>
       </div>
 
-      <!-- Foto do Dr. Dantas (formato diferente — usando 'contain' para não cortar) -->
+      <!-- Dr. Dantas -->
       <div class="doc-card reveal" style="transition-delay:.1s">
-        <div class="doc-photo">
-          <img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784161553/Massas_Sabores_21_x2qfvz.png" alt="Dr. Dantas">
-          <div class="doc-photo-badge">
-            <h3>Dr. Dantas</h3>
-            <span>Neurocirurgia</span>
-            <div class="doc-crm">CRM/RQE a confirmar</div>
-          </div>
-        </div>
-        <div class="doc-body">
-          <p>Dr. Dantas Mageste é neurocirurgião com atuação no tratamento de doenças neurológicas, da coluna vertebral e condições cerebrovasculares. Com formação sólida e experiência em neurorradiologia intervencionista, ele trabalha com foco em diagnósticos precisos, indicações cirúrgicas criteriosas e abordagens minimamente invasivas, priorizando sempre a segurança, a precisão e o bem-estar do paciente.</p>
+        <div class="doc-card-head">
+          <h3>Dr. Dantas</h3>
+          <div class="doc-crm">Neurocirurgia · CRM/RQE a confirmar</div>
+          <p>Neurocirurgião com atuação no tratamento de doenças neurológicas, da coluna vertebral e condições cerebrovasculares. Com formação sólida em neurorradiologia intervencionista, trabalha com foco em diagnósticos precisos, indicações cirúrgicas criteriosas e abordagens minimamente invasivas.</p>
           <div class="doc-focus">
             <span>Coluna e dor crônica</span>
             <span>Doenças cerebrais</span>
             <span>Neurocirurgia</span>
           </div>
-          
-          <a href="https://wa.me/5511971899972?text=Olá! Gostaria de agendar uma consulta com o Dr. Dantas pela Life Health." target="_blank" class="doc-cta">Agendar com Dr. Dantas <i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
-          
+        </div>
+        <div class="doc-photo">
+          <img src="https://res.cloudinary.com/dec2b0u1/image/upload/v1784161553/Massas_Sabores_21_x2qfvz.png" alt="Dr. Dantas">
+          <div class="doc-cta-wrap">
+            <a href="https://wa.me/5511971899972?text=Olá! Gostaria de agendar uma consulta com o Dr. Dantas pela Life Health." target="_blank" class="doc-cta">Agendar <i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
+          </div>
         </div>
       </div>
     </div>
