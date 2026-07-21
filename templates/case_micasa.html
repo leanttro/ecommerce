@@ -104,8 +104,13 @@ a{text-decoration:none;color:inherit;}
 .nav-cta i{width:15px;height:15px;}
 @media(max-width:640px){.logo-img{height:56px;} #navbar.scrolled .logo-img{height:46px;} .nav-cta span{display:none;}}
 
-/* ═══ HERO (agora é o próprio carrossel de fotos) ═══ */
-#hero-detail{position:relative;background:var(--olive-dker);color:#fff;overflow:hidden;height:min(64vh,560px);min-height:340px;}
+/* ═══ FAIXA DE TÍTULO (acima do carrossel, não cobre a foto) ═══ */
+.hero-title-bar{position:relative;background:var(--olive-dker);color:#fff;overflow:hidden;padding:2.2rem 0 1.6rem;}
+.hero-detail-leaf{position:absolute;top:1.4rem;right:2rem;width:64px;color:#E7B79A;opacity:.5;z-index:1;pointer-events:none;}
+.hero-detail-title{font-size:clamp(1.5rem,3vw,2.3rem);max-width:760px;color:#fff;position:relative;z-index:2;}
+
+/* ═══ HERO (carrossel de fotos) ═══ */
+#hero-detail{position:relative;background:var(--olive-dker);color:#fff;overflow:hidden;height:min(56vh,480px);min-height:300px;}
 #heroTrack{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;
   -webkit-overflow-scrolling:touch;scrollbar-width:none;}
 #heroTrack::-webkit-scrollbar{display:none;}
@@ -113,11 +118,6 @@ a{text-decoration:none;color:inherit;}
 .hero-slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;
   filter:blur(32px) brightness(.5) saturate(1.15);transform:scale(1.18);}
 .hero-slide img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;}
-.hero-detail-overlay-top{position:absolute;inset:0;pointer-events:none;z-index:1;
-  background:linear-gradient(to bottom,rgba(37,42,26,.85) 0%,rgba(37,42,26,.32) 32%,transparent 58%,rgba(37,42,26,.6) 100%);}
-.hero-detail-leaf{position:absolute;top:2rem;right:2rem;width:80px;color:#E7B79A;opacity:.5;z-index:2;pointer-events:none;}
-.hero-detail-inner{position:absolute;top:0;left:0;right:0;z-index:2;padding:3.2rem 0 0;pointer-events:none;}
-.hero-detail-title{font-size:clamp(2.2rem,5vw,4rem);max-width:760px;color:#fff;}
 
 .hero-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;
   background:rgba(247,243,236,.14);border:1.5px solid rgba(247,243,236,.32);display:flex;align-items:center;
@@ -130,7 +130,8 @@ a{text-decoration:none;color:inherit;}
 .hero-dot{width:8px;height:8px;border-radius:50%;background:rgba(247,243,236,.38);border:none;cursor:pointer;
   transition:all .25s;padding:0;}
 .hero-dot.active{background:var(--terracotta);width:24px;border-radius:4px;}
-@media(max-width:640px){ #hero-detail{height:min(48vh,400px);min-height:300px;} .hero-nav{display:none;} }
+@media(max-width:640px){ #hero-detail{height:min(42vh,340px);min-height:260px;} .hero-nav{display:none;} }
+
 
 /* ═══ CONTEÚDO ═══ */
 .section{padding:5rem 0;}
@@ -194,17 +195,7 @@ a{text-decoration:none;color:inherit;}
 {% if p.imagem5 %}{% set _ = hero_imgs.append(p.imagem5) %}{% endif %}
 {% if hero_imgs|length == 0 and p.imagem1 %}{% set _ = hero_imgs.append(p.imagem1) %}{% endif %}
 
-<section id="hero-detail">
-  <div id="heroTrack">
-    {% for img in hero_imgs %}
-    <div class="hero-slide">
-      <div class="hero-slide-bg" style="background-image:url('{{ img }}');"></div>
-      <img src="{{ img }}" alt="Foto {{ loop.index }} do quarto {{ p.nome }}" loading="{{ 'eager' if loop.first else 'lazy' }}">
-    </div>
-    {% endfor %}
-  </div>
-  <div class="hero-detail-overlay-top"></div>
-
+<div class="hero-title-bar">
   <svg class="hero-detail-leaf leaf-anim" viewBox="0 0 150 210" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <path class="leaf-line" d="M70 205 C55 150 70 95 60 55 C55 35 75 18 95 8"/>
     <path class="leaf-line" d="M68 185 Q95 158 120 165 Q98 180 68 185"/>
@@ -214,10 +205,20 @@ a{text-decoration:none;color:inherit;}
     <path class="leaf-line" d="M72 45 Q95 20 115 30 Q95 42 72 45"/>
     <path class="leaf-line" d="M80 20 Q62 2 48 5 Q65 17 80 20"/>
   </svg>
-
-  <div class="container hero-detail-inner">
+  <div class="container">
     <span class="eyebrow on-dark">Nossa acomodação</span>
     <h1 class="hero-detail-title">{{ p.nome }}</h1>
+  </div>
+</div>
+
+<section id="hero-detail">
+  <div id="heroTrack">
+    {% for img in hero_imgs %}
+    <div class="hero-slide">
+      <div class="hero-slide-bg" style="background-image:url('{{ img }}');"></div>
+      <img src="{{ img }}" alt="Foto {{ loop.index }} do quarto {{ p.nome }}" loading="{{ 'eager' if loop.first else 'lazy' }}">
+    </div>
+    {% endfor %}
   </div>
 
   {% if hero_imgs|length > 1 %}
