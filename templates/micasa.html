@@ -1492,10 +1492,19 @@ function selectLang(code, name) {
     try{ if(window.lucide) lucide.createIcons(); }catch(e){}
 
     if (code === 'pt') {
-        var sel = document.querySelector('.goog-te-combo');
-        if (sel) { sel.value = ''; sel.dispatchEvent(new Event('change')); }
         document.getElementById('translate-btn').innerHTML = '<i data-lucide="languages" aria-hidden="true"></i> Traduzir';
         try{ if(window.lucide) lucide.createIcons(); }catch(e){}
+
+        // O truque de "sel.value = ''" não restaura o texto original de verdade
+        // (é só um placeholder do combo, não está ligado à função de restaurar do Google).
+        // Por isso limpamos o cookie que o Google Translate usa e recarregamos a página
+        // já sem tradução, garantindo que o conteúdo volte ao português original.
+        var hostname = window.location.hostname;
+        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + hostname;
+        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.' + hostname;
+
+        location.reload();
         return;
     }
 
