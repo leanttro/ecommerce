@@ -560,6 +560,34 @@ footer{background:var(--ink-2);color:rgba(255,255,255,.55);padding:4rem 0 1.6rem
 #video-sec::before{width:340px;height:340px;background:rgba(184,146,58,.16);top:-40px;left:6%;}
 #video-sec::after{width:260px;height:260px;background:rgba(217,186,110,.14);bottom:-20px;right:8%;}
 
+.tarja-loop{
+  position:relative;overflow:hidden;
+  background:linear-gradient(90deg,var(--ink),var(--ink-2));
+  border-radius:999px;
+  max-width:620px;width:100%;
+  margin:0 auto 2rem;
+  box-shadow:0 14px 34px rgba(20,33,61,.22);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+}
+.tarja-loop.tarja-bottom{margin:2rem auto 0;}
+.tarja-scroller{
+  display:flex;width:max-content;
+  animation:tarjaScroll 26s linear infinite;
+}
+.tarja-loop.tarja-bottom .tarja-scroller{animation-direction:reverse;}
+.tarja-track{
+  display:flex;align-items:center;flex-shrink:0;white-space:nowrap;
+  gap:.85rem;padding:.8rem 1.4rem;
+}
+.tarja-item{color:#fff;font-size:.82rem;font-weight:600;letter-spacing:.01em;}
+.tarja-dot{color:var(--gold-2);font-size:.65rem;}
+@keyframes tarjaScroll{
+  0%{transform:translateX(0);}
+  100%{transform:translateX(-50%);}
+}
+@media (prefers-reduced-motion: reduce){ .tarja-scroller{animation:none;} }
+
 .video-frame-wrap{
   position:relative;display:flex;justify-content:center;
   perspective:1600px;
@@ -814,6 +842,28 @@ setTimeout(function(){
       <span class="eyebrow" style="justify-content:center;display:inline-flex">Conheça a Life Health</span>
       <h2>Um cuidado que você sente desde o primeiro contato</h2>
     </div>
+
+    <div class="tarja-loop tarja-top">
+      <div class="tarja-scroller">
+        <div class="tarja-track">
+          <span class="tarja-item">Cirurgias minimamente invasivas</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Uso preciso de medicação</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Menor tempo de recuperação</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Acompanhamento em cada etapa</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Cirurgia cervical</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Cirurgia no lombar</span><span class="tarja-dot">●</span>
+        </div>
+        <div class="tarja-track" aria-hidden="true">
+          <span class="tarja-item">Cirurgias minimamente invasivas</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Uso preciso de medicação</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Menor tempo de recuperação</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Acompanhamento em cada etapa</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Cirurgia cervical</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Cirurgia no lombar</span><span class="tarja-dot">●</span>
+        </div>
+      </div>
+    </div>
+
     <div class="video-frame-wrap">
       <div class="video-glow"></div>
       <div class="video-frame" id="lifeVideoFrame">
@@ -822,6 +872,28 @@ setTimeout(function(){
         </video>
       </div>
     </div>
+
+    <div class="tarja-loop tarja-bottom">
+      <div class="tarja-scroller">
+        <div class="tarja-track">
+          <span class="tarja-item">Cirurgia no lombar</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Cirurgia cervical</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Acompanhamento em cada etapa</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Menor tempo de recuperação</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Uso preciso de medicação</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Cirurgias minimamente invasivas</span><span class="tarja-dot">●</span>
+        </div>
+        <div class="tarja-track" aria-hidden="true">
+          <span class="tarja-item">Cirurgia no lombar</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Cirurgia cervical</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Acompanhamento em cada etapa</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Menor tempo de recuperação</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Uso preciso de medicação</span><span class="tarja-dot">●</span>
+          <span class="tarja-item">Cirurgias minimamente invasivas</span><span class="tarja-dot">●</span>
+        </div>
+      </div>
+    </div>
+
     <div class="video-caption"><i data-lucide="sparkles" style="width:16px;height:16px"></i> Bastidores da rotina de cuidado organizada pela nossa equipe.</div>
   </div>
 </section>
