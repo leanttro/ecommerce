@@ -247,6 +247,12 @@ button{font-family:inherit;}
 .nav-links a:not(.nav-cta):hover::after{right:0;}
 .nav-links a.nav-cta{background:var(--terracotta);color:#fff!important;padding:.6rem 1.3rem;border-radius:100px;line-height:1;display:inline-flex;align-items:center;}
 .nav-cta:hover{background:var(--terracotta-dk);}
+.nav-lang{display:flex;align-items:center;gap:.35rem;}
+.nav-lang a{font-size:.72rem;font-weight:700;color:var(--muted,#9a9a8f);opacity:.65;padding-bottom:0;transition:opacity .2s,color .2s;}
+.nav-lang a:not(.nav-cta)::after{display:none;}
+.nav-lang a:hover{opacity:1;color:var(--olive-dker);}
+.nav-lang a.nav-lang-active{color:var(--terracotta);opacity:1;}
+.nav-lang-sep{font-size:.7rem;color:var(--muted,#9a9a8f);opacity:.5;}
 .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:.4rem;}
 .hamburger span{width:22px;height:2px;background:var(--olive-dker);border-radius:2px;}
 
@@ -629,6 +635,9 @@ setTimeout(function(){
       <li><a href="#acomodacoes">Quartos</a></li>
       <li><a href="#localizacao">Localização</a></li>
       <li><a href="#blog">Blog</a></li>
+      <li class="nav-lang">
+        <a href="javascript:void(0)" id="nav-lang-pt" class="nav-lang-active" onclick="selectLang('pt','Português')">PT</a><span class="nav-lang-sep">/</span><a href="javascript:void(0)" id="nav-lang-en" onclick="selectLang('en','English')">EN</a>
+      </li>
       <li><a href="#contato" class="nav-cta">Contato</a></li>
     </ul>
     <button class="hamburger" onclick="openMobile()" aria-label="Abrir menu"><span></span><span></span><span></span></button>
@@ -1485,6 +1494,13 @@ function selectLang(code, name) {
     currentLang = code;
     drawerOpen  = false;
     document.getElementById('translate-drawer').classList.remove('open');
+
+    var navPt = document.getElementById('nav-lang-pt');
+    var navEn = document.getElementById('nav-lang-en');
+    if (navPt && navEn) {
+        navPt.classList.toggle('nav-lang-active', code === 'pt');
+        navEn.classList.toggle('nav-lang-active', code === 'en');
+    }
 
     var lang = LANGS.find(function(l){ return l.code === code; });
     document.getElementById('translate-btn').innerHTML =
