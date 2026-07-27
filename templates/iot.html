@@ -1,50 +1,40 @@
 <!--
-  TEMPLATE: iot_ortopedia.html  (v2 — redesign completo)
+  TEMPLATE: iot_ortopedia.html  (v3 — redesign visual "vivo & arredondado")
   ─────────────────────────────────────────────────────────────
   Bespoke para a IOT — Instituto de Ortopedia e Traumatologia
   (Dr. Rubens Rodrigues, CRM 36480 — especialista em Coluna e Quadril,
   cirurgia minimamente invasiva).
 
-  Esta é a SEGUNDA versão do template: mesmo conteúdo e mesmo contrato
-  de variáveis da v1 (que seguia a linguagem visual do life.html), mas
-  com uma linguagem visual totalmente diferente — estilo editorial/
-  clínico, tipografia serifada em destaque, seções numeradas em índice
-  (01, 02, 03...), sem cortes diagonais, sem gradientes, sem cards com
-  sombra/hover "SaaS". As cores continuam sendo as reais da marca
-  (navy #163B5C e coral #DD4A2E), só que usadas de forma mais sóbria
-  (quase monocromática, com o coral reservado para poucos acentos).
+  Este arquivo troca SOMENTE o design da v2: paleta viva (inspirada
+  no token-system do template "Guia de Artesanato" — creme, tinta
+  quase-preta e laranja vívido), cantos generosos/arredondados em
+  cards, botões, molduras e chips, muito mais movimento (blobs
+  orgânicos, chips flutuantes, hover com lift/scale, marquee, CTA
+  com pulso) e um vídeo vertical 9:16 em destaque no hero (mesma
+  proporção no mobile e no desktop). Microcirurgia, cirurgia da
+  coluna lombar e cirurgia minimamente invasiva ganham uma seção
+  própria de destaque logo abaixo do hero.
 
-  Segue o MESMO contrato de variáveis que life.html/pascoa.html/index.html
-  recebem da rota index() do app.py — nada no app.py precisa mudar.
+  Todo o CONTRATO DE VARIÁVEIS/IDS é o mesmo da v2 — nada no
+  app.py precisa mudar:
+  - Jinja: produtos / p.nome / p.descricao / p.slug / loja.slug_url,
+    posts / post.capa / post.titulo / post.resumo / post.data / post.slug
+  - IDs usados pelo JS: navbar, mobileMenu, blogCarousel, blogPrev,
+    blogNext, btnCarrossel, btnGrade, blogCarouselWrap, blogGridWrap,
+    leadForm, leadSuccessMsg, preloader
+  - Classes usadas pelo JS: .reveal, .blog-card, .scrolled, .open
+  - Campos do formulário: nome, whatsapp, email, mensagem, profissao
+  - Links de WhatsApp/telefone/e-mail e âncoras (#home, #especialista,
+    #procedimentos, #blog, #contato) inalterados.
 
   ANTES DE SUBIR PARA PRODUÇÃO:
-  1) Salvar este arquivo como /templates/<nome_do_template_ativo>.html
-     (sugestão: "iot" ou "ortopedia").
-  2) Adicionar esse mesmo nome na whitelist de template_ativo em
-     app.py (linha ~607, dentro do "if template_name not in [...]").
-  3) Não há dado "a confirmar" pendente — CRM 36480 foi informado pelo
-     cliente e usado como está.
-  4) LOGO: já está usando o arquivo oficial (PNG branco hospedado no site
-     da IOT: iotortopedia.com.br/.../IOT-Ortopedista-especialista-em-Coluna-e-Quadril.png),
-     via classe .logo-img — não é mais texto/CSS. Como o PNG original é
-     branco, aplico um CSS "mask" que preenche o desenho do logo com a cor
-     navy do site (var(--ink)) no header/rodapé claro, e com branco puro
-     (classe .on-dark) no rodapé escuro. Se um dia a IOT hospedar o logo
-     em outro lugar (ex.: CDN/Cloudinary própria), só trocar a URL dentro
-     de --logo-url em .logo-img (aparece uma única vez no CSS).
-     Favicon continua provisório em texto — procure "LOGO PLACEHOLDER" (1
-     ocorrência restante) para trocar quando tiverem um favicon dedicado.
-  5) FOTO DO DR. RUBENS: ainda não tenho asset real. Procure por
-     "AVATAR PLACEHOLDER" (2 ocorrências — seção "Bem-vindo" e seção
-     "Nosso Especialista") e troque pela foto real quando disponível.
-     Hoje aparece um retângulo com as iniciais "RR", no mesmo espírito
-     do life.html original.
-  6) MAPA: iframe do Google Maps usa o endereço em texto (funciona sem
-     API key). Se a IOT tiver uma API key, dá pra trocar por um embed
-     mais preciso.
-  7) Se um dia a IOT quiser puxar telefone/endereço/e-mail do painel em
-     vez de texto fixo, é só trocar pelo `{{ loja.campo }}`
-     correspondente — a estrutura do app.py já suporta isso.
+  1) Salvar este arquivo como /templates/<nome_do_template_ativo>.html.
+  2) Adicionar o nome na whitelist de template_ativo em app.py.
+  3) LOGO / FOTOS: mesmos assets reais já usados na v2 (nenhuma
+     imagem placeholder nova foi introduzida).
+  4) VÍDEO: usa o arquivo enviado pelo cliente, formato retrato 9:16,
+     hospedado no Cloudinary. Se um dia trocarem o vídeo, a URL
+     aparece uma única vez, no atributo src da tag <video id="heroVideo">.
   ─────────────────────────────────────────────────────────────
 -->
 <!DOCTYPE html>
@@ -55,42 +45,43 @@
 
 <!-- SEO PRIMÁRIO -->
 <title>IOT | Instituto de Ortopedia e Traumatologia — Dr. Rubens Rodrigues</title>
-<meta name="description" content="IOT Instituto de Ortopedia e Traumatologia. Dr. Rubens Rodrigues (CRM 36480), especialista em coluna e quadril, cirurgia minimamente invasiva. Atendimento em São Paulo/SP.">
-<meta name="keywords" content="ortopedista, especialista em coluna, especialista em quadril, cirurgia minimamente invasiva, hérnia de disco, dor lombar, endoscopia da coluna, Dr. Rubens Rodrigues, IOT ortopedia São Paulo">
+<meta name="description" content="IOT Instituto de Ortopedia e Traumatologia. Dr. Rubens Rodrigues (CRM 36480), especialista em coluna e quadril, microcirurgia, cirurgia da coluna lombar e cirurgia minimamente invasiva. Atendimento em São Paulo/SP.">
+<meta name="keywords" content="ortopedista, especialista em coluna, especialista em quadril, microcirurgia da coluna, cirurgia da coluna lombar, cirurgia minimamente invasiva, hérnia de disco, dor lombar, endoscopia da coluna, Dr. Rubens Rodrigues, IOT ortopedia São Paulo">
 <meta name="author" content="IOT Instituto de Ortopedia e Traumatologia">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 <link rel="canonical" href="https://exemplo-preview.com.br/iot-ortopedia/">
 
 <!-- FAVICON / ÍCONE DO SITE -->
-<!-- LOGO PLACEHOLDER: favicon provisório em SVG (letras IOT). Trocar pelo ícone oficial assim que a marca enviar o arquivo. -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23163B5C'/%3E%3Ctext x='32' y='40' font-family='Georgia,serif' font-size='20' font-weight='700' fill='%23FFFFFF' text-anchor='middle'%3EIOT%3C/text%3E%3C/svg%3E">
-<meta name="theme-color" content="#163B5C">
+<!-- LOGO OFICIAL usado como favicon (aparece na aba do navegador e pode ser usado pelo Google nos resultados de busca) -->
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1784202440/Open_Sauce_-_VISUAL_3_-Picsart-AiImageEnhancer_h6avuy.png">
+<link rel="apple-touch-icon" href="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1784202440/Open_Sauce_-_VISUAL_3_-Picsart-AiImageEnhancer_h6avuy.png">
+<meta name="theme-color" content="#1B1B1B">
 
 <!-- OPEN GRAPH -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="IOT Instituto de Ortopedia e Traumatologia">
 <meta property="og:title" content="IOT | Instituto de Ortopedia e Traumatologia — Dr. Rubens Rodrigues">
-<meta property="og:description" content="Especialista em coluna e quadril, cirurgia minimamente invasiva. CRM 36480. Atendimento em São Paulo/SP.">
+<meta property="og:description" content="Especialista em coluna e quadril, microcirurgia e cirurgia minimamente invasiva. CRM 36480. Atendimento em São Paulo/SP.">
 <meta property="og:url" content="https://exemplo-preview.com.br/iot-ortopedia/">
-<meta property="og:image" content="https://placehold.co/1200x630/163B5C/FFFFFF/png?text=IOT+Ortopedia">
+<meta property="og:image" content="https://placehold.co/1200x630/1B1B1B/FFFFFF/png?text=IOT+Ortopedia">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="pt_BR">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="IOT Instituto de Ortopedia e Traumatologia">
-<meta name="twitter:description" content="Especialista em coluna e quadril, cirurgia minimamente invasiva. Dr. Rubens Rodrigues — CRM 36480.">
-<meta name="twitter:image" content="https://placehold.co/1200x630/163B5C/FFFFFF/png?text=IOT+Ortopedia">
+<meta name="twitter:description" content="Especialista em coluna e quadril, microcirurgia e cirurgia minimamente invasiva. Dr. Rubens Rodrigues — CRM 36480.">
+<meta name="twitter:image" content="https://placehold.co/1200x630/1B1B1B/FFFFFF/png?text=IOT+Ortopedia">
 
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "MedicalBusiness",
   "name": "IOT Instituto de Ortopedia e Traumatologia",
-  "description": "Instituto de ortopedia especializado em coluna e quadril, com foco em cirurgia minimamente invasiva. Atendimento com o Dr. Rubens Rodrigues, CRM 36480.",
+  "description": "Instituto de ortopedia especializado em coluna e quadril, com foco em microcirurgia, cirurgia da coluna lombar e cirurgia minimamente invasiva. Atendimento com o Dr. Rubens Rodrigues, CRM 36480.",
   "url": "https://exemplo-preview.com.br/iot-ortopedia/",
-  "logo": "https://placehold.co/256x256/163B5C/FFFFFF/png?text=IOT",
-  "image": "https://placehold.co/1200x630/163B5C/FFFFFF/png?text=IOT+Ortopedia",
+  "logo": "https://res.cloudinary.com/dzcaxmbjn/image/upload/v1784202440/Open_Sauce_-_VISUAL_3_-Picsart-AiImageEnhancer_h6avuy.png",
+  "image": "https://placehold.co/1200x630/1B1B1B/FFFFFF/png?text=IOT+Ortopedia",
   "telephone": "+551138857082",
   "email": "contato@iotortopedia.com.br",
   "medicalSpecialty": ["Orthopedic", "Spine Surgery", "Hip Surgery"],
@@ -114,21 +105,39 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
 <style>
+/* ══════════════════════════════════════════════════════════════
+   IOT — design tokens (redesign vivo & arredondado)
+   Paleta inspirada no template "Guia de Artesanato": creme
+   luminoso, tinta quase-preta e laranja vívido como acento único,
+   com cantos generosos e muita microanimação.
+   ══════════════════════════════════════════════════════════════ */
 :root{
-  --ink:      #163B5C;
-  --ink-2:    #0D2438;
-  --coral:    #DD4A2E;
-  --paper:    #F6F3EC;
-  --paper-2:  #EFEAE0;
-  --line:     #D9D2C2;
-  --line-dark: rgba(255,255,255,.16);
-  --text:     #2B2E36;
-  --muted:    #6E6A5E;
-  --white:    #FFFFFF;
+  --creme:      #FFFFFF;
+  --creme-alt:  #F7F5F1;
+  --creme-alt2: #F1EEE8;
+  --linha:      #EAE6DE;
+
+  --tinta:      #1B1B1B;
+  --tinta-2:    #100E0B;
+  --texto:      #2B2A27;
+  --muted:      #6B6459;
+
+  --laranja:      #003b64;
+  --laranja-forte:#003b64;
+  --laranja-escuro:#003b64;
+  --laranja-bg:   #dcf1ff;
+  --dourado:      #F2A93B;
+
+  --branco:#FFFFFF;
+
+  --r-sm:14px; --r:20px; --r-lg:28px; --r-xl:40px; --r-pill:999px;
+  --sombra: 0 2px 6px rgba(20,18,14,.06), 0 14px 34px -16px rgba(20,18,14,.18);
+  --sombra-hover: 0 10px 24px rgba(20,18,14,.10), 0 30px 54px -18px rgba(20,18,14,.28);
+  --ease: cubic-bezier(.22,.9,.3,1);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
@@ -136,55 +145,78 @@ html{scroll-behavior:smooth;overflow-x:hidden;}
 body{
   font-family:'Inter',sans-serif;
   font-size:16px;
-  background:var(--paper);
-  color:var(--text);
+  background:var(--creme);
+  color:var(--texto);
   overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
 }
 h1,h2,h3,h4{
-  font-family:'Newsreader',serif;
-  color:var(--ink);
-  line-height:1.1;
-  font-weight:500;
-  letter-spacing:-.01em;
+  font-family:'Fraunces',serif;
+  color:var(--tinta);
+  line-height:1.08;
+  font-weight:600;
+  letter-spacing:-.015em;
 }
 p{ font-family:'Inter',sans-serif; }
 a{text-decoration:none;color:inherit;}
 img{max-width:100%;display:block;}
 ul{list-style:none;}
 button{font-family:inherit;}
-:focus-visible{outline:2px solid var(--coral);outline-offset:3px;}
+:focus-visible{outline:2px solid var(--laranja);outline-offset:3px;border-radius:6px;}
 @media (prefers-reduced-motion: reduce){
   *{animation:none!important;transition:none!important;}
 }
 
-.container{max-width:1240px;margin:0 auto;padding:0 2rem;}
-.idx{
-  font-family:'Inter',sans-serif;font-size:.72rem;font-weight:700;color:var(--coral);
-  letter-spacing:.14em;display:flex;align-items:center;gap:.7rem;margin-bottom:1.4rem;
+@keyframes flutuar{
+  0%,100%{ transform:translateY(0) rotate(var(--rot,0deg)); }
+  50%{ transform:translateY(-14px) rotate(var(--rot,0deg)); }
 }
-.idx::after{content:'';flex:0 0 40px;height:1px;background:var(--coral);}
-.idx.on-dark{color:#F0A995;}
-.idx.on-dark::after{background:rgba(240,169,149,.5);}
+@keyframes blobMorph{
+  0%,100%{ border-radius:42% 58% 65% 35% / 45% 40% 60% 55%; }
+  33%{ border-radius:58% 42% 40% 60% / 55% 60% 40% 45%; }
+  66%{ border-radius:35% 65% 55% 45% / 60% 35% 65% 40%; }
+}
+@keyframes girarSuave{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+@keyframes pulsarAnel{
+  0%{ box-shadow:0 0 0 0 rgba(0,59,100,.45); }
+  70%{ box-shadow:0 0 0 14px rgba(0,59,100,0); }
+  100%{ box-shadow:0 0 0 0 rgba(0,59,100,0); }
+}
+@keyframes surgir{ from{ opacity:0; transform:translateY(18px); } to{ opacity:1; transform:translateY(0); } }
+@keyframes marqueeScroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
 
-/* ─ botões (retos, sem pílula) ─ */
+.container{max-width:1240px;margin:0 auto;padding:0 2rem;}
+
+.idx{
+  font-family:'Inter',sans-serif;font-size:.74rem;font-weight:700;color:var(--laranja);
+  letter-spacing:.12em;display:inline-flex;align-items:center;gap:.6rem;margin-bottom:1.2rem;
+  background:var(--laranja-bg);padding:.5rem 1rem;border-radius:var(--r-pill);
+  text-transform:uppercase;
+}
+.idx.on-dark{color:#FFD9BE;background:rgba(255,255,255,.1);}
+
+/* ─ botões (pílula, vivos) ─ */
 .btn{
   display:inline-flex;align-items:center;gap:.6rem;
-  font-weight:600;font-size:.84rem;letter-spacing:.03em;text-transform:uppercase;
-  padding:1rem 1.7rem;border:1px solid var(--ink);
-  cursor:pointer;transition:background .25s ease, color .25s ease, border-color .25s ease;
-  white-space:nowrap;background:transparent;color:var(--ink);
+  font-weight:700;font-size:.9rem;letter-spacing:.01em;
+  padding:1rem 1.8rem;border:1.5px solid var(--tinta);border-radius:var(--r-pill);
+  cursor:pointer;transition:transform .2s var(--ease), background .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease;
+  white-space:nowrap;background:transparent;color:var(--tinta);
 }
-.btn-fill{background:var(--ink);color:#fff;}
-.btn-fill:hover{background:var(--coral);border-color:var(--coral);}
-.btn-line{border-color:var(--line);color:var(--ink);}
-.btn-line:hover{border-color:var(--ink);}
-.btn-line.on-dark{border-color:rgba(255,255,255,.4);color:#fff;}
-.btn-line.on-dark:hover{border-color:#fff;background:rgba(255,255,255,.08);}
+.btn-fill{
+  background:linear-gradient(135deg,var(--laranja) 0%,var(--laranja-forte) 100%);
+  color:#fff;border-color:transparent;box-shadow:var(--sombra);
+  animation:pulsarAnel 2.6s ease infinite;
+}
+.btn-fill:hover{transform:translateY(-3px) scale(1.02);box-shadow:var(--sombra-hover);}
+.btn-line{border-color:var(--linha);color:var(--tinta);}
+.btn-line:hover{border-color:var(--tinta);background:var(--creme-alt);transform:translateY(-2px);}
+.btn-line.on-dark{border-color:rgba(255,255,255,.35);color:#fff;}
+.btn-line.on-dark:hover{border-color:#fff;background:rgba(255,255,255,.1);}
 
-/* ═══ PRELOADER (barra, não círculo) ═══ */
+/* ═══ PRELOADER ═══ */
 #preloader{
-  position:fixed;inset:0;z-index:99999;background:var(--ink-2);
+  position:fixed;inset:0;z-index:99999;background:var(--tinta-2);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.6rem;
   animation:preloaderOut .8s ease .9s forwards;
 }
@@ -194,8 +226,8 @@ button{font-family:inherit;}
   font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
   color:#fff;padding-left:.9rem;border-left:1px solid rgba(255,255,255,.35);line-height:1.35;
 }
-.preloader-bar{width:220px;height:1px;background:rgba(255,255,255,.2);position:relative;overflow:hidden;}
-.preloader-bar::after{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:var(--coral);animation:barFill 1.1s cubic-bezier(.65,0,.35,1) forwards;}
+.preloader-bar{width:220px;height:4px;background:rgba(255,255,255,.16);position:relative;overflow:hidden;border-radius:var(--r-pill);}
+.preloader-bar::after{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,var(--laranja),var(--laranja-forte));border-radius:var(--r-pill);animation:barFill 1.1s cubic-bezier(.65,0,.35,1) forwards;}
 @keyframes barFill{to{width:100%;}}
 @keyframes preloaderOut{
   0%{opacity:1;visibility:visible;}
@@ -210,159 +242,263 @@ button{font-family:inherit;}
 /* ═══ HEADER ═══ */
 #navbar{
   position:sticky;top:0;left:0;right:0;z-index:1000;
-  background:var(--paper);border-bottom:1px solid var(--line);
-  transition:padding .3s;
+  background:var(--laranja);backdrop-filter:saturate(180%) blur(16px);-webkit-backdrop-filter:saturate(180%) blur(16px);
+  border-bottom:1px solid rgba(255,255,255,.12);
+  transform:translateZ(0);
+  will-change:transform;
 }
-.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding:1.3rem 0;}
-#navbar.scrolled .nav-inner{padding:.9rem 0;}
-.nav-logo{display:flex;align-items:center;gap:.5rem;margin-left:.8rem;}
-/* LOGO OFICIAL: arquivo definitivo enviado pelo cliente. No header (fundo claro)
-   usamos a imagem como veio; no rodapé (fundo navy escuro) aplicamos o filtro
-   brightness(0) invert(1) — mesma técnica já usada no life.html — para garantir
-   contraste em branco sobre fundo escuro. */
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding:1.2rem 0;transition:padding .3s ease;}
+#navbar.scrolled .nav-inner{padding:.75rem 0;}
+.nav-logo{display:flex;align-items:center;gap:.5rem;}
 .logo-img{height:42px;width:auto;display:block;}
-.logo-img.on-dark{filter:brightness(0) invert(1);opacity:.92;}
+.logo-img.on-dark{filter:brightness(0) invert(1);opacity:.95;}
+/* logo em branco (mobile e desktop), já que o cabeçalho agora é azul */
+.nav-logo .logo-img{filter:brightness(0) invert(1);opacity:.95;}
 .logo-side-text{
   font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--ink);padding-left:.9rem;margin-left:.1rem;border-left:1px solid var(--line);
+  color:rgba(255,255,255,.9);padding-left:.9rem;margin-left:.1rem;border-left:1px solid rgba(255,255,255,.3);
   line-height:1.3;max-width:110px;
 }
 .nav-logo.on-dark .logo-side-text,
 #footer .logo-side-text{color:rgba(255,255,255,.85);border-left-color:rgba(255,255,255,.25);}
-@media(max-width:520px){.logo-side-text{display:none;}}
-.nav-links{display:flex;align-items:center;gap:2.4rem;}
-.nav-links a{font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);position:relative;padding-bottom:2px;}
-.nav-links a::after{content:'';position:absolute;left:0;right:100%;bottom:0;height:1px;background:var(--coral);transition:right .25s ease;}
-.nav-links a:hover::after{right:0;}
-.nav-cta{border:1px solid var(--ink);padding:.6rem 1.2rem;display:inline-flex;align-items:center;justify-content:center;line-height:1;padding-bottom:.6rem;}
-.nav-cta::after{display:none;}
-.nav-cta:hover{background:var(--ink);color:#fff;}
-.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:.4rem;}
-.hamburger span{width:22px;height:1.5px;background:var(--ink);}
+@media(max-width:520px){
+  .logo-side-text{display:block;font-size:.6rem;max-width:88px;padding-left:.6rem;margin-left:.3rem;}
+}
+.nav-links{display:flex;align-items:center;gap:.3rem;background:var(--creme-alt);padding:.4rem;border-radius:var(--r-pill);}
+.nav-links a{font-size:.82rem;font-weight:600;color:var(--tinta);padding:.6rem 1.1rem;border-radius:var(--r-pill);display:inline-block;transition:background .2s var(--ease), color .2s var(--ease);}
+.nav-links a:hover{background:var(--branco);box-shadow:var(--sombra);}
+.nav-cta{background:var(--tinta);color:#fff !important;padding:.7rem 1.4rem !important;}
+.nav-cta:hover{background:var(--laranja) !important;box-shadow:none;}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:.5rem;border-radius:var(--r-pill);}
+.hamburger:hover{background:rgba(255,255,255,.12);}
+.hamburger span{width:22px;height:2px;border-radius:2px;background:#fff;}
 
 .mobile-menu{
-  position:fixed;inset:0;background:var(--ink-2);z-index:2000;
+  position:fixed;inset:0;background:var(--tinta-2);z-index:2000;
   display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1.4rem;
   padding:2rem 2.4rem;transform:translateX(100%);transition:transform .45s cubic-bezier(.65,0,.35,1);
 }
 .mobile-menu.open{transform:translateX(0);}
-.mobile-menu a{color:#fff;font-size:1.7rem;font-family:'Newsreader',serif;font-style:italic;}
+.mobile-menu a{color:#fff;font-size:1.8rem;font-family:'Fraunces',serif;font-style:italic;}
 .mobile-menu .idx{margin-bottom:2.5rem;}
-.close-menu{position:absolute;top:1.8rem;right:2rem;background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;}
+.close-menu{position:absolute;top:1.8rem;right:2rem;background:rgba(255,255,255,.1);border:none;color:#fff;font-size:1.3rem;cursor:pointer;width:42px;height:42px;border-radius:50%;}
 
 @media(max-width:860px){
   .nav-links{display:none;}
   .hamburger{display:flex;}
+  .nav-logo{margin-left:.5rem;}
 }
 
 /* ═══ HERO ═══ */
 #hero{
-  background:
-    linear-gradient(rgba(22,59,92,.88), rgba(22,59,92,.92)),
-    url('https://res.cloudinary.com/dec2b0u1/image/upload/v1784202683/Open_Sauce_-_VISUAL_4_ywvbw8.png') center/cover no-repeat;
-  color:#fff;padding:4.5rem 0 0;
+  position:relative;
+  background:var(--creme-alt);
+  padding:3.5rem 0 5rem;
+  overflow:hidden;
 }
-.hero-top{padding-bottom:3.5rem;border-bottom:1px solid var(--line-dark);}
+.hero-blob{
+  position:absolute;width:560px;height:560px;
+  background:#dcf1ff;
+  opacity:.55;filter:blur(2px);
+  animation:blobMorph 12s ease-in-out infinite, flutuar 9s ease-in-out infinite;
+  z-index:0;
+}
+.hero-blob--1{ top:-220px; left:-180px; }
+.hero-blob--2{ bottom:-260px; right:-200px; width:420px;height:420px; background:#dcf1ff; animation-duration:14s, 11s; }
+
+.hero-grid{
+  position:relative;z-index:1;display:grid;
+  grid-template-columns:1.05fr .7fr;
+  grid-template-areas:
+    "copy media"
+    "actions media"
+    "specs media";
+  column-gap:3.5rem; row-gap:0;
+  align-items:center;
+}
+.hero-copy{grid-area:copy;}
+.hero-actions{grid-area:actions;}
+.hero-specs{grid-area:specs;}
+.hero-media{grid-area:media;}
+.hero-copy .idx{--rot:0deg;}
 .hero-headline{
-  font-size:clamp(2.4rem,6vw,5.2rem);font-weight:500;letter-spacing:-.02em;
-  max-width:920px;color:#fff;
+  font-size:clamp(2.3rem,5.2vw,4.4rem);font-weight:600;letter-spacing:-.02em;
+  max-width:640px;color:var(--tinta);
 }
-.hero-headline em{font-style:italic;color:#F0A995;}
-.hero-sub-row{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;margin-top:2.2rem;flex-wrap:wrap;}
-.hero-subtitle{font-size:1.05rem;line-height:1.8;color:rgba(255,255,255,.7);max-width:460px;}
-.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;}
+.hero-headline em{font-style:italic;color:var(--laranja);}
+.hero-subtitle{font-size:1.06rem;line-height:1.8;color:var(--muted);max-width:480px;margin:1.4rem 0 2.2rem;}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2.8rem;}
 
-.hero-specs{display:grid;grid-template-columns:repeat(4,1fr);row-gap:2rem;}
-.hero-spec{padding:2.4rem 1.6rem 2.4rem 1.2rem;border-right:1px solid var(--line-dark);}
-.hero-spec:last-child{border-right:none;}
-.hero-spec i{color:#F0A995;margin-bottom:1rem;display:block;}
-.hero-spec strong{display:block;font-family:'Newsreader',serif;font-size:1.15rem;color:#fff;font-weight:500;margin-bottom:.5rem;}
-.hero-spec span{font-size:.78rem;color:rgba(255,255,255,.6);line-height:1.5;}
+.hero-specs{display:flex;flex-wrap:wrap;gap:.9rem;}
+.hero-spec{
+  display:flex;align-items:center;gap:.7rem;background:var(--branco);border:1px solid var(--linha);
+  padding:.8rem 1.2rem;border-radius:var(--r-pill);box-shadow:var(--sombra);
+}
+.hero-spec i{color:var(--laranja);flex-shrink:0;}
+.hero-spec strong{display:block;font-family:'Fraunces',serif;font-size:.95rem;color:var(--tinta);font-weight:600;line-height:1.1;}
+.hero-spec span{font-size:.7rem;color:var(--muted);}
 
-@media(max-width:860px){
-  .hero-specs{grid-template-columns:1fr 1fr;}
-  .hero-spec{padding-right:1rem;}
-  .hero-spec:nth-child(2n){border-right:none;}
+/* moldura de vídeo vertical 9:16 — igual no mobile e no desktop */
+.hero-media{ position:relative; display:flex; justify-content:center; }
+.phone-frame{
+  position:relative;width:100%;max-width:300px;aspect-ratio:9/16;
+  border-radius:var(--r-xl);overflow:hidden;background:var(--tinta);
+  box-shadow:var(--sombra-hover);border:6px solid var(--branco);
+  animation:surgir .8s var(--ease);
 }
-@media(max-width:560px){
-  .hero-specs{grid-template-columns:1fr;}
-  .hero-spec{border-right:none!important;border-bottom:1px solid var(--line-dark);padding:2rem 0;}
+.phone-frame video{width:100%;height:100%;object-fit:cover;display:block;}
+.phone-frame::after{
+  content:'';position:absolute;inset:0;border-radius:calc(var(--r-xl) - 6px);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);pointer-events:none;
 }
+.hero-chip{
+  position:absolute;display:flex;align-items:center;gap:.55rem;background:var(--branco);
+  padding:.7rem 1.1rem;border-radius:var(--r-pill);box-shadow:var(--sombra-hover);
+  font-size:.78rem;font-weight:700;color:var(--tinta);animation:flutuar 6s ease-in-out infinite;
+  z-index:2;
+}
+.hero-chip i{color:var(--laranja);}
+.hero-chip--1{ top:6%; left:-8%; --rot:-2deg; animation-delay:.2s; }
+.hero-chip--2{ bottom:10%; right:-10%; --rot:2deg; animation-delay:1.1s; }
+@media(max-width:520px){
+  .hero-chip{ font-size:.7rem; padding:.55rem .85rem; }
+}
+
+@media(max-width:980px){
+  #hero{padding:2.2rem 0 3rem;}
+  .hero-grid{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "copy"
+      "media"
+      "actions"
+      "specs";
+    row-gap:1.1rem;
+  }
+  .hero-subtitle{margin:1rem 0 0;}
+  .hero-actions{margin-bottom:1.6rem;}
+  .phone-frame{max-width:230px;}
+  .hero-chip{ left:0; right:0; margin:0 auto; width:max-content; }
+  .hero-chip--1{ top:-1.1rem; bottom:auto; left:0; right:0; }
+  .hero-chip--2{ bottom:-1.1rem; top:auto; left:0; right:0; }
+}
+
+/* ═══ FAIXA DE DESTAQUES (microcirurgia / lombar / minimamente invasiva) ═══ */
+#destaques{padding:0 0 5.5rem;background:var(--creme-alt);}
+.destaques-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;}
+.destaque-card{
+  background:var(--branco);border-radius:var(--r-lg);padding:2.1rem 1.6rem;text-align:center;
+  border:1px solid var(--linha);box-shadow:var(--sombra);
+  transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease);
+  position:relative;
+}
+.destaque-card:hover{transform:translateY(-8px) scale(1.02);box-shadow:var(--sombra-hover);border-color:transparent;}
+.destaque-card__badge{
+  position:absolute;top:-.7rem;right:1.2rem;background:var(--laranja);color:#fff;
+  font-size:.62rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+  padding:.32rem .7rem;border-radius:var(--r-pill);box-shadow:var(--sombra);
+}
+.destaque-card__icone{
+  width:64px;height:64px;border-radius:var(--r-lg);margin:0 auto 1.1rem;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--laranja-bg),#FDF1E6);color:var(--laranja);
+  transition:transform .3s var(--ease);
+}
+.destaque-card:hover .destaque-card__icone{transform:rotate(-6deg) scale(1.08);}
+.destaque-card h3{font-size:1.06rem;margin-bottom:.5rem;}
+.destaque-card p{font-size:.85rem;color:var(--muted);line-height:1.6;}
+@media(max-width:980px){ .destaques-grid{grid-template-columns:1fr 1fr;} }
+@media(max-width:560px){ .destaques-grid{grid-template-columns:1fr;} }
 
 /* ═══ SEÇÃO GENÉRICA ═══ */
-.section{padding:6rem 0;border-bottom:1px solid var(--line);}
+.section{padding:6rem 0;}
 .section-title{font-size:clamp(1.9rem,3.4vw,2.7rem);max-width:620px;margin-bottom:1rem;}
 .section-lede{color:var(--muted);font-size:1rem;line-height:1.8;max-width:520px;}
 
 /* ═══ BEM-VINDO ═══ */
-#bemvindo{background:var(--paper-2);}
+#bemvindo{background:var(--creme);}
 .bv-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:4.5rem;align-items:start;}
 .bv-frame{
-  position:relative;aspect-ratio:3/4;border:1px solid var(--ink);overflow:hidden;
+  position:relative;aspect-ratio:3/4;border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sombra-hover);
 }
 .bv-frame img{width:100%;height:100%;object-fit:cover;}
-/* AVATAR PLACEHOLDER — trocar por <img src="..."> com a foto real do Dr. Rubens assim que disponível */
 .bv-frame .avatar-fallback{
   width:100%;height:100%;display:flex;align-items:center;justify-content:center;
-  background:var(--ink);color:#fff;font-family:'Newsreader',serif;font-weight:500;font-size:5.5rem;
+  background:var(--tinta);color:#fff;font-family:'Fraunces',serif;font-weight:600;font-size:5.5rem;
 }
 .bv-frame-tag{
-  position:absolute;top:1rem;left:1rem;background:var(--paper);border:1px solid var(--ink);
-  padding:.5rem .9rem;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);
+  position:absolute;bottom:1.1rem;left:1.1rem;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);
+  padding:.6rem 1.1rem;font-size:.76rem;font-weight:700;color:var(--tinta);border-radius:var(--r-pill);
+  box-shadow:var(--sombra);
 }
-.bv-text p{color:var(--text);font-size:1.02rem;line-height:1.9;margin-bottom:1.2rem;max-width:600px;}
-.bv-text p strong{color:var(--ink);}
-.bv-list{margin-top:2rem;border-top:1px solid var(--line);}
-.bv-list-item{display:flex;align-items:center;gap:1rem;padding:1rem 0;border-bottom:1px solid var(--line);}
-.bv-list-item i{color:var(--coral);flex-shrink:0;}
-.bv-list-item span{font-size:.94rem;color:var(--ink);font-weight:500;}
+.bv-text p{color:var(--texto);font-size:1.02rem;line-height:1.9;margin-bottom:1.2rem;max-width:600px;}
+.bv-text p strong{color:var(--tinta);}
+.bv-list{margin-top:1.6rem;display:flex;flex-direction:column;gap:.7rem;}
+.bv-list-item{
+  display:flex;align-items:center;gap:1rem;padding:.9rem 1.2rem;
+  background:var(--creme-alt);border-radius:var(--r-pill);width:fit-content;
+  transition:transform .25s var(--ease), background .25s var(--ease);
+}
+.bv-list-item:hover{transform:translateX(6px);background:var(--laranja-bg);}
+.bv-list-item i{color:var(--laranja);flex-shrink:0;background:var(--branco);border-radius:50%;padding:.4rem;width:26px;height:26px;}
+.bv-list-item span{font-size:.94rem;color:var(--tinta);font-weight:600;}
 
 @media(max-width:900px){
+  #bemvindo{padding-top:2.5rem;}
   .bv-grid{grid-template-columns:1fr;}
   .bv-frame{max-width:340px;margin:0 auto 1rem;}
 }
 
-/* ═══ COMO PODEMOS AJUDAR (índice numerado) ═══ */
-#ajudar{background:var(--paper);}
-.ajudar-list{border-top:1px solid var(--ink);margin-top:2.5rem;}
+/* ═══ COMO PODEMOS AJUDAR (grade de cards) ═══ */
+#ajudar{background:var(--creme-alt);}
+.ajudar-list{margin-top:2.5rem;display:grid;grid-template-columns:repeat(2,1fr);gap:1.4rem;}
 .ajudar-row{
-  display:grid;grid-template-columns:70px 1fr 2fr 30px;gap:2rem;align-items:center;
-  padding:2rem 0;border-bottom:1px solid var(--line);transition:background .25s;
-  text-decoration:none;color:inherit;cursor:pointer;
+  display:flex;flex-direction:column;gap:.8rem;
+  background:var(--branco);border-radius:var(--r-lg);padding:2rem;border:1px solid var(--linha);
+  transition:transform .3s var(--ease), box-shadow .3s var(--ease);
+  text-decoration:none;color:inherit;cursor:pointer;position:relative;overflow:hidden;
 }
-.ajudar-row:hover{background:var(--paper-2);}
-.ajudar-num{font-family:'Newsreader',serif;font-size:1rem;color:var(--muted);}
-.ajudar-row h3{font-size:1.35rem;font-weight:500;}
+.ajudar-row:hover{transform:translateY(-6px);box-shadow:var(--sombra-hover);}
+.ajudar-num{
+  font-family:'Fraunces',serif;font-style:italic;font-size:1rem;color:var(--laranja);
+  width:38px;height:38px;border-radius:50%;background:var(--laranja-bg);
+  display:flex;align-items:center;justify-content:center;font-weight:600;
+}
+.ajudar-row h3{font-size:1.3rem;font-weight:600;}
 .ajudar-row p{color:var(--muted);font-size:.92rem;line-height:1.7;}
-.ajudar-row .arrow{color:var(--coral);opacity:0;transform:translateX(-6px);transition:opacity .25s,transform .25s;}
-.ajudar-row:hover .arrow{opacity:1;transform:translateX(0);}
-@media(max-width:760px){
-  .ajudar-row{grid-template-columns:40px 1fr;grid-template-areas:"num title" ". desc";}
-  .ajudar-row .arrow{display:none;}
-  .ajudar-num{grid-area:num;}
-  .ajudar-row h3{grid-area:title;}
-  .ajudar-row p{grid-area:desc;}
+.ajudar-row .arrow{
+  color:var(--laranja);position:absolute;bottom:1.6rem;right:1.6rem;
+  opacity:0;transform:translateX(-6px);transition:opacity .25s,transform .25s;
 }
+.ajudar-row:hover .arrow{opacity:1;transform:translateX(0);}
+@media(max-width:760px){ .ajudar-list{grid-template-columns:1fr;} }
 
 /* ═══ ESPECIALISTA ═══ */
-#especialista{background:var(--ink);color:#fff;}
+#especialista{background:var(--tinta);color:#fff;position:relative;overflow:hidden;}
 #especialista .section-title{color:#fff;}
 #especialista .section-lede{color:rgba(255,255,255,.65);}
-.doc-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:4.5rem;align-items:start;margin-top:3rem;}
-.doc-frame{position:relative;aspect-ratio:4/5;border:1px solid rgba(255,255,255,.25);overflow:hidden;}
-.doc-frame img{width:100%;height:100%;object-fit:cover;}
-/* AVATAR PLACEHOLDER — trocar por <img src="..."> com a foto real do Dr. Rubens assim que disponível */
+.doc-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:4.5rem;align-items:start;margin-top:3rem;position:relative;z-index:1;}
+.doc-frame{position:relative;aspect-ratio:4/5;border-radius:var(--r-xl);overflow:hidden;box-shadow:0 30px 60px -20px rgba(0,0,0,.55);}
+.doc-frame img,.doc-frame video{width:100%;height:100%;object-fit:cover;display:block;}
+.doc-frame.reveal{
+  opacity:0;transform:scale(.8) rotate(-4deg);
+  transition:opacity 1s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1);
+}
+.doc-frame.reveal.visible{opacity:1;transform:scale(1) rotate(0deg);}
 .doc-frame .avatar-fallback{
   width:100%;height:100%;display:flex;align-items:center;justify-content:center;
-  background:var(--ink-2);color:#fff;font-family:'Newsreader',serif;font-weight:500;font-size:6rem;
+  background:var(--tinta-2);color:#fff;font-family:'Fraunces',serif;font-weight:600;font-size:6rem;
 }
 .doc-name{font-size:clamp(1.6rem,2.6vw,2.1rem);color:#fff;margin-bottom:.2rem;}
-.doc-role{display:block;color:#F0A995;font-size:.86rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:1.6rem;font-weight:600;}
+.doc-role{display:block;color:var(--dourado);font-size:.86rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:1.6rem;font-weight:700;}
 .doc-body p{color:rgba(255,255,255,.78);font-size:.98rem;line-height:1.9;margin-bottom:1.1rem;}
 .doc-body p strong{color:#fff;}
-.doc-timeline{margin-top:2rem;border-top:1px solid rgba(255,255,255,.18);}
-.doc-tl-item{display:grid;grid-template-columns:120px 1fr;gap:1.5rem;padding:1.3rem 0;border-bottom:1px solid rgba(255,255,255,.18);}
-.doc-tl-item .tl-label{font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:#F0A995;font-weight:600;}
+.doc-timeline{margin-top:2rem;display:flex;flex-direction:column;gap:.8rem;}
+.doc-tl-item{
+  display:grid;grid-template-columns:130px 1fr;gap:1.5rem;padding:1.1rem 1.4rem;
+  background:rgba(255,255,255,.06);border-radius:var(--r);align-items:center;
+}
+.doc-tl-item .tl-label{font-size:.76rem;letter-spacing:.05em;text-transform:uppercase;color:var(--dourado);font-weight:700;}
 .doc-tl-item .tl-desc{font-size:.9rem;color:rgba(255,255,255,.75);line-height:1.6;}
 .doc-cta{margin-top:2rem;}
 @media(max-width:900px){
@@ -371,95 +507,114 @@ button{font-family:inherit;}
   .doc-tl-item{grid-template-columns:1fr;gap:.3rem;}
 }
 
-/* ═══ ESPECIALIDADES (colunas de lista) ═══ */
-#procedimentos{background:var(--paper);}
-.proc-cols{display:grid;grid-template-columns:1fr 1fr;gap:0 3rem;margin-top:2.5rem;}
-.proc-item{display:flex;gap:1.2rem;padding:1.4rem 0;border-bottom:1px solid var(--line);}
-.proc-item .proc-num{font-family:'Newsreader',serif;font-style:italic;color:var(--coral);font-size:1.1rem;flex-shrink:0;width:28px;}
-.proc-item h4{font-size:1rem;color:var(--ink);margin-bottom:.3rem;font-weight:500;}
+/* ═══ ESPECIALIDADES (grade de cards) ═══ */
+#procedimentos{background:var(--creme);}
+.proc-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-top:2.5rem;}
+.proc-item{
+  display:flex;flex-direction:column;gap:.7rem;padding:1.7rem;
+  background:var(--creme-alt);border-radius:var(--r-lg);
+  transition:transform .3s var(--ease), background .3s var(--ease), box-shadow .3s var(--ease);
+}
+.proc-item:hover{transform:translateY(-5px);background:var(--branco);box-shadow:var(--sombra);}
+.proc-item .proc-num{
+  font-family:'Fraunces',serif;font-style:italic;color:var(--laranja);font-size:1rem;
+  width:32px;height:32px;border-radius:50%;background:var(--laranja-bg);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.proc-item h4{font-size:1rem;color:var(--tinta);margin-bottom:.2rem;font-weight:600;}
 .proc-item p{font-size:.85rem;color:var(--muted);line-height:1.6;}
-@media(max-width:760px){ .proc-cols{grid-template-columns:1fr;} }
+@media(max-width:980px){ .proc-cols{grid-template-columns:1fr 1fr;} }
+@media(max-width:560px){ .proc-cols{grid-template-columns:1fr;} }
 
 /* ═══ BLOG ═══ */
-#blog{background:var(--paper-2);}
+#blog{background:var(--creme-alt);}
 .blog-toolbar{display:flex;gap:.6rem;margin:2.2rem 0 2.6rem;}
 .blog-toolbar button{
   display:inline-flex;align-items:center;gap:.45rem;
-  padding:.55rem 1.1rem;border:1px solid var(--line);background:transparent;
-  font-size:.72rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);
-  cursor:pointer;transition:all .2s;
+  padding:.6rem 1.2rem;border:1px solid var(--linha);background:var(--branco);border-radius:var(--r-pill);
+  font-size:.74rem;font-weight:700;letter-spacing:.02em;color:var(--tinta);
+  cursor:pointer;transition:all .2s var(--ease);
 }
-.blog-toolbar button.active{background:var(--ink);color:#fff;border-color:var(--ink);}
-.blog-toolbar button:not(.active):hover{border-color:var(--ink);}
+.blog-toolbar button.active{background:var(--tinta);color:#fff;border-color:var(--tinta);}
+.blog-toolbar button:not(.active):hover{border-color:var(--tinta);}
 .blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;}
 .blog-carousel-wrap{position:relative;}
 .blog-carousel{display:flex;gap:2rem;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:.4rem;}
 .blog-carousel::-webkit-scrollbar{display:none;}
 .blog-card{
   flex:0 0 calc(33.333% - 1.34rem);scroll-snap-align:start;
-  border:1px solid var(--line);background:var(--paper);
-  display:flex;flex-direction:column;transition:border-color .25s;
+  border-radius:var(--r-lg);background:var(--branco);overflow:hidden;
+  display:flex;flex-direction:column;border:1px solid var(--linha);
+  transition:transform .3s var(--ease), box-shadow .3s var(--ease);
 }
-.blog-card:hover{border-color:var(--ink);}
-.blog-card-img{aspect-ratio:16/10;background:var(--ink);overflow:hidden;position:relative;}
-.blog-card-img img{width:100%;height:100%;object-fit:cover;}
+.blog-card:hover{transform:translateY(-6px);box-shadow:var(--sombra-hover);}
+.blog-card-img{aspect-ratio:16/10;background:var(--tinta);overflow:hidden;position:relative;}
+.blog-card-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease);}
+.blog-card:hover .blog-card-img img{transform:scale(1.06);}
 .blog-card-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.45);}
 .blog-card-body{padding:1.7rem;}
-.blog-date{font-size:.7rem;color:var(--coral);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.7rem;display:block;}
-.blog-card h3{font-family:'Newsreader',serif;font-weight:500;font-size:1.18rem;line-height:1.4;margin-bottom:.7rem;color:var(--ink);}
+.blog-date{
+  font-size:.68rem;color:#fff;background:var(--laranja);font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+  margin-bottom:.9rem;display:inline-block;padding:.3rem .7rem;border-radius:var(--r-pill);
+}
+.blog-card h3{font-family:'Fraunces',serif;font-weight:600;font-size:1.18rem;line-height:1.4;margin-bottom:.7rem;color:var(--tinta);}
 .blog-card p{font-size:.85rem;color:var(--muted);line-height:1.75;margin-bottom:1.2rem;}
-.blog-read{font-size:.76rem;font-weight:600;color:var(--ink);display:inline-flex;align-items:center;gap:.4rem;letter-spacing:.04em;text-transform:uppercase;}
-.blog-read i{color:var(--coral);}
+.blog-read{font-size:.76rem;font-weight:700;color:var(--tinta);display:inline-flex;align-items:center;gap:.4rem;}
+.blog-read i{color:var(--laranja);}
 .blog-nav-arrows{display:flex;justify-content:center;gap:1.2rem;margin-top:2.5rem;}
-.blog-nav-arrows button{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.blog-nav-arrows button:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+.blog-nav-arrows button{width:46px;height:46px;border-radius:50%;border:1px solid var(--linha);background:var(--branco);color:var(--tinta);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s var(--ease);}
+.blog-nav-arrows button:hover{background:var(--tinta);color:#fff;border-color:var(--tinta);transform:translateY(-2px);}
 .blog-nav-arrows button:disabled{opacity:.35;cursor:default;}
-.blog-nav-arrows button:disabled:hover{background:var(--paper);color:var(--ink);}
-.blog-empty{text-align:center;color:var(--muted);font-size:.9rem;padding:3.5rem 2rem;border:1px dashed var(--line);margin-top:2rem;}
+.blog-nav-arrows button:disabled:hover{background:var(--branco);color:var(--tinta);transform:none;}
+.blog-empty{text-align:center;color:var(--muted);font-size:.9rem;padding:3.5rem 2rem;border:1.5px dashed var(--linha);border-radius:var(--r-lg);margin-top:2rem;background:var(--branco);}
 @media(max-width:900px){ .blog-grid{grid-template-columns:1fr 1fr;} .blog-card{flex:0 0 calc(50% - 1rem);} }
 @media(max-width:600px){ .blog-grid{grid-template-columns:1fr;} .blog-card{flex:0 0 86%;} }
 
 /* ═══ CONVÊNIOS (marquee) ═══ */
-#convenios{background:var(--ink);color:#fff;padding:5rem 0;border-bottom:1px solid var(--line);overflow:hidden;}
-#convenios .idx{justify-content:center;color:#F0A995;}
-#convenios .idx::after{display:none;}
+#convenios{background:var(--tinta);color:#fff;padding:5rem 0;overflow:hidden;}
+#convenios .idx{justify-content:center;}
 #convenios .container{text-align:center;margin-bottom:2.5rem;}
 .marquee-wrap{width:100%;overflow:hidden;position:relative;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);}
-.marquee-track{display:flex;width:max-content;animation:marqueeScroll 28s linear infinite;}
+.marquee-track{display:flex;width:max-content;animation:marqueeScroll 24s linear infinite;gap:1rem;}
 .marquee-track span{
-  font-family:'Newsreader',serif;font-style:italic;font-size:1.7rem;color:rgba(255,255,255,.55);
-  padding:0 2.6rem;white-space:nowrap;display:flex;align-items:center;gap:2.6rem;
+  font-family:'Inter',sans-serif;font-weight:700;font-size:1rem;color:#fff;
+  padding:.9rem 1.7rem;white-space:nowrap;display:flex;align-items:center;
+  background:rgba(255,255,255,.08);border-radius:var(--r-pill);border:1px solid rgba(255,255,255,.14);
 }
-.marquee-track span::after{content:'—';color:var(--coral);font-style:normal;}
 @keyframes marqueeScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 .conv-note{text-align:center;color:rgba(255,255,255,.5);font-size:.82rem;margin-top:2.2rem;}
 
 /* ═══ CONTATO ═══ */
-#contato{background:var(--paper);}
+#contato{background:var(--creme-alt);}
 .contato-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;margin-top:2.5rem;}
-.contato-item{display:flex;gap:1.2rem;padding:1.3rem 0;border-bottom:1px solid var(--line);}
-.contato-item i{color:var(--coral);flex-shrink:0;margin-top:.2rem;}
-.contato-item strong{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem;}
-.contato-item a,.contato-item span{font-size:1.02rem;color:var(--ink);font-weight:500;}
-.contato-item a:hover{color:var(--coral);}
-.map-frame{border:1px solid var(--ink);margin-top:2rem;}
-.map-frame iframe{width:100%;height:240px;border:0;display:block;filter:grayscale(.2);}
+.contato-item{
+  display:flex;gap:1.2rem;padding:1.2rem;margin-bottom:.9rem;
+  background:var(--branco);border-radius:var(--r-lg);border:1px solid var(--linha);
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.contato-item:hover{transform:translateX(4px);box-shadow:var(--sombra);}
+.contato-item i{color:var(--laranja);flex-shrink:0;margin-top:.2rem;background:var(--laranja-bg);border-radius:50%;padding:.5rem;width:20px;height:20px;}
+.contato-item strong{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem;}
+.contato-item a,.contato-item span{font-size:1.02rem;color:var(--tinta);font-weight:600;}
+.contato-item a:hover{color:var(--laranja);}
+.map-frame{border-radius:var(--r-lg);margin-top:1.4rem;overflow:hidden;box-shadow:var(--sombra);}
+.map-frame iframe{width:100%;height:240px;border:0;display:block;filter:grayscale(.15);}
 
-.form-card{border:1px solid var(--ink);padding:2.6rem;}
+.form-card{background:var(--branco);border-radius:var(--r-xl);padding:2.6rem;box-shadow:var(--sombra);}
 .form-card h3{font-size:1.4rem;margin-bottom:.5rem;}
 .form-card > p{color:var(--muted);font-size:.9rem;margin-bottom:2rem;}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;}
-.form-group{margin-bottom:1.6rem;}
-.form-group label{display:block;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+.form-group{margin-bottom:1.2rem;}
+.form-group label{display:block;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;}
 .form-group input,.form-group textarea{
-  width:100%;padding:.6rem 0;border:none;border-bottom:1px solid var(--line);border-radius:0;
-  font-family:'Inter',sans-serif;font-size:.98rem;background:transparent;transition:border-color .2s;
+  width:100%;padding:.85rem 1.1rem;border:1.5px solid var(--linha);border-radius:var(--r);
+  font-family:'Inter',sans-serif;font-size:.98rem;background:var(--creme-alt);transition:border-color .2s var(--ease), background .2s var(--ease);
 }
 .form-group textarea{resize:vertical;min-height:80px;}
-.form-group input:focus,.form-group textarea:focus{outline:none;border-color:var(--coral);}
-.form-card .btn{width:100%;justify-content:center;margin-top:.6rem;}
-.form-success{display:none;align-items:center;gap:.9rem;border:1px solid var(--ink);padding:1.2rem 1.4rem;color:var(--ink);}
-.form-success i{color:var(--coral);flex-shrink:0;}
+.form-group input:focus,.form-group textarea:focus{outline:none;border-color:var(--laranja);background:var(--branco);}
+.form-card .btn{width:100%;justify-content:center;margin-top:.4rem;}
+.form-success{display:none;align-items:center;gap:.9rem;background:var(--laranja-bg);border-radius:var(--r-lg);padding:1.3rem 1.5rem;color:var(--tinta);}
+.form-success i{color:var(--laranja);flex-shrink:0;}
 .form-success strong{display:block;font-size:.92rem;}
 .form-success span{font-size:.82rem;color:var(--muted);}
 
@@ -469,30 +624,31 @@ button{font-family:inherit;}
 }
 
 /* ═══ REVEAL ON SCROLL ═══ */
-.reveal{opacity:0;transform:translateY(20px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1);}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1);}
 .reveal.visible{opacity:1;transform:translateY(0);}
 
 /* ═══ FOOTER ═══ */
-footer{background:var(--ink-2);padding:3.5rem 0 1.6rem;color:rgba(255,255,255,.7);}
-.footer-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:2.5rem;padding-bottom:2.4rem;border-bottom:1px solid rgba(255,255,255,.14);}
+footer{background:var(--tinta-2);padding:3.5rem 0 1.6rem;color:rgba(255,255,255,.7);}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:2.5rem;padding-bottom:2.4rem;border-bottom:1px solid rgba(255,255,255,.12);}
 .footer-brand p{font-size:.84rem;line-height:1.7;max-width:300px;margin-top:.8rem;color:rgba(255,255,255,.55);}
 .footer-nav{display:flex;gap:3rem;flex-wrap:wrap;}
 .footer-col h4{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:1rem;}
 .footer-col ul li{margin-bottom:.7rem;}
 .footer-col ul li a{font-size:.86rem;transition:color .2s;}
-.footer-col ul li a:hover{color:#F0A995;}
+.footer-col ul li a:hover{color:var(--dourado);}
 .footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.8rem;padding-top:1.6rem;font-size:.76rem;}
 .footer-bottom a{color:rgba(255,255,255,.65);}
 .footer-bottom a:hover{color:#fff;}
 
-/* WHATSAPP FLUTUANTE (quadrado, alinhado à linguagem reta do resto) */
+/* WHATSAPP FLUTUANTE */
 .wa-float{position:fixed;bottom:1.8rem;right:1.8rem;z-index:900;}
 .wa-btn{
-  width:56px;height:56px;background:#25D366;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 10px 26px rgba(0,0,0,.25);transition:transform .25s;
+  width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 26px rgba(0,0,0,.25);transition:transform .25s var(--ease);
+  animation:pulsarAnel 2.6s ease infinite;
 }
-.wa-btn:hover{transform:translateY(-3px);}
-@media(max-width:560px){ .wa-float{bottom:1.2rem;right:1.2rem;} .wa-btn{width:50px;height:50px;} }
+.wa-btn:hover{transform:translateY(-4px) scale(1.05);}
+@media(max-width:560px){ .wa-float{bottom:1.2rem;right:1.2rem;} .wa-btn{width:52px;height:52px;} }
 </style>
 </head>
 <body>
@@ -521,6 +677,7 @@ setTimeout(function(){
   <span class="idx on-dark">Menu</span>
   <a href="#home" onclick="closeMobile()">Home</a>
   <a href="#especialista" onclick="closeMobile()">Quem Somos</a>
+  <a href="#procedimentos" onclick="closeMobile()">Especialidades</a>
   <a href="#blog" onclick="closeMobile()">Blog</a>
   <a href="#contato" onclick="closeMobile()">Contato</a>
 </div>
@@ -536,6 +693,7 @@ setTimeout(function(){
     <ul class="nav-links">
       <li><a href="#home">Home</a></li>
       <li><a href="#especialista">Quem Somos</a></li>
+      <li><a href="#procedimentos">Especialidades</a></li>
       <li><a href="#blog">Blog</a></li>
       <li><a href="#contato" class="nav-cta">Contato</a></li>
     </ul>
@@ -546,26 +704,68 @@ setTimeout(function(){
 <!-- ═══ HERO ═══ -->
 <section id="home">
 <div id="hero">
-  <div class="container hero-top">
-    <span class="idx on-dark">Coluna &amp; Quadril</span>
-    <h1 class="hero-headline">Ortopedista especialista em <em>Coluna e Quadril</em></h1>
-    <div class="hero-sub-row">
-      <p class="hero-subtitle">IOT Instituto de Ortopedia e Traumatologia. Atendimento com o Dr. Rubens Rodrigues, focado em diagnóstico preciso e cirurgia minimamente invasiva.</p>
-      <div class="hero-actions">
-        <a href="https://wa.me/5511970731552?text=Olá! Vim pelo site e gostaria de agendar uma consulta com o Dr. Rubens Rodrigues." target="_blank" class="btn btn-fill">Agendar Consulta</a>
-        <a href="#especialista" class="btn btn-line on-dark">Conhecer o especialista</a>
+  <div class="hero-blob hero-blob--1"></div>
+  <div class="hero-blob hero-blob--2"></div>
+  <div class="container hero-grid">
+
+    <div class="hero-copy">
+      <span class="idx">Coluna &amp; Quadril</span>
+      <h1 class="hero-headline">Especialista em <em>Coluna e Quadril</em>, referência em microcirurgia</h1>
+      <p class="hero-subtitle">IOT Instituto de Ortopedia e Traumatologia. Atendimento com o Dr. Rubens Rodrigues, focado em diagnóstico preciso, microcirurgia da coluna e cirurgia minimamente invasiva.</p>
+    </div>
+
+    <div class="hero-media">
+      <span class="hero-chip hero-chip--1"><i data-lucide="scan-line" style="width:16px;height:16px"></i>Microcirurgia</span>
+      <div class="phone-frame">
+        <video id="heroVideo" src="https://res.cloudinary.com/dec2b0u1/video/upload/v1784838334/Design_sem_nome_2_fafptf.mp4" autoplay muted loop playsinline></video>
+      </div>
+      <span class="hero-chip hero-chip--2"><i data-lucide="heart-pulse" style="width:16px;height:16px"></i>Recuperação mais rápida</span>
+    </div>
+
+    <div class="hero-actions">
+      <a href="https://wa.me/5511970731552?text=Olá! Vim pelo site e gostaria de agendar uma consulta com o Dr. Rubens Rodrigues." target="_blank" class="btn btn-fill">Agendar Consulta</a>
+      <a href="#especialista" class="btn btn-line">Conhecer o especialista</a>
+    </div>
+
+    <div class="hero-specs">
+      <div class="hero-spec"><i data-lucide="calendar" style="width:18px;height:18px"></i><div><strong>Desde 1980</strong><span>Experiência clínica</span></div></div>
+      <div class="hero-spec"><i data-lucide="graduation-cap" style="width:18px;height:18px"></i><div><strong>USP</strong><span>Formação médica</span></div></div>
+      <div class="hero-spec"><i data-lucide="stethoscope" style="width:18px;height:18px"></i><div><strong>CRM 36480</strong><span>Registro médico</span></div></div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ═══ DESTAQUES: MICROCIRURGIA / LOMBAR / MINIMAMENTE INVASIVA ═══ -->
+<section id="destaques">
+  <div class="container">
+    <div class="destaques-grid">
+      <div class="destaque-card reveal" style="transition-delay:0s">
+        <span class="destaque-card__badge">Destaque</span>
+        <div class="destaque-card__icone"><i data-lucide="microscope" style="width:28px;height:28px"></i></div>
+        <h3>Microcirurgia</h3>
+        <p>Acesso reduzido, precisão milimétrica e preservação máxima dos tecidos ao redor da coluna.</p>
+      </div>
+      <div class="destaque-card reveal" style="transition-delay:.06s">
+        <span class="destaque-card__badge">Destaque</span>
+        <div class="destaque-card__icone"><i data-lucide="align-vertical-justify-center" style="width:28px;height:28px"></i></div>
+        <h3>Cirurgia da Coluna Lombar</h3>
+        <p>Tratamento de hérnia de disco, estenose e dores lombares crônicas com técnica avançada.</p>
+      </div>
+      <div class="destaque-card reveal" style="transition-delay:.12s">
+        <span class="destaque-card__badge">Destaque</span>
+        <div class="destaque-card__icone"><i data-lucide="scissors-line-dashed" style="width:28px;height:28px"></i></div>
+        <h3>Minimamente Invasiva</h3>
+        <p>Cortes menores, menos dor e retorno mais rápido às atividades do dia a dia.</p>
+      </div>
+      <div class="destaque-card reveal" style="transition-delay:.18s">
+        <div class="destaque-card__icone"><i data-lucide="stethoscope" style="width:28px;height:28px"></i></div>
+        <h3>Diagnóstico Preciso</h3>
+        <p>Avaliação clínica detalhada antes de qualquer indicação de tratamento ou cirurgia.</p>
       </div>
     </div>
   </div>
-  <div class="container">
-    <div class="hero-specs">
-      <div class="hero-spec"><i data-lucide="calendar" style="width:18px;height:18px"></i><strong>Desde 1980</strong><span>Anos de experiência clínica</span></div>
-      <div class="hero-spec"><i data-lucide="graduation-cap" style="width:18px;height:18px"></i><strong>USP</strong><span>Formação médica</span></div>
-      <div class="hero-spec"><i data-lucide="stethoscope" style="width:18px;height:18px"></i><strong>CRM 36480</strong><span>Registro médico</span></div>
-      <div class="hero-spec"><i data-lucide="award" style="width:18px;height:18px"></i><strong>SBQ · AAOS</strong><span>Sociedades médicas</span></div>
-    </div>
-  </div>
-</div>
 </section>
 
 <!-- ═══ BEM-VINDO À IOT ═══ -->
@@ -581,10 +781,10 @@ setTimeout(function(){
       <span class="idx">Bem-vindo à IOT</span>
       <h2 class="section-title">Seu bem-estar é nossa prioridade!</h2>
       <p>A <strong>IOT — Instituto de Ortopedia e Traumatologia</strong> é dedicada ao tratamento de dores e disfunções da coluna vertebral e do quadril, unindo diagnóstico criterioso a condutas atualizadas e individualizadas para cada paciente.</p>
-      <p>Sempre que possível, priorizamos tratamentos conservadores e minimamente invasivos — infiltrações, endoscopia, cirurgia por tubo e outras técnicas que reduzem tempo de recuperação e risco cirúrgico, reservando a cirurgia aberta tradicional para os casos que realmente a exigem.</p>
+      <p>Sempre que possível, priorizamos tratamentos conservadores e minimamente invasivos — infiltrações, endoscopia, cirurgia por tubo e microcirurgia — que reduzem tempo de recuperação e risco cirúrgico, reservando a cirurgia aberta tradicional para os casos que realmente a exigem.</p>
       <div class="bv-list">
         <div class="bv-list-item"><i data-lucide="check" style="width:16px;height:16px"></i><span>Diagnóstico preciso</span></div>
-        <div class="bv-list-item"><i data-lucide="check" style="width:16px;height:16px"></i><span>Cirurgia minimamente invasiva</span></div>
+        <div class="bv-list-item"><i data-lucide="check" style="width:16px;height:16px"></i><span>Microcirurgia e cirurgia minimamente invasiva</span></div>
         <div class="bv-list-item"><i data-lucide="check" style="width:16px;height:16px"></i><span>Acompanhamento próximo</span></div>
       </div>
     </div>
@@ -625,7 +825,7 @@ setTimeout(function(){
       <div class="ajudar-row reveal" style="transition-delay:.1s">
         <span class="ajudar-num">03</span>
         <h3>Cirurgia</h3>
-        <p>Procedimentos minimamente invasivos, com técnicas que reduzem cortes, dor e tempo de recuperação.</p>
+        <p>Microcirurgia e procedimentos minimamente invasivos, com técnicas que reduzem cortes, dor e tempo de recuperação.</p>
         <i data-lucide="arrow-right" class="arrow" style="width:20px;height:20px"></i>
       </div>
       <div class="ajudar-row reveal" style="transition-delay:.15s">
@@ -647,13 +847,13 @@ setTimeout(function(){
 
     <div class="doc-grid">
       <div class="doc-frame reveal">
-        <img src="https://iotortopedia.com.br/wp-content/uploads/2021/08/Especialistas-IOT.png" alt="Dr. Rubens Rodrigues - Ortopedista especialista em Coluna e Quadril">
+        <video src="https://res.cloudinary.com/dec2b0u1/video/upload/v1784941275/Dr_Rubens_Site_yy6ued.mp4" autoplay muted loop playsinline aria-label="Dr. Rubens Rodrigues - Ortopedista especialista em Coluna e Quadril"></video>
       </div>
 
       <div class="doc-body reveal" style="transition-delay:.1s">
         <h3 class="doc-name">Dr. Rubens Rodrigues</h3>
         <span class="doc-role">Ortopedista · Coluna e Quadril · CRM 36480</span>
-        <p>Com mais de quatro décadas de atuação, o Dr. Rubens Rodrigues dedicou sua carreira ao diagnóstico e tratamento de doenças da coluna vertebral e do quadril. Sua abordagem prioriza sempre a técnica menos invasiva capaz de resolver o problema com segurança, evitando cirurgias desnecessárias e reduzindo o tempo de recuperação dos pacientes.</p>
+        <p>Com mais de quatro décadas de atuação, o Dr. Rubens Rodrigues dedicou sua carreira ao diagnóstico e tratamento de doenças da coluna vertebral e do quadril. Sua abordagem prioriza sempre a técnica menos invasiva capaz de resolver o problema com segurança — incluindo microcirurgia e cirurgia da coluna lombar —, evitando cirurgias desnecessárias e reduzindo o tempo de recuperação dos pacientes.</p>
         <p>Formado pela <strong>Universidade de São Paulo (USP)</strong>, fez residência médica no <strong>Instituto de Ortopedia e Traumatologia do Hospital das Clínicas da Faculdade de Medicina da USP (IOT-HC-FMUSP)</strong>. É membro da <strong>Sociedade Brasileira do Quadril</strong> e da <strong>Academia Americana de Cirurgiões Ortopédicos</strong>, mantendo-se atualizado com as técnicas mais modernas de cirurgia minimamente invasiva.</p>
 
         <div class="doc-timeline">
@@ -674,12 +874,12 @@ setTimeout(function(){
   <div class="container">
     <span class="idx">Especialidades</span>
     <h2 class="section-title">Procedimentos minimamente invasivos</h2>
-    <p class="section-lede">Técnicas modernas que buscam reduzir cortes, dor e tempo de recuperação, sempre que clinicamente indicado.</p>
+    <p class="section-lede">Técnicas modernas de microcirurgia que buscam reduzir cortes, dor e tempo de recuperação, sempre que clinicamente indicado.</p>
 
     <div class="proc-cols">
       <div class="proc-item reveal"><span class="proc-num">01</span><div><h4>Infiltrações</h4><p>Aplicação guiada de medicação para alívio de dor e processos inflamatórios.</p></div></div>
       <div class="proc-item reveal"><span class="proc-num">02</span><div><h4>Endoscopia da coluna</h4><p>Acesso por incisão mínima, com visualização direta da estrutura tratada.</p></div></div>
-      <div class="proc-item reveal"><span class="proc-num">03</span><div><h4>Cirurgia pelo tubo</h4><p>Técnica tubular que preserva a musculatura ao redor da coluna.</p></div></div>
+      <div class="proc-item reveal"><span class="proc-num">03</span><div><h4>Cirurgia pelo tubo</h4><p>Técnica tubular que preserva a musculatura ao redor da coluna lombar.</p></div></div>
       <div class="proc-item reveal"><span class="proc-num">04</span><div><h4>Rizotomias</h4><p>Interrupção seletiva de sinais de dor por radiofrequência.</p></div></div>
       <div class="proc-item reveal"><span class="proc-num">05</span><div><h4>Cifoplastias</h4><p>Estabilização de fraturas vertebrais por compressão.</p></div></div>
       <div class="proc-item reveal"><span class="proc-num">06</span><div><h4>Quimionucleólise</h4><p>Redução do volume do disco herniado por via química.</p></div></div>
@@ -751,7 +951,7 @@ setTimeout(function(){
 
     {% else %}
     <div class="blog-empty">
-      <i data-lucide="pencil-line" style="width:36px;height:36px;color:var(--line);display:block;margin:0 auto 1rem"></i>
+      <i data-lucide="pencil-line" style="width:36px;height:36px;color:var(--linha);display:block;margin:0 auto 1rem"></i>
       <p>Em breve, novos conteúdos sobre ortopedia, coluna e quadril.</p>
     </div>
     {% endif %}
@@ -830,13 +1030,13 @@ setTimeout(function(){
 </section>
 
 <!-- ═══ FOOTER ═══ -->
-<footer>
+<footer id="footer">
   <div class="container">
     <div class="footer-top">
       <div class="footer-brand">
         <!-- LOGO OFICIAL: sobre fundo escuro, aplicamos filtro para branco (classe on-dark) -->
         <img class="logo-img on-dark" src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1784202440/Open_Sauce_-_VISUAL_3_-Picsart-AiImageEnhancer_h6avuy.png" alt="IOT Instituto de Ortopedia e Traumatologia">
-        <p>Especialista em coluna e quadril, com foco em cirurgia minimamente invasiva. Dr. Rubens Rodrigues — CRM 36480.</p>
+        <p>Especialista em coluna e quadril, com foco em microcirurgia e cirurgia minimamente invasiva. Dr. Rubens Rodrigues — CRM 36480.</p>
       </div>
       <div class="footer-nav">
         <div class="footer-col">
@@ -878,7 +1078,17 @@ try{ if(window.lucide) lucide.createIcons(); }catch(e){ console.warn('lucide fal
 
 // navbar scroll
 const nav = document.getElementById('navbar');
-window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 60); }, { passive:true });
+let navScrolled = false;
+let navTicking = false;
+function updateNav(){
+  const y = window.scrollY;
+  if(!navScrolled && y > 80){ navScrolled = true; nav.classList.add('scrolled'); }
+  else if(navScrolled && y < 40){ navScrolled = false; nav.classList.remove('scrolled'); }
+  navTicking = false;
+}
+window.addEventListener('scroll', () => {
+  if(!navTicking){ navTicking = true; requestAnimationFrame(updateNav); }
+}, { passive:true });
 
 // mobile menu
 function openMobile(){ document.getElementById('mobileMenu').classList.add('open'); document.body.style.overflow='hidden'; }
