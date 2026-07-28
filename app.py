@@ -685,6 +685,8 @@ def produto(loja_slug, slug):
             template_produto = 'case_tecnologia.html'
         elif template_ativo == 'micasa':
             template_produto = 'case_micasa.html'
+        elif template_ativo == 'iot':
+            template_produto = 'case_iot.html'
         elif template_ativo == 'institucional' or p.get('layout_case'):
             template_produto = 'case.html'
 
