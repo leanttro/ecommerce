@@ -466,11 +466,13 @@ button{font-family:inherit;}
 }
 .ajudar-row h3{font-size:1.3rem;font-weight:600;}
 .ajudar-row p{color:var(--muted);font-size:.92rem;line-height:1.7;}
-.ajudar-row .arrow{
-  color:var(--laranja);position:absolute;bottom:1.6rem;right:1.6rem;
-  opacity:0;transform:translateX(-6px);transition:opacity .25s,transform .25s;
+.ajudar-cta{
+  display:flex;align-items:center;gap:.45rem;margin-top:.3rem;padding-top:1rem;
+  border-top:1px solid var(--linha);color:var(--laranja);font-size:.86rem;font-weight:700;
+  transition:gap .25s;
 }
-.ajudar-row:hover .arrow{opacity:1;transform:translateX(0);}
+.ajudar-row:hover .ajudar-cta{gap:.7rem;}
+.ajudar-cta i{width:16px;height:16px;flex-shrink:0;}
 @media(max-width:760px){ .ajudar-list{grid-template-columns:1fr;} }
 
 /* ═══ ESPECIALISTA ═══ */
@@ -840,7 +842,7 @@ setTimeout(function(){
           <span class="ajudar-num">0{{ loop.index }}</span>
           <h3>{{ p.nome }}</h3>
           <p>{{ p.descricao | truncate(140) if p.descricao else '' }}</p>
-          <i data-lucide="arrow-right" class="arrow" style="width:20px;height:20px"></i>
+          <span class="ajudar-cta">Ver detalhes do tratamento <i data-lucide="arrow-right" aria-hidden="true"></i></span>
         </a>
         {% endfor %}
       {% else %}
@@ -849,25 +851,25 @@ setTimeout(function(){
         <span class="ajudar-num">01</span>
         <h3>Coluna</h3>
         <p>Tratamento de hérnia de disco, estenose, escoliose e dores lombares e cervicais crônicas.</p>
-        <i data-lucide="arrow-right" class="arrow" style="width:20px;height:20px"></i>
+        <span class="ajudar-cta">Ver detalhes do tratamento <i data-lucide="arrow-right" aria-hidden="true"></i></span>
       </div>
       <div class="ajudar-row reveal" style="transition-delay:.05s">
         <span class="ajudar-num">02</span>
         <h3>Quadril</h3>
         <p>Avaliação e tratamento de dores, desgastes e lesões do quadril, incluindo cirurgia minimamente invasiva.</p>
-        <i data-lucide="arrow-right" class="arrow" style="width:20px;height:20px"></i>
+        <span class="ajudar-cta">Ver detalhes do tratamento <i data-lucide="arrow-right" aria-hidden="true"></i></span>
       </div>
       <div class="ajudar-row reveal" style="transition-delay:.1s">
         <span class="ajudar-num">03</span>
         <h3>Cirurgia</h3>
         <p>Cirurgia Minimamente Invasiva, com técnicas que reduzem cortes, dor e tempo de recuperação.</p>
-        <i data-lucide="arrow-right" class="arrow" style="width:20px;height:20px"></i>
+        <span class="ajudar-cta">Ver detalhes do tratamento <i data-lucide="arrow-right" aria-hidden="true"></i></span>
       </div>
       <div class="ajudar-row reveal" style="transition-delay:.15s">
         <span class="ajudar-num">04</span>
         <h3>Consulta</h3>
         <p>Avaliação clínica detalhada para chegar a um diagnóstico correto e a um plano de tratamento seguro.</p>
-        <i data-lucide="arrow-right" class="arrow" style="width:20px;height:20px"></i>
+        <span class="ajudar-cta">Ver detalhes do tratamento <i data-lucide="arrow-right" aria-hidden="true"></i></span>
       </div>
       {% endif %}
     </div>
