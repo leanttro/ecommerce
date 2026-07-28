@@ -262,7 +262,7 @@
                                             <img src="{{ p.imagem }}" class="w-full aspect-square object-cover {{ 'opacity-50' if p.estoque == 0 }}">
                                         </a>
                                         {% if p.estoque > 0 %}
-                                        <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}" class="absolute bottom-2 right-2 bg-theme text-white w-8 h-8 rounded-full shadow-lg hover:scale-110 transition flex items-center justify-center z-20" title="Ver Detalhes">
+                                        <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}" class="absolute bottom-2 right-2 bg-theme text-white w-8 h-8 rounded-full shadow-lg hover:scale-110 transition hidden md:flex items-center justify-center z-20" title="Ver Detalhes">
                                             <i data-lucide="arrow-right" class="w-4 h-4"></i>
                                         </a>
                                         {% endif %}
@@ -281,6 +281,12 @@
                                             {% if p.a_partir_de %}<p class="text-[10px] text-gray-500 uppercase font-bold text-center leading-none mt-2 mb-0">A partir de</p>{% endif %}
                                             <p class="text-theme font-bold text-lg text-center {{ 'mt-1' if not p.a_partir_de else '' }}">R$ {{ "%.2f"|format(p.preco) }}</p>
                                         {% endif %}
+
+                                        {% if p.estoque > 0 %}
+                                        <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}" class="md:hidden mt-3 block text-[11px] font-bold text-theme border border-theme rounded-full py-1.5 hover:bg-theme hover:text-white transition">
+                                            VER PRODUTO
+                                        </a>
+                                        {% endif %}
                                     </div>
                                 </div>
                             {% else %}
@@ -290,8 +296,17 @@
                             {% endfor %}
                         </div>
 
-                        <button onclick="scrollCarousel(1)" id="btn-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition flex">
+                        <button onclick="scrollCarousel(1)" id="btn-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white transition hidden md:flex">
                             <i data-lucide="chevron-right" class="w-6 h-6 text-gray-700"></i>
+                        </button>
+                    </div>
+
+                    <div id="mobile-carousel-nav" class="flex md:hidden justify-center items-center gap-6 mt-3">
+                        <button onclick="scrollCarousel(-1)" class="bg-white border p-2 rounded-full shadow hover:bg-gray-100 transition flex">
+                            <i data-lucide="chevron-left" class="w-5 h-5 text-gray-700"></i>
+                        </button>
+                        <button onclick="scrollCarousel(1)" class="bg-white border p-2 rounded-full shadow hover:bg-gray-100 transition flex">
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-700"></i>
                         </button>
                     </div>
                 </div>
