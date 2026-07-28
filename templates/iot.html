@@ -11,7 +11,7 @@
   cards, botões, molduras e chips, muito mais movimento (blobs
   orgânicos, chips flutuantes, hover com lift/scale, marquee, CTA
   com pulso) e um vídeo vertical 9:16 em destaque no hero (mesma
-  proporção no mobile e no desktop). Microcirurgia, cirurgia da
+  proporção no mobile e no desktop). Cirurgia Minimamente Invasiva, cirurgia da
   coluna lombar e cirurgia minimamente invasiva ganham uma seção
   própria de destaque logo abaixo do hero.
 
@@ -45,8 +45,8 @@
 
 <!-- SEO PRIMÁRIO -->
 <title>IOT | Instituto de Ortopedia e Traumatologia — Dr. Rubens Rodrigues</title>
-<meta name="description" content="IOT Instituto de Ortopedia e Traumatologia. Dr. Rubens Rodrigues (CRM 36480), especialista em coluna e quadril, microcirurgia, cirurgia da coluna lombar e cirurgia minimamente invasiva. Atendimento em São Paulo/SP.">
-<meta name="keywords" content="ortopedista, especialista em coluna, especialista em quadril, microcirurgia da coluna, cirurgia da coluna lombar, cirurgia minimamente invasiva, hérnia de disco, dor lombar, endoscopia da coluna, Dr. Rubens Rodrigues, IOT ortopedia São Paulo">
+<meta name="description" content="IOT Instituto de Ortopedia e Traumatologia. Dr. Rubens Rodrigues (CRM 36480), especialista em coluna e quadril, cirurgia minimamente invasiva e cirurgia da coluna lombar. Atendimento em São Paulo/SP.">
+<meta name="keywords" content="ortopedista, especialista em coluna, especialista em quadril, cirurgia minimamente invasiva, cirurgia da coluna lombar, hérnia de disco, dor lombar, endoscopia da coluna, Dr. Rubens Rodrigues, IOT ortopedia São Paulo">
 <meta name="author" content="IOT Instituto de Ortopedia e Traumatologia">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 <link rel="canonical" href="https://exemplo-preview.com.br/iot-ortopedia/">
@@ -61,7 +61,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="IOT Instituto de Ortopedia e Traumatologia">
 <meta property="og:title" content="IOT | Instituto de Ortopedia e Traumatologia — Dr. Rubens Rodrigues">
-<meta property="og:description" content="Especialista em coluna e quadril, microcirurgia e cirurgia minimamente invasiva. CRM 36480. Atendimento em São Paulo/SP.">
+<meta property="og:description" content="Especialista em coluna e quadril e cirurgia minimamente invasiva. CRM 36480. Atendimento em São Paulo/SP.">
 <meta property="og:url" content="https://exemplo-preview.com.br/iot-ortopedia/">
 <meta property="og:image" content="https://placehold.co/1200x630/1B1B1B/FFFFFF/png?text=IOT+Ortopedia">
 <meta property="og:image:width" content="1200">
@@ -70,7 +70,7 @@
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="IOT Instituto de Ortopedia e Traumatologia">
-<meta name="twitter:description" content="Especialista em coluna e quadril, microcirurgia e cirurgia minimamente invasiva. Dr. Rubens Rodrigues — CRM 36480.">
+<meta name="twitter:description" content="Especialista em coluna e quadril e cirurgia minimamente invasiva. Dr. Rubens Rodrigues — CRM 36480.">
 <meta name="twitter:image" content="https://placehold.co/1200x630/1B1B1B/FFFFFF/png?text=IOT+Ortopedia">
 
 <script type="application/ld+json">
@@ -78,7 +78,7 @@
   "@context": "https://schema.org",
   "@type": "MedicalBusiness",
   "name": "IOT Instituto de Ortopedia e Traumatologia",
-  "description": "Instituto de ortopedia especializado em coluna e quadril, com foco em microcirurgia, cirurgia da coluna lombar e cirurgia minimamente invasiva. Atendimento com o Dr. Rubens Rodrigues, CRM 36480.",
+  "description": "Instituto de ortopedia especializado em coluna e quadril, com foco em cirurgia minimamente invasiva e cirurgia da coluna lombar. Atendimento com o Dr. Rubens Rodrigues, CRM 36480.",
   "url": "https://exemplo-preview.com.br/iot-ortopedia/",
   "logo": "https://res.cloudinary.com/dzcaxmbjn/image/upload/v1784202440/Open_Sauce_-_VISUAL_3_-Picsart-AiImageEnhancer_h6avuy.png",
   "image": "https://placehold.co/1200x630/1B1B1B/FFFFFF/png?text=IOT+Ortopedia",
@@ -383,7 +383,7 @@ button{font-family:inherit;}
   .hero-chip--2{ bottom:-1.1rem; top:auto; left:0; right:0; }
 }
 
-/* ═══ FAIXA DE DESTAQUES (microcirurgia / lombar / minimamente invasiva) ═══ */
+/* ═══ FAIXA DE DESTAQUES (cirurgia minimamente invasiva / lombar / minimamente invasiva) ═══ */
 #destaques{padding:0 0 5.5rem;background:var(--creme-alt);}
 .destaques-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;}
 .destaque-card{
@@ -505,6 +505,41 @@ button{font-family:inherit;}
   .doc-grid{grid-template-columns:1fr;}
   .doc-frame{max-width:320px;}
   .doc-tl-item{grid-template-columns:1fr;gap:.3rem;}
+}
+
+/* ═══ VÍDEO EXPLICATIVO: CIRURGIA MINIMAMENTE INVASIVA A LASER ═══ */
+#video-laser{background:var(--tinta);color:#fff;position:relative;overflow:hidden;}
+#video-laser::before{
+  content:'';position:absolute;top:-180px;right:-160px;width:480px;height:480px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,138,61,.18),transparent 70%);pointer-events:none;
+}
+#video-laser .idx{color:#FFD9BE;background:rgba(255,255,255,.1);}
+#video-laser .section-title{color:#fff;}
+#video-laser .section-lede{color:rgba(255,255,255,.7);}
+.video-laser-grid{
+  position:relative;z-index:1;display:grid;grid-template-columns:.85fr 1.15fr;gap:3.5rem;align-items:center;
+}
+.video-laser-tags{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:2rem;}
+.video-laser-tag{
+  display:inline-flex;align-items:center;gap:.55rem;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.16);padding:.65rem 1.1rem;border-radius:var(--r-pill);
+  font-size:.8rem;font-weight:700;color:#fff;
+}
+.video-laser-tag i{color:var(--laranja);flex-shrink:0;}
+.video-laser-frame{
+  position:relative;border-radius:var(--r-xl);overflow:hidden;background:#000;
+  box-shadow:0 30px 70px -20px rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.1);
+  aspect-ratio:16/9;
+}
+.video-laser-frame video{width:100%;height:100%;object-fit:contain;display:block;background:#000;}
+.video-laser-frame.reveal{opacity:0;transform:scale(.94);transition:opacity .9s var(--ease),transform .9s var(--ease);}
+.video-laser-frame.reveal.visible{opacity:1;transform:scale(1);}
+@media(max-width:900px){
+  .video-laser-grid{grid-template-columns:1fr;gap:2rem;}
+  .video-laser-frame{aspect-ratio:4/3;}
+}
+@media(max-width:520px){
+  .video-laser-frame{aspect-ratio:1/1;}
 }
 
 /* ═══ ESPECIALIDADES (grade de cards) ═══ */
@@ -710,12 +745,12 @@ setTimeout(function(){
 
     <div class="hero-copy">
       <span class="idx">Coluna &amp; Quadril</span>
-      <h1 class="hero-headline">Especialista em <em>Coluna e Quadril</em>, referência em microcirurgia</h1>
-      <p class="hero-subtitle">IOT Instituto de Ortopedia e Traumatologia. Atendimento com o Dr. Rubens Rodrigues, focado em diagnóstico preciso, microcirurgia da coluna e cirurgia minimamente invasiva.</p>
+      <h1 class="hero-headline">Especialista em <em>Coluna e Quadril</em>, referência em cirurgia minimamente invasiva</h1>
+      <p class="hero-subtitle">IOT Instituto de Ortopedia e Traumatologia. Atendimento com o Dr. Rubens Rodrigues, focado em diagnóstico preciso e cirurgia minimamente invasiva da coluna.</p>
     </div>
 
     <div class="hero-media">
-      <span class="hero-chip hero-chip--1"><i data-lucide="scan-line" style="width:16px;height:16px"></i>Microcirurgia</span>
+      <span class="hero-chip hero-chip--1"><i data-lucide="scan-line" style="width:16px;height:16px"></i>Cirurgia Minimamente Invasiva</span>
       <div class="phone-frame">
         <video id="heroVideo" src="https://res.cloudinary.com/dec2b0u1/video/upload/v1784838334/Design_sem_nome_2_fafptf.mp4" autoplay muted loop playsinline></video>
       </div>
@@ -737,14 +772,14 @@ setTimeout(function(){
 </div>
 </section>
 
-<!-- ═══ DESTAQUES: MICROCIRURGIA / LOMBAR / MINIMAMENTE INVASIVA ═══ -->
+<!-- ═══ DESTAQUES: CIRURGIA MINIMAMENTE INVASIVA / LOMBAR / MINIMAMENTE INVASIVA ═══ -->
 <section id="destaques">
   <div class="container">
     <div class="destaques-grid">
       <div class="destaque-card reveal" style="transition-delay:0s">
         <span class="destaque-card__badge">Destaque</span>
         <div class="destaque-card__icone"><i data-lucide="microscope" style="width:28px;height:28px"></i></div>
-        <h3>Microcirurgia</h3>
+        <h3>Cirurgia Minimamente Invasiva</h3>
         <p>Acesso reduzido, precisão milimétrica e preservação máxima dos tecidos ao redor da coluna.</p>
       </div>
       <div class="destaque-card reveal" style="transition-delay:.06s">
@@ -756,7 +791,7 @@ setTimeout(function(){
       <div class="destaque-card reveal" style="transition-delay:.12s">
         <span class="destaque-card__badge">Destaque</span>
         <div class="destaque-card__icone"><i data-lucide="scissors-line-dashed" style="width:28px;height:28px"></i></div>
-        <h3>Minimamente Invasiva</h3>
+        <h3>Recuperação Rápida</h3>
         <p>Cortes menores, menos dor e retorno mais rápido às atividades do dia a dia.</p>
       </div>
       <div class="destaque-card reveal" style="transition-delay:.18s">
@@ -781,10 +816,10 @@ setTimeout(function(){
       <span class="idx">Bem-vindo à IOT</span>
       <h2 class="section-title">Seu bem-estar é nossa prioridade!</h2>
       <p>A <strong>IOT — Instituto de Ortopedia e Traumatologia</strong> é dedicada ao tratamento de dores e disfunções da coluna vertebral e do quadril, unindo diagnóstico criterioso a condutas atualizadas e individualizadas para cada paciente.</p>
-      <p>Sempre que possível, priorizamos tratamentos conservadores e minimamente invasivos — infiltrações, endoscopia, cirurgia por tubo e microcirurgia — que reduzem tempo de recuperação e risco cirúrgico, reservando a cirurgia aberta tradicional para os casos que realmente a exigem.</p>
+      <p>Sempre que possível, priorizamos tratamentos conservadores e minimamente invasivos — infiltrações, endoscopia, cirurgia por tubo e cirurgia minimamente invasiva — que reduzem tempo de recuperação e risco cirúrgico, reservando a cirurgia aberta tradicional para os casos que realmente a exigem.</p>
       <div class="bv-list">
         <div class="bv-list-item"><i data-lucide="check" style="width:16px;height:16px"></i><span>Diagnóstico preciso</span></div>
-        <div class="bv-list-item"><i data-lucide="check" style="width:16px;height:16px"></i><span>Microcirurgia e cirurgia minimamente invasiva</span></div>
+        <div class="bv-list-item"><i data-lucide="check" style="width:16px;height:16px"></i><span>Cirurgia Minimamente Invasiva</span></div>
         <div class="bv-list-item"><i data-lucide="check" style="width:16px;height:16px"></i><span>Acompanhamento próximo</span></div>
       </div>
     </div>
@@ -825,7 +860,7 @@ setTimeout(function(){
       <div class="ajudar-row reveal" style="transition-delay:.1s">
         <span class="ajudar-num">03</span>
         <h3>Cirurgia</h3>
-        <p>Microcirurgia e procedimentos minimamente invasivos, com técnicas que reduzem cortes, dor e tempo de recuperação.</p>
+        <p>Cirurgia Minimamente Invasiva, com técnicas que reduzem cortes, dor e tempo de recuperação.</p>
         <i data-lucide="arrow-right" class="arrow" style="width:20px;height:20px"></i>
       </div>
       <div class="ajudar-row reveal" style="transition-delay:.15s">
@@ -853,7 +888,7 @@ setTimeout(function(){
       <div class="doc-body reveal" style="transition-delay:.1s">
         <h3 class="doc-name">Dr. Rubens Rodrigues</h3>
         <span class="doc-role">Ortopedista · Coluna e Quadril · CRM 36480</span>
-        <p>Com mais de quatro décadas de atuação, o Dr. Rubens Rodrigues dedicou sua carreira ao diagnóstico e tratamento de doenças da coluna vertebral e do quadril. Sua abordagem prioriza sempre a técnica menos invasiva capaz de resolver o problema com segurança — incluindo microcirurgia e cirurgia da coluna lombar —, evitando cirurgias desnecessárias e reduzindo o tempo de recuperação dos pacientes.</p>
+        <p>Com mais de quatro décadas de atuação, o Dr. Rubens Rodrigues dedicou sua carreira ao diagnóstico e tratamento de doenças da coluna vertebral e do quadril. Sua abordagem prioriza sempre a técnica menos invasiva capaz de resolver o problema com segurança — incluindo cirurgia minimamente invasiva e cirurgia da coluna lombar —, evitando cirurgias desnecessárias e reduzindo o tempo de recuperação dos pacientes.</p>
         <p>Formado pela <strong>Universidade de São Paulo (USP)</strong>, fez residência médica no <strong>Instituto de Ortopedia e Traumatologia do Hospital das Clínicas da Faculdade de Medicina da USP (IOT-HC-FMUSP)</strong>. É membro da <strong>Sociedade Brasileira do Quadril</strong> e da <strong>Academia Americana de Cirurgiões Ortopédicos</strong>, mantendo-se atualizado com as técnicas mais modernas de cirurgia minimamente invasiva.</p>
 
         <div class="doc-timeline">
@@ -869,12 +904,31 @@ setTimeout(function(){
   </div>
 </section>
 
+<!-- ═══ VÍDEO EXPLICATIVO: CIRURGIA MINIMAMENTE INVASIVA A LASER ═══ -->
+<section id="video-laser" class="section">
+  <div class="container video-laser-grid">
+    <div class="video-laser-text reveal">
+      <span class="idx">Como funciona</span>
+      <h2 class="section-title">Veja como é feita a Cirurgia Minimamente Invasiva a Laser</h2>
+      <p class="section-lede">Uma demonstração real do procedimento: acesso mínimo, energia a laser guiada com precisão e máxima preservação dos tecidos ao redor da coluna.</p>
+      <div class="video-laser-tags">
+        <span class="video-laser-tag"><i data-lucide="zap" style="width:16px;height:16px"></i>Energia a laser</span>
+        <span class="video-laser-tag"><i data-lucide="crosshair" style="width:16px;height:16px"></i>Precisão guiada</span>
+        <span class="video-laser-tag"><i data-lucide="shield-check" style="width:16px;height:16px"></i>Menos risco cirúrgico</span>
+      </div>
+    </div>
+    <div class="video-laser-frame reveal">
+      <video src="https://res.cloudinary.com/dec2b0u1/video/upload/v1785243839/WhatsApp_Video_2026-07-27_at_21.12.29_zk7ypr.mp4" controls playsinline preload="metadata" aria-label="Demonstração da Cirurgia Minimamente Invasiva a Laser"></video>
+    </div>
+  </div>
+</section>
+
 <!-- ═══ ESPECIALIDADES / PROCEDIMENTOS ═══ -->
 <section id="procedimentos" class="section">
   <div class="container">
     <span class="idx">Especialidades</span>
     <h2 class="section-title">Procedimentos minimamente invasivos</h2>
-    <p class="section-lede">Técnicas modernas de microcirurgia que buscam reduzir cortes, dor e tempo de recuperação, sempre que clinicamente indicado.</p>
+    <p class="section-lede">Técnicas modernas de cirurgia minimamente invasiva que buscam reduzir cortes, dor e tempo de recuperação, sempre que clinicamente indicado.</p>
 
     <div class="proc-cols">
       <div class="proc-item reveal"><span class="proc-num">01</span><div><h4>Infiltrações</h4><p>Aplicação guiada de medicação para alívio de dor e processos inflamatórios.</p></div></div>
@@ -893,8 +947,8 @@ setTimeout(function(){
 <section id="blog" class="section">
   <div class="container">
     <span class="idx">Blog</span>
-    <h2 class="section-title">Conteúdo sobre coluna e quadril</h2>
-    <p class="section-lede">Informação confiável para você entender melhor seu diagnóstico e tratamento.</p>
+    <h2 class="section-title">Cuidados Pós-Cirurgia Minimamente Invasiva</h2>
+    <p class="section-lede">Informação confiável para você entender melhor seu diagnóstico, tratamento e recuperação.</p>
 
     {% if posts and posts|length > 0 %}
 
@@ -1036,7 +1090,7 @@ setTimeout(function(){
       <div class="footer-brand">
         <!-- LOGO OFICIAL: sobre fundo escuro, aplicamos filtro para branco (classe on-dark) -->
         <img class="logo-img on-dark" src="https://res.cloudinary.com/dzcaxmbjn/image/upload/v1784202440/Open_Sauce_-_VISUAL_3_-Picsart-AiImageEnhancer_h6avuy.png" alt="IOT Instituto de Ortopedia e Traumatologia">
-        <p>Especialista em coluna e quadril, com foco em microcirurgia e cirurgia minimamente invasiva. Dr. Rubens Rodrigues — CRM 36480.</p>
+        <p>Especialista em coluna e quadril, com foco em cirurgia minimamente invasiva. Dr. Rubens Rodrigues — CRM 36480.</p>
       </div>
       <div class="footer-nav">
         <div class="footer-col">
