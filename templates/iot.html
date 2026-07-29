@@ -264,8 +264,9 @@ button{font-family:inherit;}
 @media(max-width:520px){
   .logo-side-text{display:block;font-size:.6rem;max-width:88px;padding-left:.6rem;margin-left:.3rem;}
 }
-.nav-links{display:flex;align-items:center;gap:.3rem;background:var(--creme-alt);padding:.4rem;border-radius:var(--r-pill);}
-.nav-links a{font-size:.82rem;font-weight:600;color:var(--tinta);padding:.6rem 1.1rem;border-radius:var(--r-pill);display:inline-block;transition:background .2s var(--ease), color .2s var(--ease);}
+.nav-links{display:flex;align-items:center;gap:.15rem;background:var(--creme-alt);padding:.4rem;border-radius:var(--r-pill);}
+.nav-links a{font-size:.78rem;font-weight:600;color:var(--tinta);padding:.6rem .85rem;border-radius:var(--r-pill);display:inline-block;white-space:nowrap;transition:background .2s var(--ease), color .2s var(--ease);}
+@media(max-width:1140px){ .logo-side-text{display:none;} }
 .nav-links a:hover{background:var(--branco);box-shadow:var(--sombra);}
 .nav-cta{background:var(--tinta);color:#fff !important;padding:.7rem 1.4rem !important;}
 .nav-cta:hover{background:var(--laranja) !important;box-shadow:none;}
@@ -727,6 +728,8 @@ setTimeout(function(){
   <a href="#home" onclick="closeMobile()">Home</a>
   <a href="#especialista" onclick="closeMobile()">Quem Somos</a>
   <a href="#procedimentos" onclick="closeMobile()">Especialidades</a>
+  <a href="#ajudar" onclick="closeMobile()">Tratamentos</a>
+  <a href="#convenios" onclick="closeMobile()">Convênios</a>
   <a href="#blog" onclick="closeMobile()">Blog</a>
   <a href="#contato" onclick="closeMobile()">Contato</a>
 </div>
@@ -743,6 +746,8 @@ setTimeout(function(){
       <li><a href="#home">Home</a></li>
       <li><a href="#especialista">Quem Somos</a></li>
       <li><a href="#procedimentos">Especialidades</a></li>
+      <li><a href="#ajudar">Tratamentos</a></li>
+      <li><a href="#convenios">Convênios</a></li>
       <li><a href="#blog">Blog</a></li>
       <li><a href="#contato" class="nav-cta">Contato</a></li>
     </ul>
