@@ -757,7 +757,7 @@ setTimeout(function(){
         <div class="quarto-body">
           <span class="quarto-tag">{{ ns.cat_nome if ns.cat_nome else 'Quarto' }}</span>
           <h3>{{ p.nome }}</h3>
-          <p>{{ p.descricao | truncate(140) if p.descricao else '' }}</p>
+          <p>{{ p.descricao | striptags | truncate(140) if p.descricao else '' }}</p>
           {% if p.preco and p.preco > 0 %}
           <!-- Preço opcional: exibido só como referência, sem link de reserva -->
           <span class="quarto-price">A partir de R$ {{ '%.0f'|format(p.preco) }} <small>/ noite</small></span>
