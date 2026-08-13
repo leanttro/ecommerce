@@ -390,6 +390,29 @@ button{font-family:inherit;}
 @media(max-width:900px){.quarto-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:600px){.quarto-grid{grid-template-columns:1fr;}}
 
+/* ═══ SERVIÇOS ═══ */
+#servicos{background:var(--cream-2);}
+.servico-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;margin-top:3rem;}
+.servico-card{
+  background:#fff;border:1px solid var(--line);border-radius:18px;padding:1.9rem 1.6rem;
+  display:block;text-decoration:none;color:inherit;cursor:pointer;
+  transition:transform .25s ease,box-shadow .25s ease;
+}
+.servico-card:hover{transform:translateY(-5px);box-shadow:0 18px 34px rgba(69,78,52,.14);}
+.servico-icon{
+  width:52px;height:52px;border-radius:50%;background:var(--cream-2);display:flex;align-items:center;justify-content:center;
+  margin-bottom:1.1rem;color:var(--terracotta);
+}
+.servico-card:hover .servico-icon{background:var(--terracotta);color:#fff;transition:background .25s,color .25s;}
+.servico-icon i{width:22px;height:22px;}
+.servico-card h3{font-size:1.06rem;color:var(--olive-dker);margin-bottom:.5rem;}
+.servico-card p{font-size:.86rem;color:var(--muted);line-height:1.6;margin-bottom:1rem;}
+.servico-price{display:block;font-family:'Fraunces',serif;font-weight:600;font-size:.96rem;color:var(--olive-dker);margin-bottom:.7rem;}
+.servico-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;font-weight:800;color:var(--terracotta);}
+.servico-link i{width:14px;height:14px;}
+@media(max-width:900px){.servico-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:560px){.servico-grid{grid-template-columns:1fr;}}
+
 /* ═══ ESTRUTURA DA CASA ═══ */
 #estrutura{background:var(--cream);}
 .estrutura-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.6rem;margin-top:3rem;}
@@ -736,12 +759,26 @@ setTimeout(function(){
     <h2 class="section-title">Escolha o seu tipo de quarto</h2>
     <p class="section-lede">Três formatos pra combinar com o seu jeito de viajar — sempre com muita limpeza e conforto.</p>
 
-    {% if produtos and produtos|length > 0 %}
+    {% set quartos = [] %}
+    {% set servicos = [] %}
+    {% for p in produtos %}
+      {% if p.layout_case %}
+        {% set _ = servicos.append(p) %}
+      {% else %}
+        {% set _ = quartos.append(p) %}
+      {% endif %}
+    {% endfor %}
+    <!-- Reaproveitamos o campo "layout_case" (checkbox já existente no painel, na aba de
+         edição de produto) como marcador de "isto é um Serviço, não um quarto". Assim os
+         quartos continuam indo pro grid de Acomodações e os serviços (Day Use, Guarda-volumes,
+         Estacionamento, Lavanderia etc.) saem daqui e vão pra seção "Serviços" logo abaixo. -->
+
+    {% if quartos and quartos|length > 0 %}
     <!-- QUARTOS DINÂMICOS: puxa de 'produtos' (o mesmo contrato que alimenta os cases do pascoa.html).
          Cadastre cada quarto no painel como um produto — nome, descrição, foto (imagem/imagem1) e,
          se quiser, categoria (ex.: "Coletivo Feminino", "Coletivo Masculino", "Privado") e preço da diária. -->
     <div class="quarto-grid">
-      {% for p in produtos %}
+      {% for p in quartos %}
       {% set ns = namespace(cat_nome='') %}
       {% for c in categorias %}{% if c.id == p.categoria_id %}{% set ns.cat_nome = c.nome %}{% endif %}{% endfor %}
       <a href="/{{ loja.slug_url }}/produto/{{ p.slug }}" class="quarto-card reveal" style="transition-delay:{{ loop.index0 * 0.08 }}s">
@@ -808,6 +845,37 @@ setTimeout(function(){
     {% endif %}
   </div>
 </section>
+
+<!-- ═══ SERVIÇOS ═══ -->
+{% if servicos and servicos|length > 0 %}
+<section id="servicos" class="section">
+  <div class="container">
+    <span class="eyebrow">Serviços</span>
+    <h2 class="section-title">Outros serviços da casa</h2>
+    <p class="section-lede">Day use, guarda-volumes, estacionamento, lavanderia — tudo pra deixar sua estadia mais fácil.</p>
+
+    <div class="servico-grid">
+      {% for s in servicos %}
+      <a href="/{{ loja.slug_url }}/produto/{{ s.slug }}" class="servico-card reveal" style="transition-delay:{{ loop.index0 * 0.06 }}s">
+        <div class="servico-icon">
+          {% if 'day use' in s.nome|lower %}<i data-lucide="sun" aria-hidden="true"></i>
+          {% elif 'guarda' in s.nome|lower %}<i data-lucide="briefcase" aria-hidden="true"></i>
+          {% elif 'estacion' in s.nome|lower %}<i data-lucide="car" aria-hidden="true"></i>
+          {% elif 'lavand' in s.nome|lower %}<i data-lucide="shirt" aria-hidden="true"></i>
+          {% else %}<i data-lucide="concierge-bell" aria-hidden="true"></i>{% endif %}
+        </div>
+        <h3>{{ s.nome }}</h3>
+        <p>{{ s.descricao | striptags | truncate(100) if s.descricao else '' }}</p>
+        {% if s.preco and s.preco > 0 %}
+        <span class="servico-price">A partir de R$ {{ '%.0f'|format(s.preco) }}</span>
+        {% endif %}
+        <span class="servico-link">Ver detalhes <i data-lucide="arrow-right" aria-hidden="true"></i></span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 
 <!-- ═══ ESTRUTURA DA CASA ═══ -->
 <section id="estrutura" class="section">
