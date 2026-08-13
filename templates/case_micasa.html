@@ -206,11 +206,12 @@ a{text-decoration:none;color:inherit;}
     <path class="leaf-line" d="M80 20 Q62 2 48 5 Q65 17 80 20"/>
   </svg>
   <div class="container">
-    <span class="eyebrow on-dark">Nossa acomodação</span>
+    <span class="eyebrow on-dark">{{ 'Nosso serviço' if p.layout_case else 'Nossa acomodação' }}</span>
     <h1 class="hero-detail-title">{{ p.nome }}</h1>
   </div>
 </div>
 
+{% if not p.layout_case %}
 <section id="hero-detail">
   <div id="heroTrack">
     {% for img in hero_imgs %}
@@ -231,8 +232,40 @@ a{text-decoration:none;color:inherit;}
   <div class="hero-dots" id="heroDots"></div>
   {% endif %}
 </section>
+{% endif %}
 
-<!-- ═══ DETALHES + SIDEBAR ═══ -->
+{% if p.layout_case %}
+<!-- ═══ LAYOUT ENXUTO — SERVIÇOS (Day Use, Guarda-volumes, Estacionamento, Lavanderia etc.) ═══
+     Ativado quando o checkbox "layout_case" está marcado no produto (painel > Produtos > editar).
+     Sem carrossel de fotos e sem "Comodidades": só o essencial, já que é pouco texto. -->
+<section class="section" style="padding-top:3.5rem;">
+  <div class="container" style="max-width:760px;">
+    <div class="sidebar-card reveal" style="position:static;">
+      {% if p.preco and p.preco > 0 %}
+      <div class="price-badge">
+        <small>Valor</small>
+        R$ {{ '%.0f'|format(p.preco) }}
+      </div>
+      {% endif %}
+
+      <div class="prose" style="margin-bottom:1.8rem;">
+        {% if p.descricao %}
+          {{ p.descricao | replace('\n', '<br>') | safe }}
+        {% else %}
+          <p>Fale com a gente pelo WhatsApp pra saber mais detalhes sobre esse serviço.</p>
+        {% endif %}
+      </div>
+
+      <div class="sidebar-actions" style="padding-top:0;border-top:none;">
+        <button onclick="window.open('https://wa.me/55{{ p.whatsapp_projeto or loja.whatsapp_comercial }}?text=Oi! Vi o serviço {{ p.nome }} no site e queria saber mais.')" class="btn btn-whats">
+          <i data-lucide="message-circle" aria-hidden="true"></i> Falar no WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+{% else %}
+<!-- ═══ DETALHES + SIDEBAR (QUARTOS) ═══ -->
 <section class="section">
   <div class="container detail-grid">
 
@@ -290,6 +323,7 @@ a{text-decoration:none;color:inherit;}
 
   </div>
 </section>
+{% endif %}
 
 <!-- ═══ FOOTER ═══ -->
 <footer id="detail-footer">
