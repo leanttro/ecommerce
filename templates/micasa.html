@@ -612,6 +612,67 @@ footer{background:var(--olive-dker);padding:3.2rem 0 1.6rem;color:rgba(247,243,2
   50%{border-radius:58% 42% 40% 60% / 55% 60% 40% 45%;}
 }
 @media(max-width:560px){.wa-float{bottom:1.2rem;right:1.2rem;} .wa-btn{width:54px;height:54px;}}
+
+/* ═══ MODAL: MANUAL RÁPIDO DO HÓSPEDE ═══ */
+.manual-overlay{position:fixed;inset:0;background:rgba(58,58,46,.55);backdrop-filter:blur(3px);
+  z-index:2000;display:none;align-items:center;justify-content:center;padding:1.4rem;
+  opacity:0;transition:opacity .25s ease;}
+.manual-overlay.open{display:flex;opacity:1;}
+.manual-modal{background:var(--cream);width:100%;max-width:840px;max-height:88vh;border-radius:22px;
+  overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 70px rgba(0,0,0,.35);
+  transform:translateY(18px) scale(.98);transition:transform .3s cubic-bezier(.16,1,.3,1);}
+.manual-overlay.open .manual-modal{transform:translateY(0) scale(1);}
+.manual-modal-header{background:var(--olive-dker);padding:1.5rem 1.8rem;display:flex;align-items:center;
+  justify-content:space-between;gap:1rem;flex-shrink:0;}
+.manual-modal-header-inner{display:flex;align-items:center;gap:1rem;}
+.manual-logo{height:42px;width:auto;flex-shrink:0;filter:brightness(0) invert(1);opacity:.92;}
+.manual-modal-header h2{color:#fff;font-size:1.25rem;line-height:1.2;}
+.manual-close{background:rgba(247,243,236,.14);border:1.5px solid rgba(247,243,236,.3);color:#fff;
+  width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:background .2s;}
+.manual-close:hover{background:var(--terracotta);border-color:var(--terracotta);}
+.manual-modal-body{overflow-y:auto;padding:1.8rem;flex:1;}
+.manual-intro{font-size:.98rem;line-height:1.7;color:var(--muted);margin-bottom:1.6rem;padding-bottom:1.4rem;
+  border-bottom:1px solid var(--line);}
+.manual-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:640px){.manual-grid{grid-template-columns:1fr;}}
+.manual-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:1.2rem 1.3rem;}
+.manual-card h3{display:flex;align-items:center;gap:.55rem;font-size:.98rem;color:var(--olive-dker);margin-bottom:.6rem;}
+.manual-card h3 i{width:17px;height:17px;color:var(--terracotta);flex-shrink:0;}
+.manual-card p{font-size:.86rem;line-height:1.6;color:var(--ink);margin-bottom:.4rem;}
+.manual-card p:last-child{margin-bottom:0;}
+.manual-card ul{margin:0;padding-left:1.1rem;}
+.manual-card li{font-size:.86rem;line-height:1.6;color:var(--ink);margin-bottom:.3rem;}
+.manual-card li:last-child{margin-bottom:0;}
+.manual-footer-note{display:flex;align-items:center;gap:.9rem;margin-top:1.6rem;padding:1.1rem 1.3rem;
+  background:var(--cream-2);border-radius:14px;}
+.manual-footer-note i{width:24px;height:24px;color:var(--terracotta);flex-shrink:0;}
+.manual-footer-note p{font-size:.86rem;line-height:1.55;color:var(--ink);}
+.manual-docs{margin-top:1.8rem;padding-top:1.6rem;border-top:1px solid var(--line);}
+.manual-docs-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;}
+@media(max-width:640px){.manual-docs-grid{grid-template-columns:1fr;}}
+.manual-doc-link{display:flex;align-items:center;gap:.6rem;background:#fff;border:1px solid var(--line);
+  border-radius:12px;padding:.85rem 1rem;font-size:.86rem;font-weight:700;color:var(--olive-dker);
+  transition:border-color .2s,background .2s,transform .2s;}
+.manual-doc-link i{width:16px;height:16px;color:var(--terracotta);flex-shrink:0;}
+.manual-doc-link:hover{border-color:var(--terracotta);background:var(--cream-2);transform:translateY(-1px);}
+.manual-modal-actions{flex-shrink:0;padding:1.2rem 1.8rem;background:#fff;border-top:1px solid var(--line);
+  display:flex;gap:.8rem;flex-wrap:wrap;}
+.manual-modal-actions .btn{width:auto;flex:1;min-width:200px;}
+@media(max-width:640px){.manual-modal{max-height:92vh;border-radius:18px;} .manual-modal-header{padding:1.2rem 1.3rem;}
+  .manual-modal-body{padding:1.3rem;} .manual-modal-actions{padding:1rem 1.3rem;}}
+
+/* ═══ SEÇÃO: MANUAL DO HÓSPEDE (home) ═══ */
+.hospede-section{background:var(--cream-2);}
+.hospede-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:2.6rem;align-items:center;}
+@media(max-width:860px){.hospede-wrap{grid-template-columns:1fr;gap:1.8rem;}}
+.hospede-card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:2rem 2.2rem;
+  display:flex;align-items:flex-start;gap:1.2rem;box-shadow:0 18px 40px rgba(58,58,46,.08);}
+.hospede-card i{width:30px;height:30px;color:var(--terracotta);flex-shrink:0;margin-top:.15rem;}
+.hospede-card h3{font-size:1.05rem;color:var(--olive-dker);margin-bottom:.35rem;}
+.hospede-card p{font-size:.9rem;line-height:1.6;color:var(--muted);}
+.hospede-list{display:grid;gap:.9rem;}
+@media(max-width:560px){.hospede-card{padding:1.5rem 1.4rem;}}
 </style>
 </head>
 <body>
@@ -1156,6 +1217,38 @@ setTimeout(function(){
   </div>
 </section>
 
+<!-- ═══ MANUAL DO HÓSPEDE ═══ -->
+<section id="hospede" class="section hospede-section">
+  <div class="container">
+    <div class="hospede-wrap">
+      <div>
+        <span class="eyebrow">Já é hóspede?</span>
+        <h2 class="section-title" style="margin-bottom:1rem;">Manual Rápido do Hóspede</h2>
+        <p class="section-lede" style="margin-bottom:1.6rem;">Wi-Fi, horários, regras da casa, lavanderia e tudo que você precisa saber pra aproveitar sua estadia com tranquilidade — reunimos tudo num guia rápido, sem precisar procurar em vários lugares.</p>
+        <button onclick="openManualModal()" class="btn btn-dark">
+          <i data-lucide="book-open" aria-hidden="true"></i> Abrir Manual do Hóspede
+        </button>
+      </div>
+      <div class="hospede-list">
+        <div class="hospede-card">
+          <i data-lucide="wifi" aria-hidden="true"></i>
+          <div>
+            <h3>Wi-Fi, horários e convivência</h3>
+            <p>Rede e senha da internet, check-in/out e período de silêncio, tudo num só lugar.</p>
+          </div>
+        </div>
+        <div class="hospede-card">
+          <i data-lucide="shirt" aria-hidden="true"></i>
+          <div>
+            <h3>Lavanderia, café e mais</h3>
+            <p>Como funciona e quanto custa cada serviço da casa, além de dúvidas comuns.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ═══ CONTATO ═══ -->
 {% if not loja.ocultar_formulario %}
 <section id="contato" class="section">
@@ -1227,6 +1320,166 @@ setTimeout(function(){
   <a href="https://wa.me/5511991021064?text=Oi!%20Vim%20pelo%20site%20e%20queria%20saber%20mais%20sobre%20o%20Micasa%20Hostel." target="_blank" class="wa-btn" aria-label="Falar pelo WhatsApp">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.119.554 4.107 1.523 5.836L.057 23.925 6.29 22.48A11.939 11.939 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.659-.503-5.184-1.381l-.372-.22-3.866.95.994-3.756-.243-.386A9.94 9.94 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" fill-rule="evenodd" clip-rule="evenodd"/></svg>
   </a>
+</div>
+
+<!-- ═══ MODAL: MANUAL RÁPIDO DO HÓSPEDE ═══ -->
+<div id="manualOverlay" class="manual-overlay" onclick="if(event.target===this) closeManualModal()">
+  <div class="manual-modal">
+
+    <div class="manual-modal-header">
+      <div class="manual-modal-header-inner">
+        <img class="manual-logo" src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1784235480/Massas_Sabores_36_pxcet2.png" alt="Micasa Hostel">
+        <div>
+          <span class="eyebrow on-dark" style="margin-bottom:.25rem;">Manual Rápido do Hóspede</span>
+          <h2>Guia de Boas-Vindas · Micasa Hostel</h2>
+        </div>
+      </div>
+      <button class="manual-close" onclick="closeManualModal()" aria-label="Fechar">&#10005;</button>
+    </div>
+
+    <div class="manual-modal-body">
+      <p class="manual-intro">Ficamos felizes em receber você! Este guia reúne as informações mais importantes para que sua estadia seja confortável, tranquila e agradável. Para informações completas, consulte o Regulamento Interno e Condições de Hospedagem — Versão Oficial 2026 (links ao final).</p>
+
+      <div class="manual-grid">
+
+        <div class="manual-card">
+          <h3><i data-lucide="map-pin" aria-hidden="true"></i>Contato & Endereço</h3>
+          <p>Rua Tapes, 740 — Jardim Aeroporto, São Paulo – SP, CEP 04631-011</p>
+          <p>WhatsApp: (11) 99102-1064 · Instagram: @micasahostel.congonhas</p>
+        </div>
+
+        <div class="manual-card">
+          <h3><i data-lucide="clock" aria-hidden="true"></i>Horários Importantes</h3>
+          <ul>
+            <li><strong>Recepção:</strong> 09h00 às 23h00</li>
+            <li><strong>Check-in:</strong> 14h00 às 23h00</li>
+            <li><strong>Check-out:</strong> até 12h00</li>
+            <li><strong>Após o check-out:</strong> áreas comuns liberadas até 16h00 (depois, pode ser cobrado Day Use)</li>
+            <li><strong>Período de silêncio:</strong> 23h00 às 07h00</li>
+          </ul>
+        </div>
+
+        <div class="manual-card">
+          <h3><i data-lucide="wifi" aria-hidden="true"></i>Wi-Fi</h3>
+          <p>Rede: <strong>MICASA</strong></p>
+          <p>Senha: <strong>tapes740</strong></p>
+        </div>
+
+        <div class="manual-card">
+          <h3><i data-lucide="users" aria-hidden="true"></i>Regras de Convivência</h3>
+          <ul>
+            <li>Respeite os demais hóspedes e mantenha comportamento cordial</li>
+            <li>Observe o período de silêncio e use fones de ouvido quando necessário</li>
+            <li>Mantenha as áreas comuns organizadas</li>
+            <li>Cuide dos equipamentos e instalações</li>
+          </ul>
+        </div>
+
+        <div class="manual-card">
+          <h3><i data-lucide="utensils" aria-hidden="true"></i>Cozinha Compartilhada</h3>
+          <ul>
+            <li>Lave os utensílios e limpe a bancada após o uso</li>
+            <li>Descarte corretamente seus resíduos</li>
+            <li>Identifique seus alimentos quando solicitado</li>
+            <li>Evite deixar alimentos abandonados ou vencidos na geladeira</li>
+          </ul>
+        </div>
+
+        <div class="manual-card">
+          <h3><i data-lucide="droplets" aria-hidden="true"></i>Banheiros</h3>
+          <ul>
+            <li>Mantenha o local limpo</li>
+            <li>Evite desperdício de água</li>
+            <li>Informe vazamentos ou problemas de manutenção</li>
+          </ul>
+        </div>
+
+        <div class="manual-card">
+          <h3><i data-lucide="shirt" aria-hidden="true"></i>Lavanderia</h3>
+          <p><strong>Completa</strong> (lavagem, secagem, sabão e dobra): R$ 50,00 · até 3 sacolas grandes · prazo até 24h</p>
+          <p><strong>Manual</strong> (mediante autorização): R$ 10,00 · até 10 peças · inclui 1 dose de sabão</p>
+        </div>
+
+        <div class="manual-card">
+          <h3><i data-lucide="sun" aria-hidden="true"></i>Secagem de Roupas</h3>
+          <p>Utilize apenas os locais indicados pela Administração. Não utilize grades, fachadas, áreas não autorizadas ou estruturas externas do imóvel.</p>
+        </div>
+
+        <div class="manual-card">
+          <h3><i data-lucide="coffee" aria-hidden="true"></i>Café</h3>
+          <p>R$ 5,00 por dose (rende aprox. 2 xícaras), preparo pelo próprio hóspede.</p>
+        </div>
+
+        <div class="manual-card">
+          <h3><i data-lucide="car" aria-hidden="true"></i>Estacionamento</h3>
+          <p><strong>Vagas internas:</strong> R$ 30,00/noite · sujeito à disponibilidade · veículos de passeio até aprox. 4,90m, sem bagageiro externo</p>
+          <p><strong>Parceiro</strong> (a ~200m): para veículos maiores, valores conforme operador</p>
+        </div>
+
+        <div class="manual-card">
+          <h3><i data-lucide="user-plus" aria-hidden="true"></i>Visitantes</h3>
+          <p>Permanência gratuita de até 1 hora. Além disso, pode gerar cobrança de Day Use. A Administração pode solicitar identificação.</p>
+        </div>
+
+        <div class="manual-card">
+          <h3><i data-lucide="paw-print" aria-hidden="true"></i>Pets</h3>
+          <p>Bem-vindos mediante autorização prévia. O tutor é responsável por comportamento, higiene, segurança e eventuais danos causados pelo animal.</p>
+        </div>
+
+        <div class="manual-card">
+          <h3><i data-lucide="leaf" aria-hidden="true"></i>Sustentabilidade</h3>
+          <p>Economize água e energia, evite desperdício de alimentos, separe resíduos quando possível e respeite os jardins e áreas verdes.</p>
+        </div>
+
+        <div class="manual-card">
+          <h3><i data-lucide="search" aria-hidden="true"></i>Achados e Perdidos</h3>
+          <p>Avise a Administração o quanto antes. Itens ficam guardados por até 6 meses e a retirada é feita pelo proprietário ou pessoa autorizada.</p>
+        </div>
+
+        <div class="manual-card">
+          <h3><i data-lucide="plug-zap" aria-hidden="true"></i>Segurança Elétrica</h3>
+          <p>Todas as tomadas do hostel operam em 110V. Verifique a compatibilidade dos seus equipamentos antes de usar.</p>
+        </div>
+
+      </div>
+
+      <div class="manual-footer-note">
+        <i data-lucide="help-circle" aria-hidden="true"></i>
+        <p>Em caso de dúvida, procure a Administração ou fale com a gente pelo WhatsApp — teremos prazer em ajudar.</p>
+      </div>
+
+      <div class="manual-docs">
+        <p class="tag-heading">Regulamentos e manuais completos</p>
+        <div class="manual-docs-grid">
+          <a href="https://docs.google.com/document/d/1qoZBApQqFQHGNi7dSkpRn22eJxa1S_Wg84Z27_DLO9s/edit?usp=drive_link" target="_blank" rel="noopener" class="manual-doc-link">
+            <i data-lucide="file-text" aria-hidden="true"></i> Regulamento Interno
+          </a>
+          <a href="https://docs.google.com/document/d/1oJOdR-dmOW8Rbg3jexJ0BYbdOLSPSL7RtmBsq0Acc88/edit?usp=drive_link" target="_blank" rel="noopener" class="manual-doc-link">
+            <i data-lucide="file-text" aria-hidden="true"></i> Anexo I — Regulamento Pets
+          </a>
+          <a href="https://docs.google.com/document/d/1PrGIEHaghO6eZA6B1pedTSk5xsSO2aBVxMecIZc96-4/edit?usp=drive_link" target="_blank" rel="noopener" class="manual-doc-link">
+            <i data-lucide="file-text" aria-hidden="true"></i> Anexo II
+          </a>
+          <a href="https://docs.google.com/document/d/1F0XlIYmcw6XnlaWqxArMqrMKaa3LnKrIZbPg5dYd24Q/edit?usp=drive_link" target="_blank" rel="noopener" class="manual-doc-link">
+            <i data-lucide="file-text" aria-hidden="true"></i> Anexo III
+          </a>
+          <a href="https://docs.google.com/document/d/1ARF_O3u2Bw_2wm82piYkMqyFPoOZ7piiAjCG-6tXQkc/edit?usp=drive_link" target="_blank" rel="noopener" class="manual-doc-link">
+            <i data-lucide="file-text" aria-hidden="true"></i> Anexo IV — Manual Rápido
+          </a>
+        </div>
+        <a href="/static/docs/manual-hospede-micasa.pdf" download class="btn btn-dark" style="margin-top:1rem;">
+          <i data-lucide="download" aria-hidden="true"></i> Baixar Manual Rápido (PDF)
+        </a>
+      </div>
+    </div>
+
+    <div class="manual-modal-actions">
+      <button onclick="window.open('https://wa.me/5511991021064?text=Oi!%20Tenho%20uma%20d%C3%BAvida%20sobre%20o%20Micasa%20Hostel.')" class="btn btn-whats">
+        <i data-lucide="message-circle" aria-hidden="true"></i> Dúvidas? Fale no WhatsApp
+      </button>
+    </div>
+
+  </div>
 </div>
 
 <script>
@@ -1628,6 +1881,20 @@ document.addEventListener('click', function(e) {
 });
 
 try{ if(window.lucide) lucide.createIcons(); }catch(e){}
+
+// ─ modal do Manual Rápido do Hóspede ─
+function openManualModal(){
+  document.getElementById('manualOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  try{ if(window.lucide) lucide.createIcons(); }catch(e){}
+}
+function closeManualModal(){
+  document.getElementById('manualOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') closeManualModal();
+});
 </script>
 </body>
 </html>
