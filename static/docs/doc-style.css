@@ -1,0 +1,205 @@
+/* ============================================================
+   MICASA HOSTEL — folha de estilo dos documentos oficiais
+   Paleta e tipografia herdadas do site principal (micasa.html)
+   ============================================================ */
+
+:root{
+  --olive:      #859266;
+  --olive-dk:   #5F6A49;
+  --olive-dker: #454E34;
+  --terracotta: #C9744A;
+  --terracotta-dk: #A85C38;
+  --cream:      #F7F3EC;
+  --cream-2:    #EFE7D8;
+  --line:       #DFD5BF;
+  --ink:        #3A3A2E;
+  --muted:      #7C7A67;
+  --white:      #FFFFFF;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Mulish',sans-serif;
+  font-size:16px;
+  background:var(--cream-2);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{
+  font-family:'Fraunces',serif;
+  color:var(--olive-dker);
+  line-height:1.18;
+  font-weight:600;
+  letter-spacing:-.01em;
+}
+p,li{font-family:'Mulish',sans-serif;line-height:1.75;}
+a{color:var(--terracotta-dk);text-decoration:underline;text-underline-offset:2px;}
+.script{font-family:'Caveat',cursive;font-weight:600;}
+
+/* ---------- toolbar (fixed, hidden on print) ---------- */
+.doc-toolbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:14px 22px;
+  background:var(--olive-dker);
+  color:var(--cream);
+  box-shadow:0 2px 10px rgba(0,0,0,.15);
+}
+.doc-toolbar a.back{
+  color:var(--cream);text-decoration:none;
+  font-size:14px;font-weight:600;
+  display:flex;align-items:center;gap:6px;opacity:.85;
+}
+.doc-toolbar a.back:hover{opacity:1;}
+.doc-toolbar .doc-title-mini{
+  font-family:'Fraunces',serif;font-size:15px;font-weight:600;
+  color:var(--cream);opacity:.9;
+  display:none;
+}
+.btn-print{
+  background:var(--terracotta);
+  color:#fff;border:none;
+  font-family:'Mulish',sans-serif;font-weight:700;font-size:14px;
+  padding:10px 20px;border-radius:999px;cursor:pointer;
+  display:flex;align-items:center;gap:8px;
+  transition:background .15s ease, transform .15s ease;
+}
+.btn-print:hover{background:var(--terracotta-dk);transform:translateY(-1px);}
+.btn-print svg{width:16px;height:16px;flex:0 0 auto;}
+
+/* ---------- page shell ---------- */
+.doc-wrap{max-width:820px;margin:0 auto;padding:0 20px 80px;}
+
+.doc-cover{
+  background:var(--olive-dker);
+  color:var(--cream);
+  padding:64px 20px 56px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.doc-cover::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 20% 20%, rgba(201,116,74,.18), transparent 55%),
+             radial-gradient(circle at 80% 80%, rgba(133,146,102,.25), transparent 55%);
+  pointer-events:none;
+}
+.doc-cover-inner{position:relative;max-width:640px;margin:0 auto;}
+.doc-kicker{
+  font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--terracotta);font-weight:700;margin-bottom:14px;
+}
+.doc-cover h1{
+  color:var(--white);font-size:clamp(30px,5vw,46px);margin-bottom:10px;
+}
+.doc-cover .subtitle{
+  font-family:'Caveat',cursive;font-size:24px;color:var(--cream);opacity:.85;
+  margin-bottom:26px;
+}
+.doc-cover .meta-row{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:22px;
+}
+.pill{
+  border:1px solid rgba(247,243,236,.3);
+  color:var(--cream);
+  font-size:12.5px;font-weight:600;
+  padding:6px 14px;border-radius:999px;
+  background:rgba(247,243,236,.06);
+}
+
+.doc-body{
+  background:var(--white);
+  margin-top:-30px;
+  border-radius:18px 18px 0 0;
+  padding:48px clamp(20px,5vw,64px) 20px;
+  position:relative;
+  box-shadow:0 -6px 24px rgba(69,78,52,.08);
+}
+
+.doc-toc{
+  background:var(--cream);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:24px 26px;
+  margin-bottom:40px;
+}
+.doc-toc h2{font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--olive-dk);margin-bottom:14px;}
+.doc-toc ol{list-style:none;columns:2;column-gap:28px;}
+.doc-toc li{break-inside:avoid;margin-bottom:8px;font-size:14.5px;}
+.doc-toc a{color:var(--ink);text-decoration:none;}
+.doc-toc a:hover{color:var(--terracotta-dk);}
+
+section.chapter{margin-bottom:44px;scroll-margin-top:80px;}
+section.chapter h2{
+  font-size:23px;color:var(--terracotta-dk);
+  border-bottom:2px solid var(--line);
+  padding-bottom:10px;margin-bottom:18px;
+  display:flex;align-items:baseline;gap:10px;
+}
+section.chapter h2 .num{
+  font-family:'Mulish',sans-serif;font-weight:800;font-size:13px;
+  color:var(--white);background:var(--olive);
+  padding:3px 9px;border-radius:6px;letter-spacing:.03em;
+}
+h3.sub{font-size:17px;color:var(--olive-dker);margin:22px 0 8px;}
+h4.subsub{font-size:15px;color:var(--olive-dk);margin:16px 0 6px;font-family:'Mulish',sans-serif;font-weight:800;}
+p{margin-bottom:12px;color:var(--ink);}
+ul.doc-list{margin:10px 0 16px 0;padding-left:4px;}
+ul.doc-list li{
+  list-style:none;position:relative;padding-left:20px;margin-bottom:6px;color:var(--ink);
+}
+ul.doc-list li::before{
+  content:"●";color:var(--terracotta);font-size:9px;position:absolute;left:0;top:7px;
+}
+ol.doc-steps{margin:10px 0 16px 22px;}
+ol.doc-steps li{margin-bottom:6px;}
+.callout{
+  background:var(--cream);border-left:4px solid var(--olive);
+  border-radius:8px;padding:14px 18px;margin:14px 0;font-size:15px;
+}
+.callout.warn{border-left-color:var(--terracotta);}
+.value-row{
+  display:flex;justify-content:space-between;gap:16px;
+  padding:10px 0;border-bottom:1px dashed var(--line);
+  font-size:15px;
+}
+.value-row .label{color:var(--muted);}
+.value-row .val{font-weight:700;color:var(--olive-dker);}
+table.doc-table{width:100%;border-collapse:collapse;margin:14px 0 22px;font-size:14.5px;}
+table.doc-table th{
+  text-align:left;background:var(--cream);color:var(--olive-dker);
+  font-family:'Fraunces',serif;font-weight:600;
+  padding:10px 12px;border-bottom:2px solid var(--line);
+}
+table.doc-table td{padding:10px 12px;border-bottom:1px solid var(--line);}
+table.doc-table tr:last-child td{border-bottom:none;}
+
+.doc-footer{
+  text-align:center;padding:36px 20px 8px;color:var(--muted);font-size:13px;
+}
+.doc-footer .script{font-size:20px;color:var(--olive-dk);display:block;margin-bottom:6px;}
+
+/* checklist style used in manual rápido */
+ul.check li::before{content:"✓";color:var(--olive);font-weight:900;font-size:13px;top:5px;}
+ul.cross li::before{content:"✗";color:var(--terracotta);font-weight:900;font-size:12px;top:5px;}
+
+@media (max-width:640px){
+  .doc-toc ol{columns:1;}
+  .doc-body{border-radius:14px 14px 0 0;padding:34px 18px 10px;}
+  .doc-toolbar .doc-title-mini{display:none;}
+}
+
+/* ---------- print / PDF ---------- */
+@media print{
+  @page{margin:20mm 16mm;}
+  .doc-toolbar{display:none !important;}
+  body{background:#fff;}
+  .doc-wrap{max-width:100%;padding:0;}
+  .doc-cover{border-radius:0;padding:30px 0 24px;}
+  .doc-cover::before{display:none;}
+  .doc-body{margin-top:0;border-radius:0;box-shadow:none;padding:26px 4px 0;}
+  .doc-toc{break-after:page;}
+  section.chapter{break-inside:avoid-page;}
+  a{color:var(--ink);text-decoration:none;}
+}
