@@ -714,6 +714,7 @@ setTimeout(function(){
   <a href="#acomodacoes" onclick="closeMobile()">Quartos</a>
   <a href="#localizacao" onclick="closeMobile()">Localização</a>
   <a href="#blog" onclick="closeMobile()">Blog</a>
+  <a href="javascript:void(0)" onclick="closeMobile();openManualModal()">Manual</a>
   <a href="#contato" onclick="closeMobile()">Contato</a>
 </div>
 
@@ -728,6 +729,7 @@ setTimeout(function(){
       <li><a href="#acomodacoes">Quartos</a></li>
       <li><a href="#localizacao">Localização</a></li>
       <li><a href="#blog">Blog</a></li>
+      <li><a href="javascript:void(0)" onclick="openManualModal()">Manual</a></li>
       <li class="nav-lang">
         <a href="javascript:void(0)" id="nav-lang-pt" class="nav-lang-active" onclick="selectLang('pt','Português')">PT</a><span class="nav-lang-sep">/</span><a href="javascript:void(0)" id="nav-lang-en" onclick="selectLang('en','English')">EN</a>
       </li>
@@ -1302,6 +1304,7 @@ setTimeout(function(){
             <li><a href="#acomodacoes">Quartos</a></li>
             <li><a href="#localizacao">Localização</a></li>
             <li><a href="#blog">Blog</a></li>
+            <li><a href="/static/docs/regulamento-micasa-hostel.html" target="_blank" rel="noopener">Manual do Hóspede</a></li>
             <li><a href="#contato">Contato</a></li>
           </ul>
         </div>
@@ -1460,24 +1463,24 @@ setTimeout(function(){
       <div class="manual-docs">
         <p class="tag-heading">Regulamentos e manuais completos</p>
         <div class="manual-docs-grid">
-          <a href="https://docs.google.com/document/d/1qoZBApQqFQHGNi7dSkpRn22eJxa1S_Wg84Z27_DLO9s/edit?usp=drive_link" target="_blank" rel="noopener" class="manual-doc-link">
+          <a href="/static/docs/regulamento-micasa-hostel.html" target="_blank" rel="noopener" class="manual-doc-link">
             <i data-lucide="file-text" aria-hidden="true"></i> Regulamento Interno
           </a>
-          <a href="https://docs.google.com/document/d/1oJOdR-dmOW8Rbg3jexJ0BYbdOLSPSL7RtmBsq0Acc88/edit?usp=drive_link" target="_blank" rel="noopener" class="manual-doc-link">
+          <a href="/static/docs/anexo-i-pets.html" target="_blank" rel="noopener" class="manual-doc-link">
             <i data-lucide="file-text" aria-hidden="true"></i> Anexo I — Regulamento Pets
           </a>
-          <a href="https://docs.google.com/document/d/1PrGIEHaghO6eZA6B1pedTSk5xsSO2aBVxMecIZc96-4/edit?usp=drive_link" target="_blank" rel="noopener" class="manual-doc-link">
-            <i data-lucide="file-text" aria-hidden="true"></i> Anexo II
+          <a href="/static/docs/anexo-ii-sustentabilidade.html" target="_blank" rel="noopener" class="manual-doc-link">
+            <i data-lucide="file-text" aria-hidden="true"></i> Anexo II — Sustentabilidade
           </a>
-          <a href="https://docs.google.com/document/d/1F0XlIYmcw6XnlaWqxArMqrMKaa3LnKrIZbPg5dYd24Q/edit?usp=drive_link" target="_blank" rel="noopener" class="manual-doc-link">
-            <i data-lucide="file-text" aria-hidden="true"></i> Anexo III
+          <a href="/static/docs/anexo-iii-taxas-e-valores.html" target="_blank" rel="noopener" class="manual-doc-link">
+            <i data-lucide="file-text" aria-hidden="true"></i> Anexo III — Taxas e Valores
           </a>
-          <a href="https://docs.google.com/document/d/1ARF_O3u2Bw_2wm82piYkMqyFPoOZ7piiAjCG-6tXQkc/edit?usp=drive_link" target="_blank" rel="noopener" class="manual-doc-link">
+          <a href="/static/docs/anexo-iv-manual-rapido.html" target="_blank" rel="noopener" class="manual-doc-link">
             <i data-lucide="file-text" aria-hidden="true"></i> Anexo IV — Manual Rápido
           </a>
         </div>
-        <a href="/static/docs/manual-hospede-micasa.pdf" download class="btn btn-dark" style="margin-top:1rem;">
-          <i data-lucide="download" aria-hidden="true"></i> Baixar Manual Rápido (PDF)
+        <a href="/static/docs/anexo-iv-manual-rapido.html" target="_blank" rel="noopener" class="btn btn-dark" style="margin-top:1rem;">
+          <i data-lucide="download" aria-hidden="true"></i> Abrir e Baixar Manual Rápido (PDF)
         </a>
       </div>
     </div>
