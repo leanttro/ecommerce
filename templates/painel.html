@@ -1256,7 +1256,8 @@
                 
                 grupo.opcoes.forEach((op, oIdx) => {
                     opcoesHTML += `
-                        <div class="flex flex-wrap gap-2 items-center mt-2 pl-4 border-l-2 border-gray-200">
+                        <div class="flex flex-wrap gap-2 items-center mt-2 pl-2 border-l-2 border-gray-200 opcao-item" data-oidx="${oIdx}">
+                            <span class="opcao-drag-handle text-gray-400 hover:text-gray-600 cursor-move px-1" title="Arrastar para reordenar"><i data-lucide="grip-vertical" class="w-4 h-4"></i></span>
                             <input type="text" placeholder="Opção (Ex: Chocolate)" value="${op.nome || ''}" onchange="updateOpcao(${gIdx}, ${oIdx}, 'nome', this.value)" class="flex-1 min-w-[120px] border border-gray-300 rounded-lg p-2 text-sm focus:border-pink-500 outline-none">
                             
                             <select onchange="updateOpcao(${gIdx}, ${oIdx}, 'tipo_preco', this.value)" class="border border-gray-300 rounded-lg p-2 text-sm focus:border-pink-500 outline-none bg-white">
@@ -1277,7 +1278,7 @@
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nome do Grupo (Ex: Tamanho, Sabor)</label>
                             <input type="text" placeholder="Ex: Escolha a Massa" value="${grupo.grupo || ''}" onchange="updateGrupo(${gIdx}, this.value)" class="font-bold border-b-2 border-gray-300 focus:border-pink-500 outline-none px-1 py-1 w-full text-gray-700">
                         </div>
-                        <div class="space-y-1">
+                        <div class="space-y-1 opcoes-list" id="opcoes-list-${gIdx}" data-gidx="${gIdx}">
                             ${opcoesHTML}
                         </div>
                         <button type="button" onclick="addOpcao(${gIdx})" class="text-xs text-pink-600 font-bold flex items-center gap-1 mt-4 hover:text-pink-800 transition"><i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar nova opção neste grupo</button>
@@ -1286,6 +1287,24 @@
             });
             document.getElementById('prodVariantes').value = JSON.stringify(currentVariantes);
             lucide.createIcons();
+            initOpcoesSortable();
+        }
+
+        function initOpcoesSortable() {
+            document.querySelectorAll('.opcoes-list').forEach((listEl) => {
+                Sortable.create(listEl, {
+                    animation: 150,
+                    handle: '.opcao-drag-handle',
+                    ghostClass: 'sortable-ghost',
+                    onEnd: function (evt) {
+                        const gIdx = parseInt(listEl.dataset.gidx, 10);
+                        const opcoes = currentVariantes[gIdx].opcoes;
+                        const [moved] = opcoes.splice(evt.oldIndex, 1);
+                        opcoes.splice(evt.newIndex, 0, moved);
+                        renderVariantes();
+                    }
+                });
+            });
         }
 
         function addGrupo() {
