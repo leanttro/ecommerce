@@ -190,6 +190,7 @@ ul{list-style:none;}
 button{font-family:inherit;}
 :focus-visible{outline:2px solid var(--terracotta);outline-offset:3px;}
 .script{font-family:'Caveat',cursive;font-weight:600;}
+.paulo-br{display:none;}
 @media (prefers-reduced-motion: reduce){
   *{animation:none!important;transition:none!important;}
 }
@@ -278,11 +279,11 @@ button{font-family:inherit;}
   .nav-links{display:none;}
   .hamburger{display:flex;position:absolute;right:0;top:50%;transform:translateY(-50%);}
   .nav-inner{position:relative;justify-content:center;padding:.85rem 0;}
-  .logo-img{height:78px;}
-  #navbar.scrolled .logo-img{height:62px;}
+  .logo-img{height:120px;}
+  #navbar.scrolled .logo-img{height:98px;}
 }
 @media(max-width:420px){
-  .logo-img{height:66px;}
+  .logo-img{height:101px;}
 }
 
 /* ═══ LEAF MOTIF (line-draw) ═══ */
@@ -336,6 +337,7 @@ button{font-family:inherit;}
   .hero-headline{font-size:1.7rem;}
   .hero-headline .script{font-size:1.75em;}
   .micasa-br{display:none;}
+  .paulo-br{display:block;}
 }
 
 .hero-strip{border-top:1px solid var(--line-dark);padding:1.6rem 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:1.2rem 2.4rem;}
@@ -747,7 +749,7 @@ setTimeout(function(){
   <div class="container">
     <div class="hero-grid">
       <div class="hero-text">
-        <h1 class="hero-headline"><span class="script">Mi Casa,<br class="micasa-br">Su Casa</span>Sua casa em São Paulo, a&nbsp;5 min do Aeroporto de Congonhas</h1>
+        <h1 class="hero-headline"><span class="script">Mi Casa,<br class="micasa-br">Su Casa</span>Sua casa em São Paulo,<br class="paulo-br"> a 5 min do Aeroporto de Congonhas</h1>
         <p class="hero-subtitle">Quartos coletivos e privados, jardim, varanda e cozinha compartilhada em Campo Belo. O tipo de lugar onde você chega de mochila nas costas e sai com endereço de gente nova pra visitar no mundo todo.</p>
         <div class="hero-actions">
           <!-- WHATSAPP A CONFIRMAR: trocar 5511999999999 pelo número real -->
