@@ -1830,7 +1830,14 @@ textarea:focus-visible{
 
 /* garante espaço reduzido acima de "Resultados" em qualquer largura */
 #prova.compare{ padding-top: 48px; }
-#sites.portfolio{ padding-top: 36px; }
+#sites.portfolio{ padding-top: 36px; padding-bottom: 36px; }
+#servicos.info-faq-section{ padding-top: 36px; }
+
+/* quebra manual do título da FAQ de serviços no desktop */
+.faq-title-break{ display: none; }
+@media (min-width: 769px){
+  .faq-title-break{ display: block; }
+}
 
 </style>
 </head>
@@ -2345,7 +2352,7 @@ textarea:focus-visible{
   <div class="container">
     <div class="info-faq-head reveal">
       <p class="eyebrow">Serviços</p>
-      <h2 class="h2">Perguntas sobre o que eu faço</h2>
+      <h2 class="h2">Perguntas sobre<br class="faq-title-break"> o que eu faço</h2>
       <p class="lede">Antes de chamar no WhatsApp, dá uma olhada no que costuma tirar dúvida.</p>
     </div>
 
