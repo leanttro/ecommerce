@@ -6,7 +6,17 @@
 <title>leanttro.com — Sua audiência é sua. Sua receita também deveria ser.</title>
 <meta name="description" content="Ajudo donos de sites de nicho a pararem de depender só de Instagram ou YouTube — estruturando o próprio site como fonte de receita.">
 <link rel="canonical" href="https://criadores.leanttro.com">
-<link rel="icon" type="image/png" href="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1779207400/leanttro_bohuce.png">
+<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3305/3305969.png">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-44WCVMR2Y5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-44WCVMR2Y5');
+</script>
 
 <!-- Open Graph (preview no WhatsApp, e-mail, etc.) -->
 <meta property="og:type" content="website">
@@ -1200,6 +1210,68 @@ textarea:focus-visible{
   .portfolio__faq-chevron{ margin-left: 6px; }
 }
 
+/* ================================================================
+   FAQ — serviços + palavras-chave (SEO)
+   ================================================================ */
+.info-faq-section{ background: var(--bg2); }
+.info-faq-section + .info-faq-section{ background: var(--bg); }
+.info-faq-head{ max-width: 620px; margin: 0 auto 44px; text-align: center; }
+.info-faq-head .eyebrow{ justify-content: center; }
+.info-faq-head .h2{ margin: 16px 0 14px; }
+.info-faq-head .lede{ font-size: clamp(1rem, 1.4vw, 1.1rem); }
+
+.info-faq{
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.info-faq-item{
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  transition: border-color .25s var(--ease), box-shadow .25s var(--ease);
+}
+.info-faq-item[open]{
+  border-color: var(--primary-soft);
+  box-shadow: var(--shadow);
+}
+.info-faq-item summary{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 19px 22px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+}
+.info-faq-item summary::-webkit-details-marker{ display: none; }
+.info-faq-item summary span{ flex: 1; }
+.info-faq-item summary svg{
+  margin-left: auto;
+  width: 18px; height: 18px;
+  flex-shrink: 0;
+  stroke: var(--muted);
+  transition: transform .3s var(--ease);
+}
+.info-faq-item[open] summary svg{ transform: rotate(180deg); }
+.info-faq-item p{
+  margin: 0;
+  padding: 0 22px 20px 22px;
+  color: var(--muted);
+  font-size: .94rem;
+  line-height: 1.65;
+}
+
+@media (max-width: 640px){
+  .info-faq-item summary{ padding: 16px 18px; font-size: .94rem; }
+  .info-faq-item p{ padding: 0 18px 18px 18px; }
+}
+
 .sober__quote{
   margin-top: 28px;
   font-size: 1.05rem;
@@ -1593,6 +1665,36 @@ textarea:focus-visible{
   transform: translateY(-2px);
 }
 .footer__social svg{ width: 17px; height: 17px; stroke: #fff; }
+
+/* --- Destaque: Instagram + site, bem visíveis no rodapé --- */
+.footer__highlight{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding-bottom: 30px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.footer__highlight-link{
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 22px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  border: 1.5px solid rgba(255,255,255,.14);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1rem;
+  transition: background .2s var(--ease), border-color .2s var(--ease), transform .2s var(--ease);
+}
+.footer__highlight-link:hover{
+  background: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.footer__highlight-link svg{ width: 20px; height: 20px; stroke: #fff; flex-shrink: 0; }
+.footer__highlight-link span{ opacity: .9; }
 
 .footer__bottom{
   padding-top: 26px;
@@ -2237,6 +2339,112 @@ textarea:focus-visible{
 </section>
 
 <!-- ============================================================
+     FAQ 1 — SOBRE OS SERVIÇOS (sem valores)
+     ============================================================ -->
+<section class="section section--tight info-faq-section" id="servicos">
+  <div class="container">
+    <div class="info-faq-head reveal">
+      <p class="eyebrow">Serviços</p>
+      <h2 class="h2">Perguntas sobre o que eu faço</h2>
+      <p class="lede">Antes de chamar no WhatsApp, dá uma olhada no que costuma tirar dúvida.</p>
+    </div>
+
+    <div class="info-faq reveal reveal-delay-1">
+      <details class="info-faq-item">
+        <summary><span>Quais serviços você oferece?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p>Site profissional (institucional), loja virtual (e-commerce), landing page simples, catálogo digital com template pronto, domínio personalizado com configuração, tráfego pago (Google Ads), chatbot de WhatsApp receptivo e pacote Google (GA4 + Search Console + GMB). Também ofereço listas de leads segmentadas, relatório quinzenal de desempenho, artes para redes sociais, templates e kits de Canva, vídeo promocional com cena de IA, configuração e manutenção de VPS, e automação para disparo de e-mail. O foco em todos é o mesmo: estruturar um canal que trabalhe por você, sem depender só de Instagram ou YouTube.</p>
+      </details>
+      <details class="info-faq-item">
+        <summary><span>Vocês fazem listas de leads?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p>Sim. Monto listas segmentadas com empresa, e-mail e WhatsApp, em pacotes de 100, 500 ou 1000 contatos, prontas pra prospecção — e também dá pra contratar a automação de disparo de e-mail pra usar em cima delas.</p>
+      </details>
+      <details class="info-faq-item">
+        <summary><span>Vocês fazem artes e templates pra redes sociais?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p>Sim. Faço artes avulsas nos formatos 1:1, 4:5 ou 9:16, além de pacotes mensais de 8 ou 12 artes. Também entrego template único ou kit de templates no Canva, caso você prefira editar por conta própria.</p>
+      </details>
+      <details class="info-faq-item">
+        <summary><span>Fazem configuração e manutenção de VPS?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p>Sim, cuido da configuração inicial de uma VPS (8GB) e da manutenção contínua, garantindo que o site e as automações fiquem sempre no ar — quem já tem VPS própria não paga a mensalidade desse serviço.</p>
+      </details>
+      <details class="info-faq-item">
+        <summary><span>Qual a diferença entre site e landing page?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p>O site institucional serve pra apresentar seu negócio, ganhar autoridade e ser encontrado no Google a longo prazo — geralmente com várias páginas. A landing page é uma página única, feita pra converter uma campanha específica em contato ou venda, com foco em um único objetivo.</p>
+      </details>
+      <details class="info-faq-item">
+        <summary><span>Vocês entregam o site pronto pra receber tráfego pago?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p>Sim. A estrutura já sai pensada pra rodar campanhas de Google Ads, com páginas de conversão, tempo de carregamento e organização adequados — e dá pra contratar a gestão do tráfego junto.</p>
+      </details>
+      <details class="info-faq-item">
+        <summary><span>O site fica pronto pra pedir aprovação no Google AdSense?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p>Sim, essa é uma das minhas especialidades: estrutura de conteúdo, políticas e organização técnica preparadas para revisões como a do AdSense — vários dos sites no meu portfólio já foram aprovados.</p>
+      </details>
+      <details class="info-faq-item">
+        <summary><span>Funciona pra qualquer nicho?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p>Sim. Já trabalhei com guias de conteúdo, calculadoras, negócios locais e páginas de captação — o processo se adapta ao nicho, mas o objetivo é sempre criar uma fonte de tráfego e receita que seja sua, não da plataforma.</p>
+      </details>
+      <details class="info-faq-item">
+        <summary><span>Como funciona o chatbot de WhatsApp?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p>Ele fica integrado ao seu WhatsApp pra responder as primeiras mensagens, qualificar quem chega e direcionar o atendimento — reduz o tempo de resposta e evita perder contato fora do horário comercial.</p>
+      </details>
+      <details class="info-faq-item">
+        <summary><span>Quanto custa?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p>O valor varia de acordo com o serviço e o tamanho do projeto — não trabalho com preço fechado padrão, porque cada site tem uma necessidade diferente. Manda uma mensagem contando o que você precisa e te passo um orçamento certo.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FAQ 2 — PALAVRAS-CHAVE (SEO: criação de site / landing page)
+     ============================================================ -->
+<section class="section section--tight info-faq-section" id="duvidas">
+  <div class="container">
+    <div class="info-faq-head reveal">
+      <p class="eyebrow">Dúvidas comuns</p>
+      <h2 class="h2">Quer criar um site ou uma landing page?</h2>
+      <p class="lede">Perguntas que quem está pesquisando "como criar um site" ou "como fazer uma landing page" costuma ter.</p>
+    </div>
+
+    <div class="info-faq reveal reveal-delay-1">
+      <details class="info-faq-item">
+        <summary><span>Como criar um site profissional do zero?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p>Passa por definir o objetivo do site, estruturar as páginas e o conteúdo, cuidar do SEO técnico e só depois publicar. Eu cuido de todo esse processo pra você, do planejamento até o site no ar.</p>
+      </details>
+      <details class="info-faq-item">
+        <summary><span>Como fazer uma landing page que converte?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p>Uma boa landing page tem um único objetivo, título claro, prova social e um caminho curto até o botão de ação — sem distração. É isso que eu estruturo em cada projeto, pensando em quem vai chegar por anúncio ou link direto.</p>
+      </details>
+      <details class="info-faq-item">
+        <summary><span>Preciso de domínio e hospedagem próprios?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p>Sim, o ideal é que o site fique no seu próprio domínio — isso é o que te dá controle total sobre o canal, ao contrário de depender de um perfil de rede social. Se você ainda não tem, eu te ajudo a configurar.</p>
+      </details>
+      <details class="info-faq-item">
+        <summary><span>Site próprio vale mais a pena do que só Instagram?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p>O Instagram te dá alcance, mas a audiência é da plataforma — se o algoritmo muda ou a conta cai, você perde tudo. Um site é seu: aparece no Google, pode ser monetizado de várias formas e não some de um dia pro outro.</p>
+      </details>
+      <details class="info-faq-item">
+        <summary><span>Quanto tempo leva pra um site aparecer no Google?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p>Varia bastante conforme o nicho e a concorrência, mas com a estrutura técnica certa desde o início — a que eu já uso em todos os projetos — o processo de indexação e ranqueamento tende a ser bem mais rápido.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "Quais serviços você oferece?", "acceptedAnswer": { "@type": "Answer", "text": "Site profissional, loja virtual, landing page, catálogo digital, domínio personalizado, tráfego pago, chatbot de WhatsApp, pacote Google, listas de leads, relatório de desempenho, artes e templates de Canva, vídeo promocional, VPS e automação de e-mail, sempre focados em estruturar um canal próprio de receita." } },
+    { "@type": "Question", "name": "Qual a diferença entre site e landing page?", "acceptedAnswer": { "@type": "Answer", "text": "O site institucional apresenta seu negócio e ganha autoridade no Google a longo prazo. A landing page é uma página única, feita para converter uma campanha específica em contato ou venda." } },
+    { "@type": "Question", "name": "Como criar um site profissional do zero?", "acceptedAnswer": { "@type": "Answer", "text": "É preciso definir o objetivo do site, estruturar páginas e conteúdo, cuidar do SEO técnico e só então publicar — um processo de planejamento até o site no ar." } },
+    { "@type": "Question", "name": "Como fazer uma landing page que converte?", "acceptedAnswer": { "@type": "Answer", "text": "Uma landing page eficaz tem um único objetivo, título claro, prova social e um caminho curto até o botão de ação, sem distrações." } },
+    { "@type": "Question", "name": "Site próprio vale mais a pena do que só Instagram?", "acceptedAnswer": { "@type": "Answer", "text": "Um site próprio aparece no Google, pode ser monetizado de várias formas e não depende do algoritmo de uma rede social, ao contrário de um perfil no Instagram." } }
+  ]
+}
+</script>
+
+<!-- ============================================================
      SEÇÃO 5 — CTA FINAL
      ============================================================ -->
 <section class="cta-final" id="contato">
@@ -2317,6 +2525,17 @@ textarea:focus-visible{
      ============================================================ -->
 <footer class="footer">
   <div class="container">
+    <div class="footer__highlight">
+      <a class="footer__highlight-link" href="https://instagram.com/leanttro" target="_blank" rel="noopener" aria-label="Instagram @leanttro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.2" cy="6.8" r="1"></circle></svg>
+        @leanttro
+      </a>
+      <a class="footer__highlight-link" href="https://www.leanttro.com" target="_blank" rel="noopener" aria-label="Site www.leanttro.com">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"></path></svg>
+        www.leanttro.com
+      </a>
+    </div>
+
     <div class="footer__row">
       <a href="#topo" class="footer__logo">
         <img src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1779207400/leanttro_bohuce.png" alt="Logo leanttro.com">
@@ -2327,6 +2546,8 @@ textarea:focus-visible{
         <li><a href="#audiencia">Audiência</a></li>
         <li><a href="#solucao">Solução</a></li>
         <li><a href="#prova">Resultados</a></li>
+        <li><a href="#servicos">Serviços</a></li>
+        <li><a href="#duvidas">Dúvidas</a></li>
       </ul>
 
       <div class="footer__social">
