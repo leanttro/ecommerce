@@ -1,0 +1,2450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>leanttro.com — Sua audiência é sua. Sua receita também deveria ser.</title>
+<meta name="description" content="Ajudo donos de sites de nicho a pararem de depender só de Instagram ou YouTube — estruturando o próprio site como fonte de receita.">
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1779207400/leanttro_bohuce.png">
+
+<!-- ============================================================
+     GOOGLE FONTS — Montserrat (400/500/600/700/800), única família
+     usada em toda a página, com variação de peso e tracking para
+     criar hierarquia sem precisar de uma segunda fonte.
+     ============================================================ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+/* ================================================================
+   1. RESET & DESIGN TOKENS
+   ================================================================ */
+:root{
+  /* --- cor --- */
+  --primary:        #5B3FEC;
+  --primary-d:       #4A2FD6;
+  --primary-soft:    #F0EDFF;
+  --primary-glow:    rgba(91,63,236,.35);
+
+  --accent:          #25D366;
+  --accent-d:        #1DA850;
+  --accent-glow:     rgba(37,211,102,.35);
+
+  --dark:            #1D1D1F;
+  --text:            #1D1D1F;
+  --muted:           #6E6E76;
+  --border:          #E7E7EE;
+
+  --bg:              #ffffff;
+  --bg2:             #F6F6FA;
+
+  /* --- forma --- */
+  --radius-card:     14px;
+  --radius-btn:      10px;
+  --radius-lg:       28px;
+
+  /* --- sombra --- */
+  --shadow:          0 4px 20px rgba(28,20,60,.08);
+  --shadow-md:       0 10px 30px rgba(28,20,60,.14);
+  --shadow-lg:       0 30px 80px rgba(28,20,60,.22);
+
+  /* --- tipografia --- */
+  --sans:            'Montserrat', sans-serif;
+
+  /* --- timing --- */
+  --ease:            cubic-bezier(.16,.84,.44,1);
+  --ease-soft:       cubic-bezier(.22,.61,.36,1);
+}
+
+*,*::before,*::after{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html{
+  scroll-behavior: smooth;
+}
+
+body{
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, svg{
+  max-width: 100%;
+  display: block;
+}
+
+ul{ list-style: none; }
+a{ text-decoration: none; color: inherit; }
+button{ font-family: inherit; border: none; background: none; cursor: pointer; }
+
+::selection{
+  background: var(--primary);
+  color: #fff;
+}
+
+/* acessibilidade: foco visível sempre */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible{
+  outline: 2.5px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior: auto; }
+  *,*::before,*::after{
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ================================================================
+   2. LAYOUT UTILITIES
+   ================================================================ */
+.container{
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section{
+  position: relative;
+  padding: 96px 0;
+}
+
+.section--tight{ padding: 72px 0; }
+
+.eyebrow{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.eyebrow::before{
+  content: '';
+  width: 22px;
+  height: 2px;
+  background: var(--accent);
+  display: inline-block;
+}
+
+.h1{
+  font-size: clamp(2.3rem, 5.4vw, 4.4rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -.02em;
+}
+
+.h2{
+  font-size: clamp(1.9rem, 3.6vw, 3rem);
+  font-weight: 800;
+  line-height: 1.14;
+  letter-spacing: -.015em;
+}
+
+.h3{
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.lede{
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  color: var(--muted);
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.text-muted{ color: var(--muted); }
+.text-center{ text-align: center; }
+
+/* ================================================================
+   3. BOTÕES
+   ================================================================ */
+.btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 28px;
+  border-radius: var(--radius-btn);
+  border: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: .95rem;
+  letter-spacing: -.01em;
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), background .2s;
+  white-space: nowrap;
+  position: relative;
+}
+
+.btn:active{ transform: scale(.97); }
+
+.btn-primary{
+  background: var(--dark);
+  color: #fff;
+}
+.btn-primary:hover{
+  background: #000;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-accent{
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 8px 24px var(--accent-glow);
+}
+.btn-accent:hover{
+  background: var(--accent-d);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px var(--accent-glow);
+}
+
+.btn-outline{
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,.5);
+  backdrop-filter: blur(6px);
+}
+.btn-outline:hover{
+  background: rgba(255,255,255,.18);
+  transform: translateY(-2px);
+}
+
+.btn-lg{
+  padding: 19px 40px;
+  font-size: 1.05rem;
+}
+
+.btn-icon{
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* pulso de destaque no CTA final */
+.btn-pulse{
+  position: relative;
+}
+.btn-pulse::after{
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-btn);
+  border: 2px solid var(--accent);
+  animation: pulseRing 2.4s var(--ease-soft) infinite;
+  pointer-events: none;
+}
+@keyframes pulseRing{
+  0%   { transform: scale(1);    opacity: .7; }
+  80%  { transform: scale(1.35); opacity: 0;  }
+  100% { transform: scale(1.35); opacity: 0;  }
+}
+
+/* ================================================================
+   4. BACKGROUND EFFECTS — malha de gradiente + blobs + grão
+   ================================================================ */
+.mesh-bg{
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.blob{
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: .55;
+  will-change: transform;
+}
+
+@keyframes floatBlob{
+  0%,100%{ transform: translate(0,0) scale(1); }
+  33%    { transform: translate(30px,-40px) scale(1.08); }
+  66%    { transform: translate(-25px,25px) scale(.95); }
+}
+
+.grain{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ================================================================
+   5. SCROLL REVEAL (JS toggles .is-visible)
+   ================================================================ */
+.reveal{
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .8s var(--ease), transform .8s var(--ease);
+}
+.reveal.is-visible{
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1{ transition-delay: .1s; }
+.reveal-delay-2{ transition-delay: .2s; }
+.reveal-delay-3{ transition-delay: .3s; }
+.reveal-delay-4{ transition-delay: .4s; }
+
+@media (prefers-reduced-motion: reduce){
+  .reveal{ opacity: 1; transform: none; }
+}
+
+/* ================================================================
+   6. HEADER
+   ================================================================ */
+.header{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 18px 0;
+  transition: padding .3s var(--ease), background .3s var(--ease), box-shadow .3s var(--ease);
+}
+
+.header.is-scrolled{
+  padding: 12px 0;
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 1px 0 var(--border), var(--shadow);
+}
+
+.header__row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.logo{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: -.02em;
+  color: var(--dark);
+}
+.logo img{
+  height: 34px;
+  width: auto;
+}
+
+.nav{
+  display: flex;
+  align-items: center;
+  gap: 34px;
+}
+
+.nav__links{
+  display: flex;
+  gap: 28px;
+}
+
+.nav__links a{
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--text);
+  position: relative;
+  padding: 4px 0;
+}
+.nav__links a::after{
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--primary);
+  transition: width .25s var(--ease);
+}
+.nav__links a:hover::after{ width: 100%; }
+
+.nav__cta{ display: flex; align-items: center; gap: 12px; }
+
+.nav-toggle{
+  display: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--bg2);
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.nav-toggle span,
+.nav-toggle span::before,
+.nav-toggle span::after{
+  content: '';
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--dark);
+  position: relative;
+  transition: transform .3s var(--ease), opacity .3s var(--ease);
+}
+.nav-toggle span::before{ position: absolute; top: -6px; }
+.nav-toggle span::after{ position: absolute; top: 6px; }
+.nav-toggle.is-open span{ background: transparent; }
+.nav-toggle.is-open span::before{ transform: rotate(45deg) translate(4px,4px); }
+.nav-toggle.is-open span::after{ transform: rotate(-45deg) translate(4px,-4px); }
+
+/* ================================================================
+   7. HERO (SEÇÃO 1)
+   ================================================================ */
+.hero{
+  position: relative;
+  padding: 108px 0 96px;
+  overflow: hidden;
+  background-image:
+    linear-gradient(180deg, rgba(251,250,255,.93) 0%, rgba(246,246,250,.93) 100%),
+    url('https://res.cloudinary.com/shjckctq/image/upload/v1787944691/af8faf42-50d4-443d-89cf-562aa2820390.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.hero .blob--1{
+  width: 480px; height: 480px;
+  top: -140px; right: -120px;
+  background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+  animation: floatBlob 16s ease-in-out infinite;
+  opacity: .27;
+}
+.hero .blob--2{
+  width: 380px; height: 380px;
+  bottom: -160px; left: -100px;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  animation: floatBlob 20s ease-in-out infinite reverse;
+  opacity: .27;
+}
+
+.hero__grid{
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.hero__visual{ display: none; }
+
+.hero__kicker{
+  margin-bottom: 22px;
+}
+
+.hero__title{
+  margin-bottom: 22px;
+}
+.hero__title em{
+  font-style: normal;
+  background: linear-gradient(100deg, var(--primary) 0%, var(--primary-d) 60%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.typing-cursor{
+  display: inline-block;
+  width: 3px;
+  height: .9em;
+  background: var(--primary);
+  margin-left: 3px;
+  vertical-align: -0.12em;
+  animation: cursorBlink .9s steps(1) infinite;
+}
+@keyframes cursorBlink{
+  0%, 49%  { opacity: 1; }
+  50%,100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce){
+  .typing-cursor{ display: none !important; }
+}
+
+.hero__lede{
+  max-width: 540px;
+  margin-bottom: 18px;
+}
+
+.hero__punch{
+  display: block;
+  max-width: 480px;
+  padding-left: 20px;
+  border-left: 2px solid var(--primary);
+  margin: 28px 0 26px;
+}
+.hero__punch p{
+  font-size: 1.02rem;
+  font-weight: 400;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.hero__punch p + p{ margin-top: 10px; }
+.hero__punch strong{
+  font-weight: 700;
+  color: var(--primary-d);
+}
+
+.hero__aside{
+  font-size: .92rem;
+  font-style: italic;
+  color: var(--muted);
+  margin-bottom: 34px;
+}
+
+.hero__actions{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+/* --- cena 3D: cofre da audiência --- */
+.vault-scene{
+  position: relative;
+  height: 460px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1400px;
+}
+
+.vault-orbit{
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  animation: spinOrbit 26s linear infinite;
+}
+@keyframes spinOrbit{
+  from{ transform: rotateZ(0deg); }
+  to{ transform: rotateZ(360deg); }
+}
+
+.orbit-icon{
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 56px; height: 56px;
+  margin: -28px 0 0 -28px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: spinOrbitCounter 26s linear infinite;
+}
+@keyframes spinOrbitCounter{
+  from{ transform: rotateZ(0deg); }
+  to{ transform: rotateZ(-360deg); }
+}
+.orbit-icon svg{ width: 26px; height: 26px; }
+.orbit-icon--1{ transform: translate(190px, 0) rotate(0deg); }
+.orbit-icon--2{ transform: translate(-95px, 165px) rotate(0deg); }
+.orbit-icon--3{ transform: translate(-95px, -165px) rotate(0deg); }
+
+.vault-card{
+  position: relative;
+  z-index: 3;
+  width: 300px;
+  padding: 30px 26px;
+  background: rgba(255,255,255,.7);
+  border: 1px solid rgba(255,255,255,.9);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  text-align: center;
+  transform-style: preserve-3d;
+  transition: transform .15s var(--ease-soft);
+  will-change: transform;
+}
+
+.vault-card__lock{
+  width: 64px; height: 64px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: linear-gradient(140deg, var(--primary) 0%, var(--primary-d) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 14px 30px var(--primary-glow);
+}
+.vault-card__lock svg{ width: 28px; height: 28px; stroke: #fff; }
+
+.vault-card__title{
+  font-weight: 800;
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+.vault-card__sub{
+  font-size: .85rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.vault-card__bar{
+  margin-top: 20px;
+  height: 8px;
+  border-radius: 20px;
+  background: var(--border);
+  overflow: hidden;
+}
+.vault-card__bar span{
+  display: block;
+  height: 100%;
+  width: 12%;
+  border-radius: 20px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+}
+.vault-card__barlabel{
+  margin-top: 8px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.particle{
+  position: absolute;
+  border-radius: 50%;
+  background: var(--primary);
+  opacity: .3;
+  animation: particleFloat linear infinite;
+}
+@keyframes particleFloat{
+  0%  { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: .5; }
+  90% { opacity: .5; }
+  100%{ transform: translateY(-420px) translateX(30px); opacity: 0; }
+}
+
+/* ================================================================
+   8. SEÇÃO 2 — PONTE
+   ================================================================ */
+.bridge{
+  background: var(--bg);
+}
+
+.bridge__head{
+  max-width: 640px;
+  margin: 0 auto 64px;
+  text-align: center;
+}
+
+.flow{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+  margin-bottom: 56px;
+}
+
+.flow-step{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 196px;
+  text-align: center;
+}
+
+.flow-step__icon{
+  width: 72px; height: 72px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  transition: transform .4s var(--ease), box-shadow .4s var(--ease), background .4s var(--ease);
+}
+.flow-step__icon svg{ width: 30px; height: 30px; }
+
+.flow-step.is-visible .flow-step__icon{
+  transform: translateY(-4px) rotateY(360deg);
+}
+
+.flow-step--final .flow-step__icon{
+  background: linear-gradient(140deg, var(--primary) 0%, var(--primary-d) 100%);
+  box-shadow: 0 14px 30px var(--primary-glow);
+}
+.flow-step--final .flow-step__icon svg{ stroke: #fff; }
+
+.flow-step__label{
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.flow-step__sub{
+  font-size: .78rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.flow-arrow{
+  width: 84px;
+  height: 2px;
+  position: relative;
+  background: repeating-linear-gradient(90deg, var(--border) 0 8px, transparent 8px 14px);
+  align-self: center;
+  margin: 0 4px 30px;
+  overflow: visible;
+}
+.flow-arrow::after{
+  content: '';
+  position: absolute;
+  right: -1px; top: 50%;
+  width: 8px; height: 8px;
+  border-right: 2px solid var(--primary);
+  border-bottom: 2px solid var(--primary);
+  transform: translateY(-50%) rotate(-45deg);
+}
+.flow-arrow::before{
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 10px; height: 2px;
+  background: var(--accent);
+  animation: flowDash 2.2s linear infinite;
+}
+@keyframes flowDash{
+  0%  { left: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100%{ left: 94%; opacity: 0; }
+}
+
+.bridge__proof{
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 34px 38px;
+  border-radius: var(--radius-lg);
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+}
+.bridge__proof svg{
+  width: 34px; height: 34px;
+  flex-shrink: 0;
+  stroke: var(--primary);
+  margin-top: 3px;
+}
+.bridge__proof p{
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.7;
+}
+.bridge__proof strong{ font-weight: 800; }
+
+/* ================================================================
+   9. SEÇÃO 3 — SOLUÇÃO (bloco sóbrio, contraste com o resto)
+   ================================================================ */
+.sober{
+  background: var(--dark);
+  color: #fff;
+}
+
+.sober .eyebrow{ color: var(--accent); }
+.sober .eyebrow::before{ background: var(--accent); }
+
+.sober__grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.sober__lede{
+  color: rgba(255,255,255,.68);
+}
+
+.sober__list{
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sober__carousel{
+  position: relative;
+  height: auto;
+}
+
+.sober__sticky{
+  position: relative;
+  top: 0;
+}
+
+.sober__stage-wrap{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.sober__arrow{
+  flex-shrink: 0;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.16);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .25s var(--ease), border-color .25s var(--ease), transform .25s var(--ease);
+}
+.sober__arrow:hover{
+  background: var(--accent);
+  border-color: var(--accent);
+  transform: scale(1.08);
+}
+.sober__arrow svg{ width: 20px; height: 20px; }
+
+.sober__stage{
+  position: relative;
+  flex: 1;
+  min-height: 232px;
+  perspective: 1300px;
+}
+
+.sober__item{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 30px 28px;
+  border-radius: var(--radius-card);
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.1);
+  opacity: 0;
+  transform: translateX(46px) rotateY(-10deg);
+  transition: opacity .55s var(--ease), transform .55s var(--ease);
+  pointer-events: none;
+}
+.sober__item.is-active{
+  position: relative;
+  opacity: 1;
+  transform: translateX(0) rotateY(0deg);
+  pointer-events: auto;
+}
+.sober__item.is-leaving{
+  opacity: 0;
+  transform: translateX(-46px) rotateY(10deg);
+}
+.sober__item:hover{
+  background: rgba(255,255,255,.075);
+  border-color: rgba(255,255,255,.2);
+}
+
+.sober__item-icon{
+  width: 52px; height: 52px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: soberIconFloat 3.2s ease-in-out infinite;
+}
+.sober__item-icon svg{ width: 26px; height: 26px; stroke: #fff; }
+
+@keyframes soberIconFloat{
+  0%,100%{ transform: translateY(0) rotate(0deg); }
+  50%    { transform: translateY(-7px) rotate(-4deg); }
+}
+
+.sober__item h4{
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  margin-bottom: 8px;
+}
+.sober__item p{
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: rgba(255,255,255,.68);
+}
+
+.sober__dots{
+  display: flex;
+  gap: 10px;
+  margin: 24px 0 0 58px;
+}
+.sober__dot{
+  width: 34px;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255,255,255,.18);
+  cursor: pointer;
+  transition: background .3s var(--ease), transform .3s var(--ease);
+}
+.sober__dot.is-active{
+  background: var(--accent);
+  transform: scaleY(1.4);
+}
+
+.sober__hint{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 22px 0 0 58px;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  transition: opacity .4s var(--ease);
+}
+.sober__hint svg{
+  width: 14px; height: 14px;
+  animation: soberHintBounce 1.4s ease-in-out infinite;
+}
+.sober__hint.is-hidden{ opacity: 0; }
+
+@keyframes soberHintBounce{
+  0%,100%{ transform: translateY(0); }
+  50%    { transform: translateY(5px); }
+}
+
+@media (max-width: 900px){
+  .sober__hint{ display: none; }
+
+  .sober__stage{ min-height: 300px; }
+  .sober__item{
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+    padding: 34px 26px;
+  }
+  .sober__item-icon{ margin: 0 auto; }
+  .sober__dots{ justify-content: center; margin-left: 0; }
+}
+
+/* --- desktop: caixa do carrossel maior e centralizada --- */
+@media (min-width: 901px){
+  .sober__hint{ display: none; }
+  .sober__sticky{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .sober__stage-wrap{
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+  .sober__stage{ min-height: 280px; }
+  .sober__item{ padding: 40px 38px; }
+  .sober__item-icon{ width: 60px; height: 60px; }
+  .sober__item-icon svg{ width: 30px; height: 30px; }
+  .sober__item h4{ font-size: 1.6rem; }
+  .sober__item p{ font-size: 1.1rem; }
+  .sober__dots{ margin-left: 58px; justify-content: flex-start; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .sober__item-icon{ animation: none; }
+}
+
+/* ================================================================
+   8.5 PORTFÓLIO — carrossel/ticker de links clicáveis
+   ================================================================ */
+.portfolio{
+  background: var(--bg2);
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+.portfolio__track-wrap{
+  overflow-x: hidden;
+  overflow-y: visible;
+  margin-top: 44px;
+  padding-top: 72px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.portfolio__track{
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  animation: portfolioScroll 38s linear infinite;
+}
+.portfolio__track:hover{
+  animation-play-state: paused;
+}
+
+.portfolio__item{
+  position: relative;
+  display: inline-flex;
+}
+
+.portfolio__bubble{
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  margin-bottom: 20px;
+  width: max-content;
+  max-width: 168px;
+  padding: 10px 14px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  font-size: .74rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--muted);
+  text-align: center;
+  text-transform: none;
+  white-space: normal;
+  pointer-events: none;
+}
+.portfolio__bubble-dot{
+  position: absolute;
+  left: 50%;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 50%;
+}
+.portfolio__bubble-dot--1{
+  width: 11px; height: 11px;
+  bottom: -16px;
+  margin-left: -5.5px;
+}
+.portfolio__bubble-dot--2{
+  width: 6px; height: 6px;
+  bottom: -24px;
+  margin-left: -3px;
+}
+
+.portfolio__link{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 24px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1.02rem;
+  color: var(--text);
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+  transition: transform .3s var(--ease), box-shadow .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease);
+}
+.portfolio__link svg{
+  width: 15px; height: 15px;
+  stroke: var(--accent);
+  flex-shrink: 0;
+}
+.portfolio__link:hover{
+  transform: translateY(-5px) scale(1.04);
+  box-shadow: var(--shadow-md);
+  color: var(--primary);
+  border-color: var(--primary-soft);
+}
+
+@keyframes portfolioScroll{
+  from{ transform: translateX(0); }
+  to  { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .portfolio__track{ animation: none; overflow-x: auto; }
+}
+
+@media (max-width: 640px){
+  .portfolio__link{ padding: 13px 18px; font-size: .92rem; }
+  .portfolio__bubble{ max-width: 128px; font-size: .66rem; padding: 8px 10px; margin-bottom: 14px; }
+  .portfolio__bubble-dot--1{ bottom: -14px; }
+  .portfolio__bubble-dot--2{ bottom: -21px; }
+  .portfolio__track-wrap{ padding-top: 92px; }
+}
+
+/* --- FAQ: explicação de cada site, expansível --- */
+.portfolio__faq{
+  max-width: 760px;
+  margin: 56px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.portfolio__faq-item{
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  transition: border-color .25s var(--ease), box-shadow .25s var(--ease);
+}
+.portfolio__faq-item[open]{
+  border-color: var(--primary-soft);
+  box-shadow: var(--shadow);
+}
+.portfolio__faq-summary{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 700;
+  font-size: .98rem;
+  color: var(--text);
+}
+.portfolio__faq-summary::-webkit-details-marker{ display: none; }
+.portfolio__faq-name{ flex: 0 0 auto; min-width: 190px; }
+.portfolio__faq-badge{
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.portfolio__faq-badge--approved{ background: var(--accent); color: #fff; }
+.portfolio__faq-badge--pending{ background: var(--bg2); color: var(--muted); border: 1px solid var(--border); }
+.portfolio__faq-chevron{
+  margin-left: auto;
+  width: 18px; height: 18px;
+  flex-shrink: 0;
+  stroke: var(--muted);
+  transition: transform .3s var(--ease);
+}
+.portfolio__faq-item[open] .portfolio__faq-chevron{ transform: rotate(180deg); }
+.portfolio__faq-answer{
+  margin: 0;
+  padding: 0 22px 20px 22px;
+  color: var(--muted);
+  font-size: .92rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px){
+  .portfolio__faq{ margin-top: 40px; }
+  .portfolio__faq-summary{ flex-wrap: wrap; gap: 8px 12px; padding: 16px 18px; }
+  .portfolio__faq-name{ min-width: 0; width: 100%; }
+  .portfolio__faq-chevron{ margin-left: 0; }
+}
+
+.sober__quote{
+  margin-top: 28px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.6;
+  color: #fff;
+  border-left: 3px solid var(--accent);
+  padding-left: 18px;
+}
+
+/* ================================================================
+   10. SEÇÃO 4 — PROVA SOCIAL / COMPARAÇÃO
+   ================================================================ */
+.compare{
+  background: var(--bg2);
+  padding-top: 48px;
+}
+
+.compare__head{
+  max-width: 680px;
+  margin: 0 auto 60px;
+  text-align: center;
+}
+
+.compare__grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: stretch;
+}
+
+.compare-col{
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px 40px;
+  box-shadow: var(--shadow);
+  transition: transform .45s var(--ease), box-shadow .45s var(--ease);
+}
+.compare-col:hover{
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+}
+
+.compare-col__tag{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.compare-col--adsense .compare-col__tag{
+  background: var(--primary-soft);
+  color: var(--primary-d);
+}
+.compare-col--sub .compare-col__tag{
+  background: rgba(37,211,102,.14);
+  color: var(--accent-d);
+}
+
+.compare-col h3{
+  margin-bottom: 10px;
+}
+.compare-col p{
+  color: var(--muted);
+  font-size: .95rem;
+  margin-bottom: 24px;
+}
+
+/* moldura tipo "navegador" para os placeholders */
+.shot{
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+  transition: transform .5s var(--ease), box-shadow .5s var(--ease);
+}
+.shot:last-of-type{ margin-bottom: 0; }
+.shot:hover{
+  transform: perspective(900px) rotateX(2deg) rotateY(-2deg) translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.shot__bar{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 12px;
+  background: #EFEFF4;
+  border-bottom: 1px solid var(--border);
+}
+.shot__dot{
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #D7D7E0;
+}
+.shot img{
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.compare-col__caption{
+  font-size: .78rem;
+  color: var(--muted);
+  margin-top: -10px;
+  margin-bottom: 18px;
+}
+
+.compare__footer{
+  text-align: center;
+  margin-top: 52px;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--text);
+}
+.compare__footer span{
+  color: var(--primary);
+}
+
+/* ================================================================
+   11. SEÇÃO 5 — CTA FINAL
+   ================================================================ */
+.cta-final{
+  position: relative;
+  overflow: hidden;
+  padding: 140px 0;
+  background: linear-gradient(135deg, var(--primary-d) 0%, var(--primary) 55%, #7A5CFF 100%);
+  color: #fff;
+  text-align: center;
+}
+
+.cta-final .blob{
+  opacity: .5;
+}
+.cta-final .blob--1{
+  width: 520px; height: 520px;
+  top: -220px; left: -140px;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  animation: floatBlob 18s ease-in-out infinite;
+}
+.cta-final .blob--2{
+  width: 420px; height: 420px;
+  bottom: -200px; right: -120px;
+  background: radial-gradient(circle, #fff 0%, transparent 70%);
+  opacity: .18;
+  animation: floatBlob 22s ease-in-out infinite reverse;
+}
+
+.cta-final__inner{
+  position: relative;
+  z-index: 2;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.cta-final .eyebrow{ color: rgba(255,255,255,.85); justify-content: center; }
+.cta-final .eyebrow::before{ background: var(--accent); }
+
+.cta-final h2{
+  color: #fff;
+  margin: 18px 0 20px;
+}
+
+.cta-final p{
+  color: rgba(255,255,255,.82);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 40px;
+}
+
+.cta-final__actions{
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.cta-final__note{
+  margin-top: 26px;
+  font-size: .82rem;
+  color: rgba(255,255,255,.6);
+}
+
+.cta-final__alt{
+  margin-top: 18px;
+  font-size: .88rem;
+  color: rgba(255,255,255,.55);
+}
+.cta-final__alt a{
+  color: rgba(255,255,255,.8);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color .2s ease;
+}
+.cta-final__alt a:hover{ color: #fff; }
+
+/* ================================================================
+   12. FOOTER
+   ================================================================ */
+.footer{
+  background: var(--dark);
+  color: rgba(255,255,255,.7);
+  padding: 54px 0 34px;
+}
+
+.footer__row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+
+.footer__logo{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #fff;
+}
+.footer__logo img{
+  height: 30px;
+  width: auto;
+  filter: brightness(0) invert(1);
+}
+
+.footer__links{
+  display: flex;
+  gap: 26px;
+}
+.footer__links a{
+  font-size: .88rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.7);
+  transition: color .2s;
+}
+.footer__links a:hover{ color: #fff; }
+
+.footer__social{
+  display: flex;
+  gap: 12px;
+}
+.footer__social a{
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s, transform .2s;
+}
+.footer__social a:hover{
+  background: var(--accent);
+  transform: translateY(-2px);
+}
+.footer__social svg{ width: 17px; height: 17px; stroke: #fff; }
+
+.footer__bottom{
+  padding-top: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: .8rem;
+  color: rgba(255,255,255,.42);
+}
+
+/* ================================================================
+   13. RESPONSIVO
+   ================================================================ */
+
+/* --- desktop (>1024px): remove a caixa do vault/print e centraliza a hero --- */
+@media (min-width: 1025px){
+  .hero__grid{ grid-template-columns: 1fr; }
+  .hero__content{
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .hero__lede{ margin-left: auto; margin-right: auto; }
+  .hero__kicker{ justify-content: center; }
+  .hero__punch{
+    margin-left: auto;
+    margin-right: auto;
+    border-left: none;
+    border-top: 2px solid var(--primary);
+    padding-left: 0;
+    padding-top: 18px;
+  }
+  .hero__actions{ justify-content: center; }
+}
+
+/* --- ≤1024px --- */
+@media (max-width: 1024px){
+  .section{ padding: 90px 0; }
+  .hero{ padding: 150px 0 90px; }
+  .hero__grid{ grid-template-columns: 1fr; gap: 64px; }
+  .hero__lede{ max-width: 100%; }
+  .vault-scene{ height: 380px; }
+  .sober__grid{ grid-template-columns: 1fr; gap: 40px; }
+  .compare__grid{ grid-template-columns: 1fr; }
+  .nav__links{ display: none; }
+}
+
+/* --- ≤768px --- */
+@media (max-width: 768px){
+  .container{ padding: 0 20px; }
+  .section{ padding: 70px 0; }
+  .header .btn-primary{ display: none; }
+  .nav-toggle{ display: flex; }
+  .nav__links{
+    position: fixed;
+    top: 68px; left: 16px; right: 16px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-lg);
+    flex-direction: column;
+    gap: 0;
+    padding: 8px;
+    transform-origin: top center;
+    transform: scaleY(0);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform .3s var(--ease), opacity .3s var(--ease);
+  }
+  .nav__links.is-open{
+    display: flex;
+    transform: scaleY(1);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .nav__links a{
+    padding: 14px 12px;
+    border-radius: 8px;
+  }
+  .nav__links a:hover{ background: var(--bg2); }
+  .nav__links a::after{ display: none; }
+
+  .flow{ flex-direction: column; }
+  .flow-arrow{
+    width: 2px; height: 44px;
+    margin: 6px 0;
+    background: repeating-linear-gradient(180deg, var(--border) 0 8px, transparent 8px 14px);
+  }
+  .flow-arrow::after{
+    right: 50%; top: auto; bottom: -2px;
+    transform: translateX(50%) rotate(45deg);
+  }
+  .flow-arrow::before{
+    width: 2px; height: 10px; left: 0; top: 0;
+    animation: flowDashV 2.2s linear infinite;
+  }
+  @keyframes flowDashV{
+    0%  { top: 0%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100%{ top: 94%; opacity: 0; }
+  }
+
+  .bridge__proof{ flex-direction: column; padding: 26px; }
+
+  .cta-final{ padding: 100px 0; }
+  .footer__row{ flex-direction: column; align-items: flex-start; }
+
+  .hero{ padding-top: 75px; }
+}
+
+/* --- ≤375px (ajuste fino mobile pequeno) --- */
+@media (max-width: 400px){
+  .btn-lg{ width: 100%; padding: 17px 24px; }
+  .hero__actions{ flex-direction: column; }
+  .hero__actions .btn{ width: 100%; }
+  .cta-final__actions{ flex-direction: column; width: 100%; }
+  .cta-final__actions .btn{ width: 100%; }
+  .vault-card{ width: 260px; padding: 24px 20px; }
+  .orbit-icon--1{ transform: translate(140px, 0) rotate(0deg); }
+  .orbit-icon--2{ transform: translate(-70px, 120px) rotate(0deg); }
+  .orbit-icon--3{ transform: translate(-70px, -120px) rotate(0deg); }
+  .compare-col{ padding: 26px 22px 30px; }
+}
+
+/* --- telas grandes (≥1440px) --- */
+@media (min-width: 1440px){
+  .container{ max-width: 1320px; }
+  .hero{ padding-top: 150px; }
+}
+
+/* garante espaço reduzido acima de "Resultados" em qualquer largura */
+#prova.compare{ padding-top: 48px; }
+#sites.portfolio{ padding-top: 36px; }
+
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="header" id="header">
+  <div class="container header__row">
+    <a href="#topo" class="logo">
+      <img src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1779207400/leanttro_bohuce.png" alt="Logo leanttro.com">
+    </a>
+
+    <nav class="nav">
+      <ul class="nav__links" id="navLinks">
+        <li><a href="#audiencia">Audiência</a></li>
+        <li><a href="#solucao">Solução</a></li>
+        <li><a href="#prova">Resultados</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ul>
+
+      <div class="nav__cta">
+        <a href="#contato" class="btn btn-primary">
+          Falar agora
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+          <span></span>
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- ============================================================
+     SEÇÃO 1 — HERO / ABERTURA
+     ============================================================ -->
+<section class="hero" id="topo">
+  <div class="mesh-bg">
+    <div class="blob blob--1"></div>
+    <div class="blob blob--2"></div>
+  </div>
+  <div class="grain"></div>
+
+  <div class="container">
+    <div class="hero__grid">
+
+      <div class="hero__content reveal is-visible">
+        <p class="eyebrow hero__kicker">Audiência x ativo próprio</p>
+
+        <h1 class="h1 hero__title" id="heroTitle" aria-label="Toda essa audiência que você construiu — ela mora onde?">
+          <span id="heroTitlePlain"></span><em id="heroTitleEm"></em><span class="typing-cursor" id="heroTitleCursor"></span>
+        </h1>
+
+        <p class="lede hero__lede" id="heroLede" aria-label="No Instagram? No YouTube? Beleza, ela é real — você já provou que sabe atrair atenção. Só que hoje essa atenção não te paga nada.">
+          <span id="heroLedeText"></span><span class="typing-cursor" id="heroLedeCursor" style="display:none;"></span>
+        </p>
+
+        <div class="hero__punch">
+          <p>Sem site, <strong>não existe nada seu</strong> ali gerando dinheiro — só posts reféns do algoritmo.</p>
+          <p>Com site, ele provavelmente existe, mas <strong>tá parado</strong>, sem te pagar nada.</p>
+        </div>
+
+        <div class="hero__actions">
+          <a href="#contato" class="btn btn-accent btn-lg">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            Falar agora
+          </a>
+          <a href="#audiencia" class="btn btn-primary btn-lg">
+            Entender como funciona
+          </a>
+        </div>
+      </div>
+
+      <div class="hero__visual reveal is-visible reveal-delay-2">
+        <div class="vault-scene" id="vaultScene">
+
+          <div class="vault-orbit">
+            <div class="orbit-icon orbit-icon--1" title="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#5B3FEC" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.2" cy="6.8" r="1"></circle></svg>
+            </div>
+            <div class="orbit-icon orbit-icon--2" title="YouTube">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#5B3FEC" stroke-width="1.8"><rect x="2.5" y="5.5" width="19" height="13" rx="4"></rect><path d="M10.5 9.3 15 12l-4.5 2.7z" fill="#5B3FEC" stroke="none"></path></svg>
+            </div>
+            <div class="orbit-icon orbit-icon--3" title="Alcance orgânico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#5B3FEC" stroke-width="1.8"><path d="M4 15s2-2 8-2 8 2 8 2"></path><path d="M4 9s2 2 8 2 8-2 8-2"></path><circle cx="12" cy="12" r="9"></circle></svg>
+            </div>
+          </div>
+
+          <div class="vault-card" id="vaultCard">
+            <div class="vault-card__lock">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+            </div>
+            <p class="vault-card__title">Audiência real</p>
+            <p class="vault-card__sub">Zero ativo próprio monetizando ela</p>
+            <div class="vault-card__bar"><span></span></div>
+            <p class="vault-card__barlabel">Receita própria: 12%</p>
+          </div>
+
+          <span class="particle" style="width:6px;height:6px;left:14%;bottom:10%;animation-duration:7s;animation-delay:0s;"></span>
+          <span class="particle" style="width:9px;height:9px;left:78%;bottom:6%;animation-duration:9s;animation-delay:1.2s;background:var(--accent);"></span>
+          <span class="particle" style="width:5px;height:5px;left:50%;bottom:0%;animation-duration:6s;animation-delay:2.4s;"></span>
+          <span class="particle" style="width:7px;height:7px;left:30%;bottom:16%;animation-duration:8s;animation-delay:3.4s;background:var(--accent);"></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SEÇÃO 2 — PONTE
+     ============================================================ -->
+<section class="section bridge" id="audiencia">
+  <div class="container">
+    <div class="bridge__head reveal">
+      <p class="eyebrow text-center type-reveal" style="justify-content:center;">O que muda</p>
+      <h2 class="h2 type-reveal" style="margin:16px 0 14px;">
+        E se o site trabalhasse por você, em vez de só existir?
+      </h2>
+      <p class="lede type-reveal">
+        Isso é possível. Um site bem estruturado gera receita própria — sem depender
+        do alcance do Instagram, do algoritmo das redes sociais, ou de sorte.
+      </p>
+      <p class="lede type-reveal">
+        No fundo, é a diferença entre <strong>alugar audiência</strong> e <strong>ter patrimônio</strong>:
+        no Instagram e no YouTube, essa audiência não é sua — é da plataforma, e você só está
+        de passagem ali. Um site é seu. Fica, cresce e continua gerando receita mesmo se
+        você parar de postar.
+      </p>
+      <p class="hero__aside" style="text-align:center;">
+        Já tem site com AdSense ativo e sente que dá pra extrair mais receita do que hoje?
+        Isso também tem solução.
+      </p>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step reveal">
+        <div class="flow-step__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#6E6E76" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle></svg>
+        </div>
+        <p class="flow-step__label">Só tem posts</p>
+        <p class="flow-step__sub">Alcance que some se você parar de postar</p>
+      </div>
+
+      <div class="flow-arrow"></div>
+
+      <div class="flow-step reveal reveal-delay-1">
+        <div class="flow-step__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#6E6E76" stroke-width="1.8"><rect x="3" y="4" width="18" height="15" rx="2"></rect><path d="M3 9h18"></path></svg>
+        </div>
+        <p class="flow-step__label">Tem site, mas...</p>
+        <p class="flow-step__sub">Ele existe, só que tá parado e não vende nada</p>
+      </div>
+
+      <div class="flow-arrow"></div>
+
+      <div class="flow-step flow-step--final reveal reveal-delay-2">
+        <div class="flow-step__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg>
+        </div>
+        <p class="flow-step__label">Site estruturado</p>
+        <p class="flow-step__sub">Trabalha sozinho e gera receita todo mês</p>
+      </div>
+    </div>
+
+    <div class="bridge__proof reveal">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+      <p class="type-reveal">
+        Já ajudei sites de nicho a serem <strong>aprovados no AdSense</strong> e construí
+        plataformas complexas do zero, como <strong>marketplace</strong> e
+        <strong>portal de eventos</strong>. Sei exatamente onde a maioria trava — e como destravar.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SEÇÃO 3 — SOLUÇÃO (bloco sóbrio)
+     ============================================================ -->
+<section class="section sober" id="solucao">
+  <div class="container sober__grid">
+    <div class="reveal">
+      <p class="eyebrow type-reveal">Como eu ajudo</p>
+      <h2 class="h2 type-reveal" style="color:#fff;margin:16px 0 18px;">
+        Eu ajudo donos de sites de nicho a pararem de depender só de
+        Instagram ou YouTube.
+      </h2>
+      <p class="lede sober__lede type-reveal">
+        Estruturando o próprio site como fonte de receita. Sem enrolação,
+        sem prometer milagre.
+      </p>
+      <p class="sober__quote type-reveal">
+        É trabalho técnico: estrutura, aprovação, otimização — feito por
+        alguém que já passou por isso várias vezes.
+      </p>
+    </div>
+
+    <div class="sober__carousel reveal reveal-delay-1" id="soberCarousel">
+      <div class="sober__sticky">
+        <div class="sober__stage-wrap">
+          <button type="button" class="sober__arrow sober__arrow--prev" id="soberPrev" aria-label="Card anterior">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+          </button>
+
+          <div class="sober__stage" id="soberStage">
+            <div class="sober__item is-active" data-index="0">
+              <div class="sober__item-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-6 9 6v12"></path><path d="M9 21V12h6v9"></path></svg>
+              </div>
+              <div>
+                <h4>Estrutura</h4>
+                <p>Arquitetura do site pensada para conteúdo, SEO e monetização — não só aparência.</p>
+              </div>
+            </div>
+
+            <div class="sober__item" data-index="1">
+              <div class="sober__item-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg>
+              </div>
+              <div>
+                <h4>Aprovação</h4>
+                <p>Preparação técnica e de conteúdo para passar em revisões como a do Google AdSense.</p>
+              </div>
+            </div>
+
+            <div class="sober__item" data-index="2">
+              <div class="sober__item-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M7 15l4-4 3 3 5-6"></path></svg>
+              </div>
+              <div>
+                <h4>Otimização</h4>
+                <p>Ajustes contínuos para que a receita do site cresça de forma consistente.</p>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="sober__arrow sober__arrow--next" id="soberNext" aria-label="Próximo card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+          </button>
+        </div>
+
+        <div class="sober__dots" id="soberDots">
+          <button type="button" class="sober__dot is-active" data-index="0" aria-label="Ver: Estrutura"></button>
+          <button type="button" class="sober__dot" data-index="1" aria-label="Ver: Aprovação"></button>
+          <button type="button" class="sober__dot" data-index="2" aria-label="Ver: Otimização"></button>
+        </div>
+
+        <p class="sober__hint" id="soberHint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg>
+          role pra ver mais
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SEÇÃO 4 — PROVA SOCIAL / COMPARAÇÃO
+     ============================================================ -->
+<section class="section compare" id="prova">
+  <div class="container">
+    <div class="compare__head reveal">
+      <p class="eyebrow text-center type-reveal" style="justify-content:center;">Resultados</p>
+      <h2 class="h2 type-reveal" style="margin:16px 0 14px;">
+        Cada site é diferente. Por isso eu não trabalho com fórmula fixa.
+      </h2>
+    </div>
+
+    <div class="compare__grid">
+
+      <!-- Coluna AdSense -->
+      <div class="compare-col compare-col--adsense reveal">
+        <span class="compare-col__tag">Caminho AdSense</span>
+        <h3 class="h3">Aprovação confirmada pelo próprio Google</h3>
+        <p>
+          Às vezes o caminho certo é AdSense — como nesses 4 sites aprovados
+          nos últimos dois meses, com status confirmado pelo próprio Google.
+        </p>
+
+        <!-- PLACEHOLDER 1/2: mockup de um site real de nicho já publicado (case), homepage funcionando no ar -->
+        <div class="shot">
+          <div class="shot__bar">
+            <span class="shot__dot"></span><span class="shot__dot"></span><span class="shot__dot"></span>
+          </div>
+          <img src="https://res.cloudinary.com/shjckctq/image/upload/v1787942460/Sem_nome_2000_x_1500_px_1.png" alt="Mockup da homepage de um site de nicho real, já publicado e no ar">
+        </div>
+        <p class="compare-col__caption">Site real de nicho, estruturado e publicado — não é maquete.</p>
+
+        <!-- PLACEHOLDER 2/2: mockup combinado com dois laptops sobrepostos — gráfico de "Ganhos estimados" (barras)
+             + tabela de status "Pronto" + "Autorizado" dos 4 sites aprovados, juntos na mesma peça visual -->
+        <div class="shot">
+          <div class="shot__bar">
+            <span class="shot__dot"></span><span class="shot__dot"></span><span class="shot__dot"></span>
+          </div>
+          <img src="https://res.cloudinary.com/shjckctq/image/upload/v1787942460/Sem_nome_2000_x_1500_px_2.png" alt="Mockup combinado de dois laptops sobrepostos: gráfico de ganhos estimados em barras e tabela de status Pronto e Autorizado dos 4 sites aprovados">
+        </div>
+        <p class="compare-col__caption">Resultado consolidado: ganhos estimados + aprovação confirmada em 4 sites.</p>
+      </div>
+
+      <!-- Coluna Assinatura / Marketplace -->
+      <div class="compare-col compare-col--sub reveal reveal-delay-2">
+        <span class="compare-col__tag">Caminho Assinatura</span>
+        <h3 class="h3">Plataforma própria sustentando receita mensal</h3>
+        <p>
+          Às vezes o caminho certo é outro — como nessa plataforma que
+          construí com sistema de assinatura, que hoje sustenta receita
+          própria todo mês.
+        </p>
+
+        <!-- PLACEHOLDER: print de painel de planos/assinatura de uma plataforma (mensal/trimestral/semestral/anual) -->
+        <div class="shot">
+          <div class="shot__bar">
+            <span class="shot__dot"></span><span class="shot__dot"></span><span class="shot__dot"></span>
+          </div>
+          <img src="https://res.cloudinary.com/shjckctq/image/upload/v1787942460/Sem_nome_2000_x_1500_px_3.png" alt="Print do painel de planos de assinatura: mensal, trimestral, semestral e anual">
+        </div>
+        <p class="compare-col__caption">Planos mensal, trimestral, semestral e anual.</p>
+
+        <!-- PLACEHOLDER: print de uma plataforma tipo marketplace local (grid de expositores/perfis + formulário de cadastro) -->
+        <div class="shot">
+          <div class="shot__bar">
+            <span class="shot__dot"></span><span class="shot__dot"></span><span class="shot__dot"></span>
+          </div>
+          <img src="https://res.cloudinary.com/shjckctq/image/upload/v1787942460/Sem_nome_2000_x_1500_px_4.png" alt="Print de plataforma marketplace local com grid de expositores e formulário de cadastro">
+        </div>
+        <p class="compare-col__caption">Marketplace local: grid de expositores + cadastro.</p>
+      </div>
+
+    </div>
+
+    <p class="compare__footer reveal type-reveal">
+      Formas diferentes de fazer a mesma coisa: <span>transformar audiência em receita.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ============================================================
+     SEÇÃO 3.5 — PORTFÓLIO / SITES JÁ ESTRUTURADOS (carrossel de links)
+     ============================================================ -->
+<section class="section section--tight portfolio" id="sites">
+  <div class="container">
+    <div class="portfolio__head reveal text-center">
+      <p class="eyebrow text-center type-reveal" style="justify-content:center;">Alguns sites que já estruturei</p>
+      <h2 class="h2 type-reveal" style="margin:16px 0 8px;">De nicho a portal — clique e veja no ar.</h2>
+    </div>
+  </div>
+
+  <div class="portfolio__track-wrap reveal reveal-delay-1">
+    <div class="portfolio__track" id="portfolioTrack">
+      <div class="portfolio__item"><div class="portfolio__bubble">acha a estação de metrô mais próxima<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://nearestmetro.com" target="_blank" rel="noopener">nearestmetro.com<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">guia de cestas de presentes<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://cestadepresentes.com.br" target="_blank" rel="noopener">cestadepresentes.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">QR code em brindes personalizados<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://qrcodebrindes.com.br" target="_blank" rel="noopener">qrcodebrindes.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">acha o cinema mais perto de você<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://cinemapertodemim.com.br" target="_blank" rel="noopener">cinemapertodemim.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">calendário de feriados de 2027<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://feriados2027.com.br" target="_blank" rel="noopener">feriados2027.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">diretório de serviços perto de você<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://ondetemperto.com.br" target="_blank" rel="noopener">ondetemperto.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">acha a lotérica mais próxima<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://lotericapertodemim.com.br" target="_blank" rel="noopener">lotericapertodemim.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">calculadora de IMC pra adultos<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://adultbmicalculator.com" target="_blank" rel="noopener">adultbmicalculator.com<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">guia de feiras de rua<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://feirasderua.com.br" target="_blank" rel="noopener">feirasderua.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">guia de rodízios e buffets<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://guiadorodizio.com.br" target="_blank" rel="noopener">guiadorodizio.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">site e diretório de negócios locais<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://leanttro.com" target="_blank" rel="noopener">leanttro.com<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">acha correios e cartórios perto de você<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://agenciastart.com.br" target="_blank" rel="noopener">agenciastart.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+
+      <!-- duplicado para o loop do carrossel ficar contínuo -->
+      <div class="portfolio__item"><div class="portfolio__bubble">acha a estação de metrô mais próxima<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://nearestmetro.com" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">nearestmetro.com<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">guia de cestas de presentes<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://cestadepresentes.com.br" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">cestadepresentes.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">QR code em brindes personalizados<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://qrcodebrindes.com.br" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">qrcodebrindes.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">acha o cinema mais perto de você<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://cinemapertodemim.com.br" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">cinemapertodemim.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">calendário de feriados de 2027<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://feriados2027.com.br" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">feriados2027.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">diretório de serviços perto de você<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://ondetemperto.com.br" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">ondetemperto.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">acha a lotérica mais próxima<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://lotericapertodemim.com.br" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">lotericapertodemim.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">calculadora de IMC pra adultos<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://adultbmicalculator.com" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">adultbmicalculator.com<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">guia de feiras de rua<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://feirasderua.com.br" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">feirasderua.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">guia de rodízios e buffets<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://guiadorodizio.com.br" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">guiadorodizio.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">site e diretório de negócios locais<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://leanttro.com" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">leanttro.com<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+      <div class="portfolio__item"><div class="portfolio__bubble">acha correios e cartórios perto de você<span class="portfolio__bubble-dot portfolio__bubble-dot--1"></span><span class="portfolio__bubble-dot portfolio__bubble-dot--2"></span></div><a class="portfolio__link" href="https://agenciastart.com.br" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">agenciastart.com.br<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="portfolio__faq reveal reveal-delay-2">
+
+      <details class="portfolio__faq-item">
+        <summary class="portfolio__faq-summary">
+          <span class="portfolio__faq-name">feirasderua.com.br</span>
+          <span class="portfolio__faq-badge portfolio__faq-badge--approved">Aprovado no AdSense</span>
+          <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+        </summary>
+        <p class="portfolio__faq-answer">Guia de feiras de rua. No ar há 8 meses — já aprovado no Google AdSense.</p>
+      </details>
+
+      <details class="portfolio__faq-item">
+        <summary class="portfolio__faq-summary">
+          <span class="portfolio__faq-name">guiadorodizio.com.br</span>
+          <span class="portfolio__faq-badge portfolio__faq-badge--approved">Aprovado no AdSense</span>
+          <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+        </summary>
+        <p class="portfolio__faq-answer">Guia de rodízios e buffets. No ar há 3 meses — já aprovado no Google AdSense.</p>
+      </details>
+
+      <details class="portfolio__faq-item">
+        <summary class="portfolio__faq-summary">
+          <span class="portfolio__faq-name">agenciastart.com.br</span>
+          <span class="portfolio__faq-badge portfolio__faq-badge--approved">Aprovado no AdSense</span>
+          <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+        </summary>
+        <p class="portfolio__faq-answer">Ajuda a achar correios e cartórios perto de você. No ar há 3 meses — já aprovado no Google AdSense.</p>
+      </details>
+
+      <details class="portfolio__faq-item">
+        <summary class="portfolio__faq-summary">
+          <span class="portfolio__faq-name">leanttro.com</span>
+          <span class="portfolio__faq-badge portfolio__faq-badge--approved">Aprovado no AdSense</span>
+          <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+        </summary>
+        <p class="portfolio__faq-answer">Site e diretório de negócios locais — esse aqui, inclusive. No ar há 4 meses — já aprovado no Google AdSense.</p>
+      </details>
+
+      <details class="portfolio__faq-item">
+        <summary class="portfolio__faq-summary">
+          <span class="portfolio__faq-name">ondetemperto.com.br</span>
+          <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+        </summary>
+        <p class="portfolio__faq-answer">Diretório de serviços perto de você. No ar há 2 meses — aguardando aprovação no AdSense.</p>
+      </details>
+
+      <details class="portfolio__faq-item">
+        <summary class="portfolio__faq-summary">
+          <span class="portfolio__faq-name">nearestmetro.com</span>
+          <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+        </summary>
+        <p class="portfolio__faq-answer">Ajuda a achar a estação de metrô mais próxima. No ar há 3 meses — aguardando aprovação no AdSense.</p>
+      </details>
+
+      <details class="portfolio__faq-item">
+        <summary class="portfolio__faq-summary">
+          <span class="portfolio__faq-name">cestadepresentes.com.br</span>
+          <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+        </summary>
+        <p class="portfolio__faq-answer">Guia de cestas de presentes. No ar há 2 meses — aguardando aprovação no AdSense.</p>
+      </details>
+
+      <details class="portfolio__faq-item">
+        <summary class="portfolio__faq-summary">
+          <span class="portfolio__faq-name">qrcodebrindes.com.br</span>
+          <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+        </summary>
+        <p class="portfolio__faq-answer">QR Code em brindes personalizados. No ar há 1 mês — aguardando aprovação no AdSense.</p>
+      </details>
+
+      <details class="portfolio__faq-item">
+        <summary class="portfolio__faq-summary">
+          <span class="portfolio__faq-name">cinemapertodemim.com.br</span>
+          <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+        </summary>
+        <p class="portfolio__faq-answer">Ajuda a achar o cinema mais perto de você. No ar há 1 mês — aguardando aprovação no AdSense.</p>
+      </details>
+
+      <details class="portfolio__faq-item">
+        <summary class="portfolio__faq-summary">
+          <span class="portfolio__faq-name">lotericapertodemim.com.br</span>
+          <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+        </summary>
+        <p class="portfolio__faq-answer">Ajuda a achar a lotérica mais próxima. No ar há 1 mês — aguardando aprovação no AdSense.</p>
+      </details>
+
+      <details class="portfolio__faq-item">
+        <summary class="portfolio__faq-summary">
+          <span class="portfolio__faq-name">feriados2027.com.br</span>
+          <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+        </summary>
+        <p class="portfolio__faq-answer">Calendário de feriados de 2027. No ar há 2 semanas — aguardando aprovação no AdSense.</p>
+      </details>
+
+      <details class="portfolio__faq-item">
+        <summary class="portfolio__faq-summary">
+          <span class="portfolio__faq-name">adultbmicalculator.com</span>
+          <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+        </summary>
+        <p class="portfolio__faq-answer">Calculadora de IMC pra adultos. No ar há 2 semanas — aguardando aprovação no AdSense.</p>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SEÇÃO 5 — CTA FINAL
+     ============================================================ -->
+<section class="cta-final" id="contato">
+  <div class="mesh-bg">
+    <div class="blob blob--1"></div>
+    <div class="blob blob--2"></div>
+  </div>
+
+  <div class="container cta-final__inner">
+    <p class="eyebrow reveal type-reveal">Vamos conversar</p>
+    <h2 class="h2 reveal reveal-delay-1 type-reveal">
+      Todo site é diferente — o seu também vai ser.
+    </h2>
+    <p class="reveal reveal-delay-2 type-reveal">
+      Me manda uma mensagem, conta como funciona hoje, e eu te digo se
+      (e como) dá pra transformar essa audiência em receita própria.
+    </p>
+
+    <div class="cta-final__actions reveal reveal-delay-3">
+      <a href="https://wa.me/551191334827?text=Oi!%20Quero%20entender%20como%20transformar%20minha%20audi%C3%AAncia%20em%20receita%20pr%C3%B3pria." target="_blank" rel="noopener" class="btn btn-accent btn-lg btn-pulse">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+        Falar agora
+      </a>
+      <a href="#topo" class="btn btn-outline btn-lg">Voltar ao topo</a>
+    </div>
+
+    <p class="cta-final__alt reveal reveal-delay-4">
+      Prefere não ir direto pro WhatsApp? <a href="#">Deixe seu contato por formulário</a>.
+    </p>
+
+    <p class="cta-final__note reveal reveal-delay-4 type-reveal">
+      Resposta rápida, sem compromisso — e sem fórmula pronta.
+    </p>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__row">
+      <a href="#topo" class="footer__logo">
+        <img src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1779207400/leanttro_bohuce.png" alt="Logo leanttro.com">
+        leanttro.com
+      </a>
+
+      <ul class="footer__links">
+        <li><a href="#audiencia">Audiência</a></li>
+        <li><a href="#solucao">Solução</a></li>
+        <li><a href="#prova">Resultados</a></li>
+      </ul>
+
+      <div class="footer__social">
+        <a href="https://wa.me/551191334827" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+        </a>
+        <a href="https://leanttro.com" target="_blank" rel="noopener" aria-label="Site leanttro.com">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"></path></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>© 2026 leanttro.com — Todos os direitos reservados.</span>
+      <span>Sites que trabalham por você.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     SCRIPTS
+     ============================================================ -->
+<script>
+(function(){
+  'use strict';
+
+  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------------------------------------------------------
+     1. Header: sombra/blur ao rolar
+     --------------------------------------------------------- */
+  var header = document.getElementById('header');
+  function onScrollHeader(){
+    if (window.scrollY > 12) header.classList.add('is-scrolled');
+    else header.classList.remove('is-scrolled');
+  }
+  onScrollHeader();
+  window.addEventListener('scroll', onScrollHeader, { passive: true });
+
+  /* ---------------------------------------------------------
+     2. Menu mobile
+     --------------------------------------------------------- */
+  var navToggle = document.getElementById('navToggle');
+  var navLinks  = document.getElementById('navLinks');
+
+  navToggle.addEventListener('click', function(){
+    var isOpen = navLinks.classList.toggle('is-open');
+    navToggle.classList.toggle('is-open', isOpen);
+    navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  navLinks.querySelectorAll('a').forEach(function(link){
+    link.addEventListener('click', function(){
+      navLinks.classList.remove('is-open');
+      navToggle.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  /* ---------------------------------------------------------
+     3. Scroll reveal via IntersectionObserver
+     --------------------------------------------------------- */
+  var revealEls = document.querySelectorAll('.reveal, .flow-step');
+
+  if ('IntersectionObserver' in window && !prefersReducedMotion){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('is-visible'); });
+  }
+
+  /* ---------------------------------------------------------
+     4. Tilt 3D no card do hero (segue o mouse)
+     --------------------------------------------------------- */
+  var scene = document.getElementById('vaultScene');
+  var card  = document.getElementById('vaultCard');
+
+  if (scene && card && !prefersReducedMotion && window.matchMedia('(hover: hover)').matches){
+    scene.addEventListener('mousemove', function(e){
+      var rect = scene.getBoundingClientRect();
+      var x = (e.clientX - rect.left) / rect.width - 0.5;
+      var y = (e.clientY - rect.top) / rect.height - 0.5;
+      var rotateY = x * 18;
+      var rotateX = y * -18;
+      card.style.transform = 'rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg)';
+    });
+
+    scene.addEventListener('mouseleave', function(){
+      card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+    });
+  }
+
+  /* ---------------------------------------------------------
+     5. Parallax leve: fundo se move mais devagar que o
+        conteúdo, no hero E na seção de CTA final.
+     --------------------------------------------------------- */
+  var parallaxTargets = [
+    { el: document.querySelector('.hero .blob--1'),      speed: 0.12 },
+    { el: document.querySelector('.hero .blob--2'),      speed: 0.08 },
+    { el: document.querySelector('.cta-final .blob--1'), speed: 0.10 },
+    { el: document.querySelector('.cta-final .blob--2'), speed: 0.07 }
+  ].filter(function(t){ return !!t.el; });
+
+  if (parallaxTargets.length && !prefersReducedMotion){
+    var ticking = false;
+    function updateParallax(){
+      parallaxTargets.forEach(function(t){
+        var sectionEl = t.el.closest('section');
+        var rect = sectionEl.getBoundingClientRect();
+        var offset = rect.top * t.speed;
+        t.el.style.transform = 'translateY(' + offset + 'px)';
+      });
+      ticking = false;
+    }
+    window.addEventListener('scroll', function(){
+      if (!ticking){
+        window.requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }, { passive: true });
+    updateParallax();
+  }
+
+  /* ---------------------------------------------------------
+     6. Microinteração 3D nos cards de prova social (leve
+        rotação/elevação no hover, seguindo o mouse)
+     --------------------------------------------------------- */
+  if (!prefersReducedMotion && window.matchMedia('(hover: hover)').matches){
+    document.querySelectorAll('.compare-col').forEach(function(col){
+      col.style.transformStyle = 'preserve-3d';
+      col.addEventListener('mousemove', function(e){
+        var rect = col.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width - 0.5;
+        var y = (e.clientY - rect.top) / rect.height - 0.5;
+        col.style.transform = 'perspective(900px) rotateX(' + (y * -4) + 'deg) rotateY(' + (x * 4) + 'deg) translateY(-4px)';
+      });
+      col.addEventListener('mouseleave', function(){
+        col.style.transform = '';
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------
+     7. Carrossel dos cards "Como eu ajudo" (Estrutura /
+        Aprovação / Otimização): trocado clicando nas setas
+        ou nos dots (sem prender o scroll da página).
+     --------------------------------------------------------- */
+  var soberCarousel = document.getElementById('soberCarousel');
+  var soberStage     = document.getElementById('soberStage');
+  if (soberCarousel && soberStage){
+    var soberItems = Array.prototype.slice.call(soberStage.querySelectorAll('.sober__item'));
+    var soberDots  = Array.prototype.slice.call(document.querySelectorAll('#soberDots .sober__dot'));
+    var soberPrevBtn = document.getElementById('soberPrev');
+    var soberNextBtn = document.getElementById('soberNext');
+    var soberIndex = 0;
+
+    function goToSober(newIndex){
+      newIndex = Math.max(0, Math.min(soberItems.length - 1, newIndex));
+      if (newIndex === soberIndex) return;
+      var current = soberItems[soberIndex];
+      var next    = soberItems[newIndex];
+
+      current.classList.add('is-leaving');
+      current.classList.remove('is-active');
+
+      next.classList.remove('is-leaving');
+      requestAnimationFrame(function(){
+        next.classList.add('is-active');
+      });
+
+      setTimeout(function(){ current.classList.remove('is-leaving'); }, 600);
+
+      soberDots.forEach(function(dot, i){
+        dot.classList.toggle('is-active', i === newIndex);
+      });
+
+      soberIndex = newIndex;
+    }
+
+    soberDots.forEach(function(dot){
+      dot.addEventListener('click', function(){
+        goToSober(parseInt(dot.getAttribute('data-index'), 10));
+      });
+    });
+    if (soberPrevBtn) soberPrevBtn.addEventListener('click', function(){ goToSober(soberIndex - 1); });
+    if (soberNextBtn) soberNextBtn.addEventListener('click', function(){ goToSober(soberIndex + 1); });
+  }
+
+  /* ---------------------------------------------------------
+     8. Efeito de digitação no hero: primeiro o título,
+        depois a frase "No Instagram? No YouTube?..."
+     --------------------------------------------------------- */
+  var heroTitlePlain  = document.getElementById('heroTitlePlain');
+  var heroTitleEm     = document.getElementById('heroTitleEm');
+  var heroTitleCursor = document.getElementById('heroTitleCursor');
+  var heroLedeText    = document.getElementById('heroLedeText');
+  var heroLedeCursor  = document.getElementById('heroLedeCursor');
+
+  if (heroTitlePlain && heroLedeText){
+    var TITLE_PLAIN = 'Toda essa audiência que você construiu — ';
+    var TITLE_EM    = 'ela mora onde?';
+    var LEDE_TEXT   = 'No Instagram? No YouTube? Beleza, ela é real — você já provou que sabe atrair atenção. Só que hoje essa atenção não te paga nada.';
+
+    function typeInto(el, text, speed, done){
+      var i = 0;
+      (function step(){
+        el.textContent = text.slice(0, i);
+        if (i <= text.length){
+          i++;
+          setTimeout(step, speed);
+        } else if (done){
+          done();
+        }
+      })();
+    }
+
+    if (prefersReducedMotion){
+      heroTitlePlain.textContent = TITLE_PLAIN;
+      heroTitleEm.textContent = TITLE_EM;
+      heroLedeText.textContent = LEDE_TEXT;
+      if (heroTitleCursor) heroTitleCursor.style.display = 'none';
+      if (heroLedeCursor)  heroLedeCursor.style.display  = 'none';
+    } else {
+      setTimeout(function(){
+        typeInto(heroTitlePlain, TITLE_PLAIN, 24, function(){
+          typeInto(heroTitleEm, TITLE_EM, 42, function(){
+            if (heroTitleCursor) heroTitleCursor.style.display = 'none';
+            setTimeout(function(){
+              if (heroLedeCursor) heroLedeCursor.style.display = 'inline-block';
+              typeInto(heroLedeText, LEDE_TEXT, 16, function(){
+                if (heroLedeCursor) heroLedeCursor.style.display = 'none';
+              });
+            }, 350);
+          });
+        });
+      }, 300);
+    }
+  }
+
+  /* ---------------------------------------------------------
+     9. Efeito de digitação genérico para o resto do site:
+        qualquer elemento com a classe "type-reveal" digita seu
+        próprio texto (preservando <strong>/<span>/etc.) assim
+        que entra na tela pela primeira vez.
+     --------------------------------------------------------- */
+  function typeRevealLength(node){
+    var len = 0;
+    for (var i = 0; i < node.childNodes.length; i++){
+      var c = node.childNodes[i];
+      len += (c.nodeType === 3) ? c.textContent.length : typeRevealLength(c);
+    }
+    return len;
+  }
+
+  function typeRevealRender(sourceChildren, budget, target){
+    var used = 0;
+    for (var i = 0; i < sourceChildren.length; i++){
+      var remain = budget - used;
+      var child = sourceChildren[i];
+      if (child.nodeType === 3){
+        var text = child.textContent;
+        var take = Math.max(0, Math.min(remain, text.length));
+        target.appendChild(document.createTextNode(text.slice(0, take)));
+        used += take;
+      } else if (child.nodeType === 1){
+        var clone = child.cloneNode(false);
+        target.appendChild(clone);
+        used += typeRevealRender(child.childNodes, remain, clone);
+      }
+    }
+    return used;
+  }
+
+  var typeRevealEls = Array.prototype.slice.call(document.querySelectorAll('.type-reveal'));
+
+  if (typeRevealEls.length){
+    if (prefersReducedMotion){
+      // mantém o texto como está, sem animação
+    } else {
+      typeRevealEls.forEach(function(el){
+        el._typeOriginal = el.cloneNode(true);
+        el._typeTotal = typeRevealLength(el._typeOriginal);
+        el.textContent = '';
+      });
+
+      var playTypeReveal = function(el){
+        var original = el._typeOriginal;
+        var total = el._typeTotal;
+        if (!original || !total) return;
+        var duration = Math.max(260, total * 15);
+        var start = null;
+
+        function frame(ts){
+          if (!start) start = ts;
+          var elapsed = ts - start;
+          var budget = Math.min(total, Math.floor((elapsed / duration) * total));
+          el.innerHTML = '';
+          typeRevealRender(original.childNodes, budget, el);
+          if (budget < total){
+            var cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+            el.appendChild(cursor);
+            requestAnimationFrame(frame);
+          }
+        }
+        requestAnimationFrame(frame);
+      };
+
+      if ('IntersectionObserver' in window){
+        var typeIO = new IntersectionObserver(function(entries){
+          entries.forEach(function(entry){
+            if (!entry.isIntersecting) return;
+            typeIO.unobserve(entry.target);
+            playTypeReveal(entry.target);
+          });
+        }, { threshold: 0.4, rootMargin: '0px 0px -60px 0px' });
+
+        typeRevealEls.forEach(function(el){ typeIO.observe(el); });
+      } else {
+        typeRevealEls.forEach(function(el){ playTypeReveal(el); });
+      }
+    }
+  }
+
+})();
+</script>
+
+</body>
+</html>
