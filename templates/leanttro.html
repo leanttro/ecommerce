@@ -5,7 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>leanttro.com — Sua audiência é sua. Sua receita também deveria ser.</title>
 <meta name="description" content="Ajudo donos de sites de nicho a pararem de depender só de Instagram ou YouTube — estruturando o próprio site como fonte de receita.">
+<link rel="canonical" href="https://criadores.leanttro.com">
 <link rel="icon" type="image/png" href="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1779207400/leanttro_bohuce.png">
+
+<!-- Open Graph (preview no WhatsApp, e-mail, etc.) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://criadores.leanttro.com">
+<meta property="og:title" content="leanttro.com — Sua audiência é sua. Sua receita também deveria ser.">
+<meta property="og:description" content="Ajudo donos de sites de nicho a pararem de depender só de Instagram ou YouTube — estruturando o próprio site como fonte de receita.">
+<meta property="og:image" content="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1779207400/leanttro_bohuce.png">
+<meta property="og:locale" content="pt_BR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="leanttro.com — Sua audiência é sua. Sua receita também deveria ser.">
+<meta name="twitter:description" content="Ajudo donos de sites de nicho a pararem de depender só de Instagram ou YouTube — estruturando o próprio site como fonte de receita.">
+<meta name="twitter:image" content="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1779207400/leanttro_bohuce.png">
 
 <!-- ============================================================
      GOOGLE FONTS — Montserrat (400/500/600/700/800), única família
@@ -991,9 +1006,10 @@ textarea:focus-visible{
   overflow-x: hidden;
   overflow-y: visible;
   margin-top: 44px;
-  padding-top: 72px;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  padding-top: 116px;
+  padding-bottom: 4px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 1%, #000 99%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 1%, #000 99%, transparent);
 }
 
 .portfolio__track{
@@ -1018,7 +1034,7 @@ textarea:focus-visible{
   transform: translateX(-50%);
   margin-bottom: 20px;
   width: max-content;
-  max-width: 168px;
+  max-width: 200px;
   padding: 10px 14px;
   background: #fff;
   border: 1.5px solid var(--border);
@@ -1138,8 +1154,30 @@ textarea:focus-visible{
 }
 .portfolio__faq-badge--approved{ background: var(--accent); color: #fff; }
 .portfolio__faq-badge--pending{ background: var(--bg2); color: var(--muted); border: 1px solid var(--border); }
-.portfolio__faq-chevron{
+.portfolio__faq-visit{
   margin-left: auto;
+  width: 30px; height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s var(--ease), border-color .2s var(--ease), transform .2s var(--ease);
+}
+.portfolio__faq-visit:hover{
+  background: var(--primary);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+.portfolio__faq-visit svg{
+  width: 13px; height: 13px;
+  stroke: var(--muted);
+  transition: stroke .2s var(--ease);
+}
+.portfolio__faq-visit:hover svg{ stroke: #fff; }
+.portfolio__faq-chevron{
+  margin-left: 6px;
   width: 18px; height: 18px;
   flex-shrink: 0;
   stroke: var(--muted);
@@ -1158,7 +1196,8 @@ textarea:focus-visible{
   .portfolio__faq{ margin-top: 40px; }
   .portfolio__faq-summary{ flex-wrap: wrap; gap: 8px 12px; padding: 16px 18px; }
   .portfolio__faq-name{ min-width: 0; width: 100%; }
-  .portfolio__faq-chevron{ margin-left: 0; }
+  .portfolio__faq-visit{ margin-left: auto; }
+  .portfolio__faq-chevron{ margin-left: 6px; }
 }
 
 .sober__quote{
@@ -1364,6 +1403,132 @@ textarea:focus-visible{
   transition: color .2s ease;
 }
 .cta-final__alt a:hover{ color: #fff; }
+.lead-form-toggle-link{
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: rgba(255,255,255,.8);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color .2s ease;
+}
+.lead-form-toggle-link:hover{ color: #fff; }
+
+/* --- Formulário de contato (envia pro Directus) --- */
+.lead-form-wrap{
+  max-width: 560px;
+  margin: 40px auto 0;
+  text-align: left;
+}
+.lead-form-toggle{
+  display: block;
+  margin: 0 auto;
+  background: transparent;
+  color: rgba(255,255,255,.8);
+  font-size: .88rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color .2s ease;
+}
+.lead-form-toggle:hover{ color: #fff; }
+.lead-form{
+  display: none;
+  margin-top: 22px;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-lg);
+}
+.lead-form.is-open{ display: block; }
+.lead-form__row{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.lead-form__group{ margin-bottom: 14px; }
+.lead-form__group label{
+  display: block;
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.lead-form__group input,
+.lead-form__group textarea,
+.lead-form__group select{
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-btn);
+  font-family: var(--sans);
+  font-size: .92rem;
+  color: var(--text);
+  background: var(--bg2);
+  transition: border-color .2s ease, background .2s ease;
+}
+.lead-form__group input:focus,
+.lead-form__group textarea:focus,
+.lead-form__group select:focus{
+  outline: none;
+  border-color: var(--primary);
+  background: #fff;
+}
+.lead-form__group textarea{ resize: vertical; min-height: 90px; }
+.lead-form__submit{ width: 100%; margin-top: 4px; }
+.lead-form__msg{
+  margin-top: 14px;
+  font-size: .86rem;
+  font-weight: 600;
+  text-align: center;
+  display: none;
+}
+.lead-form__msg.is-success{ display: block; color: var(--accent-d); }
+.lead-form__msg.is-error{ display: block; color: #D6432E; }
+
+@media (max-width: 560px){
+  .lead-form__row{ grid-template-columns: 1fr; }
+  .lead-form{ padding: 22px; }
+}
+
+/* --- Botão flutuante de WhatsApp --- */
+.wa-float{
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 999;
+}
+.wa-float__btn{
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px var(--accent-glow);
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+  animation: waFloatPulse 2.6s var(--ease-soft) infinite;
+}
+.wa-float__btn:hover{
+  background: var(--accent-d);
+  transform: translateY(-3px) scale(1.05);
+}
+.wa-float__btn svg{ width: 28px; height: 28px; fill: #fff; }
+@keyframes waFloatPulse{
+  0%,100%{ box-shadow: 0 10px 30px var(--accent-glow); }
+  50%{ box-shadow: 0 10px 30px var(--accent-glow), 0 0 0 10px rgba(37,211,102,.14); }
+}
+@media (prefers-reduced-motion: reduce){
+  .wa-float__btn{ animation: none; }
+}
+@media (max-width: 640px){
+  .wa-float{ right: 14px; bottom: 14px; }
+  .wa-float__btn{ width: 52px; height: 52px; }
+  .wa-float__btn svg{ width: 25px; height: 25px; }
+}
 
 /* ================================================================
    12. FOOTER
@@ -1951,6 +2116,7 @@ textarea:focus-visible{
         <summary class="portfolio__faq-summary">
           <span class="portfolio__faq-name">feirasderua.com.br</span>
           <span class="portfolio__faq-badge portfolio__faq-badge--approved">Aprovado no AdSense</span>
+          <a class="portfolio__faq-visit" href="https://feirasderua.com.br" target="_blank" rel="noopener" aria-label="Acessar feirasderua.com.br" onclick="event.stopPropagation();"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
           <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
         </summary>
         <p class="portfolio__faq-answer">Guia de feiras de rua. No ar há 8 meses — já aprovado no Google AdSense.</p>
@@ -1960,6 +2126,7 @@ textarea:focus-visible{
         <summary class="portfolio__faq-summary">
           <span class="portfolio__faq-name">guiadorodizio.com.br</span>
           <span class="portfolio__faq-badge portfolio__faq-badge--approved">Aprovado no AdSense</span>
+          <a class="portfolio__faq-visit" href="https://guiadorodizio.com.br" target="_blank" rel="noopener" aria-label="Acessar guiadorodizio.com.br" onclick="event.stopPropagation();"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
           <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
         </summary>
         <p class="portfolio__faq-answer">Guia de rodízios e buffets. No ar há 3 meses — já aprovado no Google AdSense.</p>
@@ -1969,6 +2136,7 @@ textarea:focus-visible{
         <summary class="portfolio__faq-summary">
           <span class="portfolio__faq-name">agenciastart.com.br</span>
           <span class="portfolio__faq-badge portfolio__faq-badge--approved">Aprovado no AdSense</span>
+          <a class="portfolio__faq-visit" href="https://agenciastart.com.br" target="_blank" rel="noopener" aria-label="Acessar agenciastart.com.br" onclick="event.stopPropagation();"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
           <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
         </summary>
         <p class="portfolio__faq-answer">Ajuda a achar correios e cartórios perto de você. No ar há 3 meses — já aprovado no Google AdSense.</p>
@@ -1978,6 +2146,7 @@ textarea:focus-visible{
         <summary class="portfolio__faq-summary">
           <span class="portfolio__faq-name">leanttro.com</span>
           <span class="portfolio__faq-badge portfolio__faq-badge--approved">Aprovado no AdSense</span>
+          <a class="portfolio__faq-visit" href="https://leanttro.com" target="_blank" rel="noopener" aria-label="Acessar leanttro.com" onclick="event.stopPropagation();"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
           <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
         </summary>
         <p class="portfolio__faq-answer">Site e diretório de negócios locais — esse aqui, inclusive. No ar há 4 meses — já aprovado no Google AdSense.</p>
@@ -1987,6 +2156,7 @@ textarea:focus-visible{
         <summary class="portfolio__faq-summary">
           <span class="portfolio__faq-name">ondetemperto.com.br</span>
           <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <a class="portfolio__faq-visit" href="https://ondetemperto.com.br" target="_blank" rel="noopener" aria-label="Acessar ondetemperto.com.br" onclick="event.stopPropagation();"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
           <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
         </summary>
         <p class="portfolio__faq-answer">Diretório de serviços perto de você. No ar há 2 meses — aguardando aprovação no AdSense.</p>
@@ -1996,6 +2166,7 @@ textarea:focus-visible{
         <summary class="portfolio__faq-summary">
           <span class="portfolio__faq-name">nearestmetro.com</span>
           <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <a class="portfolio__faq-visit" href="https://nearestmetro.com" target="_blank" rel="noopener" aria-label="Acessar nearestmetro.com" onclick="event.stopPropagation();"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
           <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
         </summary>
         <p class="portfolio__faq-answer">Ajuda a achar a estação de metrô mais próxima. No ar há 3 meses — aguardando aprovação no AdSense.</p>
@@ -2005,6 +2176,7 @@ textarea:focus-visible{
         <summary class="portfolio__faq-summary">
           <span class="portfolio__faq-name">cestadepresentes.com.br</span>
           <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <a class="portfolio__faq-visit" href="https://cestadepresentes.com.br" target="_blank" rel="noopener" aria-label="Acessar cestadepresentes.com.br" onclick="event.stopPropagation();"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
           <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
         </summary>
         <p class="portfolio__faq-answer">Guia de cestas de presentes. No ar há 2 meses — aguardando aprovação no AdSense.</p>
@@ -2014,6 +2186,7 @@ textarea:focus-visible{
         <summary class="portfolio__faq-summary">
           <span class="portfolio__faq-name">qrcodebrindes.com.br</span>
           <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <a class="portfolio__faq-visit" href="https://qrcodebrindes.com.br" target="_blank" rel="noopener" aria-label="Acessar qrcodebrindes.com.br" onclick="event.stopPropagation();"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
           <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
         </summary>
         <p class="portfolio__faq-answer">QR Code em brindes personalizados. No ar há 1 mês — aguardando aprovação no AdSense.</p>
@@ -2023,6 +2196,7 @@ textarea:focus-visible{
         <summary class="portfolio__faq-summary">
           <span class="portfolio__faq-name">cinemapertodemim.com.br</span>
           <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <a class="portfolio__faq-visit" href="https://cinemapertodemim.com.br" target="_blank" rel="noopener" aria-label="Acessar cinemapertodemim.com.br" onclick="event.stopPropagation();"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
           <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
         </summary>
         <p class="portfolio__faq-answer">Ajuda a achar o cinema mais perto de você. No ar há 1 mês — aguardando aprovação no AdSense.</p>
@@ -2032,6 +2206,7 @@ textarea:focus-visible{
         <summary class="portfolio__faq-summary">
           <span class="portfolio__faq-name">lotericapertodemim.com.br</span>
           <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <a class="portfolio__faq-visit" href="https://lotericapertodemim.com.br" target="_blank" rel="noopener" aria-label="Acessar lotericapertodemim.com.br" onclick="event.stopPropagation();"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
           <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
         </summary>
         <p class="portfolio__faq-answer">Ajuda a achar a lotérica mais próxima. No ar há 1 mês — aguardando aprovação no AdSense.</p>
@@ -2041,6 +2216,7 @@ textarea:focus-visible{
         <summary class="portfolio__faq-summary">
           <span class="portfolio__faq-name">feriados2027.com.br</span>
           <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <a class="portfolio__faq-visit" href="https://feriados2027.com.br" target="_blank" rel="noopener" aria-label="Acessar feriados2027.com.br" onclick="event.stopPropagation();"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
           <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
         </summary>
         <p class="portfolio__faq-answer">Calendário de feriados de 2027. No ar há 2 semanas — aguardando aprovação no AdSense.</p>
@@ -2050,6 +2226,7 @@ textarea:focus-visible{
         <summary class="portfolio__faq-summary">
           <span class="portfolio__faq-name">adultbmicalculator.com</span>
           <span class="portfolio__faq-badge portfolio__faq-badge--pending">Aguardando aprovação</span>
+          <a class="portfolio__faq-visit" href="https://adultbmicalculator.com" target="_blank" rel="noopener" aria-label="Acessar adultbmicalculator.com" onclick="event.stopPropagation();"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
           <svg class="portfolio__faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
         </summary>
         <p class="portfolio__faq-answer">Calculadora de IMC pra adultos. No ar há 2 semanas — aguardando aprovação no AdSense.</p>
@@ -2087,8 +2264,47 @@ textarea:focus-visible{
     </div>
 
     <p class="cta-final__alt reveal reveal-delay-4">
-      Prefere não ir direto pro WhatsApp? <a href="#">Deixe seu contato por formulário</a>.
+      Prefere não ir direto pro WhatsApp?
+      <button type="button" class="lead-form-toggle-link" id="leadFormToggleLink" onclick="toggleLeadForm()">Deixe seu contato por formulário</button>.
     </p>
+
+    <div class="lead-form-wrap reveal reveal-delay-4">
+      <form class="lead-form" id="leadForm">
+        <input type="hidden" name="profissao" id="leadFormProfissao" value="Não informado">
+
+        <div class="lead-form__row">
+          <div class="lead-form__group">
+            <label for="leadNome">Nome</label>
+            <input type="text" id="leadNome" name="nome" required autocomplete="name">
+          </div>
+          <div class="lead-form__group">
+            <label for="leadWhatsapp">WhatsApp</label>
+            <input type="tel" id="leadWhatsapp" name="whatsapp" required autocomplete="tel" placeholder="(11) 91234-5678">
+          </div>
+        </div>
+
+        <div class="lead-form__group">
+          <label for="leadEmail">E-mail</label>
+          <input type="email" id="leadEmail" name="email" required autocomplete="email">
+        </div>
+
+        <div class="lead-form__group">
+          <label for="leadServico">O que você precisa?</label>
+          <select id="leadServico" name="servico">
+            <option value="Site Institucional">Site Profissional (Institucional)</option>
+            <option value="Loja Virtual">Loja Virtual (E-commerce)</option>
+            <option value="Landing Page">Landing Page</option>
+            <option value="Tráfego Pago">Tráfego Pago (Google Ads)</option>
+            <option value="Chatbot WhatsApp">Chatbot WhatsApp</option>
+            <option value="Outro">Outro / Ainda não sei</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-accent lead-form__submit">Enviar contato</button>
+
+        <p class="lead-form__msg" id="leadFormMsg"></p>
+      </form>
+    </div>
 
     <p class="cta-final__note reveal reveal-delay-4 type-reveal">
       Resposta rápida, sem compromisso — e sem fórmula pronta.
@@ -2443,6 +2659,82 @@ textarea:focus-visible{
     }
   }
 
+})();
+
+// ------------------------------------------------------------
+// Formulário de contato -> Flask -> Directus (mesma rota do app.py)
+// POST /tecnologia/captura-lead  (slug fixo da Leanttro no Directus)
+// Campos esperados no backend: nome, whatsapp, email, profissao
+// ------------------------------------------------------------
+function toggleLeadForm(){
+  var wrap = document.querySelector('.lead-form-wrap');
+  var form = document.getElementById('leadForm');
+  var link = document.getElementById('leadFormToggleLink');
+  if (!form) return;
+  var opening = !form.classList.contains('is-open');
+  form.classList.toggle('is-open');
+  if (opening){
+    link.textContent = 'Esconder formulário';
+    setTimeout(function(){
+      wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 80);
+  } else {
+    link.textContent = 'Deixe seu contato por formulário';
+  }
+}
+
+(function(){
+  var leadForm = document.getElementById('leadForm');
+  if (!leadForm) return;
+
+  var servicoSelect = document.getElementById('leadServico');
+  var profissaoInput = document.getElementById('leadFormProfissao');
+  if (servicoSelect && profissaoInput){
+    profissaoInput.value = servicoSelect.value;
+    servicoSelect.addEventListener('change', function(){
+      profissaoInput.value = servicoSelect.value;
+    });
+  }
+
+  leadForm.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    var btn = leadForm.querySelector('.lead-form__submit');
+    var msg = document.getElementById('leadFormMsg');
+    var originalBtnText = btn.textContent;
+
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+    msg.className = 'lead-form__msg';
+    msg.textContent = '';
+
+    var formData = new FormData(leadForm);
+
+    fetch('/tecnologia/captura-lead', {
+      method: 'POST',
+      body: formData
+    })
+      .then(function(res){ return res.json().then(function(data){ return { ok: res.ok, data: data }; }); })
+      .then(function(result){
+        if (result.ok && result.data && result.data.sucesso){
+          msg.textContent = result.data.mensagem || 'Cadastrado com sucesso! Vou te chamar em breve.';
+          msg.className = 'lead-form__msg is-success';
+          leadForm.reset();
+          if (servicoSelect && profissaoInput) profissaoInput.value = servicoSelect.value;
+        } else {
+          msg.textContent = (result.data && result.data.erro) || 'Não deu pra enviar agora. Tenta de novo ou chama no WhatsApp.';
+          msg.className = 'lead-form__msg is-error';
+        }
+      })
+      .catch(function(){
+        msg.textContent = 'Não deu pra enviar agora. Tenta de novo ou chama no WhatsApp.';
+        msg.className = 'lead-form__msg is-error';
+      })
+      .finally(function(){
+        btn.disabled = false;
+        btn.textContent = originalBtnText;
+      });
+  });
 })();
 </script>
 
