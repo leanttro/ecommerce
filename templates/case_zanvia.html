@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ p.nome }} | Zanvia Consultoria</title>
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609275/zanvialogo_ig6aiy.png">
+<link rel="apple-touch-icon" href="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609275/zanvialogo_ig6aiy.png">
+<meta name="description" content="Conheça o plano {{ p.nome }} com consultoria da Zanvia: rede credenciada, carências e coberturas, sem custo adicional.">
+<meta property="og:title" content="{{ p.nome }} | Zanvia Consultoria">
+<meta property="og:description" content="Consultoria em planos de saúde e odontológicos com a Zanvia.">
+<meta property="og:image" content="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609275/zanvialogo_ig6aiy.png">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#0A1B36;
+    --navy:#122A52;
+    --navy-soft:#1D3B6E;
+    --gold:#C9A24B;
+    --gold-light:#E4C87A;
+    --paper:#F5F4F0;
+    --paper-dim:#EAE7DD;
+    --ink:#1A1D24;
+    --ink-soft:#535A6C;
+    --line:rgba(10,27,54,0.12);
+    --max:1180px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Manrope',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  p{ margin:0; }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:var(--max); margin:0 auto; padding:0 32px; }
+  img{ max-width:100%; display:block; }
+  ::selection{ background:var(--gold-light); color:var(--navy-deep); }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:15px 28px;
+    border-radius:3px;
+    font-family:'Manrope',sans-serif;
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn-gold{ background:var(--gold); color:var(--navy-deep); }
+  .btn-gold:hover{ box-shadow:0 10px 24px rgba(201,162,75,0.35); }
+  .btn-outline-navy{ background:transparent; color:var(--navy-deep); border-color:var(--navy-deep); }
+  .btn-outline-gold{ background:transparent; color:var(--gold-light); border-color:rgba(228,200,122,0.55); }
+  .btn-outline-gold:hover{ background:rgba(228,200,122,0.08); }
+  .btn-ghost{ background:transparent; color:var(--navy); font-weight:700; padding:15px 6px; }
+
+  /* ---------- Nav ---------- */
+  header.site{
+    position:static;
+    background:rgba(245,244,240,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 32px;
+    max-width:var(--max); margin:0 auto;
+  }
+  .nav-logo img{ height:69px; width:auto; }
+  .nav-links{ display:flex; align-items:center; gap:34px; }
+  .nav-links a{ font-size:14.5px; font-weight:600; color:var(--navy); }
+  .nav-links a:hover{ color:var(--gold); }
+  .nav-cta{ display:flex; align-items:center; gap:18px; }
+  .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:6px; }
+  .nav-toggle span{ display:block; width:24px; height:2px; background:var(--navy); margin:5px 0; }
+  @media (max-width:880px){
+    .nav-links{ display:none; }
+    .nav-toggle{ display:block; }
+  }
+
+  /* ---------- Pulse divider ---------- */
+  .pulse{ width:100%; height:34px; display:block; }
+  .pulse svg{ width:100%; height:100%; display:block; }
+  .pulse-navy path{ stroke:var(--gold-light); }
+  .pulse-paper path{ stroke:var(--navy); }
+
+  /* ---------- Hero ---------- */
+  .hero{ padding:76px 0 40px; }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:56px;
+    align-items:center;
+  }
+  .kicker{
+    font-size:14px; font-weight:700; color:var(--gold);
+    letter-spacing:0.02em;
+  }
+  .kicker::before{
+    content:''; display:inline-block; width:22px; height:1px;
+    background:var(--gold); margin-right:10px; vertical-align:middle;
+  }
+  .hero h1{
+    font-size:clamp(40px,5.4vw,64px);
+    line-height:1.04;
+    margin-top:18px;
+    color:var(--navy-deep);
+  }
+  .hero-sub{
+    margin-top:22px;
+    max-width:46ch;
+    font-size:18px;
+    line-height:1.6;
+    color:var(--ink-soft);
+  }
+  .hero-actions{
+    margin-top:32px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  .hero-trust{
+    margin-top:38px;
+    display:flex;
+    gap:28px;
+    flex-wrap:wrap;
+  }
+  .hero-trust .stat{ min-width:120px; }
+  .hero-trust .stat b{
+    font-family:'Fraunces',serif;
+    font-size:28px;
+    color:var(--navy-deep);
+    display:block;
+    font-weight:600;
+  }
+  .hero-trust .stat span{ font-size:13.5px; color:var(--ink-soft); }
+
+  .hero-art{ position:relative; }
+  .hero-art svg{ width:100%; height:auto; overflow:visible; }
+  .draw{ stroke-dasharray:1200; stroke-dashoffset:1200; animation:draw 1.8s ease forwards 0.2s; }
+  .draw2{ stroke-dasharray:600; stroke-dashoffset:600; animation:draw2 1.2s ease forwards 1.1s; }
+  .fadein{ opacity:0; animation:fadein 1s ease forwards 1.6s; }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  @keyframes draw2{ to{ stroke-dashoffset:0; } }
+  @keyframes fadein{ to{ opacity:1; } }
+
+  @media (max-width:940px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .hero-art{ order:-1; max-width:340px; margin:0 auto 8px; }
+  }
+
+  /* ---------- Section shells ---------- */
+  section{ padding:88px 0; }
+  .section-navy{ background:var(--navy-deep); color:#fff; }
+  .section-navy .ink-soft{ color:rgba(255,255,255,0.66); }
+  .eyebrow-row{
+    display:flex; align-items:baseline; justify-content:space-between;
+    gap:24px; margin-bottom:52px; flex-wrap:wrap;
+  }
+  .eyebrow-row h2{ font-size:clamp(28px,3.4vw,40px); max-width:20ch; }
+  .eyebrow-row p{ max-width:34ch; color:var(--ink-soft); font-size:15.5px; line-height:1.6; }
+  .section-navy .eyebrow-row p{ color:rgba(255,255,255,0.66); }
+
+  /* ---------- Como funciona ---------- */
+  .steps{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0;
+    position:relative;
+    margin-top:8px;
+  }
+  .step{
+    padding:28px 26px 0;
+    border-top:2px solid rgba(228,200,122,0.35);
+    position:relative;
+  }
+  .step::before{
+    content:attr(data-n);
+    font-family:'Fraunces',serif;
+    font-size:15px;
+    color:var(--navy-deep);
+    background:var(--gold-light);
+    width:30px; height:30px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    position:absolute; top:-16px; left:26px;
+    font-weight:600;
+  }
+  .step h3{ font-size:18px; margin-top:6px; color:#fff; font-weight:600; }
+  .step p{ margin-top:10px; font-size:14.5px; line-height:1.6; color:rgba(255,255,255,0.66); }
+  @media (max-width:880px){
+    .steps{ grid-template-columns:1fr; gap:34px; }
+  }
+
+  /* ---------- Planos por perfil ---------- */
+  .plans-grid{
+    display:grid;
+    grid-template-columns:1.3fr 1fr 0.85fr;
+    gap:22px;
+    align-items:stretch;
+  }
+  .plan-card{
+    border:1px solid var(--line);
+    background:#fff;
+    padding:36px 32px;
+    display:flex;
+    flex-direction:column;
+    border-radius:2px;
+  }
+  .plan-card.featured{
+    background:var(--navy-deep);
+    color:#fff;
+    border-color:var(--navy-deep);
+  }
+  .plan-card.featured .plan-tag{ color:var(--gold-light); }
+  .plan-card.featured p{ color:rgba(255,255,255,0.68); }
+  .plan-card.featured .plan-list li::before{ color:var(--gold-light); }
+  .plan-tag{
+    font-size:13px; font-weight:700; color:var(--gold);
+    text-transform:none;
+  }
+  .plan-card h3{ font-size:24px; margin-top:14px; }
+  .plan-card p{ margin-top:14px; font-size:15px; line-height:1.65; color:var(--ink-soft); flex-grow:1; }
+  .plan-list{ list-style:none; padding:0; margin:20px 0 0; }
+  .plan-list li{
+    font-size:14px; padding:7px 0 7px 20px; position:relative;
+    border-top:1px solid var(--line);
+  }
+  .plan-card.featured .plan-list li{ border-top-color:rgba(255,255,255,0.14); }
+  .plan-list li::before{
+    content:'—'; position:absolute; left:0; color:var(--gold);
+  }
+  .plan-card .btn{ margin-top:26px; align-self:flex-start; }
+  @media (max-width:940px){
+    .plans-grid{ grid-template-columns:1fr; }
+  }
+
+  /* ---------- Operadoras ---------- */
+  .operators{
+    display:flex; flex-wrap:wrap; gap:0;
+    border-top:1px solid rgba(228,200,122,0.25);
+  }
+  .operators span{
+    font-family:'Fraunces',serif;
+    font-size:clamp(20px,2.6vw,28px);
+    padding:22px 34px;
+    border-bottom:1px solid rgba(228,200,122,0.25);
+    border-right:1px solid rgba(228,200,122,0.25);
+    flex:1 1 auto;
+    color:rgba(255,255,255,0.92);
+    font-weight:500;
+  }
+  .operators-note{ margin-top:22px; font-size:13.5px; color:rgba(255,255,255,0.5); }
+
+  /* ---------- Por que a Zanvia ---------- */
+  .why-list{
+    border-left:2px solid var(--gold);
+    max-width:720px;
+  }
+  .why-item{ padding:26px 0 26px 32px; border-bottom:1px solid var(--line); }
+  .why-item:last-child{ border-bottom:none; }
+  .why-item h3{ font-size:20px; color:var(--navy-deep); }
+  .why-item p{ margin-top:8px; font-size:15px; line-height:1.65; color:var(--ink-soft); max-width:56ch; }
+
+  /* ---------- CTA final ---------- */
+  .cta-final{
+    background:linear-gradient(160deg,var(--navy-deep) 0%, var(--navy) 100%);
+    color:#fff;
+    text-align:left;
+  }
+  .cta-final-grid{
+    display:grid; grid-template-columns:1.2fr 0.8fr; gap:40px; align-items:center;
+  }
+  .cta-final h2{ font-size:clamp(30px,4vw,44px); max-width:14ch; }
+  .cta-final p{ margin-top:16px; color:rgba(255,255,255,0.66); max-width:44ch; font-size:16px; line-height:1.6; }
+  .cta-final .hero-actions{ margin-top:28px; }
+  .cta-box{
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(228,200,122,0.3);
+    padding:30px;
+  }
+  .cta-box h3{ font-size:17px; color:var(--gold-light); font-weight:600; }
+  .cta-box p{ margin-top:8px; font-size:14px; color:rgba(255,255,255,0.6); line-height:1.6; }
+  .cta-box form{ margin-top:18px; display:flex; flex-direction:column; gap:10px; }
+  .cta-box input{
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.18);
+    color:#fff;
+    padding:12px 14px;
+    font-family:'Manrope',sans-serif;
+    font-size:14.5px;
+  }
+  .cta-box input::placeholder{ color:rgba(255,255,255,0.4); }
+  .cta-box select{
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.18);
+    color:rgba(255,255,255,0.85);
+    padding:12px 14px;
+    font-family:'Manrope',sans-serif;
+    font-size:14.5px;
+  }
+  .cta-box select option{ color:#1A1D24; }
+  .cta-box .btn{ margin-top:4px; }
+  @media (max-width:880px){
+    .cta-final-grid{ grid-template-columns:1fr; }
+  }
+
+  /* ---------- Planos atendidos (catálogo dinâmico) ---------- */
+  .catalog-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));
+    gap:22px;
+  }
+  .catalog-card{
+    background:#fff;
+    border:1px solid var(--line);
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .catalog-card:hover{ transform:translateY(-3px); box-shadow:0 16px 30px rgba(10,27,54,0.12); }
+  .catalog-card-img{ aspect-ratio:1/1; overflow:hidden; background:var(--paper-dim); }
+  .catalog-card-img img{ width:100%; height:100%; object-fit:cover; transition:transform 0.5s ease; }
+  .catalog-card:hover .catalog-card-img img{ transform:scale(1.06); }
+  .catalog-card-placeholder{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    color:rgba(10,27,54,0.18);
+  }
+  .catalog-card-info{ padding:20px 22px 24px; }
+  .catalog-tag{
+    font-size:12.5px; font-weight:700; color:var(--gold);
+    display:block; margin-bottom:6px;
+  }
+  .catalog-card-info h3{ font-size:19px; color:var(--navy-deep); font-weight:600; }
+  .catalog-cta{
+    display:inline-block; margin-top:12px; font-size:13.5px; font-weight:700;
+    color:var(--navy); border-bottom:1px solid var(--gold); padding-bottom:2px;
+  }
+  .catalog-empty{
+    text-align:center; padding:48px 0; color:var(--ink-soft); font-size:15px;
+    border:1px dashed var(--line);
+  }
+
+  /* ---------- Blog ---------- */
+  .blog-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+    gap:22px;
+  }
+  .blog-card{
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(228,200,122,0.22);
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    transition:transform 0.2s ease, border-color 0.2s ease;
+  }
+  .blog-card:hover{ transform:translateY(-3px); border-color:rgba(228,200,122,0.5); }
+  .blog-card-img{ aspect-ratio:16/10; overflow:hidden; background:rgba(255,255,255,0.06); }
+  .blog-card-img img{ width:100%; height:100%; object-fit:cover; transition:transform 0.5s ease; }
+  .blog-card:hover .blog-card-img img{ transform:scale(1.06); }
+  .blog-card-placeholder{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    color:rgba(255,255,255,0.2);
+  }
+  .blog-card-info{ padding:22px 24px 26px; }
+  .blog-date{ font-size:12.5px; font-weight:700; color:var(--gold-light); display:block; margin-bottom:8px; }
+  .blog-card-info h3{ font-size:19px; color:#fff; font-weight:600; }
+  .blog-card-info p{ margin-top:10px; font-size:14px; line-height:1.6; color:rgba(255,255,255,0.6); }
+  .blog-cta{
+    display:inline-block; margin-top:14px; font-size:13.5px; font-weight:700;
+    color:var(--gold-light); border-bottom:1px solid rgba(228,200,122,0.5); padding-bottom:2px;
+  }
+  .blog-empty{
+    text-align:center; padding:48px 0; color:rgba(255,255,255,0.5); font-size:15px;
+    border:1px dashed rgba(228,200,122,0.25);
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    background:var(--navy-deep);
+    color:rgba(255,255,255,0.55);
+    padding:46px 0 30px;
+    border-top:1px solid rgba(255,255,255,0.08);
+  }
+  .foot-grid{
+    display:flex; justify-content:space-between; align-items:flex-start; gap:24px; flex-wrap:wrap;
+  }
+  .foot-grid img{ height:34px; margin-bottom:14px; }
+  .foot-links{ display:flex; gap:34px; flex-wrap:wrap; }
+  .foot-links a{ font-size:13.5px; color:rgba(255,255,255,0.6); }
+  .foot-links a:hover{ color:var(--gold-light); }
+  .foot-bottom{
+    margin-top:36px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.08);
+    font-size:12.5px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+
+  /* ---------- FAQ ---------- */
+  .faq-group{ margin-bottom:34px; }
+  .faq-group:last-child{ margin-bottom:0; }
+  .faq-group-label{
+    font-size:12.5px; font-weight:700; color:var(--gold);
+    letter-spacing:0.06em; text-transform:uppercase; margin-bottom:14px; display:block;
+  }
+  .faq-item{
+    border-bottom:1px solid var(--line);
+  }
+  .faq-item summary{
+    list-style:none; cursor:pointer; padding:20px 34px 20px 0; position:relative;
+    font-family:'Fraunces',serif; font-weight:600; font-size:16.5px; color:var(--navy-deep);
+  }
+  .faq-item summary::-webkit-details-marker{ display:none; }
+  .faq-item summary::after{
+    content:'+'; position:absolute; right:4px; top:16px;
+    font-family:'Manrope',sans-serif; font-weight:600; font-size:22px; color:var(--gold);
+    transition:transform 0.2s ease;
+  }
+  .faq-item[open] summary::after{ content:'–'; }
+  .faq-item p{
+    padding:0 34px 22px 0; font-size:14.5px; line-height:1.7; color:var(--ink-soft); max-width:68ch;
+  }
+
+  /* ---------- WhatsApp float ---------- */
+  .wa-float{
+    position:fixed; right:22px; bottom:22px; z-index:50;
+    background:#1D3B6E; color:#fff;
+    width:56px; height:56px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 24px rgba(10,27,54,0.3);
+  }
+
+  /* ---------- Case: breadcrumb ---------- */
+  .case-hero{ padding:44px 0 76px; }
+  .breadcrumb{
+    font-size:13px; color:var(--ink-soft); margin-bottom:26px;
+  }
+  .breadcrumb a{ color:var(--navy); font-weight:600; }
+  .breadcrumb a:hover{ color:var(--gold); }
+  .breadcrumb span{ margin:0 6px; color:var(--line); }
+
+  .case-grid{
+    display:grid;
+    grid-template-columns:0.85fr 1.15fr;
+    gap:56px;
+    align-items:start;
+  }
+  .case-img{
+    aspect-ratio:1/1;
+    background:var(--paper-dim);
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .case-img img{ width:100%; height:100%; object-fit:cover; }
+  .case-img-placeholder{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    color:rgba(10,27,54,0.18);
+  }
+  .case-tag{ font-size:13px; font-weight:700; color:var(--gold); }
+  .case-grid h1{
+    font-size:clamp(30px,4vw,42px); margin-top:14px; color:var(--navy-deep); line-height:1.08;
+  }
+  .case-desc{ margin-top:20px; font-size:16px; line-height:1.7; color:var(--ink-soft); max-width:60ch; }
+  .case-actions{ margin-top:30px; display:flex; gap:6px; flex-wrap:wrap; }
+  .case-highlights{
+    margin-top:36px; display:grid; grid-template-columns:repeat(2,1fr); gap:0;
+    border-top:1px solid var(--line);
+  }
+  .case-highlights div{
+    padding:18px 0 18px 0; border-bottom:1px solid var(--line);
+  }
+  .case-highlights div:nth-child(odd){ padding-right:20px; }
+  .case-highlights b{ font-family:'Fraunces',serif; font-size:15px; color:var(--navy-deep); display:block; }
+  .case-highlights span{ font-size:13px; color:var(--ink-soft); }
+  @media (max-width:880px){
+    .case-grid{ grid-template-columns:1fr; }
+    .case-highlights{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <nav class="nav">
+    <a href="/{{ loja.slug_url }}/#top" class="nav-logo">
+      <img src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609965/zanvia_lxvqlb.png" alt="Zanvia Consultoria em Planos de Saúde">
+    </a>
+    <div class="nav-links">
+      <a href="/{{ loja.slug_url }}/#planos">Planos</a>
+      <a href="/{{ loja.slug_url }}/#como-funciona">Como funciona</a>
+      <a href="/{{ loja.slug_url }}/#operadoras">Operadoras</a>
+      <a href="/{{ loja.slug_url }}/#blog">Blog</a>
+      <a href="/{{ loja.slug_url }}/#contato">Contato</a>
+    </div>
+    <div class="nav-cta">
+      <a href="/{{ loja.slug_url }}/#contato" class="btn btn-gold">Simular agora</a>
+      <button class="nav-toggle" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- CASE HERO -->
+  <section class="case-hero">
+    <div class="wrap">
+      <p class="breadcrumb">
+        <a href="/{{ loja.slug_url }}/#top">Início</a><span>/</span>
+        <a href="/{{ loja.slug_url }}/#planos-atendidos">Planos que atendemos</a><span>/</span>
+        {{ p.nome }}
+      </p>
+      <div class="case-grid">
+        <div class="case-img">
+          {% if p.imagem %}
+            <img src="{{ p.imagem }}" alt="{{ p.nome }}">
+          {% elif p.imagem1 %}
+            <img src="{{ p.imagem1 }}" alt="{{ p.nome }}">
+          {% else %}
+            <div class="case-img-placeholder">
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            </div>
+          {% endif %}
+        </div>
+        <div>
+          <p class="case-tag">Plano de saúde</p>
+          <h1>{{ p.nome }}</h1>
+          <div class="case-desc">
+            {% if p.descricao %}
+              {{ p.descricao | safe }}
+            {% else %}
+              <p>Consulte com um consultor Zanvia as condições, rede credenciada, carências e coberturas do plano {{ p.nome }} para o seu perfil e cidade.</p>
+            {% endif %}
+          </div>
+          <div class="case-actions">
+            <a href="/{{ loja.slug_url }}/#contato" class="btn btn-gold">Simular este plano</a>
+            <a href="#" class="btn btn-outline-navy">Falar no WhatsApp</a>
+          </div>
+          <div class="case-highlights">
+            <div><b>Rede credenciada</b><span>Hospitais e laboratórios sob consulta</span></div>
+            <div><b>Carências</b><span>Conforme regras da operadora</span></div>
+            <div><b>Atendimento</b><span>Consultor Zanvia do início ao contrato</span></div>
+            <div><b>Custo da consultoria</b><span>Sem custo adicional para o cliente</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pulse pulse-paper">
+    <svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+      <path d="M0,20 L360,20 L385,4 L410,36 L435,20 L1200,20" stroke-width="2" fill="none" vector-effect="non-scaling-stroke"/>
+    </svg>
+  </div>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="eyebrow-row">
+        <h2>Perguntas frequentes</h2>
+        <p>Dúvidas comuns de quem está pesquisando plano de saúde antes de simular com a Zanvia.</p>
+      </div>
+
+      <div class="faq-group">
+        <span class="faq-group-label">Planos e preços</span>
+        <details class="faq-item">
+          <summary>Qual plano de saúde mais barato 2026?</summary>
+          <p>Os valores variam conforme idade, cidade, tipo de plano e operadora. A Zanvia possui simulador online para consulta de preços de Amil, Unimed, Intermédica e Prevent Senior.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Como fazer cotação de plano de saúde online?</summary>
+          <p>No site zanviaconsultoria.com.br há opção de simulação online para cada operadora disponível.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde individual vale a pena?</summary>
+          <p>Depende das necessidades de cada pessoa. A Zanvia oferece planos individuais entre outras modalidades.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Qual o melhor plano de saúde familiar?</summary>
+          <p>A escolha depende de fatores como cidade, orçamento e rede credenciada desejada. A Zanvia disponibiliza simulador para comparação.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde para MEI é mais barato?</summary>
+          <p>Planos para MEI podem ter valores diferentes de planos individuais. Consulte no simulador da Zanvia para ver valores específicos.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde com CNPJ vale a pena?</summary>
+          <p>Planos empresariais com CNPJ podem apresentar condições diferentes. A Zanvia realiza cotações para CNPJ.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Como contratar plano de saúde sem empresa?</summary>
+          <p>Existem modalidades como individual, MEI e por adesão. A Zanvia atende essas modalidades.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde adesão é confiável?</summary>
+          <p>Planos por adesão são vinculados a entidades de classe. A Zanvia trabalha com operadoras que oferecem essa modalidade.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Qual operadora de plano de saúde é melhor?</summary>
+          <p>A avaliação depende de critérios como rede credenciada, preço e coberturas. A Zanvia trabalha com Amil, Unimed, Intermédica e Prevent Senior.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde Amil preço 2026?</summary>
+          <p>Os valores variam conforme perfil e região. O simulador da Zanvia consulta preços da Amil.</p>
+        </details>
+      </div>
+
+      <div class="faq-group">
+        <span class="faq-group-label">Simulação e cotação</span>
+        <details class="faq-item">
+          <summary>Simulador de plano de saúde online gratuito?</summary>
+          <p>O site zanviaconsultoria.com.br disponibiliza simulador online sem custo.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Como simular plano de saúde sem compromisso?</summary>
+          <p>Acesse o site da Zanvia e utilize a opção "Simule On-line" disponível para cada operadora.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Onde fazer cotação de vários planos de saúde?</summary>
+          <p>No site da Zanvia é possível cotar Amil, Unimed, Intermédica e Prevent Senior.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Comparador de planos de saúde funciona?</summary>
+          <p>O simulador da Zanvia permite comparar valores e coberturas de diferentes operadoras.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Qual site faz cotação de plano de saúde?</summary>
+          <p>zanviaconsultoria.com.br realiza cotações de múltiplas operadoras.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Simulação de plano de saúde mostra rede credenciada?</summary>
+          <p>Segundo o site da Zanvia, o simulador mostra rede de hospitais e laboratórios.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Dá para ver preço de plano de saúde online?</summary>
+          <p>O simulador da Zanvia consulta valores conforme idade, cidade e tipo de plano.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Como saber se plano de saúde é barato?</summary>
+          <p>O simulador da Zanvia permite comparar valores de diferentes planos.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Site confiável para cotar plano de saúde?</summary>
+          <p>A Zanvia informa atender mais de 5.000 clientes.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Cotação de plano de saúde em quanto tempo?</summary>
+          <p>O simulador online da Zanvia retorna valores em segundos.</p>
+        </details>
+      </div>
+
+      <div class="faq-group">
+        <span class="faq-group-label">Planos por adesão / categoria</span>
+        <details class="faq-item">
+          <summary>Plano de saúde por adesão como funciona?</summary>
+          <p>Conforme o site da Zanvia, o cliente é associado a entidade de classe e preenche ficha de adesão.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde para administrador CRA?</summary>
+          <p>A Zanvia menciona planos para categorias como CRA (Administradores).</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde para contador CRC?</summary>
+          <p>A Zanvia menciona planos para categorias como CRC (Contadores).</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde por sindicato é bom?</summary>
+          <p>A Zanvia trabalha com planos vinculados a sindicatos e entidades de classe.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Como se associar para ter plano de saúde?</summary>
+          <p>Segundo a Zanvia, o corretor identifica o segmento do cliente e realiza a associação.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="cta-final" id="contato">
+    <div class="wrap cta-final-grid">
+      <div>
+        <h2>Vamos encontrar o seu plano ideal?</h2>
+        <p>Faça sua simulação agora ou peça para que um consultor da Zanvia entre em contato — sem compromisso e sem custo adicional.</p>
+        <div class="hero-actions">
+          <a href="#" class="btn btn-gold">Simular minha cotação</a>
+          <a href="#" class="btn btn-outline-gold">Falar agora no WhatsApp</a>
+        </div>
+      </div>
+      <div class="cta-box">
+        <h3>Prefere que a gente ligue pra você?</h3>
+        <p>Deixe seus dados e um consultor Zanvia retorna o contato em até 24h.</p>
+        <form id="leadForm">
+          <input type="text" id="f-nome" name="nome" required placeholder="Seu nome completo">
+          <input type="tel" id="f-whatsapp" name="whatsapp" required placeholder="Seu WhatsApp">
+          <input type="email" id="f-email" name="email" required placeholder="Seu e-mail">
+          <select id="f-profissao" name="profissao">
+            <option value="">Qual plano te interessa?</option>
+            <option value="Individual e familiar">Individual e familiar</option>
+            <option value="Empresarial - CNPJ e MEI">Empresarial · CNPJ e MEI</option>
+            <option value="Adesão profissional">Adesão profissional</option>
+          </select>
+          <button type="submit" class="btn btn-gold">
+            <span class="btn-text-wrapper">Quero receber uma ligação</span>
+          </button>
+        </form>
+        <div id="leadSuccessMsg" style="display:none;margin-top:16px;padding:16px 18px;background:rgba(228,200,122,0.12);border:1px solid rgba(228,200,122,0.3);text-align:center;font-weight:700;font-size:14px;color:#fff;">
+          Dados enviados com sucesso! Nossa equipe entrará em contato.
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <img src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609965/zanvia_lxvqlb.png" alt="Zanvia Consultoria">
+        <p style="font-size:13.5px; max-width:32ch; line-height:1.6;">Consultoria em planos de saúde e odontológicos — individual, familiar, empresarial e por adesão.</p>
+      </div>
+      <div class="foot-links">
+        <a href="#planos">Planos</a>
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#operadoras">Operadoras</a>
+        <a href="#blog">Blog</a>
+        <a href="#contato">Contato</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© Zanvia Consultoria em Planos de Saúde. Todos os direitos reservados.</span>
+      <span>[inserir telefone] · [inserir e-mail] · [inserir @instagram]</span>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-float" href="#" aria-label="Falar no WhatsApp">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.09-1.33A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.62 0-3.14-.44-4.44-1.2l-.32-.18-3.02.79.8-2.94-.21-.3A7.94 7.94 0 014 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8zm4.38-5.71c-.24-.12-1.4-.69-1.62-.77-.22-.08-.38-.12-.54.12-.16.24-.62.77-.76.93-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.01-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.4-.57 1.6-1.12.2-.55.2-1.02.14-1.12-.06-.1-.22-.16-.46-.28z"/></svg>
+</a>
+
+<script>
+  document.querySelector('.nav-toggle').addEventListener('click', function(){
+    var links = document.querySelector('.nav-links');
+    var visible = links.style.display === 'flex';
+    links.style.display = visible ? 'none' : 'flex';
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '64px';
+    links.style.left = '0';
+    links.style.right = '0';
+    links.style.background = '#F5F4F0';
+    links.style.padding = '20px 32px';
+    links.style.borderBottom = '1px solid rgba(10,27,54,0.12)';
+  });
+
+  const leadForm = document.getElementById('leadForm');
+  if (leadForm) {
+    leadForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      const btn = this.querySelector('button[type=submit]');
+      const textWrapper = btn.querySelector('.btn-text-wrapper');
+      const originalHTML = textWrapper.innerHTML;
+
+      textWrapper.innerHTML = 'ENVIANDO...';
+      btn.disabled = true;
+
+      const formData = new FormData(this);
+      try {
+        const response = await fetch('/{{ loja.slug_url }}/captura-lead', {
+          method: 'POST',
+          body: formData
+        });
+        const result = await response.json();
+        if (result.sucesso || response.ok) {
+          this.style.display = 'none';
+          document.getElementById('leadSuccessMsg').style.display = 'block';
+        } else {
+          alert('Erro ao enviar. Tente novamente.');
+          textWrapper.innerHTML = originalHTML;
+          btn.disabled = false;
+        }
+      } catch(err) {
+        alert('Erro de conexão. Verifique sua internet e tente novamente.');
+        textWrapper.innerHTML = originalHTML;
+        btn.disabled = false;
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
