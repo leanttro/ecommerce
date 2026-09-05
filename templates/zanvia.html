@@ -104,6 +104,7 @@
   .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:6px; }
   .nav-toggle span{ display:block; width:24px; height:2px; background:var(--navy); margin:5px 0; }
   @media (max-width:880px){
+    header.site{ position:relative; z-index:30; }
     header.site .nav{ position:relative; }
     .nav{ flex-wrap:wrap; }
     .nav-logo{ order:1; flex-basis:100%; text-align:center; }
@@ -1478,13 +1479,15 @@
 <script>
   document.querySelector('.nav-toggle').addEventListener('click', function(){
     var links = document.querySelector('.nav-links');
+    var nav = document.querySelector('.nav');
     var visible = links.style.display === 'flex';
     links.style.display = visible ? 'none' : 'flex';
     links.style.flexDirection = 'column';
     links.style.position = 'absolute';
-    links.style.top = '64px';
+    links.style.top = nav.offsetHeight + 'px';
     links.style.left = '0';
     links.style.right = '0';
+    links.style.zIndex = '100';
     links.style.background = '#F5F4F0';
     links.style.padding = '20px 32px';
     links.style.borderBottom = '1px solid rgba(10,27,54,0.12)';
