@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zanvia Consultoria | Planos de Saúde e Odontológicos</title>
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609275/zanvialogo_ig6aiy.png">
+<link rel="apple-touch-icon" href="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609275/zanvialogo_ig6aiy.png">
+<meta name="description" content="Consultoria em planos de saúde e odontológicos individual, familiar, empresarial (CNPJ e MEI) e por adesão profissional. Compare hospitais, laboratórios, carências e coberturas antes de contratar.">
+<meta property="og:title" content="Zanvia Consultoria | Planos de Saúde e Odontológicos">
+<meta property="og:description" content="Sua saúde em primeiro lugar. Compare planos de saúde e odontológicos e encontre o ideal para o seu momento.">
+<meta property="og:image" content="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609275/zanvialogo_ig6aiy.png">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#0A1B36;
+    --navy:#122A52;
+    --navy-soft:#1D3B6E;
+    --gold:#C9A24B;
+    --gold-light:#E4C87A;
+    --paper:#F5F4F0;
+    --paper-dim:#EAE7DD;
+    --ink:#1A1D24;
+    --ink-soft:#535A6C;
+    --line:rgba(10,27,54,0.12);
+    --max:1180px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Manrope',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  p{ margin:0; }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:var(--max); margin:0 auto; padding:0 32px; }
+  img{ max-width:100%; display:block; }
+  ::selection{ background:var(--gold-light); color:var(--navy-deep); }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:15px 28px;
+    border-radius:3px;
+    font-family:'Manrope',sans-serif;
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn-gold{ background:var(--gold); color:var(--navy-deep); }
+  .btn-gold:hover{ box-shadow:0 10px 24px rgba(201,162,75,0.35); }
+  .btn-outline-navy{ background:transparent; color:var(--navy-deep); border-color:var(--navy-deep); }
+  .btn-outline-gold{ background:transparent; color:var(--gold-light); border-color:rgba(228,200,122,0.55); }
+  .btn-outline-gold:hover{ background:rgba(228,200,122,0.08); }
+  .btn-ghost{ background:transparent; color:var(--navy); font-weight:700; padding:15px 6px; }
+
+  /* ---------- Nav ---------- */
+  header.site{
+    position:static;
+    background:rgba(245,244,240,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 32px;
+    max-width:var(--max); margin:0 auto;
+  }
+  .nav-logo img{ height:69px; width:auto; }
+  .nav-links{ display:flex; align-items:center; gap:34px; }
+  .nav-links a{ font-size:14.5px; font-weight:600; color:var(--navy); }
+  .nav-links a:hover{ color:var(--gold); }
+  .nav-cta{ display:flex; align-items:center; gap:18px; }
+  .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:6px; }
+  .nav-toggle span{ display:block; width:24px; height:2px; background:var(--navy); margin:5px 0; }
+  @media (max-width:880px){
+    .nav-links{ display:none; }
+    .nav-toggle{ display:block; }
+  }
+
+  /* ---------- Pulse divider ---------- */
+  .pulse{ width:100%; height:34px; display:block; }
+  .pulse svg{ width:100%; height:100%; display:block; }
+  .pulse-navy path{ stroke:var(--gold-light); }
+  .pulse-paper path{ stroke:var(--navy); }
+
+  /* ---------- Hero ---------- */
+  .hero{ padding:76px 0 40px; }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:56px;
+    align-items:center;
+  }
+  .kicker{
+    font-size:14px; font-weight:700; color:var(--gold);
+    letter-spacing:0.02em;
+  }
+  .kicker::before{
+    content:''; display:inline-block; width:22px; height:1px;
+    background:var(--gold); margin-right:10px; vertical-align:middle;
+  }
+  .hero h1{
+    font-size:clamp(40px,5.4vw,64px);
+    line-height:1.04;
+    margin-top:18px;
+    color:var(--navy-deep);
+  }
+  .hero-sub{
+    margin-top:22px;
+    max-width:46ch;
+    font-size:18px;
+    line-height:1.6;
+    color:var(--ink-soft);
+  }
+  .hero-actions{
+    margin-top:32px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  .hero-trust{
+    margin-top:38px;
+    display:flex;
+    gap:28px;
+    flex-wrap:wrap;
+  }
+  .hero-trust .stat{ min-width:120px; }
+  .hero-trust .stat b{
+    font-family:'Fraunces',serif;
+    font-size:28px;
+    color:var(--navy-deep);
+    display:block;
+    font-weight:600;
+  }
+  .hero-trust .stat span{ font-size:13.5px; color:var(--ink-soft); }
+
+  .hero-art{ position:relative; }
+  .hero-art svg{ width:100%; height:auto; overflow:visible; }
+  .draw{ stroke-dasharray:1200; stroke-dashoffset:1200; animation:draw 1.8s ease forwards 0.2s; }
+  .draw2{ stroke-dasharray:600; stroke-dashoffset:600; animation:draw2 1.2s ease forwards 1.1s; }
+  .fadein{ opacity:0; animation:fadein 1s ease forwards 1.6s; }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  @keyframes draw2{ to{ stroke-dashoffset:0; } }
+  @keyframes fadein{ to{ opacity:1; } }
+
+  @media (max-width:940px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .hero-art{ order:-1; max-width:340px; margin:0 auto 8px; }
+  }
+
+  /* ---------- Section shells ---------- */
+  section{ padding:88px 0; }
+  .section-navy{ background:var(--navy-deep); color:#fff; }
+  .section-navy .ink-soft{ color:rgba(255,255,255,0.66); }
+  .eyebrow-row{
+    display:flex; align-items:baseline; justify-content:space-between;
+    gap:24px; margin-bottom:52px; flex-wrap:wrap;
+  }
+  .eyebrow-row h2{ font-size:clamp(28px,3.4vw,40px); max-width:20ch; }
+  .eyebrow-row p{ max-width:34ch; color:var(--ink-soft); font-size:15.5px; line-height:1.6; }
+  .section-navy .eyebrow-row p{ color:rgba(255,255,255,0.66); }
+
+  /* ---------- Como funciona ---------- */
+  .steps{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0;
+    position:relative;
+    margin-top:8px;
+  }
+  .step{
+    padding:28px 26px 0;
+    border-top:2px solid rgba(228,200,122,0.35);
+    position:relative;
+  }
+  .step::before{
+    content:attr(data-n);
+    font-family:'Fraunces',serif;
+    font-size:15px;
+    color:var(--navy-deep);
+    background:var(--gold-light);
+    width:30px; height:30px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    position:absolute; top:-16px; left:26px;
+    font-weight:600;
+  }
+  .step h3{ font-size:18px; margin-top:6px; color:#fff; font-weight:600; }
+  .step p{ margin-top:10px; font-size:14.5px; line-height:1.6; color:rgba(255,255,255,0.66); }
+  @media (max-width:880px){
+    .steps{ grid-template-columns:1fr; gap:34px; }
+  }
+
+  /* ---------- Planos por perfil ---------- */
+  .plans-grid{
+    display:grid;
+    grid-template-columns:1.3fr 1fr 0.85fr;
+    gap:22px;
+    align-items:stretch;
+  }
+  .plan-card{
+    border:1px solid var(--line);
+    background:#fff;
+    padding:36px 32px;
+    display:flex;
+    flex-direction:column;
+    border-radius:2px;
+  }
+  .plan-card.featured{
+    background:var(--navy-deep);
+    color:#fff;
+    border-color:var(--navy-deep);
+  }
+  .plan-card.featured .plan-tag{ color:var(--gold-light); }
+  .plan-card.featured p{ color:rgba(255,255,255,0.68); }
+  .plan-card.featured .plan-list li::before{ color:var(--gold-light); }
+  .plan-tag{
+    font-size:13px; font-weight:700; color:var(--gold);
+    text-transform:none;
+  }
+  .plan-card h3{ font-size:24px; margin-top:14px; }
+  .plan-card p{ margin-top:14px; font-size:15px; line-height:1.65; color:var(--ink-soft); flex-grow:1; }
+  .plan-list{ list-style:none; padding:0; margin:20px 0 0; }
+  .plan-list li{
+    font-size:14px; padding:7px 0 7px 20px; position:relative;
+    border-top:1px solid var(--line);
+  }
+  .plan-card.featured .plan-list li{ border-top-color:rgba(255,255,255,0.14); }
+  .plan-list li::before{
+    content:'—'; position:absolute; left:0; color:var(--gold);
+  }
+  .plan-card .btn{ margin-top:26px; align-self:flex-start; }
+  @media (max-width:940px){
+    .plans-grid{ grid-template-columns:1fr; }
+  }
+
+  /* ---------- Operadoras ---------- */
+  .operators{
+    display:flex; flex-wrap:wrap; gap:0;
+    border-top:1px solid rgba(228,200,122,0.25);
+  }
+  .operators span{
+    font-family:'Fraunces',serif;
+    font-size:clamp(20px,2.6vw,28px);
+    padding:22px 34px;
+    border-bottom:1px solid rgba(228,200,122,0.25);
+    border-right:1px solid rgba(228,200,122,0.25);
+    flex:1 1 auto;
+    color:rgba(255,255,255,0.92);
+    font-weight:500;
+  }
+  .operators-note{ margin-top:22px; font-size:13.5px; color:rgba(255,255,255,0.5); }
+
+  /* ---------- Por que a Zanvia ---------- */
+  .why-list{
+    border-left:2px solid var(--gold);
+    max-width:720px;
+  }
+  .why-item{ padding:26px 0 26px 32px; border-bottom:1px solid var(--line); }
+  .why-item:last-child{ border-bottom:none; }
+  .why-item h3{ font-size:20px; color:var(--navy-deep); }
+  .why-item p{ margin-top:8px; font-size:15px; line-height:1.65; color:var(--ink-soft); max-width:56ch; }
+
+  /* ---------- CTA final ---------- */
+  .cta-final{
+    background:linear-gradient(160deg,var(--navy-deep) 0%, var(--navy) 100%);
+    color:#fff;
+    text-align:left;
+  }
+  .cta-final-grid{
+    display:grid; grid-template-columns:1.2fr 0.8fr; gap:40px; align-items:center;
+  }
+  .cta-final h2{ font-size:clamp(30px,4vw,44px); max-width:14ch; }
+  .cta-final p{ margin-top:16px; color:rgba(255,255,255,0.66); max-width:44ch; font-size:16px; line-height:1.6; }
+  .cta-final .hero-actions{ margin-top:28px; }
+  .cta-box{
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(228,200,122,0.3);
+    padding:30px;
+  }
+  .cta-box h3{ font-size:17px; color:var(--gold-light); font-weight:600; }
+  .cta-box p{ margin-top:8px; font-size:14px; color:rgba(255,255,255,0.6); line-height:1.6; }
+  .cta-box form{ margin-top:18px; display:flex; flex-direction:column; gap:10px; }
+  .cta-box input{
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.18);
+    color:#fff;
+    padding:12px 14px;
+    font-family:'Manrope',sans-serif;
+    font-size:14.5px;
+  }
+  .cta-box input::placeholder{ color:rgba(255,255,255,0.4); }
+  .cta-box select{
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.18);
+    color:rgba(255,255,255,0.85);
+    padding:12px 14px;
+    font-family:'Manrope',sans-serif;
+    font-size:14.5px;
+  }
+  .cta-box select option{ color:#1A1D24; }
+  .cta-box .btn{ margin-top:4px; }
+  @media (max-width:880px){
+    .cta-final-grid{ grid-template-columns:1fr; }
+  }
+
+  /* ---------- Planos atendidos (catálogo dinâmico) ---------- */
+  .catalog-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));
+    gap:22px;
+  }
+  .catalog-card{
+    background:#fff;
+    border:1px solid var(--line);
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .catalog-card:hover{ transform:translateY(-3px); box-shadow:0 16px 30px rgba(10,27,54,0.12); }
+  .catalog-card-img{ aspect-ratio:4/3; overflow:hidden; background:var(--paper-dim); }
+  .catalog-card-img img{ width:100%; height:100%; object-fit:cover; transition:transform 0.5s ease; }
+  .catalog-card:hover .catalog-card-img img{ transform:scale(1.06); }
+  .catalog-card-placeholder{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    color:rgba(10,27,54,0.18);
+  }
+  .catalog-card-info{ padding:20px 22px 24px; }
+  .catalog-tag{
+    font-size:12.5px; font-weight:700; color:var(--gold);
+    display:block; margin-bottom:6px;
+  }
+  .catalog-card-info h3{ font-size:19px; color:var(--navy-deep); font-weight:600; }
+  .catalog-cta{
+    display:inline-block; margin-top:12px; font-size:13.5px; font-weight:700;
+    color:var(--navy); border-bottom:1px solid var(--gold); padding-bottom:2px;
+  }
+  .catalog-empty{
+    text-align:center; padding:48px 0; color:var(--ink-soft); font-size:15px;
+    border:1px dashed var(--line);
+  }
+
+  /* ---------- Blog ---------- */
+  .blog-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+    gap:22px;
+  }
+  .blog-card{
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(228,200,122,0.22);
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    transition:transform 0.2s ease, border-color 0.2s ease;
+  }
+  .blog-card:hover{ transform:translateY(-3px); border-color:rgba(228,200,122,0.5); }
+  .blog-card-img{ aspect-ratio:16/10; overflow:hidden; background:rgba(255,255,255,0.06); }
+  .blog-card-img img{ width:100%; height:100%; object-fit:cover; transition:transform 0.5s ease; }
+  .blog-card:hover .blog-card-img img{ transform:scale(1.06); }
+  .blog-card-placeholder{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    color:rgba(255,255,255,0.2);
+  }
+  .blog-card-info{ padding:22px 24px 26px; }
+  .blog-date{ font-size:12.5px; font-weight:700; color:var(--gold-light); display:block; margin-bottom:8px; }
+  .blog-card-info h3{ font-size:19px; color:#fff; font-weight:600; }
+  .blog-card-info p{ margin-top:10px; font-size:14px; line-height:1.6; color:rgba(255,255,255,0.6); }
+  .blog-cta{
+    display:inline-block; margin-top:14px; font-size:13.5px; font-weight:700;
+    color:var(--gold-light); border-bottom:1px solid rgba(228,200,122,0.5); padding-bottom:2px;
+  }
+  .blog-empty{
+    text-align:center; padding:48px 0; color:rgba(255,255,255,0.5); font-size:15px;
+    border:1px dashed rgba(228,200,122,0.25);
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    background:var(--navy-deep);
+    color:rgba(255,255,255,0.55);
+    padding:46px 0 30px;
+    border-top:1px solid rgba(255,255,255,0.08);
+  }
+  .foot-grid{
+    display:flex; justify-content:space-between; align-items:flex-start; gap:24px; flex-wrap:wrap;
+  }
+  .foot-grid img{ height:34px; margin-bottom:14px; }
+  .foot-links{ display:flex; gap:34px; flex-wrap:wrap; }
+  .foot-links a{ font-size:13.5px; color:rgba(255,255,255,0.6); }
+  .foot-links a:hover{ color:var(--gold-light); }
+  .foot-bottom{
+    margin-top:36px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.08);
+    font-size:12.5px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+
+  /* ---------- WhatsApp float ---------- */
+  .wa-float{
+    position:fixed; right:22px; bottom:22px; z-index:50;
+    background:#1D3B6E; color:#fff;
+    width:56px; height:56px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 24px rgba(10,27,54,0.3);
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <nav class="nav">
+    <a href="#top" class="nav-logo">
+      <img src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609965/zanvia_lxvqlb.png" alt="Zanvia Consultoria em Planos de Saúde">
+    </a>
+    <div class="nav-links">
+      <a href="#planos">Planos</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#operadoras">Operadoras</a>
+      <a href="#blog">Blog</a>
+      <a href="#contato">Contato</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#contato" class="btn btn-gold">Simular agora</a>
+      <button class="nav-toggle" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="kicker">Consultoria em planos de saúde</p>
+        <h1>Sua saúde em<br>primeiro lugar.</h1>
+        <p class="hero-sub">Encontramos o plano de saúde e odontológico certo para o seu momento — individual, familiar, para quem tem CNPJ ou MEI, ou por adesão a categoria profissional. Comparação real, sem letras miúdas.</p>
+        <div class="hero-actions">
+          <a href="#contato" class="btn btn-gold">Simular minha cotação</a>
+          <a href="#contato" class="btn btn-ghost">Prefiro falar por WhatsApp</a>
+        </div>
+        <div class="hero-trust">
+          <div class="stat"><b>5.000+</b><span>clientes atendidos</span></div>
+          <div class="stat"><b>4</b><span>grandes operadoras parceiras</span></div>
+          <div class="stat"><b>0</b><span>custo adicional na consultoria</span></div>
+        </div>
+      </div>
+      <div class="hero-art">
+        <svg viewBox="0 0 460 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path class="draw" d="M225,300 C160,255 55,185 55,105 C55,60 90,30 128,30 C155,30 178,46 190,72 C202,46 225,30 252,30 C290,30 325,60 325,105 C325,140 285,175 225,220"
+                stroke="#122A52" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="draw2" d="M55,150 L125,150 L145,110 L172,205 L198,95 L218,150 L325,150"
+                stroke="#C9A24B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <g class="fadein">
+            <path d="M300,150 L390,150 L390,215 C390,255 355,285 320,300 C285,285 250,255 250,215 L250,150 Z"
+                  fill="#F5F4F0" stroke="#0A1B36" stroke-width="5" stroke-linejoin="round"/>
+            <rect x="308" y="180" width="24" height="70" rx="3" fill="#C9A24B"/>
+            <rect x="284" y="204" width="72" height="24" rx="3" fill="#C9A24B"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <div class="pulse pulse-paper">
+    <svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+      <path d="M0,20 L360,20 L385,4 L410,36 L435,20 L1200,20" stroke-width="2" fill="none" vector-effect="non-scaling-stroke"/>
+    </svg>
+  </div>
+
+  <!-- COMO FUNCIONA -->
+  <section class="section-navy" id="como-funciona">
+    <div class="wrap">
+      <div class="eyebrow-row">
+        <h2>Do simulador ao contrato, em quatro passos.</h2>
+        <p>Você acompanha cada etapa — sem precisar entender de siglas de operadora para tomar uma boa decisão.</p>
+      </div>
+      <div class="steps">
+        <div class="step" data-n="1">
+          <h3>Simule online</h3>
+          <p>Informe idade, cidade e perfil. Em minutos você vê valores reais, não estimativas.</p>
+        </div>
+        <div class="step" data-n="2">
+          <h3>Compare o que importa</h3>
+          <p>Rede de hospitais e laboratórios, carências e coberturas, lado a lado, antes de decidir.</p>
+        </div>
+        <div class="step" data-n="3">
+          <h3>Fale com um consultor</h3>
+          <p>Um especialista Zanvia confirma o que faz sentido para sua idade, cidade e orçamento.</p>
+        </div>
+        <div class="step" data-n="4">
+          <h3>Contrate com segurança</h3>
+          <p>Assinatura acompanhada do início ao fim, sem custo adicional pela consultoria.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pulse pulse-navy" style="background:var(--navy-deep);">
+    <svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+      <path d="M0,20 L360,20 L385,4 L410,36 L435,20 L1200,20" stroke-width="2" fill="none" vector-effect="non-scaling-stroke"/>
+    </svg>
+  </div>
+
+  <!-- PLANOS POR PERFIL -->
+  <section id="planos">
+    <div class="wrap">
+      <div class="eyebrow-row">
+        <h2>Um plano para cada momento da sua vida.</h2>
+        <p>Pessoa física, empresa ou categoria profissional — a estrutura do plano muda, o cuidado não.</p>
+      </div>
+      <div class="plans-grid">
+        <div class="plan-card featured">
+          <p class="plan-tag">Individual e familiar</p>
+          <h3>Cobertura pensada para você e quem você ama</h3>
+          <p>Planos de saúde e odontológicos individuais ou familiares, com rede e mensalidade ajustadas ao seu perfil — sem depender de vínculo empresarial.</p>
+          <ul class="plan-list">
+            <li>Inclusão de dependentes</li>
+            <li>Coparticipação ou mensalidade fixa</li>
+            <li>Cobertura odontológica combinada</li>
+          </ul>
+          <a href="#contato" class="btn btn-outline-gold">Simular plano individual</a>
+        </div>
+        <div class="plan-card">
+          <p class="plan-tag">Empresarial · CNPJ e MEI</p>
+          <h3>Benefício de saúde para quem também empreende</h3>
+          <p>Planos empresariais acessíveis mesmo para pequenas empresas e MEI, com condições que crescem junto com o seu negócio.</p>
+          <ul class="plan-list">
+            <li>A partir de 1 vida (MEI incluso)</li>
+            <li>Tabelas por faixa etária</li>
+            <li>Gestão simplificada para o RH</li>
+          </ul>
+          <a href="#contato" class="btn btn-outline-navy">Simular plano empresarial</a>
+        </div>
+        <div class="plan-card">
+          <p class="plan-tag">Adesão profissional</p>
+          <h3>Planos por categoria e sindicato</h3>
+          <p>Para quem integra uma associação de classe — como CRA, CRC ou sindicato — com condições exclusivas de adesão coletiva.</p>
+          <ul class="plan-list">
+            <li>Associação incluída na contratação</li>
+            <li>Condições de coletivo por adesão</li>
+          </ul>
+          <a href="#contato" class="btn btn-outline-navy">Simular plano por adesão</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OPERADORAS -->
+  <section class="section-navy" id="operadoras">
+    <div class="wrap">
+      <div class="eyebrow-row">
+        <h2>Credenciados junto às maiores operadoras do país.</h2>
+        <p>Trabalhamos com as redes mais relevantes de cada região, para que a comparação seja justa.</p>
+      </div>
+      <div class="operators">
+        <span>Amil</span>
+        <span>GNDI Intermédica</span>
+        <span>Unimed Nacional</span>
+        <span>Prevent Senior</span>
+      </div>
+      <p class="operators-note">E outras operadoras regionais, conforme disponibilidade na sua cidade.</p>
+    </div>
+  </section>
+
+  <!-- PLANOS ATENDIDOS (dinâmico via Directus) -->
+  <section id="planos-atendidos">
+    <div class="wrap">
+      <div class="eyebrow-row">
+        <h2>Planos que atendemos</h2>
+        <p>Cada plano cadastrado no painel aparece aqui automaticamente, com uma página própria de detalhes.</p>
+      </div>
+
+      {% set ns = namespace(cat_id=None) %}
+      {% for cat in categorias %}
+        {% if cat.nome == 'Planos de Saúde' %}{% set ns.cat_id = cat.id %}{% endif %}
+      {% endfor %}
+      {% if ns.cat_id is not none %}
+        {% set planos = produtos | selectattr('categoria_id', 'equalto', ns.cat_id) | list %}
+      {% else %}
+        {% set planos = [] %}
+      {% endif %}
+      {% if planos and planos|length > 0 %}
+      <div class="catalog-grid">
+        {% for p in planos %}
+        <div class="catalog-card" onclick="window.location.href='/{{ loja.slug_url }}/produto/{{ p.slug }}'">
+          <div class="catalog-card-img">
+            {% if p.imagem %}
+              <img src="{{ p.imagem }}" alt="{{ p.nome }}" loading="lazy">
+            {% elif p.imagem1 %}
+              <img src="{{ p.imagem1 }}" alt="{{ p.nome }}" loading="lazy">
+            {% else %}
+              <div class="catalog-card-placeholder">
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              </div>
+            {% endif %}
+          </div>
+          <div class="catalog-card-info">
+            <h3>{{ p.nome }}</h3>
+            <span class="catalog-cta">Ver detalhes do plano</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="catalog-empty">Os planos atendidos serão exibidos aqui assim que forem cadastrados no painel, na categoria "Planos de Saúde".</div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- POR QUE A ZANVIA -->
+  <section>
+    <div class="wrap">
+      <div class="eyebrow-row">
+        <h2>Por que ter um consultor, e não só um site de preços.</h2>
+        <p></p>
+      </div>
+      <div class="why-list">
+        <div class="why-item">
+          <h3>Atendimento humano do início ao contrato</h3>
+          <p>Um consultor acompanha sua simulação, tira dúvidas por WhatsApp e continua disponível depois que o plano já está ativo.</p>
+        </div>
+        <div class="why-item">
+          <h3>Tecnologia que mostra tudo antes de você decidir</h3>
+          <p>Nosso simulador exibe rede de hospitais e laboratórios, carências e coberturas de cada operadora — não só o valor da mensalidade.</p>
+        </div>
+        <div class="why-item">
+          <h3>Painel exclusivo para acompanhar sua apólice</h3>
+          <p>Depois de contratar, você acessa uma área do cliente para acompanhar solicitações e manter seus dados sempre atualizados.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOG -->
+  <section id="blog" class="section-navy">
+    <div class="wrap">
+      <div class="eyebrow-row">
+        <h2>Conteúdo para decidir com mais segurança</h2>
+        <p>Artigos publicados no painel aparecem aqui, com página própria para cada um.</p>
+      </div>
+
+      {% if posts and posts|length > 0 %}
+      <div class="blog-grid">
+        {% for post in posts %}
+        <div class="blog-card" onclick="window.location.href='/{{ loja.slug_url }}/blog/{{ post.slug }}'">
+          <div class="blog-card-img">
+            {% if post.capa %}
+              <img src="{{ post.capa }}" alt="{{ post.titulo }}" loading="lazy">
+            {% else %}
+              <div class="blog-card-placeholder">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
+              </div>
+            {% endif %}
+          </div>
+          <div class="blog-card-info">
+            {% if post.data %}<span class="blog-date">{{ post.data }}</span>{% endif %}
+            <h3>{{ post.titulo }}</h3>
+            {% if post.resumo %}<p>{{ post.resumo }}</p>{% endif %}
+            <span class="blog-cta">Ler artigo</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="blog-empty">Os artigos publicados no painel serão exibidos aqui assim que forem cadastrados.</div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="cta-final" id="contato">
+    <div class="wrap cta-final-grid">
+      <div>
+        <h2>Vamos encontrar o seu plano ideal?</h2>
+        <p>Faça sua simulação agora ou peça para que um consultor da Zanvia entre em contato — sem compromisso e sem custo adicional.</p>
+        <div class="hero-actions">
+          <a href="#" class="btn btn-gold">Simular minha cotação</a>
+          <a href="#" class="btn btn-outline-gold">Falar agora no WhatsApp</a>
+        </div>
+      </div>
+      <div class="cta-box">
+        <h3>Prefere que a gente ligue pra você?</h3>
+        <p>Deixe seus dados e um consultor Zanvia retorna o contato em até 24h.</p>
+        <form id="leadForm">
+          <input type="text" id="f-nome" name="nome" required placeholder="Seu nome completo">
+          <input type="tel" id="f-whatsapp" name="whatsapp" required placeholder="Seu WhatsApp">
+          <input type="email" id="f-email" name="email" required placeholder="Seu e-mail">
+          <select id="f-profissao" name="profissao">
+            <option value="">Qual plano te interessa?</option>
+            <option value="Individual e familiar">Individual e familiar</option>
+            <option value="Empresarial - CNPJ e MEI">Empresarial · CNPJ e MEI</option>
+            <option value="Adesão profissional">Adesão profissional</option>
+          </select>
+          <button type="submit" class="btn btn-gold">
+            <span class="btn-text-wrapper">Quero receber uma ligação</span>
+          </button>
+        </form>
+        <div id="leadSuccessMsg" style="display:none;margin-top:16px;padding:16px 18px;background:rgba(228,200,122,0.12);border:1px solid rgba(228,200,122,0.3);text-align:center;font-weight:700;font-size:14px;color:#fff;">
+          Dados enviados com sucesso! Nossa equipe entrará em contato.
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <img src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609965/zanvia_lxvqlb.png" alt="Zanvia Consultoria">
+        <p style="font-size:13.5px; max-width:32ch; line-height:1.6;">Consultoria em planos de saúde e odontológicos — individual, familiar, empresarial e por adesão.</p>
+      </div>
+      <div class="foot-links">
+        <a href="#planos">Planos</a>
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#operadoras">Operadoras</a>
+        <a href="#blog">Blog</a>
+        <a href="#contato">Contato</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© Zanvia Consultoria em Planos de Saúde. Todos os direitos reservados.</span>
+      <span>[inserir telefone] · [inserir e-mail] · [inserir @instagram]</span>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-float" href="#" aria-label="Falar no WhatsApp">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.09-1.33A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.62 0-3.14-.44-4.44-1.2l-.32-.18-3.02.79.8-2.94-.21-.3A7.94 7.94 0 014 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8zm4.38-5.71c-.24-.12-1.4-.69-1.62-.77-.22-.08-.38-.12-.54.12-.16.24-.62.77-.76.93-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.01-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.4-.57 1.6-1.12.2-.55.2-1.02.14-1.12-.06-.1-.22-.16-.46-.28z"/></svg>
+</a>
+
+<script>
+  document.querySelector('.nav-toggle').addEventListener('click', function(){
+    var links = document.querySelector('.nav-links');
+    var visible = links.style.display === 'flex';
+    links.style.display = visible ? 'none' : 'flex';
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '64px';
+    links.style.left = '0';
+    links.style.right = '0';
+    links.style.background = '#F5F4F0';
+    links.style.padding = '20px 32px';
+    links.style.borderBottom = '1px solid rgba(10,27,54,0.12)';
+  });
+
+  const leadForm = document.getElementById('leadForm');
+  if (leadForm) {
+    leadForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      const btn = this.querySelector('button[type=submit]');
+      const textWrapper = btn.querySelector('.btn-text-wrapper');
+      const originalHTML = textWrapper.innerHTML;
+
+      textWrapper.innerHTML = 'ENVIANDO...';
+      btn.disabled = true;
+
+      const formData = new FormData(this);
+      try {
+        const response = await fetch('/{{ loja.slug_url }}/captura-lead', {
+          method: 'POST',
+          body: formData
+        });
+        const result = await response.json();
+        if (result.sucesso || response.ok) {
+          this.style.display = 'none';
+          document.getElementById('leadSuccessMsg').style.display = 'block';
+        } else {
+          alert('Erro ao enviar. Tente novamente.');
+          textWrapper.innerHTML = originalHTML;
+          btn.disabled = false;
+        }
+      } catch(err) {
+        alert('Erro de conexão. Verifique sua internet e tente novamente.');
+        textWrapper.innerHTML = originalHTML;
+        btn.disabled = false;
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
