@@ -231,6 +231,8 @@
     display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;
   }
   .feature-grid.img-left .feature-photo{ order:-1; }
+  .feature-grid-consultor{ margin-top:72px; grid-template-columns:1.1fr 0.9fr; }
+  .feature-grid-why{ grid-template-columns:1.15fr 0.85fr; }
   .feature-photo{
     aspect-ratio:4/3; overflow:hidden; border:1px solid var(--line); position:relative;
   }
@@ -320,7 +322,7 @@
     display:none; color:#fff; font-size:13.5px; line-height:1.6; text-align:center; padding:6px 0;
   }
   @media (max-width:940px){
-    .mini-quote-card{ position:static; transform:none; width:100%; max-width:none; margin-top:-30px; animation:none; }
+    .mini-quote-card{ position:static; transform:none; width:100%; max-width:none; margin-top:18px; animation:none; }
     .mini-quote-card::before{ display:none; }
     .quote-overlay-wrap{ padding-bottom:0; }
   }
@@ -871,7 +873,7 @@
         </div>
       </div>
 
-      <div class="feature-grid" style="margin-top:72px; grid-template-columns:1.1fr 0.9fr;">
+      <div class="feature-grid feature-grid-consultor">
         <div class="feature-text">
           <p class="feature-kicker">Atendimento humano, não robótico</p>
           <h2>Um consultor de verdade acompanha cada etapa.</h2>
@@ -1043,7 +1045,7 @@
 
   <!-- POR QUE A ZANVIA -->
   <section class="section-tight-top">
-    <div class="wrap feature-grid" style="grid-template-columns:1.15fr 0.85fr;">
+    <div class="wrap feature-grid feature-grid-why">
       <div>
         <div class="eyebrow-row">
           <h2>Por que ter um consultor, e não só um site de preços.</h2>
