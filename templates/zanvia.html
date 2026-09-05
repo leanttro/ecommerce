@@ -3,14 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zanvia Consultoria | Planos de Saúde e Odontológicos</title>
+<title>Plano de Saúde Individual, Familiar e Empresarial | Zanvia Consultoria</title>
 <link rel="icon" type="image/png" href="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609275/zanvialogo_ig6aiy.png">
 <link rel="apple-touch-icon" href="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609275/zanvialogo_ig6aiy.png">
-<meta name="description" content="Consultoria em planos de saúde e odontológicos individual, familiar, empresarial (CNPJ e MEI) e por adesão profissional. Compare hospitais, laboratórios, carências e coberturas antes de contratar.">
-<meta property="og:title" content="Zanvia Consultoria | Planos de Saúde e Odontológicos">
-<meta property="og:description" content="Sua saúde em primeiro lugar. Compare planos de saúde e odontológicos e encontre o ideal para o seu momento.">
+<link rel="canonical" href="https://zanviaconsultoria.com.br/">
+<meta name="robots" content="index, follow">
+<meta name="description" content="Simule online planos de saúde e odontológicos individual, familiar, empresarial (CNPJ e MEI) e por adesão profissional. Compare rede de hospitais, laboratórios, carências e coberturas de Amil, Unimed, GNDI Intermédica e Prevent Senior com um consultor especializado, sem custo adicional.">
+<meta name="keywords" content="plano de saúde, plano odontológico, plano de saúde individual, plano de saúde familiar, plano de saúde empresarial, plano de saúde MEI, plano de saúde CNPJ, plano de saúde por adesão, cotação plano de saúde, simulador plano de saúde, corretora de planos de saúde">
+<meta property="og:title" content="Plano de Saúde Individual, Familiar e Empresarial | Zanvia Consultoria">
+<meta property="og:description" content="Sua saúde em primeiro lugar. Simule online e compare planos de saúde e odontológicos individual, familiar, empresarial e por adesão com a Zanvia Consultoria.">
 <meta property="og:image" content="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609275/zanvialogo_ig6aiy.png">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://zanviaconsultoria.com.br/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Plano de Saúde Individual, Familiar e Empresarial | Zanvia Consultoria">
+<meta name="twitter:description" content="Simule online e compare planos de saúde e odontológicos com um consultor especializado, sem custo adicional.">
+<meta name="twitter:image" content="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609275/zanvialogo_ig6aiy.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -105,7 +114,12 @@
   .pulse-paper path{ stroke:var(--navy); }
 
   /* ---------- Hero ---------- */
-  .hero{ padding:76px 0 40px; }
+  .hero{
+    padding:76px 0 40px;
+    background-image:linear-gradient(rgba(245,244,240,0.88), rgba(245,244,240,0.88)), url('https://directus.leanttro.com/assets/6e3d509f-aa86-4e89-a293-ab193b393eeb?quality=80&format=webp');
+    background-size:cover;
+    background-position:center;
+  }
   .hero-grid{
     display:grid;
     grid-template-columns:1.05fr 0.95fr;
@@ -167,11 +181,21 @@
 
   @media (max-width:940px){
     .hero-grid{ grid-template-columns:1fr; }
-    .hero-art{ order:-1; max-width:340px; margin:0 auto 8px; }
+    .hero h1{ font-size:46px; }
+    .hero-art{
+      order:-1; max-width:300px; margin:0 auto 4px;
+      aspect-ratio:460/360; overflow:hidden;
+    }
+    .hero-art svg{
+      width:100%; height:100%; overflow:visible;
+      transform:scale(1.32); transform-origin:50% 38%;
+    }
   }
 
   /* ---------- Section shells ---------- */
   section{ padding:88px 0; }
+  #planos-atendidos{ padding-bottom:44px; }
+  .section-tight-top{ padding-top:44px; }
   .section-navy{ background:var(--navy-deep); color:#fff; }
   .section-navy .ink-soft{ color:rgba(255,255,255,0.66); }
   .eyebrow-row{
@@ -181,6 +205,32 @@
   .eyebrow-row h2{ font-size:clamp(28px,3.4vw,40px); max-width:20ch; }
   .eyebrow-row p{ max-width:34ch; color:var(--ink-soft); font-size:15.5px; line-height:1.6; }
   .section-navy .eyebrow-row p{ color:rgba(255,255,255,0.66); }
+
+  /* ---------- Feature (foto + texto) ---------- */
+  .feature-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;
+  }
+  .feature-grid.img-left .feature-photo{ order:-1; }
+  .feature-photo{
+    aspect-ratio:4/3; overflow:hidden; border:1px solid var(--line); position:relative;
+  }
+  .feature-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .section-navy .feature-photo{ border-color:rgba(228,200,122,0.25); }
+  .feature-kicker{
+    font-size:13px; font-weight:700; color:var(--gold); letter-spacing:0.02em;
+  }
+  .feature-text h2{
+    font-family:'Fraunces',serif; font-weight:600; margin-top:14px;
+    font-size:clamp(26px,3.2vw,36px); color:var(--navy-deep); max-width:18ch; line-height:1.15;
+  }
+  .section-navy .feature-text h2{ color:#fff; }
+  .feature-text > p{ margin-top:16px; font-size:16px; line-height:1.7; color:var(--ink-soft); max-width:52ch; }
+  .section-navy .feature-text > p{ color:rgba(255,255,255,0.7); }
+  .feature-text .btn{ margin-top:26px; }
+  @media (max-width:940px){
+    .feature-grid{ grid-template-columns:1fr; gap:26px; }
+    .feature-grid .feature-photo{ order:-1; }
+  }
 
   /* ---------- Como funciona ---------- */
   .steps{
@@ -341,7 +391,7 @@
     transition:transform 0.2s ease, box-shadow 0.2s ease;
   }
   .catalog-card:hover{ transform:translateY(-3px); box-shadow:0 16px 30px rgba(10,27,54,0.12); }
-  .catalog-card-img{ aspect-ratio:4/3; overflow:hidden; background:var(--paper-dim); }
+  .catalog-card-img{ aspect-ratio:1/1; overflow:hidden; background:var(--paper-dim); }
   .catalog-card-img img{ width:100%; height:100%; object-fit:cover; transition:transform 0.5s ease; }
   .catalog-card:hover .catalog-card-img img{ transform:scale(1.06); }
   .catalog-card-placeholder{
@@ -361,6 +411,9 @@
   .catalog-empty{
     text-align:center; padding:48px 0; color:var(--ink-soft); font-size:15px;
     border:1px dashed var(--line);
+  }
+  .section-navy .catalog-empty{
+    color:rgba(255,255,255,0.5); border-color:rgba(228,200,122,0.25);
   }
 
   /* ---------- Blog ---------- */
@@ -417,13 +470,145 @@
     font-size:12.5px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
   }
 
+  /* ---------- FAQ ---------- */
+  .faq-group{ margin-bottom:34px; }
+  .faq-group:last-child{ margin-bottom:0; }
+  .faq-group-label{
+    font-size:12.5px; font-weight:700; color:var(--gold);
+    letter-spacing:0.06em; text-transform:uppercase; margin-bottom:14px; display:block;
+  }
+  .faq-item{
+    border-bottom:1px solid var(--line);
+  }
+  .faq-item summary{
+    list-style:none; cursor:pointer; padding:20px 34px 20px 0; position:relative;
+    font-family:'Fraunces',serif; font-weight:600; font-size:16.5px; color:var(--navy-deep);
+  }
+  .faq-item summary::-webkit-details-marker{ display:none; }
+  .faq-item summary::after{
+    content:'+'; position:absolute; right:4px; top:16px;
+    font-family:'Manrope',sans-serif; font-weight:600; font-size:22px; color:var(--gold);
+    transition:transform 0.2s ease;
+  }
+  .faq-item[open] summary::after{ content:'–'; }
+  .faq-item p{
+    padding:0 34px 22px 0; font-size:14.5px; line-height:1.7; color:var(--ink-soft); max-width:68ch;
+  }
+
+  /* ---------- Modal "aguarde" (simulador) ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; z-index:200;
+    background:rgba(10,27,54,0.6);
+    display:none; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .modal-overlay.active{ display:flex; }
+  .modal-box{
+    background:#fff; width:100%; max-width:360px;
+    padding:44px 32px 36px; text-align:center; position:relative;
+    border-radius:2px;
+  }
+  .modal-close{
+    position:absolute; top:14px; right:16px; background:none; border:none;
+    font-size:20px; color:var(--ink-soft); cursor:pointer; line-height:1;
+  }
+  .modal-spinner{
+    width:42px; height:42px; margin:0 auto 22px;
+    border:3px solid var(--line); border-top-color:var(--gold);
+    border-radius:50%; animation:modalspin 0.85s linear infinite;
+  }
+  @keyframes modalspin{ to{ transform:rotate(360deg); } }
+  .modal-box h3{ font-size:19px; color:var(--navy-deep); }
+  .modal-box p{ margin-top:10px; font-size:14px; line-height:1.65; color:var(--ink-soft); }
+
   /* ---------- WhatsApp float ---------- */
   .wa-float{
     position:fixed; right:22px; bottom:22px; z-index:50;
-    background:#1D3B6E; color:#fff;
-    width:56px; height:56px; border-radius:50%;
+    background:#25D366; color:#fff;
+    width:60px; height:60px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
-    box-shadow:0 10px 24px rgba(10,27,54,0.3);
+    box-shadow:0 10px 24px rgba(37,211,102,0.45);
+    animation:wa-pulse 1.8s ease-out infinite, wa-blink 2.4s ease-in-out infinite;
+  }
+  .wa-float::before,
+  .wa-float::after{
+    content:''; position:absolute; inset:0; border-radius:50%;
+    background:#25D366; z-index:-1;
+    animation:wa-ring 1.8s ease-out infinite;
+  }
+  .wa-float::after{ animation-delay:0.6s; }
+  @keyframes wa-ring{
+    0%{ transform:scale(1); opacity:0.55; }
+    100%{ transform:scale(1.9); opacity:0; }
+  }
+  @keyframes wa-pulse{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.08); }
+  }
+  @keyframes wa-blink{
+    0%,80%,100%{ box-shadow:0 10px 24px rgba(37,211,102,0.45); filter:brightness(1); }
+    90%{ box-shadow:0 10px 32px rgba(37,211,102,0.9); filter:brightness(1.25); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .wa-float, .wa-float::before, .wa-float::after{ animation:none; }
+  }
+
+  /* ---------- Chatbot FAQ ---------- */
+  .zvbot-toggle{
+    position:fixed; right:22px; bottom:92px; z-index:50;
+    background:var(--navy-deep); color:#fff;
+    width:52px; height:52px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 24px rgba(10,27,54,0.35);
+    border:none; cursor:pointer;
+  }
+  .zvbot-toggle svg{ width:24px; height:24px; }
+  .zvbot-window{
+    position:fixed; right:22px; bottom:154px; z-index:51;
+    width:320px; max-width:calc(100vw - 32px);
+    height:420px; max-height:calc(100vh - 190px);
+    background:#fff; border-radius:14px;
+    box-shadow:0 20px 48px rgba(10,27,54,0.28);
+    display:none; flex-direction:column; overflow:hidden;
+    font-family:'Manrope',sans-serif;
+  }
+  .zvbot-window.open{ display:flex; }
+  .zvbot-head{
+    background:var(--navy-deep); color:#fff; padding:14px 16px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .zvbot-head strong{ font-size:14.5px; }
+  .zvbot-head span{ display:block; font-size:11.5px; color:rgba(255,255,255,0.65); }
+  .zvbot-close{ background:none; border:none; color:#fff; font-size:20px; line-height:1; cursor:pointer; padding:2px 6px; }
+  .zvbot-body{
+    flex:1; overflow-y:auto; padding:14px; background:var(--paper);
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .zvbot-msg{ max-width:85%; padding:9px 12px; border-radius:10px; font-size:13.5px; line-height:1.5; }
+  .zvbot-msg.bot{ background:#fff; border:1px solid var(--line); color:var(--ink); align-self:flex-start; border-bottom-left-radius:2px; }
+  .zvbot-msg.user{ background:var(--navy-deep); color:#fff; align-self:flex-end; border-bottom-right-radius:2px; }
+  .zvbot-suggestions{ display:flex; flex-wrap:wrap; gap:6px; padding:0 14px 10px; background:var(--paper); }
+  .zvbot-chip{
+    font-size:11.5px; padding:5px 10px; border-radius:14px;
+    background:#fff; border:1px solid var(--line); color:var(--navy); cursor:pointer;
+  }
+  .zvbot-chip:hover{ border-color:var(--gold); }
+  .zvbot-form{
+    display:flex; gap:8px; padding:10px; border-top:1px solid var(--line); background:#fff;
+  }
+  .zvbot-form input{
+    flex:1; border:1px solid var(--line); border-radius:20px; padding:9px 14px;
+    font-family:inherit; font-size:13.5px; outline:none;
+  }
+  .zvbot-form input:focus{ border-color:var(--gold); }
+  .zvbot-form button{
+    background:#25D366; color:#fff; border:none; border-radius:50%;
+    width:38px; height:38px; display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  @media (max-width:480px){
+    .zvbot-window{ right:16px; bottom:150px; }
+    .zvbot-toggle{ right:16px; bottom:88px; }
+    .wa-float{ right:16px; bottom:22px; }
   }
 </style>
 </head>
@@ -437,7 +622,6 @@
     <div class="nav-links">
       <a href="#planos">Planos</a>
       <a href="#como-funciona">Como funciona</a>
-      <a href="#operadoras">Operadoras</a>
       <a href="#blog">Blog</a>
       <a href="#contato">Contato</a>
     </div>
@@ -513,6 +697,18 @@
         <div class="step" data-n="4">
           <h3>Contrate com segurança</h3>
           <p>Assinatura acompanhada do início ao fim, sem custo adicional pela consultoria.</p>
+          <a href="#" class="btn btn-outline-gold js-simular" style="margin-top:18px;">Simular agora</a>
+        </div>
+      </div>
+
+      <div class="feature-grid" style="margin-top:72px; grid-template-columns:1.1fr 0.9fr;">
+        <div class="feature-text">
+          <p class="feature-kicker">Atendimento humano, não robótico</p>
+          <h2>Um consultor de verdade acompanha cada etapa.</h2>
+          <p>Nada de formulário sem retorno. Um especialista Zanvia entende sua idade, sua cidade e seu orçamento antes de indicar qualquer plano — e continua disponível depois que o contrato já está assinado.</p>
+        </div>
+        <div class="feature-photo">
+          <img src="https://directus.leanttro.com/assets/65c4eeb1-03b9-4325-a88f-973dd361889a?quality=80&format=webp" alt="Consultor médico da Zanvia orientando sobre planos de saúde" loading="lazy">
         </div>
       </div>
     </div>
@@ -523,6 +719,21 @@
       <path d="M0,20 L360,20 L385,4 L410,36 L435,20 L1200,20" stroke-width="2" fill="none" vector-effect="non-scaling-stroke"/>
     </svg>
   </div>
+
+  <!-- FAMÍLIA -->
+  <section id="familia">
+    <div class="wrap feature-grid img-left">
+      <div class="feature-photo">
+        <img src="https://directus.leanttro.com/assets/bbaf7032-1380-44e7-9056-089424535dcf?quality=80&format=webp" alt="Família feliz protegida por um plano de saúde Zanvia" loading="lazy">
+      </div>
+      <div class="feature-text">
+        <p class="feature-kicker">Planos individuais e familiares</p>
+        <h2>Sua família merece todo cuidado e atenção.</h2>
+        <p>Filhos, pais e cônjuge no mesmo plano, com rede credenciada e coberturas pensadas para cada fase da vida. Você decide quem entra, a Zanvia cuida de encontrar a condição certa para o orçamento da casa.</p>
+        <a href="#" class="btn btn-gold js-simular">Simular plano para minha família</a>
+      </div>
+    </div>
+  </section>
 
   <!-- PLANOS POR PERFIL -->
   <section id="planos">
@@ -541,7 +752,7 @@
             <li>Coparticipação ou mensalidade fixa</li>
             <li>Cobertura odontológica combinada</li>
           </ul>
-          <a href="#contato" class="btn btn-outline-gold">Simular plano individual</a>
+          <a href="#" class="btn btn-outline-gold js-simular">Simular plano individual</a>
         </div>
         <div class="plan-card">
           <p class="plan-tag">Empresarial · CNPJ e MEI</p>
@@ -552,7 +763,7 @@
             <li>Tabelas por faixa etária</li>
             <li>Gestão simplificada para o RH</li>
           </ul>
-          <a href="#contato" class="btn btn-outline-navy">Simular plano empresarial</a>
+          <a href="#" class="btn btn-outline-navy js-simular">Simular plano empresarial</a>
         </div>
         <div class="plan-card">
           <p class="plan-tag">Adesão profissional</p>
@@ -562,31 +773,14 @@
             <li>Associação incluída na contratação</li>
             <li>Condições de coletivo por adesão</li>
           </ul>
-          <a href="#contato" class="btn btn-outline-navy">Simular plano por adesão</a>
+          <a href="#" class="btn btn-outline-navy js-simular">Simular plano por adesão</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- OPERADORAS -->
-  <section class="section-navy" id="operadoras">
-    <div class="wrap">
-      <div class="eyebrow-row">
-        <h2>Credenciados junto às maiores operadoras do país.</h2>
-        <p>Trabalhamos com as redes mais relevantes de cada região, para que a comparação seja justa.</p>
-      </div>
-      <div class="operators">
-        <span>Amil</span>
-        <span>GNDI Intermédica</span>
-        <span>Unimed Nacional</span>
-        <span>Prevent Senior</span>
-      </div>
-      <p class="operators-note">E outras operadoras regionais, conforme disponibilidade na sua cidade.</p>
-    </div>
-  </section>
-
   <!-- PLANOS ATENDIDOS (dinâmico via Directus) -->
-  <section id="planos-atendidos">
+  <section id="planos-atendidos" class="section-navy">
     <div class="wrap">
       <div class="eyebrow-row">
         <h2>Planos que atendemos</h2>
@@ -631,25 +825,30 @@
   </section>
 
   <!-- POR QUE A ZANVIA -->
-  <section>
-    <div class="wrap">
-      <div class="eyebrow-row">
-        <h2>Por que ter um consultor, e não só um site de preços.</h2>
-        <p></p>
+  <section class="section-tight-top">
+    <div class="wrap feature-grid" style="grid-template-columns:1.15fr 0.85fr;">
+      <div>
+        <div class="eyebrow-row">
+          <h2>Por que ter um consultor, e não só um site de preços.</h2>
+          <p></p>
+        </div>
+        <div class="why-list">
+          <div class="why-item">
+            <h3>Atendimento humano do início ao contrato</h3>
+            <p>Um consultor acompanha sua simulação, tira dúvidas por WhatsApp e continua disponível depois que o plano já está ativo.</p>
+          </div>
+          <div class="why-item">
+            <h3>Tecnologia que mostra tudo antes de você decidir</h3>
+            <p>Nosso simulador exibe rede de hospitais e laboratórios, carências e coberturas de cada operadora — não só o valor da mensalidade.</p>
+          </div>
+          <div class="why-item">
+            <h3>Painel exclusivo para acompanhar sua apólice</h3>
+            <p>Depois de contratar, você acessa uma área do cliente para acompanhar solicitações e manter seus dados sempre atualizados.</p>
+          </div>
+        </div>
       </div>
-      <div class="why-list">
-        <div class="why-item">
-          <h3>Atendimento humano do início ao contrato</h3>
-          <p>Um consultor acompanha sua simulação, tira dúvidas por WhatsApp e continua disponível depois que o plano já está ativo.</p>
-        </div>
-        <div class="why-item">
-          <h3>Tecnologia que mostra tudo antes de você decidir</h3>
-          <p>Nosso simulador exibe rede de hospitais e laboratórios, carências e coberturas de cada operadora — não só o valor da mensalidade.</p>
-        </div>
-        <div class="why-item">
-          <h3>Painel exclusivo para acompanhar sua apólice</h3>
-          <p>Depois de contratar, você acessa uma área do cliente para acompanhar solicitações e manter seus dados sempre atualizados.</p>
-        </div>
+      <div class="feature-photo">
+        <img src="https://directus.leanttro.com/assets/3bcb83c5-7d1e-4ff0-b24c-8ae4f889d68c?quality=80&format=webp" alt="Aperto de mão selando a contratação de um plano de saúde com a Zanvia" loading="lazy">
       </div>
     </div>
   </section>
@@ -725,6 +924,129 @@
     </div>
   </section>
 
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="eyebrow-row">
+        <h2>Perguntas frequentes</h2>
+        <p>Dúvidas comuns de quem está pesquisando plano de saúde antes de simular com a Zanvia.</p>
+      </div>
+
+      <div class="faq-group">
+        <span class="faq-group-label">Planos e preços</span>
+        <details class="faq-item">
+          <summary>Qual plano de saúde mais barato 2026?</summary>
+          <p>Os valores variam conforme idade, cidade, tipo de plano e operadora. A Zanvia possui simulador online para consulta de preços de Amil, Unimed, Intermédica e Prevent Senior.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Como fazer cotação de plano de saúde online?</summary>
+          <p>No site zanviaconsultoria.com.br há opção de simulação online para cada operadora disponível.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde individual vale a pena?</summary>
+          <p>Depende das necessidades de cada pessoa. A Zanvia oferece planos individuais entre outras modalidades.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Qual o melhor plano de saúde familiar?</summary>
+          <p>A escolha depende de fatores como cidade, orçamento e rede credenciada desejada. A Zanvia disponibiliza simulador para comparação.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde para MEI é mais barato?</summary>
+          <p>Planos para MEI podem ter valores diferentes de planos individuais. Consulte no simulador da Zanvia para ver valores específicos.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde com CNPJ vale a pena?</summary>
+          <p>Planos empresariais com CNPJ podem apresentar condições diferentes. A Zanvia realiza cotações para CNPJ.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Como contratar plano de saúde sem empresa?</summary>
+          <p>Existem modalidades como individual, MEI e por adesão. A Zanvia atende essas modalidades.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde adesão é confiável?</summary>
+          <p>Planos por adesão são vinculados a entidades de classe. A Zanvia trabalha com operadoras que oferecem essa modalidade.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Qual operadora de plano de saúde é melhor?</summary>
+          <p>A avaliação depende de critérios como rede credenciada, preço e coberturas. A Zanvia trabalha com Amil, Unimed, Intermédica e Prevent Senior.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde Amil preço 2026?</summary>
+          <p>Os valores variam conforme perfil e região. O simulador da Zanvia consulta preços da Amil.</p>
+        </details>
+      </div>
+
+      <div class="faq-group">
+        <span class="faq-group-label">Simulação e cotação</span>
+        <details class="faq-item">
+          <summary>Simulador de plano de saúde online gratuito?</summary>
+          <p>O site zanviaconsultoria.com.br disponibiliza simulador online sem custo.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Como simular plano de saúde sem compromisso?</summary>
+          <p>Acesse o site da Zanvia e utilize a opção "Simule On-line" disponível para cada operadora.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Onde fazer cotação de vários planos de saúde?</summary>
+          <p>No site da Zanvia é possível cotar Amil, Unimed, Intermédica e Prevent Senior.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Comparador de planos de saúde funciona?</summary>
+          <p>O simulador da Zanvia permite comparar valores e coberturas de diferentes operadoras.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Qual site faz cotação de plano de saúde?</summary>
+          <p>zanviaconsultoria.com.br realiza cotações de múltiplas operadoras.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Simulação de plano de saúde mostra rede credenciada?</summary>
+          <p>Segundo o site da Zanvia, o simulador mostra rede de hospitais e laboratórios.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Dá para ver preço de plano de saúde online?</summary>
+          <p>O simulador da Zanvia consulta valores conforme idade, cidade e tipo de plano.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Como saber se plano de saúde é barato?</summary>
+          <p>O simulador da Zanvia permite comparar valores de diferentes planos.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Site confiável para cotar plano de saúde?</summary>
+          <p>A Zanvia informa atender mais de 5.000 clientes.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Cotação de plano de saúde em quanto tempo?</summary>
+          <p>O simulador online da Zanvia retorna valores em segundos.</p>
+        </details>
+      </div>
+
+      <div class="faq-group">
+        <span class="faq-group-label">Planos por adesão / categoria</span>
+        <details class="faq-item">
+          <summary>Plano de saúde por adesão como funciona?</summary>
+          <p>Conforme o site da Zanvia, o cliente é associado a entidade de classe e preenche ficha de adesão.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde para administrador CRA?</summary>
+          <p>A Zanvia menciona planos para categorias como CRA (Administradores).</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde para contador CRC?</summary>
+          <p>A Zanvia menciona planos para categorias como CRC (Contadores).</p>
+        </details>
+        <details class="faq-item">
+          <summary>Plano de saúde por sindicato é bom?</summary>
+          <p>A Zanvia trabalha com planos vinculados a sindicatos e entidades de classe.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Como se associar para ter plano de saúde?</summary>
+          <p>Segundo a Zanvia, o corretor identifica o segmento do cliente e realiza a associação.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+
 </main>
 
 <footer>
@@ -737,7 +1059,6 @@
       <div class="foot-links">
         <a href="#planos">Planos</a>
         <a href="#como-funciona">Como funciona</a>
-        <a href="#operadoras">Operadoras</a>
         <a href="#blog">Blog</a>
         <a href="#contato">Contato</a>
       </div>
@@ -750,8 +1071,190 @@
 </footer>
 
 <a class="wa-float" href="#" aria-label="Falar no WhatsApp">
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.09-1.33A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.62 0-3.14-.44-4.44-1.2l-.32-.18-3.02.79.8-2.94-.21-.3A7.94 7.94 0 014 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8zm4.38-5.71c-.24-.12-1.4-.69-1.62-.77-.22-.08-.38-.12-.54.12-.16.24-.62.77-.76.93-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.01-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.4-.57 1.6-1.12.2-.55.2-1.02.14-1.12-.06-.1-.22-.16-.46-.28z"/></svg>
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.09-1.33A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.62 0-3.14-.44-4.44-1.2l-.32-.18-3.02.79.8-2.94-.21-.3A7.94 7.94 0 014 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8zm4.38-5.71c-.24-.12-1.4-.69-1.62-.77-.22-.08-.38-.12-.54.12-.16.24-.62.77-.76.93-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.01-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.4-.57 1.6-1.12.2-.55.2-1.02.14-1.12-.06-.1-.22-.16-.46-.28z"/></svg>
 </a>
+
+<!-- Chatbot FAQ (somente front-end, sem backend) -->
+<button class="zvbot-toggle" id="zvbotToggle" aria-label="Abrir chat de dúvidas">
+  <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</button>
+
+<div class="zvbot-window" id="zvbotWindow">
+  <div class="zvbot-head">
+    <div>
+      <strong>Assistente Zanvia</strong>
+      <span>Tira dúvidas do FAQ na hora</span>
+    </div>
+    <button class="zvbot-close" id="zvbotClose" aria-label="Fechar chat">&times;</button>
+  </div>
+  <div class="zvbot-body" id="zvbotBody">
+    <div class="zvbot-msg bot">Olá! 👋 Posso responder perguntas sobre planos, preços, simulação e adesão. O que você quer saber?</div>
+  </div>
+  <div class="zvbot-suggestions" id="zvbotSuggestions"></div>
+  <form class="zvbot-form" id="zvbotForm">
+    <input type="text" id="zvbotInput" placeholder="Digite sua pergunta..." autocomplete="off">
+    <button type="submit" aria-label="Enviar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+    </button>
+  </form>
+</div>
+
+<script>
+(function(){
+  // Base de perguntas/respostas extraída diretamente do FAQ da página (só front-end).
+  var zvFaq = [
+    {q:"Qual plano de saúde mais barato 2026?", a:"Os valores variam conforme idade, cidade, tipo de plano e operadora. Temos um simulador online para consultar preços de Amil, Unimed, Intermédica e Prevent Senior."},
+    {q:"Como fazer cotação de plano de saúde online?", a:"Aqui no site há a opção de simulação online para cada operadora disponível — é só clicar em \"Simule On-line\"."},
+    {q:"Plano de saúde individual vale a pena?", a:"Depende das necessidades de cada pessoa. Oferecemos planos individuais entre outras modalidades, é só simular para comparar."},
+    {q:"Qual o melhor plano de saúde familiar?", a:"A escolha depende de fatores como cidade, orçamento e rede credenciada desejada. Temos um simulador para comparação de planos familiares."},
+    {q:"Plano de saúde para MEI é mais barato?", a:"Planos para MEI podem ter valores diferentes dos individuais. Consulte no simulador para ver valores específicos para o seu caso."},
+    {q:"Plano de saúde com CNPJ vale a pena?", a:"Planos empresariais com CNPJ podem apresentar condições diferentes e vantajosas. Fazemos cotações para CNPJ, é só simular."},
+    {q:"Como contratar plano de saúde sem empresa?", a:"Existem modalidades como individual, MEI e por adesão. Atendemos todas essas modalidades."},
+    {q:"Plano de saúde adesão é confiável?", a:"Sim, os planos por adesão são vinculados a entidades de classe. Trabalhamos com operadoras que oferecem essa modalidade."},
+    {q:"Qual operadora de plano de saúde é melhor?", a:"A avaliação depende de critérios como rede credenciada, preço e coberturas. Trabalhamos com Amil, Unimed, Intermédica e Prevent Senior."},
+    {q:"Plano de saúde Amil preço 2026?", a:"Os valores variam conforme perfil e região. Nosso simulador consulta os preços da Amil em segundos."},
+    {q:"Simulador de plano de saúde online gratuito?", a:"Sim! Nosso simulador online é totalmente gratuito e sem compromisso."},
+    {q:"Como simular plano de saúde sem compromisso?", a:"É só usar a opção \"Simule On-line\" disponível aqui no site para cada operadora."},
+    {q:"Onde fazer cotação de vários planos de saúde?", a:"Aqui mesmo no site é possível cotar Amil, Unimed, Intermédica e Prevent Senior."},
+    {q:"Comparador de planos de saúde funciona?", a:"Sim, nosso simulador permite comparar valores e coberturas de diferentes operadoras."},
+    {q:"Qual site faz cotação de plano de saúde?", a:"A Zanvia Consultoria realiza cotações de múltiplas operadoras direto pelo site."},
+    {q:"Simulação de plano de saúde mostra rede credenciada?", a:"Sim, o simulador mostra a rede de hospitais e laboratórios credenciados."},
+    {q:"Dá para ver preço de plano de saúde online?", a:"Sim, o simulador consulta valores conforme idade, cidade e tipo de plano em tempo real."},
+    {q:"Como saber se plano de saúde é barato?", a:"O simulador permite comparar valores de diferentes planos para você decidir com segurança."},
+    {q:"Site confiável para cotar plano de saúde?", a:"A Zanvia atende mais de 5.000 clientes e é especializada em cotações de planos de saúde."},
+    {q:"Cotação de plano de saúde em quanto tempo?", a:"O simulador online retorna valores em segundos."},
+    {q:"Plano de saúde por adesão como funciona?", a:"O cliente é associado a uma entidade de classe e preenche uma ficha de adesão para ter acesso ao plano."},
+    {q:"Plano de saúde para administrador CRA?", a:"Sim, temos planos para categorias como CRA (Administradores)."},
+    {q:"Plano de saúde para contador CRC?", a:"Sim, temos planos para categorias como CRC (Contadores)."},
+    {q:"Plano de saúde por sindicato é bom?", a:"Trabalhamos com planos vinculados a sindicatos e entidades de classe, geralmente com boas condições."},
+    {q:"Como se associar para ter plano de saúde?", a:"Nosso corretor identifica o segmento do cliente e realiza a associação necessária para a contratação."}
+  ];
+
+  function normalize(str){
+    return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+  }
+
+  var stopwords = ["o","a","os","as","de","da","do","das","dos","que","com","para","um","uma","e","é","no","na","nos","nas","por","como","qual","quais","tem","ter","seu","sua"];
+
+  function tokenize(str){
+    return normalize(str).split(' ').filter(function(w){ return w.length > 1 && stopwords.indexOf(w) === -1; });
+  }
+
+  var faqTokens = zvFaq.map(function(item){ return tokenize(item.q); });
+
+  function bestMatch(question){
+    var qTokens = tokenize(question);
+    if(qTokens.length === 0) return null;
+    var bestScore = 0, bestIdx = -1;
+    faqTokens.forEach(function(tokens, i){
+      var score = 0;
+      qTokens.forEach(function(t){
+        if(tokens.indexOf(t) !== -1) score++;
+      });
+      if(score > bestScore){ bestScore = score; bestIdx = i; }
+    });
+    if(bestIdx === -1 || bestScore === 0) return null;
+    return zvFaq[bestIdx];
+  }
+
+  var toggle = document.getElementById('zvbotToggle');
+  var win = document.getElementById('zvbotWindow');
+  var closeBtn = document.getElementById('zvbotClose');
+  var body = document.getElementById('zvbotBody');
+  var form = document.getElementById('zvbotForm');
+  var input = document.getElementById('zvbotInput');
+  var suggestions = document.getElementById('zvbotSuggestions');
+
+  function addMsg(text, who){
+    var div = document.createElement('div');
+    div.className = 'zvbot-msg ' + who;
+    div.textContent = text;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function renderSuggestions(){
+    suggestions.innerHTML = '';
+    var picks = zvFaq.slice(0,4);
+    picks.forEach(function(item){
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'zvbot-chip';
+      chip.textContent = item.q.length > 34 ? item.q.slice(0,32) + '…' : item.q;
+      chip.addEventListener('click', function(){
+        addMsg(item.q, 'user');
+        setTimeout(function(){ addMsg(item.a, 'bot'); }, 350);
+      });
+      suggestions.appendChild(chip);
+    });
+  }
+  renderSuggestions();
+
+  toggle.addEventListener('click', function(){
+    win.classList.toggle('open');
+  });
+  closeBtn.addEventListener('click', function(){
+    win.classList.remove('open');
+  });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var val = input.value.trim();
+    if(!val) return;
+    addMsg(val, 'user');
+    input.value = '';
+    setTimeout(function(){
+      var match = bestMatch(val);
+      if(match){
+        addMsg(match.a, 'bot');
+      } else {
+        addMsg('Não tenho certeza sobre isso ainda, mas posso te conectar com um consultor no WhatsApp para responder direitinho. 😊', 'bot');
+      }
+    }, 400);
+  });
+})();
+</script>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "InsuranceAgency",
+  "name": "Zanvia Consultoria",
+  "url": "https://zanviaconsultoria.com.br/",
+  "logo": "https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609275/zanvialogo_ig6aiy.png",
+  "description": "Consultoria em planos de saúde e odontológicos individual, familiar, empresarial (CNPJ e MEI) e por adesão profissional.",
+  "areaServed": "BR",
+  "sameAs": []
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Qual plano de saúde mais barato 2026?","acceptedAnswer":{"@type":"Answer","text":"Os valores variam conforme idade, cidade, tipo de plano e operadora. A Zanvia possui simulador online para consulta de preços de Amil, Unimed, Intermédica e Prevent Senior."}},
+    {"@type":"Question","name":"Como fazer cotação de plano de saúde online?","acceptedAnswer":{"@type":"Answer","text":"No site zanviaconsultoria.com.br há opção de simulação online para cada operadora disponível."}},
+    {"@type":"Question","name":"Plano de saúde individual vale a pena?","acceptedAnswer":{"@type":"Answer","text":"Depende das necessidades de cada pessoa. A Zanvia oferece planos individuais entre outras modalidades."}},
+    {"@type":"Question","name":"Qual o melhor plano de saúde familiar?","acceptedAnswer":{"@type":"Answer","text":"A escolha depende de fatores como cidade, orçamento e rede credenciada desejada. A Zanvia disponibiliza simulador para comparação."}},
+    {"@type":"Question","name":"Plano de saúde para MEI é mais barato?","acceptedAnswer":{"@type":"Answer","text":"Planos para MEI podem ter valores diferentes de planos individuais. Consulte no simulador da Zanvia para ver valores específicos."}},
+    {"@type":"Question","name":"Plano de saúde com CNPJ vale a pena?","acceptedAnswer":{"@type":"Answer","text":"Planos empresariais com CNPJ podem apresentar condições diferentes. A Zanvia realiza cotações para CNPJ."}},
+    {"@type":"Question","name":"Como contratar plano de saúde sem empresa?","acceptedAnswer":{"@type":"Answer","text":"Existem modalidades como individual, MEI e por adesão. A Zanvia atende essas modalidades."}},
+    {"@type":"Question","name":"Plano de saúde adesão é confiável?","acceptedAnswer":{"@type":"Answer","text":"Planos por adesão são vinculados a entidades de classe. A Zanvia trabalha com operadoras que oferecem essa modalidade."}},
+    {"@type":"Question","name":"Qual operadora de plano de saúde é melhor?","acceptedAnswer":{"@type":"Answer","text":"A avaliação depende de critérios como rede credenciada, preço e coberturas. A Zanvia trabalha com Amil, Unimed, Intermédica e Prevent Senior."}},
+    {"@type":"Question","name":"Simulador de plano de saúde online gratuito?","acceptedAnswer":{"@type":"Answer","text":"O site zanviaconsultoria.com.br disponibiliza simulador online sem custo."}},
+    {"@type":"Question","name":"Plano de saúde por adesão como funciona?","acceptedAnswer":{"@type":"Answer","text":"Conforme o site da Zanvia, o cliente é associado a entidade de classe e preenche ficha de adesão."}}
+  ]
+}
+</script>
+
+<div class="modal-overlay" id="simularModal" aria-hidden="true">
+    <div class="modal-box">
+      <button type="button" class="modal-close" aria-label="Fechar">×</button>
+      <div class="modal-spinner"></div>
+      <h3>Preparando seu simulador</h3>
+      <p>Aguarde um instante — um consultor Zanvia vai te ajudar a simular o plano ideal.</p>
+    </div>
+  </div>
 
 <script>
   document.querySelector('.nav-toggle').addEventListener('click', function(){
@@ -767,6 +1270,22 @@
     links.style.padding = '20px 32px';
     links.style.borderBottom = '1px solid rgba(10,27,54,0.12)';
   });
+
+  const simularModal = document.getElementById('simularModal');
+  if (simularModal) {
+    document.querySelectorAll('.js-simular').forEach(function(el){
+      el.addEventListener('click', function(e){
+        e.preventDefault();
+        simularModal.classList.add('active');
+      });
+    });
+    simularModal.querySelector('.modal-close').addEventListener('click', function(){
+      simularModal.classList.remove('active');
+    });
+    simularModal.addEventListener('click', function(e){
+      if (e.target === simularModal) simularModal.classList.remove('active');
+    });
+  }
 
   const leadForm = document.getElementById('leadForm');
   if (leadForm) {
