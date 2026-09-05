@@ -197,6 +197,10 @@
   #planos-atendidos{ padding-bottom:44px; }
   .section-tight-top{ padding-top:44px; }
   .section-navy{ background:var(--navy-deep); color:#fff; }
+  .section-light-blue{ background:#0F2A52; }
+  .section-light-blue .feature-kicker{ color:var(--gold-light); }
+  .section-light-blue .feature-text h2{ color:#fff; }
+  .section-light-blue .feature-text > p{ color:rgba(255,255,255,0.72); }
   .section-navy .ink-soft{ color:rgba(255,255,255,0.66); }
   .eyebrow-row{
     display:flex; align-items:baseline; justify-content:space-between;
@@ -230,6 +234,82 @@
   @media (max-width:940px){
     .feature-grid{ grid-template-columns:1fr; gap:26px; }
     .feature-grid .feature-photo{ order:-1; }
+  }
+
+  /* ---------- Video box (seção vídeo simulador) ---------- */
+  #video-simulador{ padding-top:64px; }
+  .video-simulador-inner{
+    display:flex; flex-direction:column; align-items:center; text-align:center;
+  }
+  .video-simulador-inner .feature-text{ max-width:62ch; }
+  .video-simulador-inner .feature-text h2{ max-width:none; margin-left:auto; margin-right:auto; }
+  .video-simulador-inner .feature-text > p{ max-width:none; margin-left:auto; margin-right:auto; }
+  .video-simulador-inner .video-box{ margin-top:36px; width:100%; max-width:760px; }
+  .video-box{
+    aspect-ratio:16/9; border-radius:14px; overflow:hidden;
+    background:#0A1B36; box-shadow:0 24px 48px rgba(10,27,54,0.28);
+    position:relative;
+  }
+  .video-box video{ width:100%; height:100%; display:block; object-fit:cover; background:#0A1B36; }
+  @media (max-width:940px){
+    #video-simulador{ padding-top:44px; }
+  }
+
+  /* ---------- Mini quote card (overlay sobre a foto do consultor) ---------- */
+  .quote-overlay-wrap{ position:relative; padding-bottom:50px; }
+  .quote-overlay-wrap .feature-photo{ margin-bottom:0; }
+  .mini-quote-card{
+    position:absolute; left:50%; bottom:-38px; transform:translateX(-50%);
+    width:88%; max-width:320px;
+    background:linear-gradient(160deg,#0F7A4C,#12A25E);
+    border-radius:12px; padding:22px 22px 20px;
+    box-shadow:0 20px 40px rgba(15,122,76,0.35);
+    animation:mq-float 3.2s ease-in-out infinite;
+    z-index:5;
+  }
+  @keyframes mq-float{
+    0%,100%{ transform:translateX(-50%) translateY(0); box-shadow:0 20px 40px rgba(15,122,76,0.35); }
+    50%{ transform:translateX(-50%) translateY(-6px); box-shadow:0 28px 48px rgba(15,122,76,0.45); }
+  }
+  .mini-quote-card::before{
+    content:''; position:absolute; inset:-6px; border-radius:16px;
+    border:2px solid rgba(228,200,122,0.55);
+    animation:mq-ring 2.6s ease-out infinite;
+    pointer-events:none;
+  }
+  @keyframes mq-ring{
+    0%{ transform:scale(1); opacity:0.7; }
+    100%{ transform:scale(1.05); opacity:0; }
+  }
+  .mini-quote-card-head{ display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .mini-quote-card-head svg{ flex-shrink:0; }
+  .mini-quote-card-head strong{
+    font-family:'Fraunces',serif; font-size:16.5px; color:#fff; font-weight:600; line-height:1.25; display:block;
+  }
+  .mini-quote-card form{ display:flex; flex-direction:column; gap:9px; }
+  .mini-quote-card input{
+    width:100%; padding:10px 13px; border-radius:6px; border:1px solid rgba(255,255,255,0.3);
+    background:rgba(255,255,255,0.12); color:#fff; font-family:'Manrope',sans-serif; font-size:13.5px; outline:none;
+  }
+  .mini-quote-card input::placeholder{ color:rgba(255,255,255,0.65); }
+  .mini-quote-card input:focus{ border-color:var(--gold-light); background:rgba(255,255,255,0.18); }
+  .mini-quote-card .btn-mq{
+    margin-top:4px; width:100%; padding:11px; border-radius:6px; border:none;
+    background:var(--gold-light); color:var(--navy-deep); font-weight:700; font-size:14px;
+    cursor:pointer; transition:transform 0.15s ease, background 0.15s ease;
+  }
+  .mini-quote-card .btn-mq:hover{ background:#f0d998; transform:translateY(-1px); }
+  .mini-quote-card .btn-mq:disabled{ opacity:0.7; cursor:default; transform:none; }
+  .mini-quote-success{
+    display:none; color:#fff; font-size:13.5px; line-height:1.6; text-align:center; padding:6px 0;
+  }
+  @media (max-width:940px){
+    .mini-quote-card{ position:static; transform:none; width:100%; max-width:none; margin-top:-30px; animation:none; }
+    .mini-quote-card::before{ display:none; }
+    .quote-overlay-wrap{ padding-bottom:0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .mini-quote-card, .mini-quote-card::before{ animation:none; }
   }
 
   /* ---------- Como funciona ---------- */
@@ -707,6 +787,40 @@
     </div>
   </section>
 
+  <!-- FAMÍLIA -->
+  <section id="familia" class="section-light-blue">
+    <div class="wrap feature-grid img-left">
+      <div class="feature-photo">
+        <img src="https://directus.leanttro.com/assets/bbaf7032-1380-44e7-9056-089424535dcf?quality=80&format=webp" alt="Família feliz protegida por um plano de saúde Zanvia" loading="lazy">
+      </div>
+      <div class="feature-text">
+        <p class="feature-kicker">Planos individuais e familiares</p>
+        <h2>Sua família merece todo cuidado e atenção.</h2>
+        <p>Filhos, pais e cônjuge no mesmo plano, com rede credenciada e coberturas pensadas para cada fase da vida. Você decide quem entra, a Zanvia cuida de encontrar a condição certa para o orçamento da casa.</p>
+        <a href="#" class="btn btn-gold js-simular">Simular plano para minha família</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- VÍDEO SIMULADOR -->
+  <section id="video-simulador">
+    <div class="wrap video-simulador-inner">
+      <div class="feature-text">
+        <p class="feature-kicker">Simulador personalizado</p>
+        <h2>Assista o vídeo e descubra como é fácil usar nosso simulador e encontrar o plano de saúde mais barato para você.</h2>
+        <p>O sistema é tão completo que, além dos valores, você também poderá visualizar rede de hospitais, laboratórios, carências e coberturas de cada plano disponível no Brasil.</p>
+        <p style="margin-top:14px;">Não perca mais tempo e veja agora como economizar!</p>
+      </div>
+      <div class="video-box">
+        <video controls preload="metadata" playsinline>
+          <source src="https://res.cloudinary.com/lfbgm729/video/upload/v1788617591/desktop_1.mp4" type="video/mp4">
+          Seu navegador não suporta a exibição de vídeos.
+        </video>
+      </div>
+      <a href="#contato" class="btn btn-gold js-simular" style="margin-top:28px;">Simular agora</a>
+    </div>
+  </section>
+
   <div class="pulse pulse-paper">
     <svg viewBox="0 0 1200 40" preserveAspectRatio="none">
       <path d="M0,20 L360,20 L385,4 L410,36 L435,20 L1200,20" stroke-width="2" fill="none" vector-effect="non-scaling-stroke"/>
@@ -746,8 +860,25 @@
           <h2>Um consultor de verdade acompanha cada etapa.</h2>
           <p>Nada de formulário sem retorno. Um especialista Zanvia entende sua idade, sua cidade e seu orçamento antes de indicar qualquer plano — e continua disponível depois que o contrato já está assinado.</p>
         </div>
-        <div class="feature-photo">
-          <img src="https://directus.leanttro.com/assets/65c4eeb1-03b9-4325-a88f-973dd361889a?quality=80&format=webp" alt="Consultor médico da Zanvia orientando sobre planos de saúde" loading="lazy">
+        <div class="quote-overlay-wrap">
+          <div class="feature-photo">
+            <img src="https://directus.leanttro.com/assets/f4994083-ad3b-4559-9285-a1fe40963207?quality=80&format=webp" alt="Consultor médico da Zanvia orientando sobre planos de saúde" loading="lazy">
+          </div>
+          <div class="mini-quote-card">
+            <div class="mini-quote-card-head">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 2v4M17 2v4M3 10h18"/><path d="M8 15l2.5 2.5L16 12"/></svg>
+              <strong>Faça agora sua<br>simulação grátis!</strong>
+            </div>
+            <form id="miniQuoteForm">
+              <input type="text" id="mq-nome" name="nome" required placeholder="Seu nome">
+              <input type="tel" id="mq-whatsapp" name="whatsapp" required placeholder="Seu WhatsApp">
+              <input type="email" id="mq-email" name="email" required placeholder="Seu e-mail">
+              <button type="submit" class="btn-mq">
+                <span class="mq-btn-text">Simular agora</span>
+              </button>
+            </form>
+            <p class="mini-quote-success" id="miniQuoteSuccess">Recebemos seus dados! ✅<br>Um consultor Zanvia vai falar com você em breve.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -758,21 +889,6 @@
       <path d="M0,20 L360,20 L385,4 L410,36 L435,20 L1200,20" stroke-width="2" fill="none" vector-effect="non-scaling-stroke"/>
     </svg>
   </div>
-
-  <!-- FAMÍLIA -->
-  <section id="familia">
-    <div class="wrap feature-grid img-left">
-      <div class="feature-photo">
-        <img src="https://directus.leanttro.com/assets/bbaf7032-1380-44e7-9056-089424535dcf?quality=80&format=webp" alt="Família feliz protegida por um plano de saúde Zanvia" loading="lazy">
-      </div>
-      <div class="feature-text">
-        <p class="feature-kicker">Planos individuais e familiares</p>
-        <h2>Sua família merece todo cuidado e atenção.</h2>
-        <p>Filhos, pais e cônjuge no mesmo plano, com rede credenciada e coberturas pensadas para cada fase da vida. Você decide quem entra, a Zanvia cuida de encontrar a condição certa para o orçamento da casa.</p>
-        <a href="#" class="btn btn-gold js-simular">Simular plano para minha família</a>
-      </div>
-    </div>
-  </section>
 
   <!-- PLANOS POR PERFIL -->
   <section id="planos">
@@ -1400,6 +1516,40 @@
       } catch(err) {
         alert('Erro de conexão. Verifique sua internet e tente novamente.');
         textWrapper.innerHTML = originalHTML;
+        btn.disabled = false;
+      }
+    });
+  }
+
+  const miniQuoteForm = document.getElementById('miniQuoteForm');
+  if (miniQuoteForm) {
+    miniQuoteForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      const btn = this.querySelector('button[type=submit]');
+      const textEl = btn.querySelector('.mq-btn-text');
+      const originalText = textEl.textContent;
+
+      textEl.textContent = 'ENVIANDO...';
+      btn.disabled = true;
+
+      const formData = new FormData(this);
+      try {
+        const response = await fetch('/{{ loja.slug_url }}/captura-lead', {
+          method: 'POST',
+          body: formData
+        });
+        const result = await response.json();
+        if (result.sucesso || response.ok) {
+          this.style.display = 'none';
+          document.getElementById('miniQuoteSuccess').style.display = 'block';
+        } else {
+          alert('Erro ao enviar. Tente novamente.');
+          textEl.textContent = originalText;
+          btn.disabled = false;
+        }
+      } catch(err) {
+        alert('Erro de conexão. Verifique sua internet e tente novamente.');
+        textEl.textContent = originalText;
         btn.disabled = false;
       }
     });
