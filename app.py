@@ -604,7 +604,7 @@ def index(loja_slug):
         template_name = 'oscar'
     else:
         template_name = g.loja.get('template_ativo') or 'index'
-        if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional', 'institucional2', 'tecnologia', 'onepiece', 'oscar', 'portal_cliente','iot', 'life', 'micasa', 'leanttro']:
+        if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional', 'institucional2', 'tecnologia', 'onepiece', 'oscar', 'portal_cliente','iot', 'life', 'micasa', 'leanttro', 'zanvia']:
             template_name = 'index'
             
         # Se for o tema de tecnologia e clicar em uma categoria específica, vai para a página exclusiva de categoria
@@ -687,6 +687,8 @@ def produto(loja_slug, slug):
             template_produto = 'case_micasa.html'
         elif template_ativo == 'iot':
             template_produto = 'case_iot.html'
+        elif template_ativo == 'zanvia':
+            template_produto = 'case_zanvia.html'
         elif template_ativo == 'institucional' or p.get('layout_case'):
             template_produto = 'case.html'
 
