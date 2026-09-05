@@ -8,17 +8,17 @@
 <link rel="apple-touch-icon" href="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609275/zanvialogo_ig6aiy.png">
 <link rel="canonical" href="https://zanviaconsultoria.com.br/">
 <meta name="robots" content="index, follow">
-<meta name="description" content="Simule online planos de saúde e odontológicos individual, familiar, empresarial (CNPJ e MEI) e por adesão profissional. Compare rede de hospitais, laboratórios, carências e coberturas de Amil, Unimed, GNDI Intermédica e Prevent Senior com um consultor especializado, sem custo adicional.">
-<meta name="keywords" content="plano de saúde, plano odontológico, plano de saúde individual, plano de saúde familiar, plano de saúde empresarial, plano de saúde MEI, plano de saúde CNPJ, plano de saúde por adesão, cotação plano de saúde, simulador plano de saúde, corretora de planos de saúde">
+<meta name="description" content="Peça sua cotação de planos de saúde e odontológicos individual, familiar, empresarial (CNPJ e MEI) e por adesão profissional pelo WhatsApp. Compare rede de hospitais, laboratórios, carências e coberturas de Amil, Unimed, GNDI Intermédica e Prevent Senior com um consultor especializado, sem custo adicional.">
+<meta name="keywords" content="plano de saúde, plano odontológico, plano de saúde individual, plano de saúde familiar, plano de saúde empresarial, plano de saúde MEI, plano de saúde CNPJ, plano de saúde por adesão, cotação plano de saúde, corretora de planos de saúde">
 <meta property="og:title" content="Plano de Saúde Individual, Familiar e Empresarial | Zanvia Consultoria">
-<meta property="og:description" content="Sua saúde em primeiro lugar. Simule online e compare planos de saúde e odontológicos individual, familiar, empresarial e por adesão com a Zanvia Consultoria.">
+<meta property="og:description" content="Sua saúde em primeiro lugar. Peça sua cotação pelo WhatsApp e compare planos de saúde e odontológicos individual, familiar, empresarial e por adesão com a Zanvia Consultoria.">
 <meta property="og:image" content="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609275/zanvialogo_ig6aiy.png">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:url" content="https://zanviaconsultoria.com.br/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Plano de Saúde Individual, Familiar e Empresarial | Zanvia Consultoria">
-<meta name="twitter:description" content="Simule online e compare planos de saúde e odontológicos com um consultor especializado, sem custo adicional.">
+<meta name="twitter:description" content="Peça sua cotação pelo WhatsApp e compare planos de saúde e odontológicos com um consultor especializado, sem custo adicional.">
 <meta name="twitter:image" content="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609275/zanvialogo_ig6aiy.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -253,25 +253,6 @@
   @media (max-width:940px){
     .feature-grid{ grid-template-columns:1fr; gap:26px; }
     .feature-grid .feature-photo{ order:-1; }
-  }
-
-  /* ---------- Video box (seção vídeo simulador) ---------- */
-  #video-simulador{ padding-top:64px; }
-  .video-simulador-inner{
-    display:flex; flex-direction:column; align-items:center; text-align:center;
-  }
-  .video-simulador-inner .feature-text{ max-width:62ch; }
-  .video-simulador-inner .feature-text h2{ max-width:none; margin-left:auto; margin-right:auto; }
-  .video-simulador-inner .feature-text > p{ max-width:none; margin-left:auto; margin-right:auto; }
-  .video-simulador-inner .video-box{ margin-top:36px; width:100%; max-width:760px; }
-  .video-box{
-    aspect-ratio:16/9; border-radius:14px; overflow:hidden;
-    background:#0A1B36; box-shadow:0 24px 48px rgba(10,27,54,0.28);
-    position:relative;
-  }
-  .video-box video{ width:100%; height:100%; display:block; object-fit:cover; background:#0A1B36; }
-  @media (max-width:940px){
-    #video-simulador{ padding-top:44px; }
   }
 
   /* ---------- Mini quote card (overlay sobre a foto do consultor) ---------- */
@@ -599,7 +580,7 @@
   .foot-grid{
     display:flex; justify-content:space-between; align-items:flex-start; gap:24px; flex-wrap:wrap;
   }
-  .foot-grid img{ height:34px; margin-bottom:14px; }
+  .foot-grid img{ height:34px; margin-bottom:14px; filter:brightness(0) invert(1); }
   .foot-links{ display:flex; gap:34px; flex-wrap:wrap; }
   .foot-links a{ font-size:13.5px; color:rgba(255,255,255,0.6); }
   .foot-links a:hover{ color:var(--gold-light); }
@@ -632,32 +613,6 @@
   .faq-item p{
     padding:0 34px 22px 0; font-size:14.5px; line-height:1.7; color:var(--ink-soft); max-width:68ch;
   }
-
-  /* ---------- Modal "aguarde" (simulador) ---------- */
-  .modal-overlay{
-    position:fixed; inset:0; z-index:200;
-    background:rgba(10,27,54,0.6);
-    display:none; align-items:center; justify-content:center;
-    padding:24px;
-  }
-  .modal-overlay.active{ display:flex; }
-  .modal-box{
-    background:#fff; width:100%; max-width:360px;
-    padding:44px 32px 36px; text-align:center; position:relative;
-    border-radius:2px;
-  }
-  .modal-close{
-    position:absolute; top:14px; right:16px; background:none; border:none;
-    font-size:20px; color:var(--ink-soft); cursor:pointer; line-height:1;
-  }
-  .modal-spinner{
-    width:42px; height:42px; margin:0 auto 22px;
-    border:3px solid var(--line); border-top-color:var(--gold);
-    border-radius:50%; animation:modalspin 0.85s linear infinite;
-  }
-  @keyframes modalspin{ to{ transform:rotate(360deg); } }
-  .modal-box h3{ font-size:19px; color:var(--navy-deep); }
-  .modal-box p{ margin-top:10px; font-size:14px; line-height:1.65; color:var(--ink-soft); }
 
   /* ---------- WhatsApp float ---------- */
   .wa-float{
@@ -765,7 +720,7 @@
       <a href="#contato">Contato</a>
     </div>
     <div class="nav-cta">
-      <a href="#contato" class="btn btn-gold">Simular agora</a>
+      <a href="#contato" class="btn btn-gold">Falar com um consultor</a>
       <button class="nav-toggle" aria-label="Abrir menu"><span></span><span></span><span></span></button>
     </div>
   </nav>
@@ -781,9 +736,10 @@
         <h1>Sua saúde em<br>primeiro lugar.</h1>
         <p class="hero-sub">Encontramos o plano de saúde e odontológico certo para o seu momento — individual, familiar, para quem tem CNPJ ou MEI, ou por adesão a categoria profissional. Comparação real, sem letras miúdas.</p>
         <div class="hero-actions">
-          <a href="#contato" class="btn btn-gold">Simular minha cotação</a>
-          <a href="#contato" class="btn btn-ghost">Prefiro falar por WhatsApp</a>
+          <a href="#contato" class="btn btn-gold">Quero minha cotação agora</a>
+          <a href="https://wa.me/5511966460811" target="_blank" rel="noopener" class="btn btn-ghost">Prefiro falar por WhatsApp</a>
         </div>
+        <p style="margin-top:14px; font-size:13.5px; font-weight:700; color:var(--gold);">⚡ Atendimento limitado por dia — fale com um consultor antes que as vagas de hoje se esgotem.</p>
         <div class="hero-trust">
           <div class="stat"><b>5.000+</b><span>clientes atendidos</span></div>
           <div class="stat"><b>4</b><span>grandes operadoras parceiras</span></div>
@@ -817,27 +773,8 @@
         <p class="feature-kicker">Planos individuais e familiares</p>
         <h2>Sua família merece todo cuidado e atenção.</h2>
         <p>Filhos, pais e cônjuge no mesmo plano, com rede credenciada e coberturas pensadas para cada fase da vida. Você decide quem entra, a Zanvia cuida de encontrar a condição certa para o orçamento da casa.</p>
-        <a href="#" class="btn btn-gold js-simular">Simular plano para minha família</a>
+        <a href="#contato" class="btn btn-gold js-simular">Quero um plano para minha família</a>
       </div>
-    </div>
-  </section>
-
-  <!-- VÍDEO SIMULADOR -->
-  <section id="video-simulador">
-    <div class="wrap video-simulador-inner">
-      <div class="feature-text">
-        <p class="feature-kicker">Simulador personalizado</p>
-        <h2>Assista o vídeo e descubra como é fácil usar nosso simulador e encontrar o plano de saúde mais barato para você.</h2>
-        <p>O sistema é tão completo que, além dos valores, você também poderá visualizar rede de hospitais, laboratórios, carências e coberturas de cada plano disponível no Brasil.</p>
-        <p style="margin-top:14px;">Não perca mais tempo e veja agora como economizar!</p>
-      </div>
-      <div class="video-box">
-        <video controls preload="metadata" playsinline>
-          <source src="https://res.cloudinary.com/lfbgm729/video/upload/v1788617591/desktop_1.mp4" type="video/mp4">
-          Seu navegador não suporta a exibição de vídeos.
-        </video>
-      </div>
-      <a href="#contato" class="btn btn-gold js-simular" style="margin-top:28px;">Simular agora</a>
     </div>
   </section>
 
@@ -851,13 +788,13 @@
   <section class="section-navy" id="como-funciona">
     <div class="wrap">
       <div class="eyebrow-row">
-        <h2>Do simulador ao contrato, em quatro passos.</h2>
+        <h2>Do primeiro contato ao contrato, em quatro passos.</h2>
         <p>Você acompanha cada etapa — sem precisar entender de siglas de operadora para tomar uma boa decisão.</p>
       </div>
       <div class="steps">
         <div class="step" data-n="1">
-          <h3>Simule online</h3>
-          <p>Informe idade, cidade e perfil. Em minutos você vê valores reais, não estimativas.</p>
+          <h3>Chame no WhatsApp ou preencha o formulário</h3>
+          <p>Conte sua idade, cidade e o que procura. Leva menos de 1 minuto.</p>
         </div>
         <div class="step" data-n="2">
           <h3>Compare o que importa</h3>
@@ -870,7 +807,7 @@
         <div class="step" data-n="4">
           <h3>Contrate com segurança</h3>
           <p>Assinatura acompanhada do início ao fim, sem custo adicional pela consultoria.</p>
-          <a href="#" class="btn btn-outline-gold js-simular" style="margin-top:18px;">Simular agora</a>
+          <a href="https://wa.me/5511966460811" target="_blank" rel="noopener" class="btn btn-outline-gold" style="margin-top:18px;">Falar no WhatsApp agora</a>
         </div>
       </div>
 
@@ -887,16 +824,17 @@
           <div class="mini-quote-card">
             <div class="mini-quote-card-head">
               <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 2v4M17 2v4M3 10h18"/><path d="M8 15l2.5 2.5L16 12"/></svg>
-              <strong>Faça agora sua<br>simulação grátis!</strong>
+              <strong>Receba sua cotação<br>sem compromisso!</strong>
             </div>
             <form id="miniQuoteForm">
               <input type="text" id="mq-nome" name="nome" required placeholder="Seu nome">
               <input type="tel" id="mq-whatsapp" name="whatsapp" required placeholder="Seu WhatsApp">
               <input type="email" id="mq-email" name="email" required placeholder="Seu e-mail">
               <button type="submit" class="btn-mq">
-                <span class="mq-btn-text">Simular agora</span>
+                <span class="mq-btn-text">Quero minha cotação</span>
               </button>
             </form>
+            <p style="font-size:11.5px; color:rgba(255,255,255,0.65); margin-top:8px; text-align:center;">Vagas de atendimento limitadas hoje.</p>
             <p class="mini-quote-success" id="miniQuoteSuccess">Recebemos seus dados! ✅<br>Um consultor Zanvia vai falar com você em breve.</p>
           </div>
         </div>
@@ -927,7 +865,7 @@
             <li>Coparticipação ou mensalidade fixa</li>
             <li>Cobertura odontológica combinada</li>
           </ul>
-          <a href="#" class="btn btn-outline-gold js-simular">Simular plano individual</a>
+          <a href="#contato" class="btn btn-outline-gold js-simular">Quero um plano individual</a>
         </div>
         <div class="plan-card">
           <p class="plan-tag">Empresarial · CNPJ e MEI</p>
@@ -938,7 +876,7 @@
             <li>Tabelas por faixa etária</li>
             <li>Gestão simplificada para o RH</li>
           </ul>
-          <a href="#" class="btn btn-outline-navy js-simular">Simular plano empresarial</a>
+          <a href="#contato" class="btn btn-outline-navy js-simular">Quero um plano empresarial</a>
         </div>
         <div class="plan-card">
           <p class="plan-tag">Adesão profissional</p>
@@ -948,7 +886,7 @@
             <li>Associação incluída na contratação</li>
             <li>Condições de coletivo por adesão</li>
           </ul>
-          <a href="#" class="btn btn-outline-navy js-simular">Simular plano por adesão</a>
+          <a href="#contato" class="btn btn-outline-navy js-simular">Quero um plano por adesão</a>
         </div>
       </div>
     </div>
@@ -1055,11 +993,11 @@
         <div class="why-list">
           <div class="why-item">
             <h3>Atendimento humano do início ao contrato</h3>
-            <p>Um consultor acompanha sua simulação, tira dúvidas por WhatsApp e continua disponível depois que o plano já está ativo.</p>
+            <p>Um consultor acompanha sua cotação, tira dúvidas por WhatsApp e continua disponível depois que o plano já está ativo.</p>
           </div>
           <div class="why-item">
-            <h3>Tecnologia que mostra tudo antes de você decidir</h3>
-            <p>Nosso simulador exibe rede de hospitais e laboratórios, carências e coberturas de cada operadora — não só o valor da mensalidade.</p>
+            <h3>Comparação completa antes de você decidir</h3>
+            <p>Levantamos rede de hospitais e laboratórios, carências e coberturas de cada operadora — não só o valor da mensalidade.</p>
           </div>
           <div class="why-item">
             <h3>Painel exclusivo para acompanhar sua apólice</h3>
@@ -1114,15 +1052,14 @@
     <div class="wrap cta-final-grid">
       <div>
         <h2>Vamos encontrar o seu plano ideal?</h2>
-        <p>Faça sua simulação agora ou peça para que um consultor da Zanvia entre em contato — sem compromisso e sem custo adicional.</p>
+        <p>Fale com um consultor agora ou preencha o formulário ao lado — sem compromisso e sem custo adicional. <strong style="color:var(--gold);">Atendimento de hoje é limitado</strong>, quanto antes você chamar, mais rápido resolve.</p>
         <div class="hero-actions">
-          <a href="#" class="btn btn-gold">Simular minha cotação</a>
-          <a href="#" class="btn btn-outline-gold">Falar agora no WhatsApp</a>
+          <a href="https://wa.me/5511966460811" target="_blank" rel="noopener" class="btn btn-gold">Falar agora no WhatsApp</a>
         </div>
       </div>
       <div class="cta-box">
         <h3>Prefere que a gente ligue pra você?</h3>
-        <p>Deixe seus dados e um consultor Zanvia retorna o contato em até 24h.</p>
+        <p>Deixe seus dados e um consultor Zanvia retorna o contato em até 24h — mas as vagas de atendimento de hoje são limitadas, garanta a sua.</p>
         <form id="leadForm">
           <input type="text" id="f-nome" name="nome" required placeholder="Seu nome completo">
           <input type="tel" id="f-whatsapp" name="whatsapp" required placeholder="Seu WhatsApp">
@@ -1134,7 +1071,7 @@
             <option value="Adesão profissional">Adesão profissional</option>
           </select>
           <button type="submit" class="btn btn-gold">
-            <span class="btn-text-wrapper">Quero receber uma ligação</span>
+            <span class="btn-text-wrapper">Quero garantir meu atendimento</span>
           </button>
         </form>
         <div id="leadSuccessMsg" style="display:none;margin-top:16px;padding:16px 18px;background:rgba(228,200,122,0.12);border:1px solid rgba(228,200,122,0.3);text-align:center;font-weight:700;font-size:14px;color:#fff;">
@@ -1149,18 +1086,18 @@
     <div class="wrap">
       <div class="eyebrow-row">
         <h2>Perguntas frequentes</h2>
-        <p>Dúvidas comuns de quem está pesquisando plano de saúde antes de simular com a Zanvia.</p>
+        <p>Dúvidas comuns de quem está pesquisando plano de saúde antes de falar com a Zanvia.</p>
       </div>
 
       <div class="faq-group">
         <span class="faq-group-label">Planos e preços</span>
         <details class="faq-item">
           <summary>Qual plano de saúde mais barato 2026?</summary>
-          <p>Os valores variam conforme idade, cidade, tipo de plano e operadora. A Zanvia possui simulador online para consulta de preços de Amil, Unimed, Intermédica e Prevent Senior.</p>
+          <p>Os valores variam conforme idade, cidade, tipo de plano e operadora. Envie seus dados pelo WhatsApp ou pelo formulário e um consultor da Zanvia te retorna com os valores de Amil, Unimed, Intermédica e Prevent Senior.</p>
         </details>
         <details class="faq-item">
-          <summary>Como fazer cotação de plano de saúde online?</summary>
-          <p>No site zanviaconsultoria.com.br há opção de simulação online para cada operadora disponível.</p>
+          <summary>Como fazer cotação de plano de saúde?</summary>
+          <p>É só chamar no WhatsApp ou preencher o formulário aqui no site — um consultor Zanvia faz o levantamento para cada operadora disponível e retorna com os valores.</p>
         </details>
         <details class="faq-item">
           <summary>Plano de saúde individual vale a pena?</summary>
@@ -1168,11 +1105,11 @@
         </details>
         <details class="faq-item">
           <summary>Qual o melhor plano de saúde familiar?</summary>
-          <p>A escolha depende de fatores como cidade, orçamento e rede credenciada desejada. A Zanvia disponibiliza simulador para comparação.</p>
+          <p>A escolha depende de fatores como cidade, orçamento e rede credenciada desejada. Fale com um consultor Zanvia para uma comparação personalizada.</p>
         </details>
         <details class="faq-item">
           <summary>Plano de saúde para MEI é mais barato?</summary>
-          <p>Planos para MEI podem ter valores diferentes de planos individuais. Consulte no simulador da Zanvia para ver valores específicos.</p>
+          <p>Planos para MEI podem ter valores diferentes de planos individuais. Fale com um consultor pelo WhatsApp para ver valores específicos para o seu caso.</p>
         </details>
         <details class="faq-item">
           <summary>Plano de saúde com CNPJ vale a pena?</summary>
@@ -1192,43 +1129,43 @@
         </details>
         <details class="faq-item">
           <summary>Plano de saúde Amil preço 2026?</summary>
-          <p>Os valores variam conforme perfil e região. O simulador da Zanvia consulta preços da Amil.</p>
+          <p>Os valores variam conforme perfil e região. Fale com um consultor Zanvia pelo WhatsApp para consultar os preços da Amil.</p>
         </details>
       </div>
 
       <div class="faq-group">
-        <span class="faq-group-label">Simulação e cotação</span>
+        <span class="faq-group-label">Atendimento e cotação</span>
         <details class="faq-item">
-          <summary>Simulador de plano de saúde online gratuito?</summary>
-          <p>O site zanviaconsultoria.com.br disponibiliza simulador online sem custo.</p>
+          <summary>A cotação da Zanvia tem algum custo?</summary>
+          <p>Não. A consultoria da Zanvia é sem custo adicional para quem contrata o plano.</p>
         </details>
         <details class="faq-item">
-          <summary>Como simular plano de saúde sem compromisso?</summary>
-          <p>Acesse o site da Zanvia e utilize a opção "Simule On-line" disponível para cada operadora.</p>
+          <summary>Como pedir uma cotação sem compromisso?</summary>
+          <p>Chame no WhatsApp ou preencha o formulário aqui no site — não tem compromisso nenhum em pedir uma cotação.</p>
         </details>
         <details class="faq-item">
           <summary>Onde fazer cotação de vários planos de saúde?</summary>
-          <p>No site da Zanvia é possível cotar Amil, Unimed, Intermédica e Prevent Senior.</p>
+          <p>Fale com um consultor Zanvia pelo WhatsApp ou pelo formulário: é possível cotar Amil, Unimed, Intermédica e Prevent Senior em um só atendimento.</p>
         </details>
         <details class="faq-item">
-          <summary>Comparador de planos de saúde funciona?</summary>
-          <p>O simulador da Zanvia permite comparar valores e coberturas de diferentes operadoras.</p>
+          <summary>A Zanvia compara planos de diferentes operadoras?</summary>
+          <p>Sim, o consultor Zanvia compara valores e coberturas de diferentes operadoras para você.</p>
         </details>
         <details class="faq-item">
           <summary>Qual site faz cotação de plano de saúde?</summary>
-          <p>zanviaconsultoria.com.br realiza cotações de múltiplas operadoras.</p>
+          <p>zanviaconsultoria.com.br realiza cotações de múltiplas operadoras através de atendimento direto por WhatsApp ou formulário.</p>
         </details>
         <details class="faq-item">
-          <summary>Simulação de plano de saúde mostra rede credenciada?</summary>
-          <p>Segundo o site da Zanvia, o simulador mostra rede de hospitais e laboratórios.</p>
+          <summary>A cotação mostra a rede credenciada?</summary>
+          <p>Sim, o consultor Zanvia informa a rede de hospitais e laboratórios credenciados de cada plano cotado.</p>
         </details>
         <details class="faq-item">
-          <summary>Dá para ver preço de plano de saúde online?</summary>
-          <p>O simulador da Zanvia consulta valores conforme idade, cidade e tipo de plano.</p>
+          <summary>Dá para ver preço de plano de saúde sem sair de casa?</summary>
+          <p>Sim, é só mandar mensagem no WhatsApp ou preencher o formulário com idade, cidade e tipo de plano que o consultor retorna com os valores.</p>
         </details>
         <details class="faq-item">
           <summary>Como saber se plano de saúde é barato?</summary>
-          <p>O simulador da Zanvia permite comparar valores de diferentes planos.</p>
+          <p>Um consultor Zanvia compara os valores de diferentes planos para você decidir com segurança.</p>
         </details>
         <details class="faq-item">
           <summary>Site confiável para cotar plano de saúde?</summary>
@@ -1236,7 +1173,7 @@
         </details>
         <details class="faq-item">
           <summary>Cotação de plano de saúde em quanto tempo?</summary>
-          <p>O simulador online da Zanvia retorna valores em segundos.</p>
+          <p>O retorno do consultor costuma ser rápido, mas o atendimento diário é limitado — quanto antes você chamar no WhatsApp ou preencher o formulário, mais rápido é atendido.</p>
         </details>
       </div>
 
@@ -1285,12 +1222,12 @@
     </div>
     <div class="foot-bottom">
       <span>© Zanvia Consultoria em Planos de Saúde. Todos os direitos reservados.</span>
-      <span>[inserir telefone] · [inserir e-mail] · [inserir @instagram]</span>
+      <span><a href="https://wa.me/5511966460811" target="_blank" rel="noopener">WhatsApp: (11) 96646-0811</a> · <a href="https://www.instagram.com/zanviaconsultoria/" target="_blank" rel="noopener">@zanviaconsultoria</a></span>
     </div>
   </div>
 </footer>
 
-<a class="wa-float" href="#" aria-label="Falar no WhatsApp">
+<a class="wa-float" href="https://wa.me/5511966460811" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
   <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.09-1.33A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.62 0-3.14-.44-4.44-1.2l-.32-.18-3.02.79.8-2.94-.21-.3A7.94 7.94 0 014 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8zm4.38-5.71c-.24-.12-1.4-.69-1.62-.77-.22-.08-.38-.12-.54.12-.16.24-.62.77-.76.93-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.01-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.4-.57 1.6-1.12.2-.55.2-1.02.14-1.12-.06-.1-.22-.16-.46-.28z"/></svg>
 </a>
 
@@ -1308,7 +1245,7 @@
     <button class="zvbot-close" id="zvbotClose" aria-label="Fechar chat">&times;</button>
   </div>
   <div class="zvbot-body" id="zvbotBody">
-    <div class="zvbot-msg bot">Olá! 👋 Posso responder perguntas sobre planos, preços, simulação e adesão. O que você quer saber?</div>
+    <div class="zvbot-msg bot">Olá! 👋 Posso responder perguntas sobre planos, preços e adesão. O que você quer saber?</div>
   </div>
   <div class="zvbot-suggestions" id="zvbotSuggestions"></div>
   <form class="zvbot-form" id="zvbotForm">
@@ -1323,26 +1260,26 @@
 (function(){
   // Base de perguntas/respostas extraída diretamente do FAQ da página (só front-end).
   var zvFaq = [
-    {q:"Qual plano de saúde mais barato 2026?", a:"Os valores variam conforme idade, cidade, tipo de plano e operadora. Temos um simulador online para consultar preços de Amil, Unimed, Intermédica e Prevent Senior."},
-    {q:"Como fazer cotação de plano de saúde online?", a:"Aqui no site há a opção de simulação online para cada operadora disponível — é só clicar em \"Simule On-line\"."},
-    {q:"Plano de saúde individual vale a pena?", a:"Depende das necessidades de cada pessoa. Oferecemos planos individuais entre outras modalidades, é só simular para comparar."},
-    {q:"Qual o melhor plano de saúde familiar?", a:"A escolha depende de fatores como cidade, orçamento e rede credenciada desejada. Temos um simulador para comparação de planos familiares."},
-    {q:"Plano de saúde para MEI é mais barato?", a:"Planos para MEI podem ter valores diferentes dos individuais. Consulte no simulador para ver valores específicos para o seu caso."},
-    {q:"Plano de saúde com CNPJ vale a pena?", a:"Planos empresariais com CNPJ podem apresentar condições diferentes e vantajosas. Fazemos cotações para CNPJ, é só simular."},
+    {q:"Qual plano de saúde mais barato 2026?", a:"Os valores variam conforme idade, cidade, tipo de plano e operadora. Chame no WhatsApp ou preencha o formulário que um consultor te retorna com os valores de Amil, Unimed, Intermédica e Prevent Senior."},
+    {q:"Como fazer cotação de plano de saúde?", a:"É só chamar no WhatsApp ou preencher o formulário aqui no site — um consultor faz o levantamento e te retorna com os valores."},
+    {q:"Plano de saúde individual vale a pena?", a:"Depende das necessidades de cada pessoa. Oferecemos planos individuais entre outras modalidades, fale com um consultor para comparar."},
+    {q:"Qual o melhor plano de saúde familiar?", a:"A escolha depende de fatores como cidade, orçamento e rede credenciada desejada. Um consultor Zanvia faz essa comparação para você."},
+    {q:"Plano de saúde para MEI é mais barato?", a:"Planos para MEI podem ter valores diferentes dos individuais. Fale com um consultor pelo WhatsApp para ver valores específicos para o seu caso."},
+    {q:"Plano de saúde com CNPJ vale a pena?", a:"Planos empresariais com CNPJ podem apresentar condições diferentes e vantajosas. Fazemos cotações para CNPJ, é só chamar no WhatsApp."},
     {q:"Como contratar plano de saúde sem empresa?", a:"Existem modalidades como individual, MEI e por adesão. Atendemos todas essas modalidades."},
     {q:"Plano de saúde adesão é confiável?", a:"Sim, os planos por adesão são vinculados a entidades de classe. Trabalhamos com operadoras que oferecem essa modalidade."},
     {q:"Qual operadora de plano de saúde é melhor?", a:"A avaliação depende de critérios como rede credenciada, preço e coberturas. Trabalhamos com Amil, Unimed, Intermédica e Prevent Senior."},
-    {q:"Plano de saúde Amil preço 2026?", a:"Os valores variam conforme perfil e região. Nosso simulador consulta os preços da Amil em segundos."},
-    {q:"Simulador de plano de saúde online gratuito?", a:"Sim! Nosso simulador online é totalmente gratuito e sem compromisso."},
-    {q:"Como simular plano de saúde sem compromisso?", a:"É só usar a opção \"Simule On-line\" disponível aqui no site para cada operadora."},
-    {q:"Onde fazer cotação de vários planos de saúde?", a:"Aqui mesmo no site é possível cotar Amil, Unimed, Intermédica e Prevent Senior."},
-    {q:"Comparador de planos de saúde funciona?", a:"Sim, nosso simulador permite comparar valores e coberturas de diferentes operadoras."},
-    {q:"Qual site faz cotação de plano de saúde?", a:"A Zanvia Consultoria realiza cotações de múltiplas operadoras direto pelo site."},
-    {q:"Simulação de plano de saúde mostra rede credenciada?", a:"Sim, o simulador mostra a rede de hospitais e laboratórios credenciados."},
-    {q:"Dá para ver preço de plano de saúde online?", a:"Sim, o simulador consulta valores conforme idade, cidade e tipo de plano em tempo real."},
-    {q:"Como saber se plano de saúde é barato?", a:"O simulador permite comparar valores de diferentes planos para você decidir com segurança."},
+    {q:"Plano de saúde Amil preço 2026?", a:"Os valores variam conforme perfil e região. Fale com um consultor pelo WhatsApp para consultar os preços da Amil."},
+    {q:"A cotação da Zanvia tem algum custo?", a:"Não! A consultoria da Zanvia é totalmente sem custo adicional para quem contrata o plano."},
+    {q:"Como pedir uma cotação sem compromisso?", a:"É só chamar no WhatsApp ou preencher o formulário aqui no site, sem compromisso nenhum."},
+    {q:"Onde fazer cotação de vários planos de saúde?", a:"Fale com um consultor pelo WhatsApp: dá pra cotar Amil, Unimed, Intermédica e Prevent Senior em um só atendimento."},
+    {q:"A Zanvia compara planos de diferentes operadoras?", a:"Sim, o consultor Zanvia compara valores e coberturas de diferentes operadoras para você."},
+    {q:"Qual site faz cotação de plano de saúde?", a:"A Zanvia Consultoria realiza cotações de múltiplas operadoras via WhatsApp ou formulário no site."},
+    {q:"A cotação mostra a rede credenciada?", a:"Sim, o consultor te informa a rede de hospitais e laboratórios credenciados de cada plano."},
+    {q:"Dá para ver preço de plano de saúde sem sair de casa?", a:"Sim, é só mandar mensagem no WhatsApp ou preencher o formulário que o consultor retorna com os valores."},
+    {q:"Como saber se plano de saúde é barato?", a:"Um consultor Zanvia compara os valores de diferentes planos para você decidir com segurança."},
     {q:"Site confiável para cotar plano de saúde?", a:"A Zanvia atende mais de 5.000 clientes e é especializada em cotações de planos de saúde."},
-    {q:"Cotação de plano de saúde em quanto tempo?", a:"O simulador online retorna valores em segundos."},
+    {q:"Cotação de plano de saúde em quanto tempo?", a:"O retorno costuma ser rápido, mas o atendimento diário é limitado — quanto antes chamar no WhatsApp, mais rápido é atendido."},
     {q:"Plano de saúde por adesão como funciona?", a:"O cliente é associado a uma entidade de classe e preenche uma ficha de adesão para ter acesso ao plano."},
     {q:"Plano de saúde para administrador CRA?", a:"Sim, temos planos para categorias como CRA (Administradores)."},
     {q:"Plano de saúde para contador CRC?", a:"Sim, temos planos para categorias como CRC (Contadores)."},
@@ -1452,29 +1389,20 @@
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    {"@type":"Question","name":"Qual plano de saúde mais barato 2026?","acceptedAnswer":{"@type":"Answer","text":"Os valores variam conforme idade, cidade, tipo de plano e operadora. A Zanvia possui simulador online para consulta de preços de Amil, Unimed, Intermédica e Prevent Senior."}},
-    {"@type":"Question","name":"Como fazer cotação de plano de saúde online?","acceptedAnswer":{"@type":"Answer","text":"No site zanviaconsultoria.com.br há opção de simulação online para cada operadora disponível."}},
+    {"@type":"Question","name":"Qual plano de saúde mais barato 2026?","acceptedAnswer":{"@type":"Answer","text":"Os valores variam conforme idade, cidade, tipo de plano e operadora. Chame no WhatsApp ou preencha o formulário que um consultor da Zanvia retorna com os valores de Amil, Unimed, Intermédica e Prevent Senior."}},
+    {"@type":"Question","name":"Como fazer cotação de plano de saúde?","acceptedAnswer":{"@type":"Answer","text":"É só chamar no WhatsApp ou preencher o formulário no site zanviaconsultoria.com.br — um consultor faz o levantamento para cada operadora disponível."}},
     {"@type":"Question","name":"Plano de saúde individual vale a pena?","acceptedAnswer":{"@type":"Answer","text":"Depende das necessidades de cada pessoa. A Zanvia oferece planos individuais entre outras modalidades."}},
-    {"@type":"Question","name":"Qual o melhor plano de saúde familiar?","acceptedAnswer":{"@type":"Answer","text":"A escolha depende de fatores como cidade, orçamento e rede credenciada desejada. A Zanvia disponibiliza simulador para comparação."}},
-    {"@type":"Question","name":"Plano de saúde para MEI é mais barato?","acceptedAnswer":{"@type":"Answer","text":"Planos para MEI podem ter valores diferentes de planos individuais. Consulte no simulador da Zanvia para ver valores específicos."}},
+    {"@type":"Question","name":"Qual o melhor plano de saúde familiar?","acceptedAnswer":{"@type":"Answer","text":"A escolha depende de fatores como cidade, orçamento e rede credenciada desejada. Um consultor Zanvia faz essa comparação para você."}},
+    {"@type":"Question","name":"Plano de saúde para MEI é mais barato?","acceptedAnswer":{"@type":"Answer","text":"Planos para MEI podem ter valores diferentes de planos individuais. Fale com um consultor Zanvia pelo WhatsApp para ver valores específicos."}},
     {"@type":"Question","name":"Plano de saúde com CNPJ vale a pena?","acceptedAnswer":{"@type":"Answer","text":"Planos empresariais com CNPJ podem apresentar condições diferentes. A Zanvia realiza cotações para CNPJ."}},
     {"@type":"Question","name":"Como contratar plano de saúde sem empresa?","acceptedAnswer":{"@type":"Answer","text":"Existem modalidades como individual, MEI e por adesão. A Zanvia atende essas modalidades."}},
     {"@type":"Question","name":"Plano de saúde adesão é confiável?","acceptedAnswer":{"@type":"Answer","text":"Planos por adesão são vinculados a entidades de classe. A Zanvia trabalha com operadoras que oferecem essa modalidade."}},
     {"@type":"Question","name":"Qual operadora de plano de saúde é melhor?","acceptedAnswer":{"@type":"Answer","text":"A avaliação depende de critérios como rede credenciada, preço e coberturas. A Zanvia trabalha com Amil, Unimed, Intermédica e Prevent Senior."}},
-    {"@type":"Question","name":"Simulador de plano de saúde online gratuito?","acceptedAnswer":{"@type":"Answer","text":"O site zanviaconsultoria.com.br disponibiliza simulador online sem custo."}},
+    {"@type":"Question","name":"A cotação da Zanvia tem algum custo?","acceptedAnswer":{"@type":"Answer","text":"Não, a consultoria da Zanvia é sem custo adicional para quem contrata o plano."}},
     {"@type":"Question","name":"Plano de saúde por adesão como funciona?","acceptedAnswer":{"@type":"Answer","text":"Conforme o site da Zanvia, o cliente é associado a entidade de classe e preenche ficha de adesão."}}
   ]
 }
 </script>
-
-<div class="modal-overlay" id="simularModal" aria-hidden="true">
-    <div class="modal-box">
-      <button type="button" class="modal-close" aria-label="Fechar">×</button>
-      <div class="modal-spinner"></div>
-      <h3>Preparando seu simulador</h3>
-      <p>Aguarde um instante — um consultor Zanvia vai te ajudar a simular o plano ideal.</p>
-    </div>
-  </div>
 
 <script>
   document.querySelector('.nav-toggle').addEventListener('click', function(){
@@ -1492,22 +1420,6 @@
     links.style.padding = '20px 32px';
     links.style.borderBottom = '1px solid rgba(10,27,54,0.12)';
   });
-
-  const simularModal = document.getElementById('simularModal');
-  if (simularModal) {
-    document.querySelectorAll('.js-simular').forEach(function(el){
-      el.addEventListener('click', function(e){
-        e.preventDefault();
-        simularModal.classList.add('active');
-      });
-    });
-    simularModal.querySelector('.modal-close').addEventListener('click', function(){
-      simularModal.classList.remove('active');
-    });
-    simularModal.addEventListener('click', function(e){
-      if (e.target === simularModal) simularModal.classList.remove('active');
-    });
-  }
 
   const leadForm = document.getElementById('leadForm');
   if (leadForm) {
