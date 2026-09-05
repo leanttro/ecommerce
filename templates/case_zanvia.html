@@ -532,10 +532,9 @@
       </p>
       <div class="case-grid">
         <div class="case-img">
-          {% if p.imagem %}
-            <img src="{{ p.imagem }}" alt="{{ p.nome }}">
-          {% elif p.imagem1 %}
-            <img src="{{ p.imagem1 }}" alt="{{ p.nome }}">
+          {% set case_img_url = p.imagem_destaque or p.imagem1 or p.imagem2 or p.imagem_secundaria or p.imagem3 or p.imagem4 or p.imagem5 %}
+          {% if case_img_url %}
+            <img src="{{ case_img_url }}" alt="{{ p.nome }}">
           {% else %}
             <div class="case-img-placeholder">
               <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
