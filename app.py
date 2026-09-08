@@ -604,7 +604,7 @@ def index(loja_slug):
         template_name = 'oscar'
     else:
         template_name = g.loja.get('template_ativo') or 'index'
-        if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional', 'institucional2', 'tecnologia', 'onepiece', 'oscar', 'portal_cliente','iot', 'life', 'micasa', 'leanttro', 'zanvia']:
+        if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional', 'institucional2', 'tecnologia', 'onepiece', 'oscar', 'portal_cliente','iot', 'life', 'micasa', 'leanttro', 'zanvia', 'julia']:
             template_name = 'index'
             
         # Se for o tema de tecnologia e clicar em uma categoria específica, vai para a página exclusiva de categoria
@@ -884,6 +884,23 @@ def admin_painel(loja_slug):
             "ocultar_agenda": True if request.form.get('ocultar_agenda') else False,
             "titulo_agenda": sanitize_input(request.form.get('titulo_agenda'))
         }
+
+        # CAMPO OPCIONAL conteudo_extra_json (usado por templates sob medida, ex: julia.html,
+        # pra acordeão/comunidade/FAQ configuráveis). Só entra no payload se o form realmente
+        # mandar essa chave — então painéis que não têm esse campo (todos hoje) continuam
+        # funcionando exatamente igual, sem sobrescrever nada no Directus.
+        conteudo_extra_raw = request.form.get('conteudo_extra_json')
+        if conteudo_extra_raw is not None:
+            conteudo_extra_raw = conteudo_extra_raw.strip()
+            if conteudo_extra_raw == '':
+                payload["conteudo_extra_json"] = None
+            else:
+                try:
+                    json.loads(conteudo_extra_raw)  # valida sintaxe antes de salvar
+                    payload["conteudo_extra_json"] = conteudo_extra_raw
+                except (ValueError, TypeError):
+                    # JSON inválido enviado pelo painel: ignora e preserva o valor já salvo
+                    flash('Conteúdo extra (JSON) inválido — essa parte não foi salva, o resto sim.', 'error')
         
         nova_senha = request.form.get('nova_senha')
         if nova_senha:
