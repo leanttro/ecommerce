@@ -966,53 +966,6 @@
   }
   .ll-btn-solid:hover{ background: var(--clay-dark); transform: translateY(-1px); }
 
-  /* ============ LL SOFT CTA (recorte leve, sem estatísticas) ============ */
-  .ll-soft-cta{
-    background: var(--cream);
-    padding: clamp(64px, 8vw, 96px) 0;
-    margin-top: clamp(64px, 8vw, 100px);
-    position: relative;
-    overflow: hidden;
-    text-align: center;
-  }
-  .ll-soft-watermark{
-    position: absolute;
-    left: 50%; top: 50%;
-    transform: translate(-50%, -50%);
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-weight: 400;
-    font-size: clamp(6rem, 20vw, 14rem);
-    color: var(--clay);
-    opacity: 0.08;
-    white-space: nowrap;
-    pointer-events: none;
-    z-index: 0;
-    line-height: 1;
-  }
-  .ll-soft-inner{
-    position: relative;
-    z-index: 1;
-    max-width: 640px;
-    margin: 0 auto;
-  }
-  .ll-soft-inner .eyebrow{ justify-content: center; }
-  .ll-soft-inner h3{
-    font-family: 'Fraunces', serif;
-    font-weight: 400;
-    font-style: italic;
-    font-size: clamp(1.4rem, 2.6vw, 1.9rem);
-    line-height: 1.4;
-    color: var(--text);
-    margin: 0 0 26px;
-  }
-  .ll-soft-inner p{
-    font-size: 1.02rem;
-    line-height: 1.7;
-    color: var(--text-soft);
-    margin: 0 0 34px;
-  }
-
   /* ============ LL ABOUT 2 (services-style accordion) ============ */
   .ll-about2{
     background: var(--surface);
@@ -1246,17 +1199,6 @@
       <p>{{ loja.banner2_subtitulo or 'A maioria dos profissionais defende que a restrição é o único caminho para a mudança. Eu não acredito nisso. O terrorismo nutricional e as regras extremas só geram um ciclo exaustivo de culpa e frustração. Alimentação saudável não deveria ser uma fase de sofrimento.' }}</p>
       <a class="ll-btn-solid" href="#acompanhamento">{{ loja.banner2_botao or 'Como funciona o acompanhamento' }}</a>
     </div>
-  </div>
-</section>
-
-<!-- SOFT CTA (recorte leve, sem estatísticas) -->
-<section class="ll-soft-cta">
-  <span class="ll-soft-watermark">calma</span>
-  <div class="wrap ll-soft-inner">
-    <span class="eyebrow">Um convite</span>
-    <h3>"{{ loja.chamada_rodape or 'Mudanças reais acontecem sem pressa, mas com consistência.' }}"</h3>
-    <p>Se você já entendeu que dietas restritivas não funcionam e quer construir, aos poucos, uma relação leve com a comida — esse é o momento de dar o primeiro passo.</p>
-    <a class="ll-btn-solid" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">Quero transformar minha alimentação</a>
   </div>
 </section>
 
