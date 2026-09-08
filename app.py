@@ -1002,6 +1002,8 @@ def admin_painel(loja_slug):
         template_painel = 'painel_creapes.html'
     elif loja_slug == 'variasfita':
         template_painel = 'painel_creapes.html'
+    elif loja_slug == 'julia':
+        template_painel = 'painel_julia.html'
 
     return render_template(template_painel, 
                            loja=loja_visual, 
