@@ -261,6 +261,7 @@
       <a href="#textos-site">Textos do site</a>
       <a href="#visibilidade">Visibilidade</a>
       <a href="#conteudo-extra">Acordeão, Comunidade &amp; FAQ</a>
+      <a href="#grupos">Grupos</a>
       <a href="#planos">Planos</a>
       <a href="#blog">Blog</a>
       <a href="#seguranca">Senha de acesso</a>
@@ -539,6 +540,43 @@
       </div>
     </form>
 
+    <!-- ═══════════════ GRUPOS (categorias de produto) ═══════════════ -->
+    <section class="card-section" id="grupos">
+      <h2>Grupos</h2>
+      <div class="section-sub">Agrupe seus planos por tipo. Todo plano precisa pertencer a um grupo para ser cadastrado.</div>
+
+      <div class="card">
+        <h3>Grupos cadastrados</h3>
+        {% if categorias and categorias|length > 0 %}
+          {% for cat in categorias %}
+          <div class="item-row">
+            <div class="item-row-info">
+              <strong>{{ cat.nome }}</strong>
+            </div>
+            <div class="item-row-actions">
+              <a class="btn btn-danger btn-small" href="/{{ loja.slug_url }}/admin/categoria/excluir/{{ cat.id }}" onclick="return confirm('Excluir este grupo? Os planos vinculados a ele ficarão sem grupo.');">Excluir</a>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">Nenhum grupo cadastrado ainda. Adicione um abaixo para poder cadastrar planos.</div>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h3>Novo grupo</h3>
+        <form method="POST" action="/{{ loja.slug_url }}/admin/categoria/salvar" id="grupo-form">
+          <div class="grid-2">
+            <div class="field">
+              <label for="grupo-nome">Nome do grupo</label>
+              <input type="text" name="nome" id="grupo-nome" placeholder="Ex: Consultas, Acompanhamento, Pacotes…" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-small">Criar grupo</button>
+        </form>
+      </div>
+    </section>
+
     <!-- ═══════════════ PLANOS (produtos) ═══════════════ -->
     <section class="card-section" id="planos">
       <h2>Planos</h2>
@@ -554,7 +592,7 @@
               <span>{% if p.consulte %}Sob consulta{% else %}R$ {{ '%.2f'|format(p.preco or 0) }}{% endif %}{% if p.descricao %} · {{ p.descricao | truncate(90) }}{% endif %}</span>
             </div>
             <div class="item-row-actions">
-              <button type="button" class="btn btn-ghost btn-small" data-edit-produto data-id="{{ p.id }}" data-nome="{{ p.nome }}" data-preco="{{ p.preco }}" data-descricao="{{ p.descricao or '' }}">Editar</button>
+              <button type="button" class="btn btn-ghost btn-small" data-edit-produto data-id="{{ p.id }}" data-nome="{{ p.nome }}" data-preco="{{ p.preco }}" data-descricao="{{ p.descricao or '' }}" data-categoria="{{ p.categoria_id or '' }}">Editar</button>
               <a class="btn btn-danger btn-small" href="/{{ loja.slug_url }}/admin/produto/excluir/{{ p.id }}" onclick="return confirm('Excluir este plano?');">Excluir</a>
             </div>
           </div>
@@ -576,6 +614,18 @@
             <div class="field">
               <label for="produto-preco">Preço (R$)</label>
               <input type="text" name="preco" id="produto-preco" placeholder="Ex: 890.00">
+            </div>
+            <div class="field">
+              <label for="produto-categoria">Grupo</label>
+              <select name="categoria_id" id="produto-categoria">
+                <option value="">— sem grupo —</option>
+                {% if categorias %}
+                  {% for cat in categorias %}
+                  <option value="{{ cat.id }}">{{ cat.nome }}</option>
+                  {% endfor %}
+                {% endif %}
+              </select>
+              <span class="hint">Crie grupos na seção acima primeiro.</span>
             </div>
           </div>
           <div class="field full">
@@ -657,6 +707,8 @@
       document.getElementById('produto-nome').value = btn.dataset.nome || '';
       document.getElementById('produto-preco').value = btn.dataset.preco || '';
       document.getElementById('produto-descricao').value = btn.dataset.descricao || '';
+      var sel = document.getElementById('produto-categoria');
+      if (sel) sel.value = btn.dataset.categoria || '';
       document.getElementById('produto-form-title').textContent = 'Editando: ' + (btn.dataset.nome || '');
       document.getElementById('produto-cancelar').style.display = 'inline-flex';
       document.getElementById('produto-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
