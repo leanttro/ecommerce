@@ -875,7 +875,7 @@
   }
 
   /* ============ LL BANNER (statement redesign) ============ */
-  .ll-banner{ padding: clamp(72px, 9vw, 120px) 0 0; }
+  .ll-banner{ padding: clamp(72px, 9vw, 120px) 0; }
   .ll-banner-grid{
     display: grid;
     grid-template-columns: 1.25fr 1fr;
@@ -1197,7 +1197,6 @@
       <span class="eyebrow">A verdadeira nutrição</span>
       <h2>{{ loja.banner2_titulo or 'Você não precisa de mais uma dieta com data para acabar.' }}</h2>
       <p>{{ loja.banner2_subtitulo or 'A maioria dos profissionais defende que a restrição é o único caminho para a mudança. Eu não acredito nisso. O terrorismo nutricional e as regras extremas só geram um ciclo exaustivo de culpa e frustração. Alimentação saudável não deveria ser uma fase de sofrimento.' }}</p>
-      <a class="ll-btn-solid" href="#acompanhamento">{{ loja.banner2_botao or 'Como funciona o acompanhamento' }}</a>
     </div>
   </div>
 </section>
