@@ -1,0 +1,910 @@
+<!--
+  TEMPLATE: painel_julia.html
+  ─────────────────────────────────────────────────────────────
+  Painel administrativo bespoke para a loja "julia" (Julia Theila,
+  nutricionista clínica). Consome as mesmas variáveis que
+  admin_painel() já manda hoje: loja, categorias, produtos, posts,
+  inscritos, agenda (as duas últimas não são usadas nesta versão,
+  pois não foram pedidas).
+
+  CONTRATO DE CAMPOS — o <name=""> de cada input abaixo é IDÊNTICO
+  à chave correspondente no dicionário `payload` de admin_painel()
+  em app.py. Nenhum nome foi inventado. Campos que não existem no
+  payload (não pedidos ou não aplicáveis, ex: cor_primaria, fontes,
+  layout_order, categorias/novidades/busca/banners/formulário/mapa/
+  agenda) foram propositalmente OMITIDOS desta UI — como o template
+  julia.html não lê nenhum desses campos, eles ficam sem efeito
+  visual mesmo que fiquem nulos no Directus após salvar por aqui.
+
+  CONTEÚDO_EXTRA_JSON: o construtor visual (JS puro, sem framework)
+  monta o Acordeão / Comunidade / FAQ e serializa tudo num único
+  JSON no submit, colocado no <input type="hidden"
+  name="conteudo_extra_json"> — o backend espera essa chave única
+  já serializada como string.
+
+  Login: não incluído aqui de propósito (já existe em
+  login_admin.html, e a rota /admin/painel só é acessível após
+  autenticação).
+  ─────────────────────────────────────────────────────────────
+-->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel · Julia Theila</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #FAF7F0;
+    --surface: #FFFFFF;
+    --panel: #EEDFC8;
+    --text: #172842;
+    --text-soft: #4E5F78;
+    --line: rgba(23,40,66,0.12);
+    --marinho: #172842;
+    --azul: #3081C2;
+    --azul-dark: #1F5F92;
+    --champanhe: #EEDFC8;
+    --danger: #B5493E;
+    --danger-bg: #FBEBE9;
+    --success: #2F6B4F;
+    --success-bg: #E9F4EE;
+  }
+  *{ box-sizing: border-box; }
+  body{
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  img{ max-width: 100%; display: block; }
+  h1,h2,h3{ font-family: 'Fraunces', serif; margin: 0; font-weight: 600; color: var(--marinho); }
+  a{ color: var(--azul); }
+
+  /* ============ LAYOUT ============ */
+  .shell{ display: flex; min-height: 100vh; }
+
+  .sidebar{
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--marinho);
+    color: #EDE6D6;
+    padding: 28px 20px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .sidebar .brand{
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .sidebar .brand-sub{ font-size: 0.78rem; color: #B9C3D6; margin-bottom: 30px; }
+  .sidebar nav{ display: flex; flex-direction: column; gap: 2px; }
+  .sidebar nav a{
+    color: #D9DFEA;
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 500;
+    padding: 10px 12px;
+    border-radius: 8px;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .sidebar nav a:hover{ background: rgba(255,255,255,0.08); color: #fff; }
+
+  .main{ flex: 1; min-width: 0; padding: 32px clamp(20px, 3vw, 48px) 80px; }
+  .page-head{ margin-bottom: 28px; }
+  .page-head p{ color: var(--text-soft); margin: 6px 0 0; font-size: 0.95rem; }
+
+  /* ============ FLASH MESSAGES ============ */
+  .flash{
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-weight: 500;
+    margin-bottom: 18px;
+  }
+  .flash.success{ background: var(--success-bg); color: var(--success); }
+  .flash.error{ background: var(--danger-bg); color: var(--danger); }
+
+  /* ============ CARDS / SECTIONS ============ */
+  section.card-section{ margin-bottom: 44px; scroll-margin-top: 24px; }
+  section.card-section > h2{ font-size: 1.35rem; margin-bottom: 4px; }
+  section.card-section > .section-sub{ color: var(--text-soft); font-size: 0.88rem; margin-bottom: 18px; }
+
+  .card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: clamp(20px, 3vw, 32px);
+    margin-bottom: 18px;
+  }
+  .card h3{ font-size: 1.02rem; margin-bottom: 16px; color: var(--marinho); }
+
+  .grid-2{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+  .grid-3{ display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px 20px; }
+  @media (max-width: 760px){ .grid-2, .grid-3{ grid-template-columns: 1fr; } }
+
+  .field{ display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .field.full{ grid-column: 1 / -1; }
+  .field label{ font-size: 0.82rem; font-weight: 600; color: var(--text); }
+  .field .hint{ font-size: 0.78rem; color: var(--text-soft); font-weight: 400; }
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="password"],
+  .field input[type="url"],
+  .field input[type="file"],
+  .field textarea,
+  .field select{
+    font-family: inherit;
+    font-size: 0.92rem;
+    padding: 11px 13px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--bg);
+    color: var(--text);
+    resize: vertical;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus{
+    outline: none; border-color: var(--azul);
+  }
+  .field textarea{ min-height: 90px; }
+
+  .checkbox-row{
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    margin-bottom: 14px;
+  }
+  .checkbox-row input{ width: 17px; height: 17px; accent-color: var(--azul); }
+  .checkbox-row label{ font-size: 0.88rem; font-weight: 500; }
+
+  .img-preview{
+    display: flex; align-items: center; gap: 14px; margin-bottom: 10px;
+  }
+  .img-preview img{
+    width: 64px; height: 64px; object-fit: cover; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--panel);
+  }
+  .img-preview span{ font-size: 0.8rem; color: var(--text-soft); }
+
+  .btn{
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px;
+    border-radius: 100px;
+    border: none;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  .btn-primary{ background: var(--azul); color: #fff; }
+  .btn-primary:hover{ background: var(--azul-dark); }
+  .btn-ghost{ background: transparent; color: var(--text); border: 1px solid var(--line); }
+  .btn-ghost:hover{ border-color: var(--azul); color: var(--azul); }
+  .btn-danger{ background: var(--danger-bg); color: var(--danger); }
+  .btn-danger:hover{ background: #F6D9D6; }
+  .btn-small{ padding: 8px 16px; font-size: 0.82rem; }
+
+  .sticky-save{
+    position: sticky; bottom: 0;
+    background: linear-gradient(180deg, rgba(250,247,240,0) 0%, var(--bg) 30%);
+    padding: 18px 0 4px;
+    margin-top: -10px;
+  }
+
+  /* ============ BUILDER (acordeão / comunidade / faq) ============ */
+  .builder-block{
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 14px;
+    background: var(--bg);
+  }
+  .builder-block-head{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .builder-block-head span{ font-size: 0.8rem; font-weight: 700; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.03em; }
+  .bullet-row{ display: flex; gap: 8px; margin-bottom: 8px; }
+  .bullet-row input{ flex: 1; }
+  .icon-btn{
+    width: 30px; height: 30px; flex-shrink: 0;
+    border-radius: 8px; border: 1px solid var(--line);
+    background: var(--surface); color: var(--text-soft);
+    cursor: pointer; font-size: 0.9rem; line-height: 1;
+  }
+  .icon-btn:hover{ border-color: var(--danger); color: var(--danger); }
+  .add-link{
+    display: inline-flex; align-items: center; gap: 6px;
+    background: none; border: none; color: var(--azul);
+    font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 6px 0;
+  }
+  .add-link:hover{ text-decoration: underline; }
+
+  /* ============ TABLES (planos / posts) ============ */
+  .item-row{
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+  }
+  .item-row:first-child{ border-top: none; }
+  .item-row-info strong{ display: block; font-size: 0.94rem; }
+  .item-row-info span{ display: block; font-size: 0.82rem; color: var(--text-soft); margin-top: 2px; }
+  .item-row-actions{ display: flex; gap: 8px; flex-shrink: 0; }
+  .empty-state{ color: var(--text-soft); font-size: 0.88rem; padding: 10px 0; }
+</style>
+</head>
+<body>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="flash {{ 'error' if category == 'error' else 'success' }}" style="margin: 20px 32px 0;">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">Julia Theila</div>
+    <div class="brand-sub">Painel administrativo</div>
+    <nav>
+      <a href="#dados-gerais">Dados gerais</a>
+      <a href="#textos-site">Textos do site</a>
+      <a href="#visibilidade">Visibilidade</a>
+      <a href="#conteudo-extra">Acordeão, Comunidade &amp; FAQ</a>
+      <a href="#planos">Planos</a>
+      <a href="#blog">Blog</a>
+      <a href="#seguranca">Senha de acesso</a>
+      <a href="/{{ loja.slug_url }}/" target="_blank" rel="noopener">Ver site ↗</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <h1>Editar site</h1>
+      <p>Tudo que você salvar aqui reflete direto na home do seu site.</p>
+    </div>
+
+    <!-- ═══════════════ FORMULÁRIO PRINCIPAL ═══════════════ -->
+    <form method="POST" action="" enctype="multipart/form-data" id="painel-form">
+
+      <section class="card-section" id="dados-gerais">
+        <h2>Dados gerais</h2>
+        <div class="section-sub">Nome, contato e ferramentas de análise.</div>
+        <div class="card">
+          <div class="grid-2">
+            <div class="field">
+              <label for="f-nome">Nome da loja</label>
+              <input type="text" id="f-nome" name="nome" value="{{ loja.nome or '' }}">
+            </div>
+            <div class="field">
+              <label for="f-whatsapp">WhatsApp comercial</label>
+              <input type="text" id="f-whatsapp" name="whatsapp" value="{{ loja.whatsapp_comercial or '' }}" placeholder="Ex: 5519971541008">
+              <span class="hint">Só números, com DDI e DDD (usado em todos os links de WhatsApp do site).</span>
+            </div>
+            <div class="field">
+              <label for="f-email">E-mail de contato</label>
+              <input type="email" id="f-email" name="email" value="{{ loja.email or '' }}">
+              <span class="hint">Aparece no rodapé. Se ficar vazio, o link de e-mail fica oculto.</span>
+            </div>
+            <div class="field">
+              <label for="f-instagram">Link do Instagram</label>
+              <input type="url" id="f-instagram" name="instagram_url" value="{{ loja.instagram_url or '' }}" placeholder="https://instagram.com/seuusuario">
+              <span class="hint">Aparece no rodapé. Se ficar vazio, o link fica oculto.</span>
+            </div>
+            <div class="field full">
+              <label for="f-endereco">Endereço físico</label>
+              <input type="text" id="f-endereco" name="endereco_fisico" value="{{ loja.endereco_fisico or '' }}">
+            </div>
+          </div>
+
+          <div class="img-preview">
+            {% if loja.logo_url %}<img src="{{ loja.logo_url }}" alt="Logo atual">{% else %}<span class="hint">Sem logo cadastrada ainda.</span>{% endif %}
+            <div class="field" style="margin-bottom:0;">
+              <label for="f-logo">Trocar logo</label>
+              <input type="file" id="f-logo" name="logo" accept="image/*">
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label for="f-ga4">Google Analytics 4 (ID)</label>
+              <input type="text" id="f-ga4" name="ga4_id" value="{{ loja.ga4_id or '' }}" placeholder="G-XXXXXXXXXX">
+            </div>
+            <div class="field">
+              <label for="f-pixel">Meta Pixel (ID)</label>
+              <input type="text" id="f-pixel" name="facebook_pixel" value="{{ loja.facebook_pixel or '' }}" placeholder="123456789012345">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card-section" id="textos-site">
+        <h2>Textos do site</h2>
+        <div class="section-sub">Os títulos e frases que aparecem nas seções da home.</div>
+
+        <div class="card">
+          <h3>Banner principal (topo do site)</h3>
+          <div class="field">
+            <label for="f-b1t">Título</label>
+            <input type="text" id="f-b1t" name="banner1_titulo" value="{{ loja.banner1_titulo or '' }}">
+          </div>
+          <div class="field">
+            <label for="f-b1s">Subtítulo</label>
+            <textarea id="f-b1s" name="banner1_subtitulo">{{ loja.banner1_subtitulo or '' }}</textarea>
+          </div>
+          <div class="field">
+            <label for="f-b1b">Texto do botão</label>
+            <input type="text" id="f-b1b" name="banner1_botao" value="{{ loja.banner1_botao or '' }}">
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Banner "Filosofia" (Sem dieta. Sem pressa.)</h3>
+          <div class="field">
+            <label for="f-b2t">Título</label>
+            <input type="text" id="f-b2t" name="banner2_titulo" value="{{ loja.banner2_titulo or '' }}">
+          </div>
+          <div class="field">
+            <label for="f-b2s">Texto</label>
+            <textarea id="f-b2s" name="banner2_subtitulo">{{ loja.banner2_subtitulo or '' }}</textarea>
+          </div>
+          <div class="field">
+            <label for="f-b2b">Texto do botão</label>
+            <input type="text" id="f-b2b" name="banner2_botao" value="{{ loja.banner2_botao or '' }}">
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Frase rolante (marquee)</h3>
+          <div class="grid-3">
+            <div class="field">
+              <label for="f-fr1">Frase 1</label>
+              <input type="text" id="f-fr1" name="frase1" value="{{ loja.frase1 or '' }}">
+            </div>
+            <div class="field">
+              <label for="f-fr2">Frase 2</label>
+              <input type="text" id="f-fr2" name="frase2" value="{{ loja.frase2 or '' }}">
+            </div>
+            <div class="field">
+              <label for="f-fr3">Frase 3</label>
+              <input type="text" id="f-fr3" name="frase3" value="{{ loja.frase3 or '' }}">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Seção "Sobre"</h3>
+          <div class="grid-2">
+            <div class="field">
+              <label for="f-menusobre">Texto do item "Sobre" no menu</label>
+              <input type="text" id="f-menusobre" name="titulo_menu_sobre" value="{{ loja.titulo_menu_sobre or '' }}">
+            </div>
+            <div class="field">
+              <label for="f-sobretit">Título</label>
+              <input type="text" id="f-sobretit" name="sobre_titulo" value="{{ loja.sobre_titulo or '' }}">
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-sobretexto">Parágrafo</label>
+            <textarea id="f-sobretexto" name="sobre_texto">{{ loja.sobre_texto or '' }}</textarea>
+          </div>
+          <div class="img-preview">
+            {% if loja.sobre_imagem_url %}<img src="{{ loja.sobre_imagem_url }}" alt="Foto atual">{% else %}<span class="hint">Sem foto cadastrada ainda.</span>{% endif %}
+            <div class="field" style="margin-bottom:0;">
+              <label for="f-sobreimg">Trocar foto</label>
+              <input type="file" id="f-sobreimg" name="sobre_imagem" accept="image/*">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Outros títulos</h3>
+          <div class="grid-2">
+            <div class="field">
+              <label for="f-titprod">Título da seção "Acompanhamento"</label>
+              <input type="text" id="f-titprod" name="titulo_produtos" value="{{ loja.titulo_produtos or '' }}">
+            </div>
+            <div class="field">
+              <label for="f-titblog">Título da seção "Blog"</label>
+              <input type="text" id="f-titblog" name="titulo_blog" value="{{ loja.titulo_blog or '' }}">
+            </div>
+          </div>
+          <div class="field full">
+            <label for="f-chamada">Citação ("Mudanças reais acontecem sem pressa...")</label>
+            <textarea id="f-chamada" name="chamada_rodape">{{ loja.chamada_rodape or '' }}</textarea>
+            <span class="hint">Essa frase aparece duas vezes no site (seção "Um convite" e no rodapé) — as duas usam este mesmo texto.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card-section" id="visibilidade">
+        <h2>Visibilidade</h2>
+        <div class="section-sub">Ligue ou desligue seções inteiras do site.</div>
+        <div class="card">
+          <div class="checkbox-row">
+            <input type="checkbox" id="f-ocultarsobre" name="ocultar_sobre" value="1" {% if loja.ocultar_sobre %}checked{% endif %}>
+            <label for="f-ocultarsobre">Ocultar a seção "Sobre"</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="f-ocultarblog" name="ocultar_blog" value="1" {% if loja.ocultar_blog %}checked{% endif %}>
+            <label for="f-ocultarblog">Ocultar a seção "Blog"</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="f-whatsflut" name="mostrar_whatsapp_flutuante" value="1" {% if loja.mostrar_whatsapp_flutuante %}checked{% endif %}>
+            <label for="f-whatsflut">Mostrar botão flutuante de WhatsApp no site</label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ CONSTRUTOR: conteudo_extra_json ═══════════════ -->
+      <section class="card-section" id="conteudo-extra">
+        <h2>Acordeão, Comunidade &amp; FAQ</h2>
+        <div class="section-sub">Se você não mexer aqui, o site continua mostrando o conteúdo padrão já existente.</div>
+
+        <div class="card">
+          <h3>Acordeão (seção "Sobre")</h3>
+          <div id="acordeao-list"></div>
+          <button type="button" class="add-link" data-add="acordeao">+ Adicionar item do acordeão</button>
+        </div>
+
+        <div class="card">
+          <h3>Recursos da Comunidade (lista de frases)</h3>
+          <div id="features-list"></div>
+          <button type="button" class="add-link" data-add="features">+ Adicionar recurso</button>
+        </div>
+
+        <div class="card">
+          <h3>Citação em destaque da Comunidade</h3>
+          <div class="field">
+            <label for="q-titulo">Título</label>
+            <input type="text" id="q-titulo" placeholder="Ex: Um espaço de apoio real">
+          </div>
+          <div class="field">
+            <label for="q-texto">Texto</label>
+            <textarea id="q-texto" placeholder="Ex: A mudança de estilo de vida fica muito mais leve..."></textarea>
+          </div>
+          <div class="field">
+            <label for="q-tags">Tags (separadas por vírgula)</label>
+            <input type="text" id="q-tags" placeholder="Essencial, Intensivo, Transformação">
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Perguntas frequentes (FAQ)</h3>
+          <div id="faq-list"></div>
+          <button type="button" class="add-link" data-add="faq">+ Adicionar pergunta</button>
+        </div>
+      </section>
+
+      <input type="hidden" name="conteudo_extra_json" id="conteudo_extra_json_field" value="">
+      <input type="hidden" name="template_ativo" value="{{ loja.template_ativo or 'index' }}">
+
+      <!-- CAMPOS DO PAYLOAD SEM UI NESTE PAINEL (julia.html não lê nenhum deles hoje).
+           Ecoam o valor atual do Directus pra evitar que fiquem null/False a cada save,
+           já que app.py faz request.form.get(...) sem fallback pra estes. -->
+      <input type="hidden" name="cor_primaria" value="{{ loja.cor_primaria or '' }}">
+      <input type="hidden" name="cor_titulo" value="{{ loja.cor_titulo or '' }}">
+      <input type="hidden" name="cor_texto" value="{{ loja.cor_texto or '' }}">
+      <input type="hidden" name="cor_fundo" value="{{ loja.cor_fundo or '' }}">
+      <input type="hidden" name="font_tamanho_base" value="{{ loja.font_tamanho_base or '' }}">
+      <input type="hidden" name="font_titulo" value="{{ loja.font_titulo or '' }}">
+      <input type="hidden" name="font_corpo" value="{{ loja.font_corpo or '' }}">
+      <input type="hidden" name="link1" value="{{ loja.linkbannerprincipal1 or '' }}">
+      <input type="hidden" name="link2" value="{{ loja.linkbannerprincipal2 or '' }}">
+      <input type="hidden" name="linkbannermenor1" value="{{ loja.linkbannermenor1 or '' }}">
+      <input type="hidden" name="linkbannermenor2" value="{{ loja.linkbannermenor2 or '' }}">
+      <input type="hidden" name="layout_order" value="{{ loja.layout_order or '' }}">
+      <input type="hidden" name="layout_portfolio" value="{{ loja.layout_portfolio or '' }}">
+      <input type="hidden" name="titulo_categorias" value="{{ loja.titulo_categorias or '' }}">
+      <input type="hidden" name="ocultar_categorias" value="{{ '1' if loja.ocultar_categorias else '' }}">
+      <input type="hidden" name="titulo_novidades" value="{{ loja.titulo_novidades or '' }}">
+      <input type="hidden" name="ocultar_novidades" value="{{ '1' if loja.ocultar_novidades else '' }}">
+      <input type="hidden" name="ocultar_busca" value="{{ '1' if loja.ocultar_busca else '' }}">
+      <input type="hidden" name="ocultar_banner" value="{{ '1' if loja.ocultar_banner else '' }}">
+      <input type="hidden" name="ocultar_banners_menores" value="{{ '1' if loja.ocultar_banners_menores else '' }}">
+      <input type="hidden" name="titulo_formulario" value="{{ loja.titulo_formulario or '' }}">
+      <input type="hidden" name="ocultar_formulario" value="{{ '1' if loja.ocultar_formulario else '' }}">
+      <input type="hidden" name="clean_cards_mode" value="{{ '1' if loja.clean_cards_mode else '' }}">
+      <input type="hidden" name="hide_card_title" value="{{ '1' if loja.hide_card_title else '' }}">
+      <input type="hidden" name="hide_explore_button" value="{{ '1' if loja.hide_explore_button else '' }}">
+      <input type="hidden" name="disable_card_shadow" value="{{ '1' if loja.disable_card_shadow else '' }}">
+      <input type="hidden" name="logos_clientes" value="{{ loja.logos_clientes or '' }}">
+      <input type="hidden" name="mostrar_mapa" value="{{ '1' if loja.mostrar_mapa else '' }}">
+      <input type="hidden" name="ocultar_agenda" value="{{ '1' if loja.ocultar_agenda else '' }}">
+      <input type="hidden" name="titulo_agenda" value="{{ loja.titulo_agenda or '' }}">
+
+      <section class="card-section" id="seguranca">
+        <h2>Senha de acesso</h2>
+        <div class="section-sub">Preencha somente se quiser trocar a senha do painel. Deixe em branco pra manter a atual.</div>
+        <div class="card">
+          <div class="field">
+            <label for="f-senha">Nova senha</label>
+            <input type="password" id="f-senha" name="nova_senha" autocomplete="new-password">
+          </div>
+        </div>
+      </section>
+
+      <div class="sticky-save">
+        <button type="submit" class="btn btn-primary">Salvar todas as alterações</button>
+      </div>
+    </form>
+
+    <!-- ═══════════════ PLANOS (produtos) ═══════════════ -->
+    <section class="card-section" id="planos">
+      <h2>Planos</h2>
+      <div class="section-sub">Os planos de acompanhamento oferecidos no site.</div>
+
+      <div class="card">
+        <h3>Planos cadastrados</h3>
+        {% if produtos and produtos|length > 0 %}
+          {% for p in produtos %}
+          <div class="item-row">
+            <div class="item-row-info">
+              <strong>{{ p.nome }}</strong>
+              <span>{% if p.consulte %}Sob consulta{% else %}R$ {{ '%.2f'|format(p.preco or 0) }}{% endif %}{% if p.descricao %} · {{ p.descricao | truncate(90) }}{% endif %}</span>
+            </div>
+            <div class="item-row-actions">
+              <button type="button" class="btn btn-ghost btn-small" data-edit-produto data-id="{{ p.id }}" data-nome="{{ p.nome }}" data-preco="{{ p.preco }}" data-descricao="{{ p.descricao or '' }}">Editar</button>
+              <a class="btn btn-danger btn-small" href="/{{ loja.slug_url }}/admin/produto/excluir/{{ p.id }}" onclick="return confirm('Excluir este plano?');">Excluir</a>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">Nenhum plano cadastrado ainda.</div>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h3 id="produto-form-title">Novo plano</h3>
+        <form method="POST" action="/{{ loja.slug_url }}/admin/produto/salvar" id="produto-form">
+          <input type="hidden" name="id" id="produto-id" value="">
+          <div class="grid-2">
+            <div class="field">
+              <label for="produto-nome">Nome do plano</label>
+              <input type="text" name="nome" id="produto-nome" required>
+            </div>
+            <div class="field">
+              <label for="produto-preco">Preço (R$)</label>
+              <input type="text" name="preco" id="produto-preco" placeholder="Ex: 890.00">
+            </div>
+          </div>
+          <div class="field full">
+            <label for="produto-descricao">Descrição</label>
+            <textarea name="descricao" id="produto-descricao"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-small">Salvar plano</button>
+          <button type="button" class="btn btn-ghost btn-small" id="produto-cancelar" style="display:none;">Cancelar edição</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ═══════════════ BLOG (posts) ═══════════════ -->
+    <section class="card-section" id="blog">
+      <h2>Blog</h2>
+      <div class="section-sub">Artigos publicados na seção de blog do site.</div>
+
+      <div class="card">
+        <h3>Posts publicados</h3>
+        {% if posts and posts|length > 0 %}
+          {% for post in posts %}
+          <div class="item-row">
+            <div class="item-row-info">
+              <strong>{{ post.titulo }}</strong>
+              {% if post.resumo %}<span>{{ post.resumo | truncate(90) }}</span>{% endif %}
+            </div>
+            <div class="item-row-actions">
+              <button type="button" class="btn btn-ghost btn-small" data-edit-post data-id="{{ post.id }}" data-titulo="{{ post.titulo }}" data-resumo="{{ post.resumo or '' }}" data-conteudo="{{ post.conteudo or '' }}">Editar</button>
+              <a class="btn btn-danger btn-small" href="/{{ loja.slug_url }}/admin/post/excluir/{{ post.id }}" onclick="return confirm('Excluir este post?');">Excluir</a>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">Nenhum post publicado ainda.</div>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h3 id="post-form-title">Novo post</h3>
+        <form method="POST" action="/{{ loja.slug_url }}/admin/post/salvar" enctype="multipart/form-data" id="post-form">
+          <input type="hidden" name="id" id="post-id" value="">
+          <div class="field">
+            <label for="post-titulo">Título</label>
+            <input type="text" name="titulo" id="post-titulo" required>
+          </div>
+          <div class="field">
+            <label for="post-resumo">Resumo (aparece no card do blog)</label>
+            <textarea name="resumo" id="post-resumo"></textarea>
+          </div>
+          <div class="field">
+            <label for="post-conteudo">Conteúdo completo</label>
+            <textarea name="conteudo" id="post-conteudo" style="min-height:160px;"></textarea>
+          </div>
+          <div class="field">
+            <label for="post-capa">Imagem de capa</label>
+            <input type="file" name="capa" id="post-capa" accept="image/*">
+            <span class="hint">Ao editar, só é necessário enviar uma nova imagem se quiser trocar a capa atual.</span>
+          </div>
+          <button type="submit" class="btn btn-primary btn-small">Salvar post</button>
+          <button type="button" class="btn btn-ghost btn-small" id="post-cancelar" style="display:none;">Cancelar edição</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Estado atual de conteudo_extra_json, serializado com segurança via filtro nativo
+     `tojson` do Flask/Jinja (não requer nenhuma alteração em app.py). -->
+<script type="application/json" id="extra-data-inicial">{{ (loja.conteudo_extra_json if loja.conteudo_extra_json else none) | tojson }}</script>
+
+<script>
+(function(){
+
+  // ───────────────── Editar plano / editar post (preenche o form existente) ─────────────────
+  document.querySelectorAll('[data-edit-produto]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.getElementById('produto-id').value = btn.dataset.id || '';
+      document.getElementById('produto-nome').value = btn.dataset.nome || '';
+      document.getElementById('produto-preco').value = btn.dataset.preco || '';
+      document.getElementById('produto-descricao').value = btn.dataset.descricao || '';
+      document.getElementById('produto-form-title').textContent = 'Editando: ' + (btn.dataset.nome || '');
+      document.getElementById('produto-cancelar').style.display = 'inline-flex';
+      document.getElementById('produto-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
+  var prodCancel = document.getElementById('produto-cancelar');
+  if (prodCancel) prodCancel.addEventListener('click', function(){
+    document.getElementById('produto-form').reset();
+    document.getElementById('produto-id').value = '';
+    document.getElementById('produto-form-title').textContent = 'Novo plano';
+    prodCancel.style.display = 'none';
+  });
+
+  document.querySelectorAll('[data-edit-post]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.getElementById('post-id').value = btn.dataset.id || '';
+      document.getElementById('post-titulo').value = btn.dataset.titulo || '';
+      document.getElementById('post-resumo').value = btn.dataset.resumo || '';
+      document.getElementById('post-conteudo').value = btn.dataset.conteudo || '';
+      document.getElementById('post-form-title').textContent = 'Editando: ' + (btn.dataset.titulo || '');
+      document.getElementById('post-cancelar').style.display = 'inline-flex';
+      document.getElementById('post-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
+  var postCancel = document.getElementById('post-cancelar');
+  if (postCancel) postCancel.addEventListener('click', function(){
+    document.getElementById('post-form').reset();
+    document.getElementById('post-id').value = '';
+    document.getElementById('post-form-title').textContent = 'Novo post';
+    postCancel.style.display = 'none';
+  });
+
+  // ───────────────── Construtor de conteudo_extra_json ─────────────────
+
+  function readInitialExtra(){
+    var el = document.getElementById('extra-data-inicial');
+    if(!el) return null;
+    var raw;
+    try { raw = JSON.parse(el.textContent); } catch(e){ return null; }
+    if (raw === null || raw === undefined) return null;
+    // Cobre tanto o caso do Directus devolver o campo já como objeto,
+    // quanto o caso de vir como string JSON (o backend grava como string).
+    if (typeof raw === 'string') {
+      try { raw = JSON.parse(raw); } catch(e){ return null; }
+    }
+    if (!raw || typeof raw !== 'object') return null;
+    return raw;
+  }
+
+  var initialExtra = readInitialExtra() || {};
+
+  // ---- Acordeão ----
+  var acordeaoList = document.getElementById('acordeao-list');
+
+  function makeAcordeaoBlock(item){
+    item = item || { titulo: '', bullets: [''] };
+    var wrap = document.createElement('div');
+    wrap.className = 'builder-block';
+    wrap.dataset.type = 'acordeao-block';
+
+    var head = document.createElement('div');
+    head.className = 'builder-block-head';
+    head.innerHTML = '<span>Item do acordeão</span>';
+    var removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'icon-btn';
+    removeBtn.textContent = '✕';
+    removeBtn.addEventListener('click', function(){ wrap.remove(); });
+    head.appendChild(removeBtn);
+    wrap.appendChild(head);
+
+    var fieldTitulo = document.createElement('div');
+    fieldTitulo.className = 'field';
+    fieldTitulo.innerHTML = '<label>Título</label>';
+    var inputTitulo = document.createElement('input');
+    inputTitulo.type = 'text';
+    inputTitulo.className = 'acordeao-titulo';
+    inputTitulo.value = item.titulo || '';
+    fieldTitulo.appendChild(inputTitulo);
+    wrap.appendChild(fieldTitulo);
+
+    var bulletsHolder = document.createElement('div');
+    bulletsHolder.className = 'acordeao-bullets';
+    wrap.appendChild(bulletsHolder);
+
+    function addBullet(text){
+      var row = document.createElement('div');
+      row.className = 'bullet-row';
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.value = text || '';
+      input.placeholder = 'Ex: Sem regras rígidas ou terrorismo nutricional';
+      var del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'icon-btn';
+      del.textContent = '✕';
+      del.addEventListener('click', function(){ row.remove(); });
+      row.appendChild(input);
+      row.appendChild(del);
+      bulletsHolder.appendChild(row);
+    }
+    (item.bullets && item.bullets.length ? item.bullets : ['']).forEach(addBullet);
+
+    var addBulletBtn = document.createElement('button');
+    addBulletBtn.type = 'button';
+    addBulletBtn.className = 'add-link';
+    addBulletBtn.textContent = '+ Adicionar item da lista';
+    addBulletBtn.addEventListener('click', function(){ addBullet(''); });
+    wrap.appendChild(addBulletBtn);
+
+    return wrap;
+  }
+
+  (Array.isArray(initialExtra.acordeao) && initialExtra.acordeao.length ? initialExtra.acordeao : [null]).forEach(function(item){
+    acordeaoList.appendChild(makeAcordeaoBlock(item));
+  });
+
+  // ---- Recursos da comunidade (lista simples) ----
+  var featuresList = document.getElementById('features-list');
+
+  function makeFeatureRow(text){
+    var row = document.createElement('div');
+    row.className = 'bullet-row';
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'feature-input';
+    input.value = text || '';
+    input.placeholder = 'Ex: Trocas entre participantes e desafios de alimentação consciente';
+    var del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'icon-btn';
+    del.textContent = '✕';
+    del.addEventListener('click', function(){ row.remove(); });
+    row.appendChild(input);
+    row.appendChild(del);
+    return row;
+  }
+  (Array.isArray(initialExtra.comunidade_features) && initialExtra.comunidade_features.length ? initialExtra.comunidade_features : ['']).forEach(function(f){
+    featuresList.appendChild(makeFeatureRow(f));
+  });
+
+  // ---- Quote da comunidade ----
+  if (initialExtra.comunidade_quote && typeof initialExtra.comunidade_quote === 'object') {
+    document.getElementById('q-titulo').value = initialExtra.comunidade_quote.titulo || '';
+    document.getElementById('q-texto').value = initialExtra.comunidade_quote.texto || '';
+    document.getElementById('q-tags').value = Array.isArray(initialExtra.comunidade_quote.tags) ? initialExtra.comunidade_quote.tags.join(', ') : '';
+  }
+
+  // ---- FAQ ----
+  var faqList = document.getElementById('faq-list');
+
+  function makeFaqBlock(item){
+    item = item || { pergunta: '', resposta: '' };
+    var wrap = document.createElement('div');
+    wrap.className = 'builder-block';
+    wrap.dataset.type = 'faq-block';
+
+    var head = document.createElement('div');
+    head.className = 'builder-block-head';
+    head.innerHTML = '<span>Pergunta</span>';
+    var removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'icon-btn';
+    removeBtn.textContent = '✕';
+    removeBtn.addEventListener('click', function(){ wrap.remove(); });
+    head.appendChild(removeBtn);
+    wrap.appendChild(head);
+
+    var fPergunta = document.createElement('div');
+    fPergunta.className = 'field';
+    fPergunta.innerHTML = '<label>Pergunta</label>';
+    var inputPergunta = document.createElement('input');
+    inputPergunta.type = 'text';
+    inputPergunta.className = 'faq-pergunta';
+    inputPergunta.value = item.pergunta || '';
+    fPergunta.appendChild(inputPergunta);
+    wrap.appendChild(fPergunta);
+
+    var fResposta = document.createElement('div');
+    fResposta.className = 'field';
+    fResposta.style.marginBottom = '0';
+    fResposta.innerHTML = '<label>Resposta</label>';
+    var textResposta = document.createElement('textarea');
+    textResposta.className = 'faq-resposta';
+    textResposta.value = item.resposta || '';
+    fResposta.appendChild(textResposta);
+    wrap.appendChild(fResposta);
+
+    return wrap;
+  }
+
+  (Array.isArray(initialExtra.faq) && initialExtra.faq.length ? initialExtra.faq : [null]).forEach(function(item){
+    faqList.appendChild(makeFaqBlock(item));
+  });
+
+  // ---- Botões "adicionar" ----
+  document.querySelectorAll('[data-add]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var type = btn.dataset.add;
+      if (type === 'acordeao') acordeaoList.appendChild(makeAcordeaoBlock(null));
+      if (type === 'features') featuresList.appendChild(makeFeatureRow(''));
+      if (type === 'faq') faqList.appendChild(makeFaqBlock(null));
+    });
+  });
+
+  // ---- Serialização no submit do formulário principal ----
+  var painelForm = document.getElementById('painel-form');
+  painelForm.addEventListener('submit', function(){
+    var acordeao = [];
+    acordeaoList.querySelectorAll('[data-type="acordeao-block"]').forEach(function(block){
+      var titulo = block.querySelector('.acordeao-titulo').value.trim();
+      var bullets = Array.prototype.map.call(block.querySelectorAll('.acordeao-bullets input'), function(i){ return i.value.trim(); }).filter(Boolean);
+      if (titulo || bullets.length) acordeao.push({ titulo: titulo, bullets: bullets });
+    });
+
+    var comunidade_features = Array.prototype.map.call(featuresList.querySelectorAll('.feature-input'), function(i){ return i.value.trim(); }).filter(Boolean);
+
+    var qTitulo = document.getElementById('q-titulo').value.trim();
+    var qTexto = document.getElementById('q-texto').value.trim();
+    var qTagsRaw = document.getElementById('q-tags').value.trim();
+    var qTags = qTagsRaw ? qTagsRaw.split(',').map(function(t){ return t.trim(); }).filter(Boolean) : [];
+    var comunidade_quote = null;
+    if (qTitulo || qTexto || qTags.length) {
+      comunidade_quote = { titulo: qTitulo, texto: qTexto, tags: qTags };
+    }
+
+    var faq = [];
+    faqList.querySelectorAll('[data-type="faq-block"]').forEach(function(block){
+      var pergunta = block.querySelector('.faq-pergunta').value.trim();
+      var resposta = block.querySelector('.faq-resposta').value.trim();
+      if (pergunta || resposta) faq.push({ pergunta: pergunta, resposta: resposta });
+    });
+
+    var payload = {};
+    if (acordeao.length) payload.acordeao = acordeao;
+    if (comunidade_features.length) payload.comunidade_features = comunidade_features;
+    if (comunidade_quote) payload.comunidade_quote = comunidade_quote;
+    if (faq.length) payload.faq = faq;
+
+    // Se nada foi preenchido no construtor, manda string vazia — o backend interpreta isso
+    // como "limpar o campo" (payload["conteudo_extra_json"] = None), o que é seguro porque
+    // o julia.html já cai de volta no conteúdo estático quando o campo está vazio.
+    var hasContent = Object.keys(payload).length > 0;
+    document.getElementById('conteudo_extra_json_field').value = hasContent ? JSON.stringify(payload) : '';
+  });
+
+})();
+</script>
+
+</body>
+</html>
