@@ -578,21 +578,25 @@
     </section>
 
     <!-- ═══════════════ PLANOS (produtos) ═══════════════ -->
+    {% set fotos_cat = categorias | selectattr('nome', 'equalto', 'Fotos') | list | first if categorias else none %}
+    {% set fotos_cat_id = fotos_cat.id if fotos_cat else none %}
+    {% set planos_normais = produtos | rejectattr('categoria_id', 'equalto', fotos_cat_id) | list if fotos_cat_id else produtos %}
+    {% set fotos_produtos = produtos | selectattr('categoria_id', 'equalto', fotos_cat_id) | list if fotos_cat_id else [] %}
     <section class="card-section" id="planos">
       <h2>Planos</h2>
       <div class="section-sub">Os planos de acompanhamento oferecidos no site.</div>
 
       <div class="card">
         <h3>Planos cadastrados</h3>
-        {% if produtos and produtos|length > 0 %}
-          {% for p in produtos %}
+        {% if planos_normais and planos_normais|length > 0 %}
+          {% for p in planos_normais %}
           <div class="item-row">
             <div class="item-row-info">
               <strong>{{ p.nome }}</strong>
               <span>{% if p.consulte %}Sob consulta{% else %}R$ {{ '%.2f'|format(p.preco or 0) }}{% endif %}{% if p.descricao %} · {{ p.descricao | truncate(90) }}{% endif %}</span>
             </div>
             <div class="item-row-actions">
-              <button type="button" class="btn btn-ghost btn-small" data-edit-produto data-id="{{ p.id }}" data-nome="{{ p.nome }}" data-preco="{{ p.preco }}" data-descricao="{{ p.descricao or '' }}" data-categoria="{{ p.categoria_id or '' }}">Editar</button>
+              <button type="button" class="btn btn-ghost btn-small" data-edit-produto data-id="{{ p.id }}" data-nome="{{ p.nome }}" data-preco="{{ p.preco }}" data-descricao="{{ p.descricao or '' }}" data-categoria="{{ p.categoria_id or '' }}" data-sort="{{ p.sort if p.sort is not none else '' }}" data-imagem="{{ p.imagem_destaque or '' }}">Editar</button>
               <a class="btn btn-danger btn-small" href="/{{ loja.slug_url }}/admin/produto/excluir/{{ p.id }}" onclick="return confirm('Excluir este plano?');">Excluir</a>
             </div>
           </div>
@@ -604,7 +608,7 @@
 
       <div class="card">
         <h3 id="produto-form-title">Novo plano</h3>
-        <form method="POST" action="/{{ loja.slug_url }}/admin/produto/salvar" id="produto-form">
+        <form method="POST" action="/{{ loja.slug_url }}/admin/produto/salvar" enctype="multipart/form-data" id="produto-form">
           <input type="hidden" name="id" id="produto-id" value="">
           <div class="grid-2">
             <div class="field">
@@ -625,16 +629,63 @@
                   {% endfor %}
                 {% endif %}
               </select>
-              <span class="hint">Crie grupos na seção acima primeiro.</span>
+              <span class="hint">Crie grupos na seção acima primeiro. Use o grupo "Fotos" pra guardar imagens sem exibir no site.</span>
+            </div>
+            <div class="field">
+              <label for="produto-sort">Ordem de exibição</label>
+              <input type="number" name="sort" id="produto-sort" placeholder="Ex: 1">
+              <span class="hint">Quanto menor o número, mais em cima o plano aparece no site.</span>
             </div>
           </div>
           <div class="field full">
             <label for="produto-descricao">Descrição</label>
             <textarea name="descricao" id="produto-descricao"></textarea>
           </div>
+          <div class="field full">
+            <label for="produto-imagem">Imagem</label>
+            <div class="img-preview" id="produto-imagem-preview" style="display:none;">
+              <img id="produto-imagem-atual" src="" alt="Imagem atual">
+              <span>Imagem atual — envie uma nova abaixo só se quiser trocar.</span>
+            </div>
+            <input type="file" name="imagem" id="produto-imagem" accept="image/*">
+            <span class="hint">Se o grupo for "Fotos", é essa imagem que vai aparecer na seção Banco de Fotos pra você copiar o link.</span>
+          </div>
           <button type="submit" class="btn btn-primary btn-small">Salvar plano</button>
           <button type="button" class="btn btn-ghost btn-small" id="produto-cancelar" style="display:none;">Cancelar edição</button>
         </form>
+      </div>
+    </section>
+
+    <!-- ═══════════════ BANCO DE FOTOS (categoria "Fotos" — não aparece no site) ═══════════════ -->
+    <section class="card-section" id="fotos-galeria">
+      <h2>Banco de Fotos</h2>
+      <div class="section-sub">Itens do grupo "Fotos" — nunca aparecem no site, servem só pra você guardar a imagem e copiar o link direto do Directus.</div>
+
+      <div class="card">
+        {% if fotos_produtos and fotos_produtos|length > 0 %}
+          {% for f in fotos_produtos %}
+          <div class="item-row">
+            <div class="item-row-info" style="display:flex; align-items:center; gap:14px;">
+              {% if f.imagem_destaque %}
+              <img src="{{ f.imagem_destaque }}" alt="{{ f.nome }}" style="width:64px; height:64px; object-fit:cover; border-radius:10px; border:1px solid var(--line); background:var(--panel); flex-shrink:0;">
+              {% endif %}
+              <div>
+                <strong>{{ f.nome }}</strong>
+                <div style="display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
+                  <input type="text" readonly value="{{ f.imagem_destaque or '' }}" onclick="this.select();" style="font-size:0.78rem; padding:6px 10px; border:1px solid var(--line); border-radius:8px; background:var(--bg); width:280px; max-width:60vw; color:var(--text-soft);">
+                  <button type="button" class="btn btn-ghost btn-small" onclick="navigator.clipboard.writeText('{{ f.imagem_destaque or '' }}'); this.textContent='Copiado!'; var b=this; setTimeout(function(){ b.textContent='Copiar link'; }, 1500);">Copiar link</button>
+                </div>
+              </div>
+            </div>
+            <div class="item-row-actions">
+              <button type="button" class="btn btn-ghost btn-small" data-edit-produto data-id="{{ f.id }}" data-nome="{{ f.nome }}" data-preco="{{ f.preco }}" data-descricao="{{ f.descricao or '' }}" data-categoria="{{ f.categoria_id or '' }}" data-sort="{{ f.sort if f.sort is not none else '' }}" data-imagem="{{ f.imagem_destaque or '' }}">Editar</button>
+              <a class="btn btn-danger btn-small" href="/{{ loja.slug_url }}/admin/produto/excluir/{{ f.id }}" onclick="return confirm('Excluir esta foto?');">Excluir</a>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">Nenhuma foto salva ainda. Crie um grupo chamado exatamente "Fotos" (seção Grupos, acima) e depois cadastre um plano nesse grupo com uma imagem — ela aparece aqui pra você copiar o link.</div>
+        {% endif %}
       </div>
     </section>
 
@@ -707,8 +758,19 @@
       document.getElementById('produto-nome').value = btn.dataset.nome || '';
       document.getElementById('produto-preco').value = btn.dataset.preco || '';
       document.getElementById('produto-descricao').value = btn.dataset.descricao || '';
+      document.getElementById('produto-sort').value = btn.dataset.sort || '';
       var sel = document.getElementById('produto-categoria');
       if (sel) sel.value = btn.dataset.categoria || '';
+      var imgPrev = document.getElementById('produto-imagem-preview');
+      var imgAtual = document.getElementById('produto-imagem-atual');
+      if (btn.dataset.imagem) {
+        imgAtual.src = btn.dataset.imagem;
+        imgPrev.style.display = 'flex';
+      } else {
+        imgAtual.src = '';
+        imgPrev.style.display = 'none';
+      }
+      document.getElementById('produto-imagem').value = '';
       document.getElementById('produto-form-title').textContent = 'Editando: ' + (btn.dataset.nome || '');
       document.getElementById('produto-cancelar').style.display = 'inline-flex';
       document.getElementById('produto-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -718,6 +780,8 @@
   if (prodCancel) prodCancel.addEventListener('click', function(){
     document.getElementById('produto-form').reset();
     document.getElementById('produto-id').value = '';
+    document.getElementById('produto-imagem-preview').style.display = 'none';
+    document.getElementById('produto-imagem-atual').src = '';
     document.getElementById('produto-form-title').textContent = 'Novo plano';
     prodCancel.style.display = 'none';
   });
