@@ -1280,12 +1280,15 @@
       <p>A verdadeira mudança exige suporte contínuo. Por isso, criei um formato desenhado para quem está cansado de tentar sozinho e precisa de um direcionamento de perto.</p>
     </div>
 
-    {% if produtos and produtos|length > 0 %}
+    {% set fotos_cat = categorias | selectattr('nome', 'equalto', 'Fotos') | list | first if categorias else none %}
+    {% set fotos_cat_id = fotos_cat.id if fotos_cat else none %}
+    {% set planos_normais = produtos | rejectattr('categoria_id', 'equalto', fotos_cat_id) | list if fotos_cat_id else produtos %}
+    {% if planos_normais and planos_normais|length > 0 %}
     <div class="plans-grid">
-      {% for p in produtos %}
+      {% for p in planos_normais %}
       <div class="plan-card">
         <div>
-          {% if produtos|length == 3 and loop.index == 2 %}<span class="plan-tag">Mais procurado</span>{% endif %}
+          {% if planos_normais|length == 3 and loop.index == 2 %}<span class="plan-tag">Mais procurado</span>{% endif %}
           <h3>{{ p.nome }}</h3>
           {% if p.consulte %}
             <span class="plan-price">Consulte</span>
