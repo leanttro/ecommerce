@@ -347,6 +347,13 @@
             <label for="f-b1b">Texto do botão</label>
             <input type="text" id="f-b1b" name="banner1_botao" value="{{ loja.banner1_botao or '' }}">
           </div>
+          <div class="img-preview">
+            {% if loja.banner1_url %}<img src="{{ loja.banner1_url }}" alt="Banner principal atual">{% else %}<span class="hint">Sem foto cadastrada ainda.</span>{% endif %}
+            <div class="field" style="margin-bottom:0;">
+              <label for="f-banner1img">Trocar foto</label>
+              <input type="file" id="f-banner1img" name="bannerprincipal1" accept="image/*">
+            </div>
+          </div>
         </div>
 
         <div class="card">
@@ -362,6 +369,13 @@
           <div class="field">
             <label for="f-b2b">Texto do botão</label>
             <input type="text" id="f-b2b" name="banner2_botao" value="{{ loja.banner2_botao or '' }}">
+          </div>
+          <div class="img-preview">
+            {% if loja.banner2_url %}<img src="{{ loja.banner2_url }}" alt="Banner Filosofia atual">{% else %}<span class="hint">Sem foto cadastrada ainda.</span>{% endif %}
+            <div class="field" style="margin-bottom:0;">
+              <label for="f-banner2img">Trocar foto</label>
+              <input type="file" id="f-banner2img" name="bannerprincipal2" accept="image/*">
+            </div>
           </div>
         </div>
 
