@@ -580,8 +580,12 @@
     <!-- ═══════════════ PLANOS (produtos) ═══════════════ -->
     {% set fotos_cat = categorias | selectattr('nome', 'equalto', 'Fotos') | list | first if categorias else none %}
     {% set fotos_cat_id = fotos_cat.id if fotos_cat else none %}
-    {% set planos_normais = produtos | rejectattr('categoria_id', 'equalto', fotos_cat_id) | list if fotos_cat_id else produtos %}
+    {% set objetivos_cat = categorias | selectattr('nome', 'equalto', 'Objetivos') | list | first if categorias else none %}
+    {% set objetivos_cat_id = objetivos_cat.id if objetivos_cat else none %}
+    {% set grupos_especiais_ids = [fotos_cat_id, objetivos_cat_id] | select('!=', none) | list %}
+    {% set planos_normais = produtos | rejectattr('categoria_id', 'in', grupos_especiais_ids) | list if grupos_especiais_ids else produtos %}
     {% set fotos_produtos = produtos | selectattr('categoria_id', 'equalto', fotos_cat_id) | list if fotos_cat_id else [] %}
+    {% set objetivos_produtos = produtos | selectattr('categoria_id', 'equalto', objetivos_cat_id) | list if objetivos_cat_id else [] %}
     <section class="card-section" id="planos">
       <h2>Planos</h2>
       <div class="section-sub">Os planos de acompanhamento oferecidos no site.</div>
@@ -629,7 +633,7 @@
                   {% endfor %}
                 {% endif %}
               </select>
-              <span class="hint">Crie grupos na seção acima primeiro. Use o grupo "Fotos" pra guardar imagens sem exibir no site.</span>
+              <span class="hint">Crie grupos na seção acima primeiro. Use o grupo "Fotos" pra guardar imagens sem exibir no site, ou o grupo "Objetivos" pra cadastrar os focos de atuação (com foto) exibidos no site.</span>
             </div>
             <div class="field">
               <label for="produto-sort">Ordem de exibição</label>
@@ -648,7 +652,7 @@
               <span>Imagem atual — envie uma nova abaixo só se quiser trocar.</span>
             </div>
             <input type="file" name="imagem" id="produto-imagem" accept="image/*">
-            <span class="hint">Se o grupo for "Fotos", é essa imagem que vai aparecer na seção Banco de Fotos pra você copiar o link.</span>
+            <span class="hint">Se o grupo for "Fotos", é essa imagem que vai aparecer na seção Banco de Fotos pra você copiar o link. Se o grupo for "Objetivos", é essa imagem (com o nome como legenda) que aparece na seção "Onde posso te ajudar" do site.</span>
           </div>
           <button type="submit" class="btn btn-primary btn-small">Salvar plano</button>
           <button type="button" class="btn btn-ghost btn-small" id="produto-cancelar" style="display:none;">Cancelar edição</button>
@@ -685,6 +689,36 @@
           {% endfor %}
         {% else %}
           <div class="empty-state">Nenhuma foto salva ainda. Crie um grupo chamado exatamente "Fotos" (seção Grupos, acima) e depois cadastre um plano nesse grupo com uma imagem — ela aparece aqui pra você copiar o link.</div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- ═══════════════ OBJETIVOS DE ATUAÇÃO (categoria "Objetivos" — aparece no site) ═══════════════ -->
+    <section class="card-section" id="objetivos-galeria">
+      <h2>Objetivos de Atuação</h2>
+      <div class="section-sub">Itens do grupo "Objetivos" — aparecem no site na seção "Onde posso te ajudar", como colunas com foto e legenda. A ordem de exibição segue o campo "Ordem" de cada item.</div>
+
+      <div class="card">
+        {% if objetivos_produtos and objetivos_produtos|length > 0 %}
+          {% for o in objetivos_produtos %}
+          <div class="item-row">
+            <div class="item-row-info" style="display:flex; align-items:center; gap:14px;">
+              {% if o.imagem_destaque %}
+              <img src="{{ o.imagem_destaque }}" alt="{{ o.nome }}" style="width:64px; height:64px; object-fit:cover; border-radius:10px; border:1px solid var(--line); background:var(--panel); flex-shrink:0;">
+              {% endif %}
+              <div>
+                <strong>{{ o.nome }}</strong>
+                <span>Ordem: {{ o.sort if o.sort is not none else '—' }}</span>
+              </div>
+            </div>
+            <div class="item-row-actions">
+              <button type="button" class="btn btn-ghost btn-small" data-edit-produto data-id="{{ o.id }}" data-nome="{{ o.nome }}" data-preco="{{ o.preco }}" data-descricao="{{ o.descricao or '' }}" data-categoria="{{ o.categoria_id or '' }}" data-sort="{{ o.sort if o.sort is not none else '' }}" data-imagem="{{ o.imagem_destaque or '' }}">Editar</button>
+              <a class="btn btn-danger btn-small" href="/{{ loja.slug_url }}/admin/produto/excluir/{{ o.id }}" onclick="return confirm('Excluir este objetivo?');">Excluir</a>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">Nenhum objetivo cadastrado ainda. Crie um grupo chamado exatamente "Objetivos" (seção Grupos, acima) e depois cadastre um plano nesse grupo com nome curto (ex: "Emagrecimento") e uma imagem — ele aparece aqui e no site.</div>
         {% endif %}
       </div>
     </section>
