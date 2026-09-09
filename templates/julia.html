@@ -70,6 +70,61 @@
     --line: rgba(23,40,66,0.14);
   }
 
+  /* ============================================================
+     PACOTE DE MOVIMENTO — adicionado a pedido do cliente.
+     Só usa opacity / transform / clip-path (nunca layout, cor ou
+     espaçamento). Toda classe abaixo é aplicada via JS em runtime;
+     sem JS, nada tem opacity 0 por padrão — o site continua 100%
+     visível e funcional (progressive enhancement).
+     ============================================================ */
+
+  /* 1) Scroll reveal genérico (títulos, textos, cards, imagens) */
+  .reveal{
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1);
+    will-change: opacity, transform;
+  }
+  .reveal.in-view{ opacity: 1; transform: translateY(0); }
+
+  /* 2) "Cortina": usado nas imagens grandes de destaque (banner/sobre) */
+  .curtain{
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 1.1s cubic-bezier(.2,.7,.2,1), opacity .5s ease;
+  }
+  .curtain.in-view{ opacity: 1; clip-path: inset(0 0 0% 0); }
+
+  /* 3) Split-word reveal para os H2 de cada seção (mesma linguagem do hero) */
+  .split-word{
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(0.4em);
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+  }
+  .split-parent.in-view .split-word{ opacity: 1; transform: translateY(0); }
+
+  /* 4) Barra de progresso de scroll */
+  #scroll-progress-bar{
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    background: var(--clay);
+    z-index: 9999;
+    transition: width .12s linear;
+    pointer-events: none;
+  }
+
+  /* Usuários que pedem menos movimento no sistema veem tudo direto, sem animação */
+  @media (prefers-reduced-motion: reduce){
+    .reveal, .curtain, .split-word{ transition: none !important; }
+  }
+
+  /* Transição de transform pro tilt 3D voltar suave ao soltar o mouse
+     (aditivo — .blog-card já tinha isso, aqui só completa pros outros 2 cards) */
+  .plan-card, .quote-card{ transition: transform 0.3s ease; }
+
   *{ box-sizing: border-box; }
   html{ scroll-behavior: smooth; }
   body{
@@ -1777,6 +1832,145 @@
       }).join('');
     }
   }
+})();
+</script>
+
+<script>
+/* ============================================================
+   PACOTE DE MOVIMENTO — animações de entrada e microinterações.
+   Não altera design/estrutura visual: só adiciona classes/estilos
+   de opacity, transform e clip-path via JS. Roda depois do script
+   acima para já pegar o conteúdo dinâmico (comunidade/faq/acordeão)
+   que aquele script pode ter substituído.
+   ============================================================ */
+(function(){
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hasIO = 'IntersectionObserver' in window;
+
+  // ---------- 1) SCROLL REVEAL (fade + sobe) ----------
+  // Cada seletor forma um "grupo" pra escalonar o delay entre os irmãos.
+  var revealGroups = [
+    '.ll-banner .eyebrow, .ll-banner p',
+    '.ll-about2-copy .eyebrow, .ll-about2-copy p, .ll-about2-copy .ll-btn-solid',
+    '.ll-accordion',
+    '.focos-head .eyebrow',
+    '.foco-col',
+    '.process-head .eyebrow, .process-head p',
+    '.plan-card',
+    '.community-head h2, .community-head p',
+    '.feature-item',
+    '.quote-card',
+    '.community-actions',
+    '.blog-head .eyebrow',
+    '.blog-card',
+    '.blog-cta',
+    '.faq-head .eyebrow',
+    '.faq-list > *'
+  ];
+  revealGroups.forEach(function(sel){
+    var els = document.querySelectorAll(sel);
+    els.forEach(function(el, i){
+      el.classList.add('reveal');
+      el.style.transitionDelay = (Math.min(i, 6) * 90) + 'ms';
+    });
+  });
+
+  // ---------- 2) CORTINA (clip-path) nas imagens grandes de destaque ----------
+  document.querySelectorAll('.ll-banner-media, .ll-about2-photo').forEach(function(el){
+    el.classList.add('curtain');
+  });
+
+  // ---------- 3) SPLIT-WORD nos H2 de cada seção (mesma linguagem do hero) ----------
+  function splitWords(el){
+    if (el.dataset.split) return;
+    el.dataset.split = '1';
+    var frag = document.createDocumentFragment();
+    el.textContent.split(/(\s+)/).forEach(function(chunk){
+      if (chunk.trim() === ''){ frag.appendChild(document.createTextNode(chunk)); return; }
+      var span = document.createElement('span');
+      span.className = 'split-word';
+      span.textContent = chunk;
+      frag.appendChild(span);
+    });
+    el.innerHTML = '';
+    el.appendChild(frag);
+  }
+  var headings = document.querySelectorAll(
+    '.ll-banner h2, .ll-about2-copy h2, .focos-head h2, .process-head h2, .community-head h2, .blog-head h2, .faq-head h2'
+  );
+  headings.forEach(function(h){
+    splitWords(h);
+    h.classList.add('split-parent');
+    h.querySelectorAll('.split-word').forEach(function(w, wi){
+      w.style.transitionDelay = (wi * 35) + 'ms';
+    });
+  });
+
+  // ---------- Observer único que dispara reveal + cortina + split-word ----------
+  var toObserve = document.querySelectorAll('.reveal, .curtain, .split-parent');
+  if (reduceMotion || !hasIO){
+    toObserve.forEach(function(el){ el.classList.add('in-view'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+    toObserve.forEach(function(el){ io.observe(el); });
+  }
+
+  // ---------- 4) Parallax sutil na foto da seção "Sobre" ----------
+  var parallaxImg = document.querySelector('.ll-about2-photo img');
+  if (parallaxImg && !reduceMotion){
+    var ticking = false;
+    function updateParallax(){
+      var rect = parallaxImg.parentElement.getBoundingClientRect();
+      var vh = window.innerHeight;
+      var center = rect.top + rect.height / 2;
+      var offset = ((center - vh / 2) * 0.06).toFixed(1);
+      parallaxImg.style.transform = 'translateY(' + offset + 'px)';
+      ticking = false;
+    }
+    window.addEventListener('scroll', function(){
+      if (!ticking){ requestAnimationFrame(updateParallax); ticking = true; }
+    }, { passive: true });
+    updateParallax();
+  }
+
+  // ---------- 5) Tilt 3D leve nos cards, só em telas com mouse ----------
+  var supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (supportsHover && !reduceMotion){
+    document.querySelectorAll('.plan-card, .blog-card, .quote-card').forEach(function(card){
+      var rect = null;
+      card.addEventListener('mouseenter', function(){ rect = card.getBoundingClientRect(); });
+      card.addEventListener('mousemove', function(e){
+        if (!rect) rect = card.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width - 0.5;
+        var y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = 'perspective(800px) rotateX(' + (-y * 5).toFixed(2) + 'deg) rotateY(' + (x * 5).toFixed(2) + 'deg) translateY(-4px)';
+      });
+      card.addEventListener('mouseleave', function(){
+        rect = null;
+        card.style.transform = '';
+      });
+    });
+  }
+
+  // ---------- 6) Barra de progresso de scroll ----------
+  var bar = document.createElement('div');
+  bar.id = 'scroll-progress-bar';
+  document.body.appendChild(bar);
+  function updateProgress(){
+    var doc = document.documentElement;
+    var scrollTop = doc.scrollTop || document.body.scrollTop;
+    var height = doc.scrollHeight - doc.clientHeight;
+    bar.style.width = (height > 0 ? (scrollTop / height) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', function(){ requestAnimationFrame(updateProgress); }, { passive: true });
+  updateProgress();
 })();
 </script>
 
