@@ -1325,11 +1325,13 @@
 {% set objetivos_produtos = produtos | selectattr('categoria_id', 'equalto', objetivos_cat_id) | list if objetivos_cat_id else [] %}
 
 <!-- OBJETIVOS / FOCOS DE ATUAÇÃO
-     Dinâmico: puxa de `produtos` filtrados pela categoria "Objetivos" (mesmo contrato
-     do app.py — nome, imagem_destaque, sort). Cada item vira uma coluna: nome -> legenda
-     acima, imagem_destaque -> foto abaixo, ordenadas pelo campo sort (já vem ordenado
-     do app.py). Categoria "Objetivos" nunca aparece na grade de planos (ver filtro acima).
-     Enquanto não houver item cadastrado, a seção inteira fica oculta. -->
+     Dinâmico: puxa de `produtos` filtrados pela categoria "Objetivos". IMPORTANTE: na rota
+     pública (app.py) o produto é remontado num dict novo e o campo de imagem vem como
+     "imagem" (URL já resolvida por get_img_url), NÃO como "imagem_destaque" — esse nome só
+     existe no dict usado pelo painel admin. Por isso aqui usamos o.imagem, não o.imagem_destaque.
+     Cada item vira uma coluna: nome -> legenda acima, imagem -> foto abaixo, ordenadas pelo
+     campo sort (já vem ordenado do app.py). Categoria "Objetivos" nunca aparece na grade de
+     planos (ver filtro acima). Enquanto não houver item cadastrado, a seção inteira fica oculta. -->
 {% if objetivos_produtos and objetivos_produtos|length > 0 %}
 <section class="focos" id="objetivos">
   <div class="wrap">
@@ -1342,8 +1344,8 @@
     {% for o in objetivos_produtos %}
     <div class="foco-col">
       <span class="foco-label">{{ o.nome }}</span>
-      {% if o.imagem_destaque %}
-      <img src="{{ o.imagem_destaque }}" alt="{{ o.nome }}" loading="lazy">
+      {% if o.imagem %}
+      <img src="{{ o.imagem }}" alt="{{ o.nome }}" loading="lazy">
       {% endif %}
     </div>
     {% endfor %}
