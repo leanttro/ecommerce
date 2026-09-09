@@ -46,6 +46,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Julia Theila | Nutricionista Clínica</title>
+<link rel="icon" type="image/png" href="{{ loja.logo or 'https://juliatheila.com.br/assets/images/1.png' }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -388,15 +389,19 @@
   }
   .focos-strip{
     display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: clamp(16px, 3vw, 32px);
     width: 100%;
     overflow-x: auto;
+    border-top: 1px solid var(--line);
     scroll-snap-type: x proximity;
     -webkit-overflow-scrolling: touch;
   }
   .focos-strip::-webkit-scrollbar{ display: none; }
   .foco-col{
-    flex: 1 1 0;
-    min-width: 150px;
+    flex: 0 0 auto;
+    width: clamp(120px, 15vw, 160px);
     scroll-snap-align: start;
     display: flex;
     flex-direction: column;
@@ -404,23 +409,22 @@
   .foco-label{
     display: block;
     text-align: center;
-    padding: 16px 12px 20px;
-    border-top: 1px solid var(--line);
+    padding: 16px 4px 18px;
     font-family: 'Fraunces', serif;
     font-weight: 600;
-    font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+    font-size: clamp(0.9rem, 1.2vw, 1.05rem);
     color: var(--text);
     line-height: 1.25;
   }
   .foco-col img{
     width: 100%;
-    height: clamp(260px, 32vw, 400px);
+    aspect-ratio: 1 / 3;
     object-fit: cover;
+    border-radius: 4px;
     display: block;
   }
   @media (max-width: 780px){
-    .foco-col{ min-width: 130px; }
-    .foco-col img{ height: 220px; }
+    .foco-col{ width: 110px; }
   }
 
   /* ============ PROCESS / PLAN CARD ============ */
@@ -710,7 +714,7 @@
     top: 28px; left: clamp(24px, 3vw, 40px);
     display: inline-flex;
   }
-  .ll-logo img{ height: 70px; width: auto; filter: brightness(0) invert(1); }
+  .ll-logo img{ height: 140px; width: auto; }
   @media (max-width: 900px){
     .ll-logo{ display: none; }
   }
