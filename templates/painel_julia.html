@@ -492,6 +492,13 @@
             <label for="q-tags">Tags (separadas por vírgula)</label>
             <input type="text" id="q-tags" placeholder="Essencial, Intensivo, Transformação">
           </div>
+          <div class="img-preview">
+            {% if loja.bannermenor2_url %}<img src="{{ loja.bannermenor2_url }}" alt="Foto da Comunidade atual">{% else %}<span class="hint">Sem foto cadastrada ainda.</span>{% endif %}
+            <div class="field" style="margin-bottom:0;">
+              <label for="f-bannermenor2img">Trocar foto</label>
+              <input type="file" id="f-bannermenor2img" name="bannermenor2" accept="image/*">
+            </div>
+          </div>
         </div>
 
         <div class="card">
