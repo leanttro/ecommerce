@@ -1219,7 +1219,7 @@
         {% if not loja.ocultar_blog and posts and posts|length > 0 %}<a href="#blog">Blog</a>{% endif %}
       </div>
     </nav>
-    <img class="ll-hero-photo" src="https://juliatheila.com.br/assets/images/_37A3761.jpg" alt="Júlia Theila, nutricionista clínica">
+    <img class="ll-hero-photo" src="{{ loja.banner1 or 'https://juliatheila.com.br/assets/images/_37A3761.jpg' }}" alt="Júlia Theila, nutricionista clínica">
     <div class="ll-hero-overlay-text">
       <span class="ll-eyebrow">Ciência, escuta e presença em cada consulta</span>
       <h2 class="ll-big-word">EQUILÍBRI<span class="ll-logo-mark"><img src="{{ loja.logo or 'https://juliatheila.com.br/assets/images/1.png' }}" alt=""></span>.</h2>
