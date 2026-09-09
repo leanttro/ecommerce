@@ -98,7 +98,7 @@
 
   /* 1) Scroll reveal genérico (títulos, textos, cards, imagens) */
   .reveal{
-    opacity: 0;
+    opacity: 0.001; /* nunca 0 puro — evita "sumiço total" percebido como bug em qualquer engine */
     transform: translateY(28px);
     transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1);
     will-change: opacity, transform;
@@ -107,11 +107,13 @@
 
   /* 2) "Cortina": usado nas imagens grandes de destaque (banner/sobre) */
   .curtain{
-    opacity: 0;
-    clip-path: inset(0 0 100% 0);
-    transition: clip-path 1.1s cubic-bezier(.2,.7,.2,1), opacity .5s ease;
+    /* Antes começava com opacity:0 (foto sumia se o JS falhasse). Agora a foto
+       fica sempre visível — só um corte parcial de 18% que "abre" com o scroll,
+       então na pior hipótese (JS não roda) a foto aparece quase inteira. */
+    clip-path: inset(0 0 18% 0);
+    transition: clip-path 1.1s cubic-bezier(.2,.7,.2,1);
   }
-  .curtain.in-view{ opacity: 1; clip-path: inset(0 0 0% 0); }
+  .curtain.in-view{ clip-path: inset(0 0 0% 0); }
 
   /* 3) Split-word reveal para os H2 de cada seção (mesma linguagem do hero) */
   .split-word{
@@ -1936,8 +1938,16 @@
           io.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+    }, { threshold: 0.1, rootMargin: '0px 0px 0px 0px' });
     toObserve.forEach(function(el){ io.observe(el); });
+
+    // TRAVA DE SEGURANÇA: se por qualquer motivo (bug de navegador, elemento com
+    // altura 0 no momento do observe, etc.) o observer não disparar pra algum
+    // elemento, força a revelação de tudo depois de 1.5s. Garante que nada fica
+    // invisível pra sempre.
+    setTimeout(function(){
+      toObserve.forEach(function(el){ el.classList.add('in-view'); });
+    }, 1500);
   }
 
   // ---------- 4) Parallax sutil na foto da seção "Sobre" ----------
