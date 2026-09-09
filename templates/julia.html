@@ -448,7 +448,7 @@
     gap: 40px;
     align-items: center;
   }
-  @media (max-width: 780px){ .plan-card{ grid-template-columns: 1fr; } }
+  @media (max-width: 780px){ .plan-card{ grid-template-columns: 1fr; gap: 14px; } }
   .plan-tag{
     display: inline-block;
     background: var(--gold-foil);
@@ -465,7 +465,7 @@
     margin-bottom: 10px;
     color: #fff;
   }
-  .plan-list{ list-style: none; margin: 10px 0 0; padding: 0; }
+  .plan-list{ list-style: none; margin: 0; padding: 0; }
   .plan-list li{
     display: flex; gap: 12px; align-items: flex-start;
     font-size: 0.98rem; line-height: 1.55;
@@ -507,6 +507,7 @@
     grid-template-columns: 1fr;
     display: flex;
     flex-direction: column;
+    gap: 8px;
   }
   .plan-price{
     display: block;
@@ -518,9 +519,27 @@
   }
   .plan-card .plan-cta{ margin-top: auto; align-self: flex-start; }
 
+  @media (max-width: 780px){
+    .plan-tag{ display: block; width: fit-content; margin-left: auto; margin-right: auto; }
+  }
+
+  /* Desktop apenas: título dos planos em 1 linha só, e reserva o espaço do selo
+     "Mais procurado" nos cards que não têm o selo, pra todos os títulos alinharem
+     na mesma altura. Não afeta a versão mobile (empilhada). */
+  @media (min-width: 781px){
+    .plans-grid .plan-card h3{
+      font-size: 1.32rem;
+      white-space: nowrap;
+    }
+    .plan-tag-spacer{ visibility: hidden; }
+  }
+  @media (max-width: 780px){
+    .plan-tag-spacer{ display: none; }
+  }
+
   /* ============ COMMUNITY GRID ============ */
-  .community{ background: var(--surface); padding: clamp(48px, 6vw, 84px) 0; }
-  .community-head{ max-width: 680px; margin-bottom: 48px; }
+  .community{ background: var(--surface); padding: clamp(16px, 2vw, 28px) 0 clamp(48px, 6vw, 84px); }
+  .community-head{ max-width: 680px; margin: 0 auto 48px; text-align: center; }
   .community-head h2{
     font-size: clamp(1.9rem, 3.4vw, 2.5rem);
     font-weight: 700;
@@ -604,7 +623,37 @@
   }
 
   /* ============ BLOG ============ */
-  .blog{ padding: clamp(48px, 6vw, 84px) 0; background: var(--surface); }
+  .blog{ padding: clamp(48px, 6vw, 84px) 0; background: var(--surface); position: relative; overflow: hidden; }
+  .blog-marquee{
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+    overflow: hidden;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .blog-marquee-track{
+    display: inline-flex;
+    animation: scroll 28s linear infinite;
+  }
+  .blog-marquee span{
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-style: italic;
+    font-size: clamp(2.6rem, 8vw, 6.5rem);
+    line-height: 1;
+    padding: 0 36px;
+    color: rgba(255, 255, 255, 0.55);
+    display: inline-flex;
+    align-items: center;
+    gap: 36px;
+  }
+  .blog-marquee span::after{ content: '✦'; font-size: 0.4em; color: rgba(255, 255, 255, 0.7); }
+  .blog .wrap{ position: relative; z-index: 1; }
+  .blog-cta{ display: flex; justify-content: center; margin-top: clamp(28px, 4vw, 44px); }
   .blog-head{ max-width: 560px; margin-bottom: 44px; }
   .blog-head h2{ font-size: clamp(1.9rem, 3.4vw, 2.5rem); font-weight: 700; }
   .blog-grid{
@@ -1430,7 +1479,11 @@
       {% for p in planos_normais %}
       <div class="plan-card">
         <div>
-          {% if planos_normais|length == 3 and loop.index == 2 %}<span class="plan-tag">Mais procurado</span>{% endif %}
+          {% if planos_normais|length == 3 and loop.index == 2 %}
+            <span class="plan-tag">Mais procurado</span>
+          {% else %}
+            <span class="plan-tag plan-tag-spacer" aria-hidden="true">Mais procurado</span>
+          {% endif %}
           <h3>{{ p.nome }}</h3>
           {% if p.consulte %}
             <span class="plan-price">Consulte</span>
@@ -1473,7 +1526,6 @@
 <section class="community" id="comunidade">
   <div class="wrap">
     <div class="community-head">
-      <span class="eyebrow">Exclusivo para pacientes</span>
       <h2>Comunidade sem pressa e com presença.</h2>
       <p>Apoio e educação alimentar pra sua jornada nunca ser solitária.</p>
     </div>
@@ -1535,9 +1587,17 @@
      Cadastre os artigos no painel e os cards substituem o estado vazio automaticamente. -->
 {% if not loja.ocultar_blog and posts and posts|length > 0 %}
 <section class="blog" id="blog">
+  <div class="blog-marquee" aria-hidden="true">
+    <div class="blog-marquee-track">
+      <span>Diário da Nutri — Por Júlia Theila</span>
+      <span>Diário da Nutri — Por Júlia Theila</span>
+      <span>Diário da Nutri — Por Júlia Theila</span>
+      <span>Diário da Nutri — Por Júlia Theila</span>
+    </div>
+  </div>
   <div class="wrap">
     <div class="blog-head">
-      <span class="eyebrow">Por Julia Theila</span>
+      <span class="eyebrow">Por Júlia Theila</span>
       <h2>{{ loja.titulo_blog or 'Leituras sem pressa sobre comida e comportamento.' }}</h2>
     </div>
     <div class="blog-grid">
@@ -1558,6 +1618,10 @@
         </div>
       </a>
       {% endfor %}
+    </div>
+    <!-- Botão placebo — trocar href="#" pela página do blog quando ela existir. -->
+    <div class="blog-cta">
+      <a href="#" class="btn-secondary">Ver todas as postagens</a>
     </div>
   </div>
 </section>
