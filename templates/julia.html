@@ -46,6 +46,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Julia Theila | Nutricionista Clínica</title>
+
+<!-- PREVIEW DO LINK (WhatsApp, Instagram, Facebook etc.) — Open Graph.
+     Imagem: loja.logo (com fallback fixo). Descrição: reaproveita o mesmo
+     texto do subtítulo do hero, cortado em ~160 caracteres pra não ficar
+     truncado de forma estranha nos apps de mensagem. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Julia Theila">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="{{ request.url }}">
+<meta property="og:title" content="Julia Theila | Nutricionista Clínica">
+<meta property="og:description" content="{{ (loja.banner1_subtitulo or 'Meu trabalho não é entregar um plano alimentar engessado — é reconstruir, passo a passo, a sua relação com a comida, com o seu corpo e com o seu próprio ritmo.') | truncate(160) }}">
+<meta property="og:image" content="{{ loja.logo or 'https://juliatheila.com.br/assets/images/1.png' }}">
+<meta property="og:image:alt" content="Julia Theila, nutricionista clínica">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Julia Theila | Nutricionista Clínica">
+<meta name="twitter:description" content="{{ (loja.banner1_subtitulo or 'Meu trabalho não é entregar um plano alimentar engessado — é reconstruir, passo a passo, a sua relação com a comida, com o seu corpo e com o seu próprio ritmo.') | truncate(160) }}">
+<meta name="twitter:image" content="{{ loja.logo or 'https://juliatheila.com.br/assets/images/1.png' }}">
 <link rel="icon" type="image/png" href="{{ loja.logo or 'https://juliatheila.com.br/assets/images/1.png' }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
