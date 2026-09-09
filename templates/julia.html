@@ -373,7 +373,7 @@
   .about p strong{ color: var(--text); font-weight: 600; }
 
   /* ============ OBJETIVOS / FOCOS DE ATUAÇÃO (filmstrip) ============ */
-  .focos{ padding: clamp(56px, 7vw, 96px) 0 0; background: var(--bg); }
+  .focos{ padding: clamp(28px, 3.5vw, 48px) 0 0; background: var(--bg); }
   .focos-head{
     max-width: 640px;
     margin: 0 auto 40px;
@@ -439,7 +439,7 @@
   .process-head p{ font-size: 1.05rem; line-height: 1.7; color: var(--text-soft); }
 
   .plan-card{
-    background: var(--olive-ink);
+    background: var(--olive-dark);
     color: #EEDFC8;
     border-radius: 28px;
     padding: clamp(36px, 5vw, 56px);
@@ -450,22 +450,22 @@
   }
   @media (max-width: 780px){ .plan-card{ grid-template-columns: 1fr; } }
   .plan-tag{
-    display: table;
+    display: inline-block;
     background: var(--gold-foil);
     color: var(--olive-dark);
     font-size: 0.78rem;
     font-weight: 700;
     padding: 6px 14px;
     border-radius: 100px;
-    margin: 0 auto 18px;
+    margin-bottom: 18px;
   }
   .plan-card h3{
     font-size: clamp(1.6rem, 2.6vw, 2rem);
     font-weight: 700;
-    margin-bottom: 4px;
+    margin-bottom: 10px;
     color: #fff;
   }
-  .plan-list{ list-style: none; margin: 0 0 0; padding: 0; }
+  .plan-list{ list-style: none; margin: 10px 0 0; padding: 0; }
   .plan-list li{
     display: flex; gap: 12px; align-items: flex-start;
     font-size: 0.98rem; line-height: 1.55;
@@ -713,13 +713,29 @@
     position: absolute;
     top: 28px; left: clamp(24px, 3vw, 40px);
     display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
   }
   .ll-logo img{ height: 140px; width: auto; }
+  .ll-logo-name{
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-align: center;
+    white-space: nowrap;
+    background: var(--gold-foil);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: var(--cream);
+  }
   @media (max-width: 900px){
     .ll-logo{ display: none; }
   }
 
-  .ll-left-content{ margin-top: 160px; }
+  .ll-left-content{ margin-top: 190px; }
   @media (max-width: 900px){
     .ll-left-content{ margin-top: 0; }
   }
@@ -780,10 +796,7 @@
     object-position: center 24%;
   }
   .ll-hero-right::after{
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(23,40,66,0.18) 0%, rgba(23,40,66,0.28) 45%, rgba(23,40,66,0.62) 100%);
-    z-index: 1;
+    content: none;
   }
 
   .ll-nav{
@@ -806,6 +819,7 @@
     font-weight: 500;
     font-size: 0.92rem;
     transition: opacity 0.2s ease;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
   }
   .ll-nav a:hover{ opacity: 0.75; }
   .ll-nav-cta{
@@ -893,6 +907,7 @@
     text-transform: uppercase;
     margin-bottom: 14px;
     opacity: 0.92;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.55), 0 1px 3px rgba(0,0,0,0.6);
   }
   .ll-big-word{
     font-family: 'Fraunces', serif;
@@ -905,6 +920,7 @@
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
+    text-shadow: 0 4px 18px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.6);
   }
   .ll-logo-mark{
     display: inline-flex;
@@ -1179,7 +1195,10 @@
 <!-- HERO estilo Lounge Lizard: painel colorido + foto com nav sobreposto -->
 <section class="ll-hero">
   <div class="ll-hero-left">
-    <a class="ll-logo" href="#"><img src="{{ loja.logo or 'https://juliatheila.com.br/assets/images/1.png' }}" alt="Julia Theila"></a>
+    <a class="ll-logo" href="#">
+      <img src="{{ loja.logo or 'https://juliatheila.com.br/assets/images/1.png' }}" alt="Julia Theila">
+      <span class="ll-logo-name">Julia Theila</span>
+    </a>
     <div class="ll-left-content">
       <h1>{{ loja.banner1_titulo or 'Construa uma vida saudável que você consegue sustentar. Sem pressa. Sem dietas.' }}</h1>
       <p>{{ loja.banner1_subtitulo or 'Meu trabalho não é entregar um plano alimentar engessado — é reconstruir, passo a passo, a sua relação com a comida, com o seu corpo e com o seu próprio ritmo. Nutrição clínica e comportamento alimentar, sem terrorismo nutricional.' }}</p>
