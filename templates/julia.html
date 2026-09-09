@@ -719,15 +719,15 @@
     .ll-logo{ display: none; }
   }
 
-  .ll-left-content{ margin-top: 96px; }
+  .ll-left-content{ margin-top: 160px; }
   @media (max-width: 900px){
     .ll-left-content{ margin-top: 0; }
   }
   .ll-left-content h1{
     font-family: 'Fraunces', serif;
     font-weight: 700;
-    font-size: clamp(1.8rem, 2.6vw, 2.3rem);
-    line-height: 1.18;
+    font-size: clamp(1.6rem, 2.2vw, 2.05rem);
+    line-height: 1.2;
     margin: 0 0 22px;
     color: #fff;
   }
@@ -872,7 +872,7 @@
     .ll-nav{ justify-content: space-between; padding: 20px 20px; }
     .ll-nav ul{ display: none; }
     .ll-nav-logo{ display: inline-flex; }
-    .ll-nav-logo img{ height: 30px; width: auto; filter: brightness(0) invert(1); }
+    .ll-nav-logo img{ height: 48px; width: auto; }
     .ll-burger{ display: flex; }
     .ll-nav-cta{
       width: 40px; height: 40px;
@@ -927,7 +927,6 @@
   .ll-logo-mark img{
     width: 62%; height: 62%;
     object-fit: contain;
-    filter: brightness(0) invert(1) opacity(0.82);
   }
 
   /* ============ LL BANNER (statement redesign) ============ */
@@ -1387,7 +1386,6 @@
           {% elif p.preco %}
             <span class="plan-price">R$ {{ p.preco }}</span>
           {% endif %}
-          <a class="plan-cta" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20plano%20{{ p.nome | urlencode }}." target="_blank" rel="noopener">Quero saber mais</a>
         </div>
         {% if p.descricao %}
         <ul class="plan-list">
@@ -1396,6 +1394,7 @@
           {% endfor %}
         </ul>
         {% endif %}
+        <a class="plan-cta" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20plano%20{{ p.nome | urlencode }}." target="_blank" rel="noopener">Quero saber mais</a>
       </div>
       {% endfor %}
     </div>
@@ -1404,7 +1403,6 @@
       <div>
         <span class="plan-tag">Mais procurado</span>
         <h3>Plano Intensivo de 3 Meses</h3>
-        <a class="plan-cta" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">Quero saber mais sobre o acompanhamento</a>
       </div>
       <ul class="plan-list">
         <li>Consultas quinzenais para ajustes rápidos e suporte emocional.</li>
@@ -1412,6 +1410,7 @@
         <li>Estratégias práticas para encaixar a boa alimentação na sua rotina real.</li>
         <li>Acesso exclusivo à nossa Comunidade de Pacientes — uma rede de apoio ativa.</li>
       </ul>
+      <a class="plan-cta" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">Quero saber mais sobre o acompanhamento</a>
     </div>
     {% endif %}
   </div>
