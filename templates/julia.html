@@ -500,6 +500,25 @@
   }
   @media (max-width: 780px){
     .foco-col{ width: 110px; }
+    /* Barra de rolagem visível no carrossel (mobile) — sinaliza pro usuário
+       que dá pra arrastar/rolar horizontalmente pra ver os outros itens. */
+    .focos-strip{
+      padding-bottom: 12px;
+      scrollbar-width: thin; /* Firefox */
+      scrollbar-color: var(--clay) var(--surface);
+    }
+    .focos-strip::-webkit-scrollbar{
+      display: block;
+      height: 6px;
+    }
+    .focos-strip::-webkit-scrollbar-track{
+      background: var(--surface);
+      border-radius: 10px;
+    }
+    .focos-strip::-webkit-scrollbar-thumb{
+      background: var(--clay);
+      border-radius: 10px;
+    }
   }
 
   /* ============ PROCESS / PLAN CARD ============ */
@@ -613,7 +632,7 @@
   }
 
   /* ============ COMMUNITY GRID ============ */
-  .community{ background: var(--surface); padding: clamp(16px, 2vw, 28px) 0 clamp(48px, 6vw, 84px); }
+  .community{ background: var(--surface); padding: clamp(36px, 4.5vw, 64px) 0 clamp(24px, 3vw, 42px); }
   .community-head{ max-width: 680px; margin: 0 auto 48px; text-align: center; }
   .community-head h2{
     font-size: clamp(1.9rem, 3.4vw, 2.5rem);
@@ -698,7 +717,7 @@
   }
 
   /* ============ BLOG ============ */
-  .blog{ padding: clamp(48px, 6vw, 84px) 0; background: var(--surface); position: relative; overflow: hidden; }
+  .blog{ padding: clamp(24px, 3vw, 42px) 0 clamp(48px, 6vw, 84px); background: var(--surface); position: relative; overflow: hidden; }
   .blog-marquee{
     position: absolute;
     top: 50%;
