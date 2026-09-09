@@ -711,19 +711,23 @@
 
   .ll-logo{
     position: absolute;
-    top: 28px; left: clamp(24px, 3vw, 40px);
+    top: 28px; left: 50%;
+    transform: translateX(-50%);
     display: inline-flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
+    text-decoration: none;
   }
   .ll-logo img{ height: 140px; width: auto; }
   .ll-logo-name{
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2rem, 2.8vw, 2.6rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: none;
     text-align: center;
+    text-decoration: none;
     white-space: nowrap;
     background: var(--gold-foil);
     -webkit-background-clip: text;
@@ -735,7 +739,7 @@
     .ll-logo{ display: none; }
   }
 
-  .ll-left-content{ margin-top: 190px; }
+  .ll-left-content{ margin-top: 240px; }
   @media (max-width: 900px){
     .ll-left-content{ margin-top: 0; }
   }
