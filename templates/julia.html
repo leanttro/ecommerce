@@ -231,10 +231,10 @@
     .nav-links{ display: none; }
   }
 
-  /* ============ MARQUEE ============ */
+  /* ============ MARQUEE (faixa leve, sem fundo escuro) ============ */
   .marquee{
-    background: var(--olive-ink);
-    color: #EDE6D6;
+    background: var(--surface);
+    color: var(--text);
     overflow: hidden;
     white-space: nowrap;
     padding: 13px 0;
@@ -250,8 +250,8 @@
     display: inline-flex;
     align-items: center;
     gap: 20px;
-    color: #EDE6D6;
-    opacity: 0.92;
+    color: var(--text);
+    opacity: 0.85;
   }
   .marquee span::after{
     content: '·';
@@ -533,10 +533,12 @@
   .process-head p{ font-size: 1.05rem; line-height: 1.7; color: var(--text-soft); }
 
   .plan-card{
-    background: var(--olive-dark);
-    color: #EEDFC8;
-    border-radius: 28px;
-    padding: clamp(36px, 5vw, 56px);
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--clay);
+    color: var(--text);
+    border-radius: 20px;
+    padding: clamp(32px, 5vw, 48px);
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 40px;
@@ -545,8 +547,8 @@
   @media (max-width: 780px){ .plan-card{ grid-template-columns: 1fr; gap: 14px; } }
   .plan-tag{
     display: inline-block;
-    background: var(--gold-foil);
-    color: var(--olive-dark);
+    background: var(--surface);
+    color: var(--text);
     font-size: 0.78rem;
     font-weight: 700;
     padding: 6px 14px;
@@ -557,15 +559,15 @@
     font-size: clamp(1.6rem, 2.6vw, 2rem);
     font-weight: 700;
     margin-bottom: 10px;
-    color: #fff;
+    color: var(--text);
   }
   .plan-list{ list-style: none; margin: 0; padding: 0; }
   .plan-list li{
     display: flex; gap: 12px; align-items: flex-start;
     font-size: 0.98rem; line-height: 1.55;
-    color: #D9CBAE;
+    color: var(--text-soft);
     padding: 10px 0;
-    border-top: 1px solid rgba(255,255,255,0.12);
+    border-top: 1px solid var(--line);
   }
   .plan-list li:first-child{ border-top: none; }
   .plan-list li::before{
@@ -578,8 +580,8 @@
   .plan-cta{
     display: inline-flex; align-items: center;
     padding: 16px 30px;
-    background: #fff;
-    color: var(--olive-ink);
+    background: var(--clay);
+    color: #fff;
     border-radius: 100px;
     text-decoration: none;
     font-size: 0.98rem;
@@ -587,7 +589,7 @@
     margin-top: 30px;
     transition: background 0.2s ease;
   }
-  .plan-cta:hover{ background: #EEDFC8; }
+  .plan-cta:hover{ background: var(--clay-dark); }
 
   /* GRID DE PLANOS (produtos) — reaproveita .plan-card/.plan-tag/.plan-list/.plan-cta,
      só empilha em coluna única dentro de cada card e organiza em 3 colunas no grid. */
@@ -608,7 +610,7 @@
     font-family: 'Fraunces', serif;
     font-size: clamp(1.5rem, 2.4vw, 1.9rem);
     font-weight: 700;
-    color: #fff;
+    color: var(--clay);
     margin: 4px 0 4px;
   }
   .plan-card .plan-cta{ margin-top: auto; align-self: flex-start; }
@@ -632,7 +634,7 @@
   }
 
   /* ============ COMMUNITY GRID ============ */
-  .community{ background: var(--surface); padding: clamp(36px, 4.5vw, 64px) 0 clamp(24px, 3vw, 42px); }
+  .community{ background: var(--white); padding: clamp(36px, 4.5vw, 64px) 0 clamp(24px, 3vw, 42px); border-top: 1px solid var(--line); }
   .community-head{ max-width: 680px; margin: 0 auto 48px; text-align: center; }
   .community-head h2{
     font-size: clamp(1.9rem, 3.4vw, 2.5rem);
@@ -869,156 +871,45 @@
     outline-offset: 3px;
   }
 
-  /* ============ LL-HERO (estrutura estilo Lounge Lizard) ============ */
-  .ll-hero{
-    display: flex;
-    min-height: 620px;
-  }
-  @media (max-width: 900px){ .ll-hero{ flex-direction: column; min-height: auto; } }
-
-  .ll-hero-left{
-    width: 390px;
-    min-width: 300px;
-    background: var(--olive-dark);
-    color: #fff;
-    padding: 32px clamp(24px, 3vw, 40px) 48px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative;
-  }
-  @media (max-width: 900px){ .ll-hero-left{ width: 100%; padding: 28px 24px 40px; } }
-
-  .ll-logo{
-    position: absolute;
-    top: 28px; left: 50%;
-    transform: translateX(-50%);
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-  }
-  .ll-logo img{ height: 140px; width: auto; }
-  .ll-logo-name{
-    font-family: 'Fraunces', serif;
-    font-size: clamp(2rem, 2.8vw, 2.6rem);
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    text-transform: none;
-    text-align: center;
-    text-decoration: none;
-    white-space: nowrap;
-    background: var(--gold-foil);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: var(--cream);
-  }
-  @media (max-width: 900px){
-    .ll-logo{ display: none; }
-  }
-
-  .ll-left-content{ margin-top: 240px; }
-  @media (max-width: 900px){
-    .ll-left-content{ margin-top: 0; }
-  }
-  .ll-left-content h1{
-    font-family: 'Fraunces', serif;
-    font-weight: 700;
-    font-size: clamp(1.6rem, 2.2vw, 2.05rem);
-    line-height: 1.2;
-    margin: 0 0 22px;
-    color: #fff;
-  }
-  .ll-left-content p{
-    font-size: 0.98rem;
-    line-height: 1.65;
-    margin: 0 0 32px;
-    color: rgba(255,255,255,0.92);
-    max-width: 42ch;
-  }
-  .ll-btn-dark{
-    display: inline-flex;
-    align-items: center;
-    padding: 15px 28px;
-    background: var(--olive);
-    color: #fff;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: background 0.2s ease;
-  }
-  .ll-btn-dark:hover{ background: var(--cream); color: var(--olive-dark); }
-
-  .ll-a11y{
-    position: absolute;
-    left: clamp(24px, 3vw, 40px);
-    bottom: 28px;
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-  }
-  .ll-a11y svg{ width: 22px; height: 22px; }
-
-  .ll-hero-right{
-    position: relative;
-    flex: 1;
-    overflow: hidden;
-    min-height: 340px;
-  }
-  @media (max-width: 900px){ .ll-hero-right{ order: -1; min-height: 320px; } }
-  .ll-hero-photo{
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    object-fit: cover;
-    object-position: center 24%;
-  }
-  .ll-hero-right::after{
-    content: none;
-  }
-
+  /* ============ NAV LIMPA (fundo branco, estilo referência) ============ */
   .ll-nav{
     position: relative; z-index: 5;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 34px;
-    padding: 24px clamp(20px, 3vw, 44px);
-    background: transparent;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 22px clamp(20px, 4vw, 56px);
+    background: var(--white);
+    border-bottom: 1px solid var(--line);
   }
-  .ll-nav-logo{ display: none; }
+  .ll-nav-logo{ display: inline-flex; align-items: center; }
+  .ll-nav-logo img{ height: 34px; width: auto; }
   .ll-nav ul{
     display: flex; gap: 30px;
     list-style: none; margin: 0; padding: 0;
   }
   .ll-nav a{
-    color: #fff;
+    color: var(--text);
     text-decoration: none;
     font-weight: 500;
     font-size: 0.92rem;
-    transition: opacity 0.2s ease;
-    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    transition: color 0.2s ease;
   }
-  .ll-nav a:hover{ opacity: 0.75; }
+  .ll-nav a:hover{ color: var(--clay); }
   .ll-nav-cta{
     background: var(--clay);
-    padding: 12px 24px;
+    padding: 13px 26px;
     border-radius: 100px;
     color: #fff !important;
     font-weight: 600;
+    font-size: 0.92rem;
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
     gap: 8px;
   }
   .ll-nav-cta-icon{ display: none; width: 18px; height: 18px; flex-shrink: 0; }
-  .ll-nav-cta:hover{ opacity: 1 !important; background: var(--clay-dark); }
+  .ll-nav-cta:hover{ background: var(--clay-dark); }
   .ll-nav-actions{
     display: flex;
     align-items: center;
@@ -1029,7 +920,7 @@
     width: 40px; height: 40px;
     border-radius: 50%;
     border: none;
-    background: rgba(255,255,255,0.16);
+    background: var(--surface);
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -1039,7 +930,7 @@
     content: '';
     display: block;
     width: 18px; height: 2px;
-    background: #fff;
+    background: var(--text);
     position: relative;
     transition: transform 0.2s ease, opacity 0.2s ease;
   }
@@ -1050,76 +941,113 @@
     position: absolute;
     top: 100%; left: 0; right: 0;
     z-index: 4;
-    background: rgba(23,40,66,0.94);
-    backdrop-filter: blur(4px);
+    background: var(--white);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 16px 30px rgba(23,40,66,0.08);
     padding: 8px 24px 20px;
     flex-direction: column;
     gap: 4px;
   }
   .ll-mobile-menu a{
-    color: #fff;
+    color: var(--text);
     text-decoration: none;
     font-weight: 500;
     font-size: 1rem;
     padding: 12px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.14);
+    border-bottom: 1px solid var(--line);
   }
   .ll-mobile-menu.is-open{ display: flex; }
 
   @media (max-width: 900px){
-    .ll-nav{ justify-content: space-between; padding: 20px 20px; }
+    .ll-nav{ padding: 18px 20px; }
     .ll-nav ul{ display: none; }
-    .ll-nav-logo{ display: inline-flex; max-width: 40%; }
-    .ll-nav-logo img{ height: 96px; width: auto; max-width: 100%; }
     .ll-burger{ display: flex; }
     .ll-nav-cta{ display: none; }
   }
 
-  .ll-hero-overlay-text{
-    position: absolute;
-    left: 0; right: 0; bottom: clamp(36px, 6vw, 76px);
-    z-index: 2;
-    text-align: center;
-    padding: 0 20px;
+  /* ============ HERO CLEAN (fundo branco, foto grande, sem sobreposição) ============ */
+  .ll-hero{
+    background: var(--white);
   }
-  .ll-eyebrow{
-    display: block;
-    color: #fff;
-    font-size: clamp(0.72rem, 1vw, 0.85rem);
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-    opacity: 0.92;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.55), 0 1px 3px rgba(0,0,0,0.6);
+  .ll-hero-grid{
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
+    align-items: center;
+    gap: clamp(28px, 5vw, 64px);
+    padding: clamp(40px, 6vw, 84px) clamp(20px, 4vw, 56px) clamp(32px, 5vw, 64px);
+    max-width: 1240px;
+    margin: 0 auto;
   }
-  .ll-big-word{
+  @media (max-width: 900px){
+    .ll-hero-grid{ grid-template-columns: 1fr; padding: 28px 20px 12px; }
+  }
+
+  .ll-hero-copy .eyebrow{ margin-bottom: 22px; }
+  .ll-hero-copy h1{
     font-family: 'Fraunces', serif;
-    font-weight: 700;
-    font-size: clamp(2.6rem, 8vw, 6.4rem);
-    line-height: 1;
-    color: #fff;
-    margin: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    font-weight: 600;
+    font-size: clamp(2rem, 3.6vw, 2.9rem);
+    line-height: 1.14;
+    margin: 0 0 20px;
+    color: var(--text);
+  }
+  .ll-hero-copy p{
+    font-size: 1.04rem;
+    line-height: 1.7;
+    margin: 0 0 34px;
+    color: var(--text-soft);
+    max-width: 46ch;
+  }
+  .ll-hero-actions{
+    display: flex;
     flex-wrap: wrap;
-    text-shadow: 0 4px 18px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.6);
+    align-items: center;
+    gap: 14px;
   }
-  .ll-logo-mark{
+  .ll-btn-dark{
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 0.82em;
-    height: 0.82em;
-    border-radius: 50%;
-    background: var(--gold-foil);
-    margin: 0 0.02em;
-    overflow: hidden;
+    padding: 15px 30px;
+    background: var(--clay);
+    color: #fff;
+    border-radius: 100px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background 0.2s ease, transform 0.2s ease;
   }
-  .ll-logo-mark img{
-    width: 78%; height: 78%;
-    object-fit: contain;
+  .ll-btn-dark:hover{ background: var(--clay-dark); transform: translateY(-1px); }
+  .ll-btn-ghost{
+    display: inline-flex;
+    align-items: center;
+    padding: 15px 26px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .ll-btn-ghost:hover{ border-color: var(--clay); color: var(--clay); }
+
+  .ll-hero-right{
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .ll-hero-photo{
+    width: 100%;
+    max-width: 460px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+  @media (max-width: 900px){
+    .ll-hero-right{ order: -1; }
+    .ll-hero-photo{ max-width: 320px; }
   }
 
   /* ============ LL BANNER (statement redesign) ============ */
@@ -1137,6 +1065,7 @@
     border-radius: 24px;
     overflow: hidden;
     aspect-ratio: 4/3;
+    background: var(--surface);
   }
   .ll-banner-media img{
     width: 100%; height: 100%;
@@ -1144,48 +1073,7 @@
     object-position: center 22%;
     transition: transform 0.7s ease;
   }
-  .ll-banner-media:hover img{ transform: scale(1.05); }
-  .ll-banner-media::after{
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(120deg, rgba(23,40,66,0.6) 0%, rgba(23,40,66,0.05) 60%);
-  }
-  .ll-banner-text{
-    position: absolute; left: clamp(20px, 4vw, 40px); top: 50%;
-    transform: translateY(-50%);
-    z-index: 2; max-width: 66%;
-  }
-  .ll-banner-text span{
-    display: block;
-    font-family: 'Fraunces', serif;
-    font-weight: 700;
-    font-size: clamp(1.7rem, 3.6vw, 2.7rem);
-    line-height: 1.08;
-    color: #fff;
-  }
-  .ll-banner-text span.accent{ color: var(--clay); }
-  .ll-banner-play{
-    position: absolute; right: clamp(16px, 3vw, 32px); top: 50%;
-    transform: translateY(-50%);
-    width: 104px; height: 104px;
-    border-radius: 50%;
-    background: var(--clay);
-    color: #fff;
-    display: flex; align-items: center; justify-content: center; text-align: center;
-    font-size: 0.76rem; font-weight: 700; letter-spacing: 0.02em; line-height: 1.35;
-    text-decoration: none;
-    z-index: 2;
-    transition: transform 0.25s ease, background 0.25s ease;
-    animation: ll-pulse-ring 2.6s ease-in-out infinite;
-  }
-  .ll-banner-play:hover{ transform: translateY(-50%) scale(1.08); background: var(--clay-dark); animation-play-state: paused; }
-  @keyframes ll-pulse-ring{
-    0%, 100%{ box-shadow: 0 0 0 0 rgba(193,122,84,0.5); }
-    50%{ box-shadow: 0 0 0 16px rgba(193,122,84,0); }
-  }
-  @media (max-width: 560px){
-    .ll-banner-play{ width: 78px; height: 78px; font-size: 0.66rem; }
-  }
+  .ll-banner-media:hover img{ transform: scale(1.03); }
 
   .ll-banner-copy h2{
     font-size: clamp(1.6rem, 2.8vw, 2.2rem);
@@ -1216,7 +1104,7 @@
 
   /* ============ LL ABOUT 2 (services-style accordion) ============ */
   .ll-about2{
-    background: var(--surface);
+    background: var(--white);
     padding: clamp(48px, 6vw, 84px) 0;
     position: relative;
   }
@@ -1376,48 +1264,45 @@
 </head>
 <body>
 
-<!-- HERO estilo Lounge Lizard: painel colorido + foto com nav sobreposto -->
-<section class="ll-hero">
-  <div class="ll-hero-left">
-    <a class="ll-logo" href="#">
-      <img src="{{ loja.logo or 'https://juliatheila.com.br/assets/images/1.png' }}" alt="Julia Theila">
-      <span class="ll-logo-name">Julia Theila</span>
+<!-- NAV clean: fundo branco, logo + menu + CTA -->
+<nav class="ll-nav">
+  <a class="ll-nav-logo" href="#"><img src="{{ loja.logo or 'https://juliatheila.com.br/assets/images/1.png' }}" alt="Julia Theila"></a>
+  <ul>
+    {% if not loja.ocultar_sobre %}<li><a href="#sobre">{{ loja.titulo_menu_sobre or 'Sobre' }}</a></li>{% endif %}
+    <li><a href="#filosofia">Filosofia</a></li>
+    <li><a href="#acompanhamento">Acompanhamento</a></li>
+    <li><a href="#comunidade">Comunidade</a></li>
+    {% if not loja.ocultar_blog and posts and posts|length > 0 %}<li><a href="#blog">Blog</a></li>{% endif %}
+  </ul>
+  <div class="ll-nav-actions">
+    <a class="ll-nav-cta" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">
+      <span class="ll-nav-cta-text">Agendar consulta</span>
     </a>
-    <div class="ll-left-content">
+    <button class="ll-burger" type="button" aria-label="Abrir menu" onclick="document.querySelector('.ll-mobile-menu').classList.toggle('is-open')"><span></span></button>
+  </div>
+  <div class="ll-mobile-menu">
+    {% if not loja.ocultar_sobre %}<a href="#sobre">{{ loja.titulo_menu_sobre or 'Sobre' }}</a>{% endif %}
+    <a href="#filosofia">Filosofia</a>
+    <a href="#acompanhamento">Acompanhamento</a>
+    <a href="#comunidade">Comunidade</a>
+    {% if not loja.ocultar_blog and posts and posts|length > 0 %}<a href="#blog">Blog</a>{% endif %}
+  </div>
+</nav>
+
+<!-- HERO clean: fundo branco, texto à esquerda, foto grande (fundo transparente) à direita -->
+<section class="ll-hero">
+  <div class="ll-hero-grid">
+    <div class="ll-hero-copy">
+      <span class="eyebrow">Ciência, escuta e presença em cada consulta</span>
       <h1>{{ loja.banner1_titulo or 'Construa uma vida saudável que você consegue sustentar. Sem pressa. Sem dietas.' }}</h1>
       <p>{{ loja.banner1_subtitulo or 'Meu trabalho não é entregar um plano alimentar engessado — é reconstruir, passo a passo, a sua relação com a comida, com o seu corpo e com o seu próprio ritmo. Nutrição clínica e comportamento alimentar, sem terrorismo nutricional.' }}</p>
-      <a class="ll-btn-dark" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">{{ loja.banner1_botao or 'Quero transformar minha alimentação' }}</a>
+      <div class="ll-hero-actions">
+        <a class="ll-btn-dark" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">{{ loja.banner1_botao or 'Quero transformar minha alimentação' }}</a>
+        {% if not loja.ocultar_sobre %}<a class="ll-btn-ghost" href="#sobre">Conheça a abordagem</a>{% endif %}
+      </div>
     </div>
-  </div>
-  <div class="ll-hero-right">
-    <nav class="ll-nav">
-      <a class="ll-nav-logo" href="#"><img src="{{ loja.logo or 'https://juliatheila.com.br/assets/images/1.png' }}" alt="Julia Theila"></a>
-      <ul>
-        {% if not loja.ocultar_sobre %}<li><a href="#sobre">{{ loja.titulo_menu_sobre or 'Sobre' }}</a></li>{% endif %}
-        <li><a href="#filosofia">Filosofia</a></li>
-        <li><a href="#acompanhamento">Acompanhamento</a></li>
-        <li><a href="#comunidade">Comunidade</a></li>
-        {% if not loja.ocultar_blog and posts and posts|length > 0 %}<li><a href="#blog">Blog</a></li>{% endif %}
-      </ul>
-      <div class="ll-nav-actions">
-        <a class="ll-nav-cta" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener" aria-label="Falar com a equipe no WhatsApp">
-          <svg class="ll-nav-cta-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.48 1.32 5.02L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.06h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.29c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.55-3.7 8.24-8.24 8.24zm4.52-6.17c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.13-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.39-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.44-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.42-.14 0-.31-.01-.48-.01-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08 0 1.23.89 2.41 1.02 2.58.12.17 1.75 2.67 4.24 3.75.59.26 1.06.41 1.42.52.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.16-.48-.28z"/></svg>
-          <span class="ll-nav-cta-text">Falar com a equipe</span>
-        </a>
-        <button class="ll-burger" type="button" aria-label="Abrir menu" onclick="document.querySelector('.ll-mobile-menu').classList.toggle('is-open')"><span></span></button>
-      </div>
-      <div class="ll-mobile-menu">
-        {% if not loja.ocultar_sobre %}<a href="#sobre">{{ loja.titulo_menu_sobre or 'Sobre' }}</a>{% endif %}
-        <a href="#filosofia">Filosofia</a>
-        <a href="#acompanhamento">Acompanhamento</a>
-        <a href="#comunidade">Comunidade</a>
-        {% if not loja.ocultar_blog and posts and posts|length > 0 %}<a href="#blog">Blog</a>{% endif %}
-      </div>
-    </nav>
-    <img class="ll-hero-photo" src="{{ loja.banner1 or 'https://juliatheila.com.br/assets/images/_37A3761.jpg' }}" alt="Júlia Theila, nutricionista clínica">
-    <div class="ll-hero-overlay-text">
-      <span class="ll-eyebrow">Ciência, escuta e presença em cada consulta</span>
-      <h2 class="ll-big-word">EQUILÍBRI<span class="ll-logo-mark"><img src="{{ loja.logo or 'https://juliatheila.com.br/assets/images/1.png' }}" alt=""></span>.</h2>
+    <div class="ll-hero-right">
+      <img class="ll-hero-photo" src="{{ loja.banner1 or 'https://juliatheila.com.br/assets/images/_37A3761.jpg' }}" alt="Júlia Theila, nutricionista clínica">
     </div>
   </div>
 </section>
@@ -1438,11 +1323,6 @@
   <div class="wrap ll-banner-grid">
     <div class="ll-banner-media">
       <img src="{{ loja.banner2 or 'https://juliatheila.com.br/assets/images/_37A3761.jpg' }}" alt="Júlia Theila, nutricionista clínica">
-      <div class="ll-banner-text">
-        <span>Sem dieta.</span>
-        <span class="accent">Sem pressa.</span>
-      </div>
-      <a class="ll-banner-play" href="#acompanhamento">Conhecer<br>o método</a>
     </div>
     <div class="ll-banner-copy">
       <span class="eyebrow">A verdadeira nutrição</span>
