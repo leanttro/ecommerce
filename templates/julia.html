@@ -1177,30 +1177,56 @@
   .ll-hero-card--ink{ background: var(--olive-dark); color: var(--cream); }
   .ll-hero-card--ink .ll-hero-card-icon{ background: rgba(238,223,200,0.16); }
 
-  /* ============ LL BANNER (statement redesign) ============ */
-  .ll-banner{ padding: clamp(48px, 6vw, 84px) 0; }
-  .ll-banner-grid{
-    display: grid;
-    grid-template-columns: 1.25fr 1fr;
-    gap: clamp(28px, 4vw, 56px);
+  /* ============ LL BANNER (foto de fundo full-bleed da seção, texto do lado oposto) ============
+     A foto (loja.banner2) preenche a seção inteira como background — pensada pra fotos com
+     fundo claro/liso e sem sombra própria (ex.: fundo branco de estúdio), já que aqui não
+     aplicamos nenhum overlay escuro por cima. O texto fica na coluna oposta à pessoa na foto. */
+  .ll-banner{
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: clamp(440px, 52vw, 600px);
+    display: flex;
     align-items: center;
   }
-  @media (max-width: 900px){ .ll-banner-grid{ grid-template-columns: 1fr; } }
-
-  .ll-banner-media{
-    position: relative;
-    border-radius: 24px;
-    overflow: hidden;
-    aspect-ratio: 4/3;
-    background: var(--surface);
+  .ll-banner-bg{
+    position: absolute;
+    inset: 0;
+    z-index: 0;
   }
-  .ll-banner-media img{
+  .ll-banner-bg img{
     width: 100%; height: 100%;
     object-fit: cover;
-    object-position: center 22%;
+    /* Ajuste este object-position conforme o enquadramento real da foto enviada —
+       "right center" pressupõe a pessoa posicionada mais à direita do quadro. */
+    object-position: right center;
     transition: transform 0.7s ease;
   }
-  .ll-banner-media:hover img{ transform: scale(1.03); }
+  .ll-banner:hover .ll-banner-bg img{ transform: scale(1.03); }
+
+  .ll-banner-inner{
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, 4vw, 56px);
+    align-items: center;
+  }
+  .ll-banner-copy{ grid-column: 1; }
+
+  @media (max-width: 900px){
+    /* Mobile: a foto continua de fundo (agora centralizada/no canto, não mais só à direita)
+       e o texto sobe pro topo da seção, sobre a área mais "limpa" da foto. */
+    .ll-banner{
+      min-height: clamp(520px, 128vw, 660px);
+      align-items: flex-start;
+      padding-top: clamp(36px, 9vw, 56px);
+    }
+    .ll-banner-bg img{ object-position: center top; }
+    .ll-banner-inner{ grid-template-columns: 1fr; }
+    .ll-banner-copy{ grid-column: 1; }
+  }
 
   .ll-banner-copy h2{
     font-size: clamp(1.6rem, 2.8vw, 2.2rem);
@@ -1471,10 +1497,10 @@
 
 <!-- BANNER (estilo Lounge Lizard "Best of Breed") -->
 <section class="ll-banner" id="filosofia">
-  <div class="wrap ll-banner-grid">
-    <div class="ll-banner-media">
-      <img src="{{ loja.banner2 or 'https://juliatheila.com.br/assets/images/_37A3761.jpg' }}" alt="Júlia Theila, nutricionista clínica">
-    </div>
+  <div class="ll-banner-bg">
+    <img src="{{ loja.banner2 or 'https://juliatheila.com.br/assets/images/_37A3761.jpg' }}" alt="Júlia Theila, nutricionista clínica">
+  </div>
+  <div class="wrap ll-banner-inner">
     <div class="ll-banner-copy">
       <span class="eyebrow">A verdadeira nutrição</span>
       <h2>{{ loja.banner2_titulo or 'Você não precisa de mais uma dieta com data para acabar.' }}</h2>
@@ -1946,7 +1972,7 @@
   });
 
   // ---------- 2) CORTINA (clip-path) nas imagens grandes de destaque ----------
-  document.querySelectorAll('.ll-banner-media, .ll-about2-photo').forEach(function(el){
+  document.querySelectorAll('.ll-banner-bg, .ll-about2-photo').forEach(function(el){
     el.classList.add('curtain');
   });
 
