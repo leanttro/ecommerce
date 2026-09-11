@@ -1214,6 +1214,20 @@
   }
   .ll-banner-copy{ grid-column: 1; }
 
+  .ll-banner-copy h2{
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0 0 16px;
+  }
+  .ll-banner-copy p{
+    font-size: 0.98rem;
+    line-height: 1.65;
+    color: var(--text-soft);
+    margin: 0 0 22px;
+    max-width: 40ch;
+  }
+
   @media (max-width: 900px){
     /* Mobile: a foto continua de fundo full-bleed da seção, mas o texto vira um
        card sólido flutuando sobre a foto — assim ele nunca "gruda" visualmente
@@ -1249,21 +1263,7 @@
       margin-bottom: 10px;
       max-width: 62%;
     }
-    .ll-banner-copy p{ color: rgba(255,255,255,0.92); font-size: 0.78rem; max-width: 10%; }
-  }
-
-  .ll-banner-copy h2{
-    font-size: clamp(1.5rem, 2.6vw, 2rem);
-    font-weight: 700;
-    line-height: 1.25;
-    margin: 0 0 16px;
-  }
-  .ll-banner-copy p{
-    font-size: 0.98rem;
-    line-height: 1.65;
-    color: var(--text-soft);
-    margin: 0 0 22px;
-    max-width: 40ch;
+    .ll-banner-copy p{ color: rgba(255,255,255,0.92); font-size: 0.78rem; max-width: 45%; }
   }
   .ll-btn-solid{
     display: inline-flex;
