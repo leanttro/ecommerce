@@ -999,10 +999,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background:
-      linear-gradient(90deg, rgba(2,10,25,0.72) 0%, rgba(2,10,25,0.34) 26%, rgba(2,10,25,0) 46%, rgba(2,10,25,0) 62%, rgba(2,10,25,0.55) 100%),
-      linear-gradient(to top, rgba(2,10,25,0.6) 0%, rgba(2,10,25,0.05) 32%, transparent 55%),
-      linear-gradient(to bottom, rgba(2,10,25,0.5) 0%, rgba(2,10,25,0) 16%);
+    background: linear-gradient(to top, rgba(2,10,25,0.22) 0%, rgba(2,10,25,0) 38%);
   }
   .ll-hero-grid{
     position: relative;
@@ -1023,8 +1020,8 @@
     .ll-hero-grid{
       grid-template-columns: 1fr;
       grid-template-areas: "brand" "copy" "actions";
-      padding: 300px 20px 132px;
-      gap: 22px;
+      padding: 340px 20px 100px;
+      gap: 16px;
     }
   }
 
@@ -1041,6 +1038,7 @@
     color: #fff;
     margin: 0 0 6px;
     line-height: 1;
+    text-shadow: 0 1px 10px rgba(2,10,25,0.55), 0 1px 3px rgba(2,10,25,0.5);
   }
   .ll-hero-role{
     font-size: 0.82rem;
@@ -1049,6 +1047,7 @@
     text-transform: uppercase;
     color: var(--sky);
     margin: 0 0 28px;
+    text-shadow: 0 1px 8px rgba(2,10,25,0.55);
   }
   .ll-hero-actions{
     display: flex;
@@ -1096,6 +1095,7 @@
     margin: 0 0 18px;
     color: #fff;
     text-align: right;
+    text-shadow: 0 1px 10px rgba(2,10,25,0.55), 0 1px 3px rgba(2,10,25,0.5);
   }
   .ll-hero-copy h1 em{
     font-style: italic;
@@ -1114,9 +1114,14 @@
     text-align: right;
     margin-left: auto;
     max-width: 40ch;
+    text-shadow: 0 1px 8px rgba(2,10,25,0.5);
   }
   @media (max-width: 900px){
     .ll-hero-copy h1, .ll-hero-copy p{ text-align: left; margin-left: 0; }
+    .ll-hero-brand{ font-size: 1.5rem; margin-bottom: 4px; }
+    .ll-hero-role{ font-size: 0.72rem; margin-bottom: 18px; }
+    .ll-hero-copy h1{ font-size: 1.4rem; margin-bottom: 12px; }
+    .ll-hero-copy p{ font-size: 0.88rem; }
     .ll-btn-dark, .ll-btn-ghost{ padding: 12px 22px; font-size: 0.85rem; }
   }
 
