@@ -238,6 +238,10 @@
     overflow: hidden;
     white-space: nowrap;
     padding: 13px 0;
+    margin-top: clamp(56px, 8vw, 96px);
+  }
+  @media (max-width: 900px){
+    .marquee{ margin-top: 48px; }
   }
   .marquee-track{
     display: inline-flex;
@@ -883,7 +887,7 @@
     border-bottom: 1px solid var(--line);
   }
   .ll-nav-logo{ display: inline-flex; align-items: center; }
-  .ll-nav-logo img{ height: 34px; width: auto; }
+  .ll-nav-logo img{ height: 52px; width: auto; }
   .ll-nav ul{
     display: flex; gap: 30px;
     list-style: none; margin: 0; padding: 0;
@@ -985,6 +989,9 @@
     object-fit: cover;
     object-position: center 22%;
   }
+  @media (max-width: 900px){
+    .ll-hero-bg img{ object-position: 68% 26%; }
+  }
   /* Overlay: escurece mais nas bordas (esquerda pro logo/CTA, base pra legibilidade
      e transição suave até os cards flutuantes) — mantém o centro/rosto claro, à mostra */
   .ll-hero-bg::after{
@@ -1001,6 +1008,9 @@
     width: 100%;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "brand copy"
+      "actions copy";
     align-items: end;
     gap: clamp(24px, 5vw, 64px);
     padding: clamp(140px, 20vw, 220px) clamp(20px, 4vw, 56px) clamp(96px, 11vw, 148px);
@@ -1008,10 +1018,20 @@
     margin: 0 auto;
   }
   @media (max-width: 900px){
-    .ll-hero-grid{ grid-template-columns: 1fr; padding: 120px 20px 132px; gap: 32px; }
+    .ll-hero-grid{
+      grid-template-columns: 1fr;
+      grid-template-areas: "brand" "copy" "actions";
+      padding: 210px 20px 132px;
+      gap: 22px;
+    }
   }
 
-  .ll-hero-brandblock{ align-self: end; }
+  .ll-hero-brandblock{ grid-area: brand; align-self: end; }
+  .ll-hero-actions{ grid-area: actions; align-self: start; }
+  @media (max-width: 900px){
+    .ll-hero-brandblock{ align-self: auto; }
+    .ll-hero-actions{ align-self: auto; margin-top: 6px; }
+  }
   .ll-hero-brand{
     font-family: 'Fraunces', serif;
     font-weight: 600;
@@ -1064,7 +1084,7 @@
   }
   .ll-btn-ghost:hover{ border-color: #fff; background: rgba(255,255,255,0.16); }
 
-  .ll-hero-copy{ align-self: start; margin-top: 0; }
+  .ll-hero-copy{ grid-area: copy; align-self: start; margin-top: 0; }
   .ll-hero-copy .eyebrow{ display: none; }
   .ll-hero-copy h1{
     font-family: 'Fraunces', serif;
@@ -1095,6 +1115,7 @@
   }
   @media (max-width: 900px){
     .ll-hero-copy h1, .ll-hero-copy p{ text-align: left; margin-left: 0; }
+    .ll-btn-dark, .ll-btn-ghost{ padding: 12px 22px; font-size: 0.85rem; }
   }
 
   /* Cards flutuantes na base do hero, sobrepondo a seção seguinte */
@@ -1151,7 +1172,7 @@
   .ll-hero-card--clay{ background: var(--clay); color: #fff; }
   .ll-hero-card--clay .ll-hero-card-icon{ background: rgba(255,255,255,0.22); }
   .ll-hero-card--cream{ background: var(--surface); color: var(--text); }
-  .ll-hero-card--ink{ background: var(--olive-ink); color: var(--cream); }
+  .ll-hero-card--ink{ background: var(--olive-dark); color: var(--cream); }
   .ll-hero-card--ink .ll-hero-card-icon{ background: rgba(238,223,200,0.16); }
 
   /* ============ LL BANNER (statement redesign) ============ */
@@ -1402,14 +1423,14 @@
     <div class="ll-hero-brandblock">
       <h2 class="ll-hero-brand">Julia Theila</h2>
       <p class="ll-hero-role">Nutricionista Clínica</p>
-      <div class="ll-hero-actions">
-        <a class="ll-btn-dark" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">Agendar consulta</a>
-        {% if not loja.ocultar_sobre %}<a class="ll-btn-ghost" href="#sobre">Conheça a abordagem</a>{% endif %}
-      </div>
     </div>
     <div class="ll-hero-copy">
       <h1>Faça as pazes com a comida, com o seu corpo <em>e com você</em>.</h1>
       <p>{{ loja.banner1_subtitulo or 'Meu trabalho não é entregar um plano alimentar engessado — é reconstruir, passo a passo, a sua relação com a comida, com o seu corpo e com o seu próprio ritmo.' }}</p>
+    </div>
+    <div class="ll-hero-actions">
+      <a class="ll-btn-dark" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">Agendar consulta</a>
+      {% if not loja.ocultar_sobre %}<a class="ll-btn-ghost" href="#sobre">Conheça a abordagem</a>{% endif %}
     </div>
   </div>
 </section>
