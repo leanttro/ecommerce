@@ -1220,12 +1220,26 @@
     /* Mobile: a foto continua de fundo (agora centralizada/no canto, não mais só à direita)
        e o texto sobe pro topo da seção, sobre a área mais "limpa" da foto. */
     .ll-banner{
-      min-height: clamp(600px, 165vw, 760px);
-      align-items: flex-start;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      align-items: stretch;
       padding-top: clamp(20px, 5vw, 32px);
+      padding-bottom: clamp(20px, 5vw, 32px);
     }
-    .ll-banner-bg img{ object-position: center top; }
-    .ll-banner-inner{ grid-template-columns: 1fr; }
+    .ll-banner-bg{
+      position: static;
+      order: 2;
+      margin-top: 24px;
+    }
+    .ll-banner-bg img{
+      position: static;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      object-position: center;
+    }
+    .ll-banner-inner{ grid-template-columns: 1fr; order: 1; }
     .ll-banner-copy{ grid-column: 1; }
   }
 
