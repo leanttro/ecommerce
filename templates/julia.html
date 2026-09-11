@@ -1217,30 +1217,41 @@
   .ll-banner-copy{ grid-column: 1; }
 
   @media (max-width: 900px){
-    /* Mobile: a foto continua de fundo (agora centralizada/no canto, não mais só à direita)
-       e o texto sobe pro topo da seção, sobre a área mais "limpa" da foto. */
+    /* Mobile: a foto volta a ser o fundo full-bleed da seção (como no desktop),
+       com o texto sobreposto. A seção fica mais alta que no desktop para sobrar
+       espaço vertical e o corte (object-fit: cover) não "comer" o rosto.
+       Se o rosto ainda ficar cortado, ajuste object-position abaixo:
+       primeiro valor = horizontal (%), segundo = vertical (0% = topo da foto). */
     .ll-banner{
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      align-items: stretch;
-      padding-top: clamp(20px, 5vw, 32px);
-      padding-bottom: clamp(20px, 5vw, 32px);
+      min-height: clamp(560px, 148vw, 720px);
+      padding-top: clamp(28px, 7vw, 40px);
+      padding-bottom: clamp(28px, 7vw, 40px);
+      align-items: flex-start;
     }
     .ll-banner-bg{
-      position: static;
-      order: 2;
-      margin-top: 24px;
+      position: absolute;
+      inset: 0;
+      order: initial;
+      margin-top: 0;
+    }
+    .ll-banner-bg::after{
+      /* Véu leve por trás do texto pra garantir legibilidade sobre a foto */
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.12) 42%, rgba(0,0,0,0.02) 68%);
+      pointer-events: none;
     }
     .ll-banner-bg img{
       position: static;
       width: 100%;
-      height: auto;
-      object-fit: contain;
-      object-position: center;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 12%;
     }
-    .ll-banner-inner{ grid-template-columns: 1fr; order: 1; }
-    .ll-banner-copy{ grid-column: 1; }
+    .ll-banner-inner{ grid-template-columns: 1fr; }
+    .ll-banner-copy{ grid-column: 1; color: #fff; }
+    .ll-banner-copy p{ color: rgba(255,255,255,0.88); }
   }
 
   .ll-banner-copy h2{
