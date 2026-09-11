@@ -877,14 +877,14 @@
 
   /* ============ NAV LIMPA (fundo branco, estilo referência) ============ */
   .ll-nav{
-    position: relative; z-index: 5;
+    position: absolute; top: 0; left: 0; right: 0; z-index: 20;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 24px;
     padding: 8px clamp(20px, 4vw, 56px);
-    background: var(--white);
-    border-bottom: 1px solid var(--line);
+    background: transparent;
+    border-bottom: none;
   }
   .ll-nav-logo{ display: inline-flex; align-items: center; }
   .ll-nav-logo img{ height: 78px; width: auto; }
@@ -893,13 +893,14 @@
     list-style: none; margin: 0; padding: 0;
   }
   .ll-nav a{
-    color: var(--text);
+    color: #fff;
     text-decoration: none;
     font-weight: 500;
     font-size: 0.92rem;
     transition: color 0.2s ease;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.35);
   }
-  .ll-nav a:hover{ color: var(--clay); }
+  .ll-nav a:hover{ color: var(--sky); }
   .ll-nav-cta{
     background: var(--clay);
     padding: 13px 26px;
@@ -1000,7 +1001,8 @@
     inset: 0;
     background:
       linear-gradient(90deg, rgba(2,10,25,0.72) 0%, rgba(2,10,25,0.34) 26%, rgba(2,10,25,0) 46%, rgba(2,10,25,0) 62%, rgba(2,10,25,0.55) 100%),
-      linear-gradient(to top, rgba(2,10,25,0.6) 0%, rgba(2,10,25,0.05) 32%, transparent 55%);
+      linear-gradient(to top, rgba(2,10,25,0.6) 0%, rgba(2,10,25,0.05) 32%, transparent 55%),
+      linear-gradient(to bottom, rgba(2,10,25,0.5) 0%, rgba(2,10,25,0) 16%);
   }
   .ll-hero-grid{
     position: relative;
