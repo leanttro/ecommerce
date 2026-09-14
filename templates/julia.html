@@ -528,7 +528,7 @@
   /* ============ ESPECIALIDADES ATENDIDAS ============ */
   .especialidades{
     position: relative;
-    padding: clamp(56px, 7vw, 96px) 0;
+    padding: clamp(32px, 4vw, 56px) 0 clamp(56px, 7vw, 96px);
     overflow: hidden;
     isolation: isolate;
   }
@@ -568,34 +568,25 @@
     100%{ transform: translate(30px, -24px) scale(1.08); }
   }
 
-  .especialidades-head{ max-width: 640px; margin: 0 auto 52px; text-align: center; }
-  .especialidades-head .eyebrow{ justify-content: center; }
+  /* Cabeçalho grande removido a pedido da cliente — agora é só uma
+     pequena "separação" (linha + rótulo) pra marcar o bloco dentro da
+     MESMA seção visual de "Onde posso te ajudar", sem repetir o título. */
+  .especialidades-head{ max-width: 640px; margin: 0 auto 28px; text-align: center; }
+  .especialidades-head .eyebrow{ justify-content: center; margin-bottom: 0; }
   .especialidades-head .eyebrow::before{ display: none; }
-  .especialidades-head h2{
-    font-size: clamp(1.9rem, 3.4vw, 2.5rem);
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 16px;
-  }
-  .especialidades-head h2 em{
-    font-style: italic;
-    color: var(--clay);
-    font-weight: 500;
-  }
-  .especialidades-head p{ font-size: 1.05rem; line-height: 1.7; color: var(--text-soft); }
 
   .esp-grid{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: clamp(20px, 2.6vw, 28px);
+    gap: clamp(14px, 1.8vw, 20px);
   }
 
   .esp-card{
     position: relative;
     background: var(--white);
     border: 1px solid var(--line);
-    border-radius: 22px;
-    padding: clamp(28px, 3.2vw, 40px);
+    border-radius: 16px;
+    padding: clamp(18px, 1.8vw, 24px);
     overflow: hidden;
     transition: transform 0.28s ease, box-shadow .45s ease, border-color .45s ease;
     box-shadow: 0 1px 2px rgba(23,40,66,0.04);
@@ -635,16 +626,16 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 54px;
-    height: 54px;
-    border-radius: 16px;
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
     background: linear-gradient(135deg, var(--clay), var(--olive-dark));
     color: var(--white);
-    margin-bottom: 20px;
+    margin-bottom: 14px;
     transition: transform .4s cubic-bezier(.2,.8,.2,1);
     animation: espIconFloat 3.2s ease-in-out infinite;
   }
-  .esp-icon svg{ width: 26px; height: 26px; }
+  .esp-icon svg{ width: 21px; height: 21px; }
   .esp-card:hover .esp-icon{ transform: rotate(-6deg) scale(1.08); }
   @keyframes espIconFloat{
     0%, 100%{ transform: translateY(0); }
@@ -653,32 +644,32 @@
   .esp-card:hover .esp-icon{ animation-play-state: paused; }
 
   .esp-card h3{
-    font-size: 1.2rem;
+    font-size: 1.02rem;
     font-weight: 600;
-    line-height: 1.32;
-    margin-bottom: 12px;
+    line-height: 1.3;
+    margin-bottom: 8px;
   }
   .esp-card p{
-    font-size: 0.96rem;
-    line-height: 1.65;
+    font-size: 0.88rem;
+    line-height: 1.55;
     color: var(--text-soft);
-    margin-bottom: 22px;
+    margin-bottom: 14px;
   }
 
   .esp-tags{
     display: flex;
     flex-wrap: wrap;
-    gap: 9px;
+    gap: 7px;
   }
   .esp-tags span{
     display: inline-block;
     background: var(--surface);
     color: var(--olive-dark);
-    font-size: 0.76rem;
+    font-size: 0.7rem;
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    padding: 7px 13px;
+    padding: 5px 11px;
     border-radius: 999px;
     opacity: 0;
     transform: translateY(8px) scale(.92);
@@ -738,6 +729,13 @@
     padding: 6px 14px;
     border-radius: 100px;
     margin-bottom: 18px;
+  }
+  /* Selo do plano de entrada — mesma forma do "Mais procurado", mas discreto
+     (contorno, sem preenchimento), pra não competir com o selo principal. */
+  .plan-tag-alt{
+    background: transparent;
+    color: var(--text-soft);
+    border: 1px solid var(--line);
   }
   .plan-card h3{
     font-size: clamp(1.6rem, 2.6vw, 2rem);
@@ -1707,27 +1705,83 @@
     font-size: clamp(1.8rem, 3vw, 2.35rem);
     font-weight: 700;
     line-height: 1.28;
-    margin: 0 0 20px;
+    margin: 0 0 22px;
   }
   .ll-about2-copy h2 em{ font-style: italic; font-weight: 400; color: var(--olive-dark); }
-  .ll-about2-copy p{
-    font-size: 1.05rem;
-    line-height: 1.72;
+
+  /* Parágrafo de abertura — único parágrafo "corrido", curto e com respiro,
+     no lugar do bloco de 4 parágrafos empilhados. */
+  .ll-about2-lead{
+    font-size: 1.1rem;
+    line-height: 1.75;
     color: var(--text-soft);
-    margin: 0 0 18px;
-    max-width: 56ch;
+    margin: 0 0 26px;
+    max-width: 54ch;
   }
-  .ll-about2-copy p strong{ color: var(--text); font-weight: 600; }
+  .ll-about2-lead strong{ color: var(--text); font-weight: 600; }
+
+  /* Citação em destaque — puxa a frase mais forte do texto pra fora do
+     parágrafo corrido, como um "respiro" visual no meio da coluna. */
+  .ll-about2-quote{
+    position: relative;
+    margin: 0 0 30px;
+    padding: 4px 0 4px 26px;
+    border-left: 3px solid var(--clay);
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.28rem;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .ll-about2-quote .mark-big{
+    display: block;
+    font-style: normal;
+    font-size: 2.4rem;
+    line-height: 0.6;
+    color: var(--clay);
+    margin-bottom: 10px;
+  }
+
+  /* Credenciais — em vez de parágrafos em negrito, uma lista enxuta
+     tipo "trilha", cada item com um marcador. */
+  .ll-about2-creds{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0 0 32px;
+    padding: 22px 24px;
+    background: var(--bg);
+    border-radius: 16px;
+  }
+  .ll-cred{
+    position: relative;
+    padding-left: 20px;
+    font-size: 0.94rem;
+    line-height: 1.5;
+    color: var(--text);
+    font-weight: 500;
+  }
+  .ll-cred-dot{
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--clay);
+  }
+
   .ll-about2-copy .ll-btn-solid{ margin-top: 10px; }
   @media (max-width: 980px){ .ll-about2-copy{ margin-bottom: 8px; } }
 
+  .ll-about2-photo-wrap{ position: relative; }
   .ll-about2-photo{
     border-radius: 20px;
     overflow: hidden;
     aspect-ratio: 3/4;
   }
   .ll-about2-photo img{ width: 100%; height: 100%; object-fit: cover; }
-  @media (max-width: 980px){ .ll-about2-photo{ max-width: 420px; margin: 0 auto; } }
+  @media (max-width: 980px){ .ll-about2-photo-wrap{ max-width: 420px; margin: 0 auto; } }
 
   .ll-accordion{ display: flex; flex-direction: column; gap: 10px; }
   .ll-accordion:not(:empty){ margin-top: clamp(28px, 4vw, 44px); }
@@ -1782,25 +1836,26 @@
 
   .ll-about2-tag{
     position: absolute;
-    right: clamp(16px, 4vw, 44px);
-    bottom: 0;
-    transform: translateY(50%);
+    right: clamp(-8px, -1vw, 0px);
+    bottom: 22px;
+    transform: translateX(28%);
     background: #172842;
     color: #fff;
-    padding: 17px 32px;
+    padding: 17px 30px;
     border-radius: 100px;
     text-decoration: none;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     letter-spacing: 0.02em;
     text-transform: uppercase;
     box-shadow: 0 12px 30px rgba(0,0,0,0.2);
     transition: transform 0.2s ease, background 0.2s ease;
     z-index: 2;
+    cursor: default;
   }
   .ll-about2-tag:hover{ background: var(--clay); }
   @media (max-width: 980px){
-    .ll-about2-tag{ position: static; transform: none; display: inline-flex; margin-top: 12px; }
+    .ll-about2-tag{ position: static; transform: none; display: inline-flex; margin-top: 16px; }
   }
 
   /* ============ WHATSAPP FLUTUANTE (toggle loja.mostrar_whatsapp_flutuante) ============ */
@@ -1944,8 +1999,9 @@
   </div>
 </section>
 
-<!-- ABOUT (estilo editorial: texto corrido + foto. Acordeão vira opcional, só aparece
-     se a loja preencher "acordeao" em conteudo_extra_json pelo painel) -->
+<!-- ABOUT (redesenhado: lede curto + citação em destaque + credenciais em
+     lista, no lugar do bloco de 4 parágrafos empilhados. Acordeão continua
+     opcional, só aparece se a loja preencher "acordeao" em conteudo_extra_json). -->
 {% if not loja.ocultar_sobre %}
 <section class="ll-about2" id="sobre">
   <div class="wrap ll-about2-grid">
@@ -1954,19 +2010,30 @@
       <h2>{% if loja.sobre_titulo %}{{ loja.sobre_titulo }}{% else %}A nutrição <em>mudou</em> a minha vida. Uso a ciência para mudar a sua.{% endif %}</h2>
 
       {% if loja.sobre_texto %}
-      <p>{{ loja.sobre_texto }}</p>
+      <p class="ll-about2-lead">{{ loja.sobre_texto }}</p>
       {% else %}
-      <p>Prazer, eu sou <strong>Júlia Theila</strong>, nutricionista formada pela PUC-Campinas. Minha relação com a nutrição começou antes mesmo da faculdade. Foi vivendo minhas próprias dificuldades com a alimentação que percebi que comer bem não poderia significar viver seguindo regras, tentando fazer tudo certo ou se sentindo culpada quando isso não acontecia.</p>
-      <p>Foi essa inquietação que me levou a olhar para a alimentação de uma forma mais ampla e a estudar profundamente o comportamento alimentar.</p>
-      <p><strong>Hoje, sigo aprofundando meus estudos sobre alimentação e comportamento humano, com pós-graduação em Neurociência e Comportamento Alimentar e formações em Nutrição Comportamental e Terapia Nutricional pelo Método Sophie.</strong></p>
-      <p><strong>Na minha prática, uno ciência e comportamento para construir um cuidado individualizado, com escuta, acolhimento e estratégias que façam sentido para a vida real.</strong></p>
+      <p class="ll-about2-lead">Prazer, eu sou <strong>Júlia Theila</strong>, nutricionista formada pela PUC-Campinas. Comecei a estudar comportamento alimentar depois de viver, na pele, o peso de tentar "comer certo" o tempo todo.</p>
+
+      <blockquote class="ll-about2-quote">
+        <span class="mark-big">“</span>
+        Comer bem não é seguir regras — é reconstruir a confiança na sua própria relação com a comida.
+      </blockquote>
+
+      <div class="ll-about2-creds">
+        <div class="ll-cred"><span class="ll-cred-dot"></span>Pós-graduação em Neurociência e Comportamento Alimentar</div>
+        <div class="ll-cred"><span class="ll-cred-dot"></span>Formação em Nutrição Comportamental</div>
+        <div class="ll-cred"><span class="ll-cred-dot"></span>Terapia Nutricional pelo Método Sophie</div>
+      </div>
       {% endif %}
 
       <a class="ll-btn-solid" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">Agendar consulta</a>
     </div>
 
-    <div class="ll-about2-photo">
-      <img src="{{ loja.sobre_imagem_url or 'https://juliatheila.com.br/assets/images/_37A3728.jpg' }}" alt="Júlia Theila">
+    <div class="ll-about2-photo-wrap">
+      <div class="ll-about2-photo">
+        <img src="{{ loja.sobre_imagem_url or 'https://juliatheila.com.br/assets/images/_37A3728.jpg' }}" alt="Júlia Theila">
+      </div>
+      <span class="ll-about2-tag">Ciência + comportamento</span>
     </div>
   </div>
 
@@ -2029,8 +2096,6 @@
   <div class="wrap">
     <div class="especialidades-head">
       <span class="eyebrow">Atendimento individual</span>
-      <h2>Onde posso <em>te ajudar</em> de perto</h2>
-      <p>Cada pessoa chega até aqui por um motivo diferente. Veja os principais eixos do meu trabalho de acompanhamento individual.</p>
     </div>
 
     <div class="esp-grid">
@@ -2126,6 +2191,8 @@
         <div>
           {% if planos_normais|length == 3 and loop.index == 2 %}
             <span class="plan-tag">Mais procurado</span>
+          {% elif planos_normais|length == 3 and loop.index == 1 %}
+            <span class="plan-tag plan-tag-alt">Sem compromisso</span>
           {% else %}
             <span class="plan-tag plan-tag-spacer" aria-hidden="true">Mais procurado</span>
           {% endif %}
@@ -2555,7 +2622,7 @@
   // Cada seletor forma um "grupo" pra escalonar o delay entre os irmãos.
   var revealGroups = [
     '.ll-banner .eyebrow, .ll-banner p',
-    '.ll-about2-copy .eyebrow, .ll-about2-copy p, .ll-about2-copy .ll-btn-solid',
+    '.ll-about2-copy .eyebrow, .ll-about2-lead, .ll-about2-quote, .ll-about2-creds .ll-cred, .ll-about2-copy .ll-btn-solid',
     '.ll-accordion',
     '.focos-head .eyebrow',
     '.foco-col',
