@@ -59,6 +59,11 @@
             color: var(--color-title);
             font-size: 0.95rem;
         }
+        .site-header .logo-img {
+            height: 28px;
+            width: auto;
+            display: block;
+        }
 
         /* ---- Bloco de título: tipografia como protagonista, sem foto de topo ---- */
         .title-spread {
@@ -237,7 +242,11 @@
 <body>
 
     <header class="site-header">
-        <span class="mark">{{ loja.nome }}</span>
+        {% if loja.logo %}
+            <img src="{{ loja.logo }}" alt="{{ loja.nome }}" class="logo-img">
+        {% else %}
+            <span class="mark">{{ loja.nome }}</span>
+        {% endif %}
         <a href="/{{ loja.slug_url }}">
             <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Voltar à vitrine
         </a>
