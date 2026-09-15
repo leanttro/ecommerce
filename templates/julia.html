@@ -86,6 +86,10 @@
     --deep-green: #01241C;     /* verde escuro alternativo — variação de contraste */
     --sky: #94BCDC;            /* azul claro — badges, apoio suave */
     --line: rgba(23,40,66,0.14);
+
+    /* Paleta "De Boa com a Comida" (comunidade) — puxada da peça de divulgação da cliente */
+    --community-orange: #F2A93B;
+    --community-orange-dark: #D98E1F;
   }
 
   /* ============================================================
@@ -838,7 +842,7 @@
   .feature-item{ padding-top: 18px; border-top: 1px solid var(--line); }
   .feature-item span.mark{
     display: inline-block; width: 8px; height: 8px; border-radius: 50%;
-    background: var(--olive); margin-bottom: 12px;
+    background: var(--community-orange); margin-bottom: 12px;
   }
   .feature-item p{ font-size: 0.96rem; line-height: 1.55; color: var(--text-soft); margin: 0; }
 
@@ -866,7 +870,7 @@
     border-bottom: 1px solid var(--line);
     padding: 28px 0;
   }
-  .quote-card .mark-big{ font-family: 'Fraunces', serif; font-size: 2.2rem; color: var(--clay); line-height: 1; }
+  .quote-card .mark-big{ font-family: 'Fraunces', serif; font-size: 2.2rem; color: var(--community-orange-dark); line-height: 1; }
   .quote-card h3{
     font-size: 1.3rem; font-weight: 600; margin: 10px 0 12px; line-height: 1.3;
   }
@@ -899,6 +903,9 @@
     gap: 14px;
     justify-content: center;
   }
+  .community-actions .btn-primary{ background: var(--community-orange-dark); }
+  .community-actions .btn-primary:hover{ background: var(--community-orange); }
+  .community-actions .btn-secondary:hover{ border-color: var(--community-orange-dark); color: var(--community-orange-dark); }
 
   /* ============ BLOG ============ */
   .blog{ padding: clamp(24px, 3vw, 42px) 0 clamp(48px, 6vw, 84px); background: var(--surface); position: relative; overflow: hidden; }
@@ -2020,9 +2027,9 @@
       </blockquote>
 
       <div class="ll-about2-creds">
-        <div class="ll-cred"><span class="ll-cred-dot"></span>Pós-graduação em Neurociência e Comportamento Alimentar</div>
-        <div class="ll-cred"><span class="ll-cred-dot"></span>Formação em Nutrição Comportamental</div>
-        <div class="ll-cred"><span class="ll-cred-dot"></span>Terapia Nutricional pelo Método Sophie</div>
+        <div class="ll-cred"><span class="ll-cred-dot"></span>Pós-graduanda em Neurociência e Comportamento Alimentar</div>
+        <div class="ll-cred"><span class="ll-cred-dot"></span>Formação em andamento em Nutrição Comportamental</div>
+        <div class="ll-cred"><span class="ll-cred-dot"></span>Formação em andamento em Terapia Nutricional pelo Método Sophie</div>
       </div>
       {% endif %}
 
@@ -2102,9 +2109,6 @@
 
       <div class="esp-card">
         <div class="esp-card-top"></div>
-        <span class="esp-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7-4.3-9.3-8.7C1.2 8.7 2.7 5.5 5.8 5c2-.3 3.6.7 4.5 2 .3.4.9.4 1.2 0 .9-1.3 2.5-2.3 4.5-2 3.1.5 4.6 3.7 3.1 6.8-2.3 4.4-7.1 8.7-7.1 8.7Z"/><path d="M8 12h1.5l1-2 2 4 1-2H16"/></svg>
-        </span>
         <h3>Relação com a comida e comportamento alimentar</h3>
         <p>Para quem enfrenta culpa ao comer, restrições, desorganização alimentar ou dificuldade de confiar nos próprios sinais e necessidades.</p>
         <div class="esp-tags">
@@ -2118,9 +2122,6 @@
 
       <div class="esp-card">
         <div class="esp-card-top"></div>
-        <span class="esp-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5h3.4l1.6-3.4 2 6.8 1.7-3.4h6.3"/><path d="M12 20.5s-7-4.3-9.3-8.7C1.2 8.7 2.7 5.5 5.8 5c2-.3 3.6.7 4.5 2 .3.4.9.4 1.2 0 .9-1.3 2.5-2.3 4.5-2 3.1.5 4.6 3.7 3.1 6.8-2.3 4.4-7.1 8.7-7.1 8.7Z"/></svg>
-        </span>
         <h3>Condições clínicas e saúde metabólica</h3>
         <p>Cuidado nutricional que concilia as necessidades de saúde com suas preferências, sua rotina e as possibilidades reais da sua vida.</p>
         <div class="esp-tags">
@@ -2134,9 +2135,6 @@
 
       <div class="esp-card">
         <div class="esp-card-top"></div>
-        <span class="esp-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.3"/><path d="M5.5 20.5c0-4 3-6.5 6.5-6.5s6.5 2.5 6.5 6.5"/><path d="M9.5 17.5v3M14.5 17.5v3"/></svg>
-        </span>
         <h3>Imagem corporal e reconexão com o corpo</h3>
         <p>Para compreender a insatisfação corporal, reconhecer os sinais do corpo e construir uma relação mais respeitosa consigo.</p>
         <div class="esp-tags">
@@ -2150,9 +2148,6 @@
 
       <div class="esp-card">
         <div class="esp-card-top"></div>
-        <span class="esp-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m14 4 6 6-8.5 8.5a3 3 0 0 1-4.2 0v0a3 3 0 0 1 0-4.2L16 5"/><path d="m17.5 6.5-11 11"/><path d="m4 20 2-2"/><path d="m11.5 7.5 1 1M13.5 5.5l1 1"/></svg>
-        </span>
         <h3>Cirurgia bariátrica e medicamentos GLP-1</h3>
         <p>Acompanhamento para as mudanças alimentares, corporais e emocionais envolvidas na cirurgia bariátrica e no uso de medicamentos GLP-1.</p>
         <div class="esp-tags">
@@ -2310,8 +2305,8 @@
 <section class="community" id="comunidade">
   <div class="wrap">
     <div class="community-head">
-      <h2>Comunidade sem pressa e com presença.</h2>
-      <p>Apoio e educação alimentar pra sua jornada nunca ser solitária.</p>
+      <h2>De Boa com a Comida.</h2>
+      <p>Nutrição, saúde, encontros e troca em uma comunidade criada pela nutricionista Julia Theila.</p>
     </div>
 
     <div class="community-grid">
@@ -2427,8 +2422,8 @@
         <p>Não trabalhamos com cardápios restritivos que ignoram seus gostos. Construímos juntos uma estratégia alimentar através de metas que respeitam sua rotina, preferências e sinais de fome e saciedade.</p>
       </details>
       <details>
-        <summary>Como funciona a Comunidade de Pacientes?</summary>
-        <p>É um espaço exclusivo onde meus pacientes trocam experiências, receitas e motivação. A mudança do estilo de vida fica muito mais leve quando você está cercado de pessoas com os mesmos objetivos.</p>
+        <summary>Como funciona a comunidade De Boa com a Comida?</summary>
+        <p>É um espaço aberto pra qualquer pessoa que queira participar, com trocas, encontros e conteúdo sobre alimentação. Pacientes em acompanhamento têm uma condição especial de valor pra fazer parte.</p>
       </details>
       <details>
         <summary>Você atende pelo plano de saúde?</summary>
@@ -2455,7 +2450,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
         </div>
         <span class="label">Instagram</span>
-        <a class="value" href="{{ loja.instagram_url or 'https://instagram.com/nutrirha' }}" target="_blank" rel="noopener">@nutrirha</a>
+        <a class="value" href="{{ loja.instagram_url }}" target="_blank" rel="noopener">{{ '@' + loja.instagram_url.rstrip('/').split('/')[-1] if loja.instagram_url else '' }}</a>
         <span class="desc">Conteúdos sobre alimentação, corpo e sociedade</span>
       </div>
       <div class="contact-info-item">
