@@ -65,7 +65,7 @@
 {% if loja.logo %}<link rel="icon" type="image/png" href="{{ loja.logo }}">{% endif %}
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:opsz,wght@9..144,700&family=Permanent+Marker&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Permanent+Marker&display=swap');
 
 :root {
   --cream:#f6f0df;
@@ -83,10 +83,10 @@ html{scroll-behavior:smooth}
 body{margin:0;background:var(--cream);color:var(--ink);font-family:"DM Sans",sans-serif;line-height:1.55}
 a{color:inherit;text-decoration:none}
 .container{width:min(1180px,calc(100% - 40px));margin:auto}
-nav{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:24px}
+nav{min-height:96px;padding:10px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:24px}
 .logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.02em}
-.logo-mark{font-family:Georgia,serif;font-size:34px;font-weight:900;color:var(--wine);letter-spacing:-.08em}
-.logo-img{height:38px;width:auto;display:block}
+.logo-mark{font-family:Georgia,serif;font-size:68px;font-weight:900;color:var(--wine);letter-spacing:-.08em}
+.logo-img{height:76px;width:auto;display:block}
 .logo-sub{font-size:11px;text-transform:uppercase;letter-spacing:.16em}
 .navlinks{display:flex;gap:26px;font-size:13px;font-weight:700}
 .btn{display:inline-flex;align-items:center;gap:10px;padding:15px 22px;border-radius:999px;background:var(--green);color:white;font-weight:700;font-size:13px;transition:.2s;box-shadow:4px 4px 0 var(--wine);border:0;cursor:pointer;font-family:inherit}
@@ -97,6 +97,8 @@ nav{height:76px;display:flex;align-items:center;justify-content:space-between;bo
 .kicker{display:inline-block;background:var(--lime);padding:7px 13px;transform:rotate(-2deg);font-family:"Permanent Marker";font-size:16px}
 h1{font-family:Fraunces,Georgia,serif;font-size:clamp(58px,7vw,105px);line-height:.87;margin:22px 0;color:var(--ink);letter-spacing:-.055em}
 h1 span{color:var(--red)}
+.hero-title-img{margin:22px 0;line-height:0}
+.hero-title-img img{display:block;width:100%;max-width:640px;height:auto}
 .lead{font-size:19px;max-width:570px}
 .hero-art{position:relative;min-height:490px}
 .photo{position:absolute;inset:0 5% 0 5%;overflow:hidden;background:var(--red);transform:rotate(2deg);padding:20px;box-shadow:12px 14px 0 var(--wine)}
@@ -168,6 +170,43 @@ h2 em{font-style:normal;color:var(--red)}
 .lema-text{font-family:Fraunces,Georgia,serif;font-size:38px;line-height:1.05;color:var(--ink);margin-bottom:18px}
 .lema-box p{font-size:14.5px;color:var(--green);margin:0}
 @media(max-width:900px){.apresenta-grid{grid-template-columns:1fr}}
+.dbc-section{position:relative;min-height:760px;overflow:hidden;padding:115px 6vw 125px;background:var(--cream);isolation:isolate}
+.dbc-section:before{content:"";position:absolute;inset:0;opacity:.18;pointer-events:none;z-index:-1;background-image:radial-gradient(rgba(23,32,25,.12) .7px,transparent .7px),radial-gradient(rgba(217,71,53,.08) .6px,transparent .6px);background-size:17px 17px,23px 23px;background-position:0 0,8px 11px}
+.dbc-section .bg-word{position:absolute;left:-35px;bottom:-65px;font-family:Fraunces,Georgia,serif;font-weight:900;font-size:clamp(180px,25vw,370px);line-height:.7;letter-spacing:-.09em;color:rgba(217,71,53,.055);user-select:none;z-index:-1}
+.dbc-section .star{position:absolute;color:var(--red);line-height:1;font-size:76px;transform:rotate(11deg)}
+.dbc-section .star.one{top:70px;left:4vw}
+.dbc-section .star.two{right:4vw;bottom:70px;font-size:115px;transform:rotate(-13deg)}
+.dbc-section .star.three{right:17%;top:105px;color:var(--green);font-size:35px}
+.dbc-section .eyebrow{display:flex;align-items:center;gap:14px;margin-bottom:25px;font-size:12px;font-weight:700;letter-spacing:.24em;text-transform:uppercase}
+.dbc-section .eyebrow:before{content:"";width:42px;height:3px;background:var(--red)}
+.dbc-section .inner{width:min(1200px,100%);margin:auto;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr);gap:75px;align-items:center}
+.dbc-section .copy{position:relative;z-index:2}
+.dbc-section h1{margin:0;max-width:850px;font-family:Fraunces,Georgia,serif;font-size:clamp(58px,7vw,104px);font-weight:900;line-height:.88;letter-spacing:-.065em}
+.dbc-section h1 .red{color:var(--red);display:block}
+.dbc-section h1 .underline{position:relative;display:inline-block}
+.dbc-section h1 .underline:after{content:"";position:absolute;left:2%;right:-3%;bottom:-12px;height:9px;background:var(--red);border-radius:50%;transform:rotate(-2deg)}
+.dbc-section .description{max-width:650px;margin:48px 0 0;font-size:19px;line-height:1.62}
+.dbc-section .description p{margin:0 0 22px}
+.dbc-section .description strong{display:block;max-width:620px;font-size:20px;line-height:1.4}
+.dbc-section .visual{position:relative;min-height:430px}
+.dbc-section .visual-card{position:absolute;width:82%;height:390px;right:4%;top:15px;background:var(--green);transform:rotate(3.2deg);box-shadow:13px 15px 0 var(--red);overflow:hidden}
+.dbc-section .visual-card:before{content:"";position:absolute;width:285px;height:285px;border-radius:50%;background:var(--lime);left:50%;top:48%;transform:translate(-50%,-50%)}
+.dbc-section .visual-card:after{content:"";position:absolute;width:185px;height:185px;border:3px solid var(--cream);border-radius:50%;left:50%;top:48%;transform:translate(-50%,-50%)}
+.dbc-section .leaf{position:absolute;z-index:2;width:95px;height:42px;border:4px solid var(--green);border-radius:100% 0 100% 0;background:var(--red);transform:rotate(-27deg)}
+.dbc-section .leaf.a{left:22%;top:25%}
+.dbc-section .leaf.b{right:17%;bottom:20%;transform:rotate(150deg);background:var(--cream)}
+.dbc-section .leaf.c{left:37%;bottom:17%;width:72px;background:var(--green);border-color:var(--cream)}
+.dbc-section .line{position:absolute;z-index:3;width:170px;height:3px;background:var(--green);left:21%;top:57%;transform:rotate(63deg)}
+.dbc-section .food-word{position:absolute;z-index:4;top:27px;left:27px;color:var(--cream);font-family:"Permanent Marker",cursive;font-size:22px;transform:rotate(-7deg)}
+.dbc-section .food-word.red{top:auto;left:auto;right:25px;bottom:25px;color:var(--lime);font-size:19px;transform:rotate(5deg)}
+.dbc-section .sticker{position:absolute;z-index:5;left:-35px;bottom:18px;width:205px;padding:22px 20px 24px;background:var(--lime);color:var(--ink);font-family:"Permanent Marker",cursive;font-size:19px;line-height:1.2;transform:rotate(-5deg);box-shadow:7px 8px 0 var(--wine)}
+.dbc-section .sticker:after{content:"♥";position:absolute;right:15px;bottom:7px;font-size:17px}
+.dbc-section .closing{position:relative;width:min(1200px,100%);margin:75px auto 0;padding:27px 34px 29px;background:var(--green);color:var(--cream);transform:rotate(-.7deg);box-shadow:8px 9px 0 var(--wine)}
+.dbc-section .closing:before{content:"";position:absolute;left:-12px;top:-11px;width:28px;height:28px;background:var(--red);clip-path:polygon(50% 0,61% 37%,100% 24%,69% 51%,100% 72%,61% 64%,50% 100%,39% 64%,0 76%,31% 50%,0 26%,39% 37%)}
+.dbc-section .closing p{margin:0;font-size:20px;font-weight:700;text-align:center}
+.dbc-section .closing span{color:var(--lime)}
+@media(max-width:900px){.dbc-section{padding:85px 28px 90px}.dbc-section .inner{grid-template-columns:1fr;gap:55px}.dbc-section .visual{min-height:360px;width:min(600px,100%);margin:auto}.dbc-section .visual-card{height:330px;width:84%}.dbc-section .closing{margin-top:55px}}
+@media(max-width:560px){.dbc-section{padding:65px 20px 75px;min-height:auto}.dbc-section .star.one{left:8px;top:45px;font-size:48px}.dbc-section .star.two{right:5px;bottom:35px;font-size:65px}.dbc-section .star.three{right:10%;top:65px}.dbc-section .eyebrow{font-size:10px;letter-spacing:.18em}.dbc-section h1{font-size:clamp(49px,15vw,70px)}.dbc-section h1 .underline:after{height:6px;bottom:-7px}.dbc-section .description{font-size:16px;margin-top:36px}.dbc-section .description strong{font-size:17px}.dbc-section .visual{min-height:300px}.dbc-section .visual-card{height:275px;right:2%;width:88%}.dbc-section .visual-card:before{width:205px;height:205px}.dbc-section .visual-card:after{width:135px;height:135px}.dbc-section .sticker{left:-7px;width:170px;font-size:16px;padding:17px}.dbc-section .food-word{font-size:17px}.dbc-section .closing{padding:22px 20px}.dbc-section .closing p{font-size:16px}}
 .faq{display:grid;gap:12px;margin-top:35px}
 details{background:var(--paper);border:1px solid var(--line);padding:20px 24px}
 summary{cursor:pointer;font-weight:700}
@@ -182,8 +221,8 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
  .feature:nth-child(2n){border-right:0} .section{padding:75px 0}
 }
 @media(max-width:560px){
- .container{width:min(100% - 28px,1180px)} nav{height:66px}
- .logo-mark{font-size:29px} .logo-sub{font-size:9px}
+ .container{width:min(100% - 28px,1180px)} nav{min-height:76px}
+ .logo-mark{font-size:58px} .logo-img{height:56px} .logo-sub{font-size:9px}
  .hero{padding:48px 0} h1{font-size:58px}
  .lead{font-size:16px} .hero-art{min-height:320px}
  .photo{inset:0} .sticker{left:0;bottom:10px;max-width:190px;font-size:15px}
@@ -220,7 +259,7 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
   <div class="container hero-grid">
     <div>
       <span class="kicker">comunidade</span>
-      <h1>DE BOA COM<br><span>A COMIDA</span></h1>
+      <h1 class="hero-title-img"><img src="https://directus.leanttro.com/assets/c92b3497-b002-4a01-95f0-1ff3061fdb22?quality=80&format=webp" alt="De boa com a comida"></h1>
       <p class="lead"><strong>Cuidar da sua alimentação pode ser mais leve do que você imagina.</strong></p>
       <p class="lead">Uma comunidade para quem quer aprender mais sobre alimentação e saúde, trocar experiências e construir hábitos possíveis para a vida — com informação confiável e sem precisar fazer tudo perfeitamente.</p>
       <a class="btn" href="#inscricao">QUERO FAZER PARTE →</a>
@@ -228,7 +267,7 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
     </div>
     <div class="hero-art">
       <div class="star">✦</div>
-      <div class="photo"><img src="{{ url_for('static', filename='dbc/dbc-hero.png') }}" alt="Identidade visual DBC"></div>
+      <div class="photo"><img src="{{ loja.bannermenor2 or url_for('static', filename='dbc/dbc-hero.png') }}" alt="Identidade visual DBC"></div>
       <div class="sticker">informação<br>troca<br>& cuidado<br>vida real ♥</div>
     </div>
   </div>
@@ -250,14 +289,29 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
 </div>
 </section>
 
-<section class="section paper statement" id="alem-do-prato">
-<div class="container">
-  <div class="eyebrow">Saúde para além do prato</div>
-  <h2>Saúde não acontece<br><em>só no prato.</em></h2>
-  <p>Comida faz parte da nossa rotina, das nossas relações, das nossas emoções e da nossa vida.</p>
-  <p>Por isso, aqui a conversa não vai ser só sobre nutrientes ou sobre o que colocar no prato. Vamos falar sobre alimentação, comportamento, movimento, saúde emocional, rotina, relações e bem-estar.</p>
-  <p><strong>Porque cuidar de si envolve muito mais do que simplesmente saber o que comer.</strong></p>
+<section class="dbc-section" id="alem-do-prato">
+<div class="bg-word">VIDA</div>
+<div class="star one">✦</div><div class="star two">✦</div><div class="star three">✳</div>
+<div class="inner">
+<div class="copy">
+<div class="eyebrow">Saúde para além do prato</div>
+<h1>Saúde não acontece <span class="red">só no <span class="underline">prato.</span></span></h1>
+<div class="description">
+<p>Comida faz parte da nossa rotina, das nossas relações, das nossas emoções e da nossa vida.</p>
+<p>Por isso, aqui a conversa não vai ser só sobre nutrientes ou sobre o que colocar no prato. Vamos falar sobre alimentação, comportamento, movimento, saúde emocional, rotina, relações e bem-estar.</p>
+<p><strong>Porque cuidar de si envolve muito mais do que simplesmente saber o que comer.</strong></p>
 </div>
+</div>
+<div class="visual" aria-hidden="true">
+<div class="visual-card">
+<div class="food-word">comida<br>é parte da vida.</div>
+<div class="leaf a"></div><div class="leaf b"></div><div class="leaf c"></div><div class="line"></div>
+<div class="food-word red">corpo + mente + rotina</div>
+</div>
+<div class="sticker">cuidar de si<br>também é<br>olhar para<br>a vida inteira.</div>
+</div>
+</div>
+<div class="closing"><p>Aqui, a gente olha para <span>você por inteiro.</span> Não só para o que existe no seu prato.</p></div>
 </section>
 
 <section class="section paper" id="apresentacao">
