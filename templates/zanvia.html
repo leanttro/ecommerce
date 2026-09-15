@@ -209,6 +209,78 @@
     }
   }
 
+  /* ---------- Social proof carousel ---------- */
+  .social-proof-carousel{
+    max-width:640px; margin:36px auto 0; position:relative;
+  }
+  .spc-frame{
+    position:relative; width:100%; aspect-ratio:1000/400;
+    border-radius:14px; overflow:hidden; background:#fff;
+    box-shadow:0 14px 34px rgba(10,27,54,0.14);
+    border:1px solid var(--line);
+  }
+  .spc-slide{
+    position:absolute; inset:0;
+    opacity:0;
+    transition:opacity 1.1s ease;
+    pointer-events:none;
+  }
+  .spc-slide.active{ opacity:1; pointer-events:auto; }
+  .spc-slide img{ width:100%; height:100%; object-fit:contain; display:block; }
+  .spc-dots{
+    display:flex; justify-content:center; gap:9px; margin-top:18px;
+  }
+  .spc-dot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--line); border:none; padding:0; cursor:pointer;
+    transition:background 0.25s, transform 0.25s;
+  }
+  .spc-dot.active{ background:var(--gold); transform:scale(1.25); }
+  .spc-caption{
+    text-align:center; margin-top:10px; font-size:13px; color:var(--ink-soft);
+  }
+  @media (max-width:640px){
+    .social-proof-carousel{ max-width:100%; }
+  }
+
+  /* ---------- FOMO / visitor popup ---------- */
+  .fomo-popup{
+    position:fixed; left:20px; bottom:20px; z-index:200;
+    width:320px; max-width:calc(100vw - 40px);
+    background:var(--navy-deep);
+    border:1px solid rgba(228,200,122,0.35);
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex; align-items:flex-start; gap:12px;
+    box-shadow:0 20px 50px rgba(10,27,54,0.35);
+    transform:translateY(140%);
+    opacity:0;
+    transition:transform 0.5s cubic-bezier(.2,.8,.2,1), opacity 0.5s ease;
+  }
+  .fomo-popup.show{ transform:translateY(0); opacity:1; }
+  .fomo-popup .fomo-icon{ font-size:26px; line-height:1; margin-top:2px; }
+  .fomo-popup .fomo-text{ flex:1; }
+  .fomo-popup .fomo-text strong{
+    display:block; color:#fff; font-size:14px; line-height:1.4; margin-bottom:4px;
+  }
+  .fomo-popup .fomo-text strong span{ color:var(--gold-light); }
+  .fomo-popup .fomo-text p{
+    font-size:12.5px; color:rgba(255,255,255,0.72); line-height:1.5; margin:0 0 8px;
+  }
+  .fomo-cta{
+    display:inline-block; font-size:12.5px; font-weight:700;
+    color:var(--gold-light); text-decoration:underline;
+  }
+  .fomo-close{
+    position:absolute; top:8px; right:10px;
+    background:none; border:none; color:rgba(255,255,255,0.5);
+    font-size:18px; line-height:1; cursor:pointer; padding:4px;
+  }
+  .fomo-close:hover{ color:#fff; }
+  @media (max-width:480px){
+    .fomo-popup{ left:12px; bottom:12px; width:calc(100vw - 24px); }
+  }
+
   /* ---------- Section shells ---------- */
   section{ padding:88px 0; }
   #planos-atendidos{ padding-bottom:44px; }
@@ -707,6 +779,16 @@
 </head>
 <body>
 
+<div class="fomo-popup" id="fomoPopup">
+  <button class="fomo-close" id="fomoClose" aria-label="Fechar aviso">&times;</button>
+  <div class="fomo-icon">🎉</div>
+  <div class="fomo-text">
+    <strong>Parabéns! Você é a pessoa <span id="fomoCount">0</span> a entrar no site hoje</strong>
+    <p>Você ganhou uma <strong>consultoria gratuita</strong> de plano de saúde. Fale agora com um consultor antes que a vaga expire.</p>
+    <a href="#contato" class="fomo-cta">Aproveitar agora →</a>
+  </div>
+</div>
+
 <header class="site">
   <nav class="nav">
     <a href="#top" class="nav-logo">
@@ -1043,6 +1125,26 @@
           <h3 style="font-family:'Fraunces',serif; font-weight:600; font-size:22px; color:var(--navy-deep); margin-top:12px;">Quem atendemos</h3>
           <p style="margin-top:12px; font-size:15px; line-height:1.7; color:var(--ink-soft);">Pessoa física — planos individuais e familiares — e empresas com CNPJ de qualquer porte: MEI, ME e LTDA.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROVA SOCIAL / AVALIAÇÕES -->
+  <section class="section-tight-top" style="padding-top:0; padding-bottom:0;">
+    <div class="wrap">
+      <div class="eyebrow-row">
+        <h2>Quem já fez a cotação com a gente</h2>
+        <p>Avaliações reais de clientes atendidos pela Zanvia no Google.</p>
+      </div>
+      <div class="social-proof-carousel">
+        <div class="spc-frame" id="spcFrame">
+          <div class="spc-slide active"><img src="https://directus.leanttro.com/assets/c2beaff6-5936-4358-aa65-41b4762f5597?quality=80&format=webp" alt="Avaliação 5 estrelas de Tatiane Da Silva Souza sobre atendimento da Zanvia" loading="lazy"></div>
+          <div class="spc-slide"><img src="https://directus.leanttro.com/assets/3a44f6e0-fe73-43a2-ad17-231d1e714c46?quality=80&format=webp" alt="Avaliação 5 estrelas de Rafaella Lelis sobre atendimento da Zanvia" loading="lazy"></div>
+          <div class="spc-slide"><img src="https://directus.leanttro.com/assets/9ee16b38-88b0-4ddd-94af-425e595bbc77?quality=80&format=webp" alt="Avaliação 5 estrelas de Renata Alves Santos sobre atendimento da Zanvia" loading="lazy"></div>
+          <div class="spc-slide"><img src="https://directus.leanttro.com/assets/29b4cede-72ea-4867-8f02-29285550357d?quality=80&format=webp" alt="Avaliação 5 estrelas de Giseli Rodrigues Fernandes sobre atendimento da Zanvia" loading="lazy"></div>
+          <div class="spc-slide"><img src="https://directus.leanttro.com/assets/634ac011-a8ed-4815-b16b-6cb941e4eeaf?quality=80&format=webp" alt="Avaliação 5 estrelas de Stephany Silva sobre atendimento da Zanvia" loading="lazy"></div>
+        </div>
+        <div class="spc-dots" id="spcDots"></div>
       </div>
     </div>
   </section>
@@ -1549,6 +1651,78 @@
       }
     });
   }
+</script>
+
+<script>
+(function(){
+  var slides = document.querySelectorAll('#spcFrame .spc-slide');
+  var dotsWrap = document.getElementById('spcDots');
+  if(!slides.length || !dotsWrap) return;
+
+  var current = 0;
+  var intervalMs = 4200; // não muito rápido
+
+  slides.forEach(function(_, i){
+    var dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'spc-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Ver avaliação ' + (i + 1));
+    dot.addEventListener('click', function(){ goTo(i); resetTimer(); });
+    dotsWrap.appendChild(dot);
+  });
+  var dots = dotsWrap.querySelectorAll('.spc-dot');
+
+  function goTo(i){
+    slides[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    current = i;
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+  }
+
+  function next(){ goTo((current + 1) % slides.length); }
+
+  var timer = setInterval(next, intervalMs);
+  function resetTimer(){
+    clearInterval(timer);
+    timer = setInterval(next, intervalMs);
+  }
+})();
+</script>
+
+<script>
+(function(){
+  var popup = document.getElementById('fomoPopup');
+  var closeBtn = document.getElementById('fomoClose');
+  var countEl = document.getElementById('fomoCount');
+  if(!popup || !countEl) return;
+
+  // Número final "alto" e aleatório (varia a cada visita)
+  var target = Math.floor(Math.random() * (14872 - 9214 + 1)) + 9214;
+  var startFrom = Math.max(1, target - 400);
+  var current = startFrom;
+
+  function showPopup(){
+    popup.classList.add('show');
+    var countUp = setInterval(function(){
+      current += Math.ceil((target - current) / 6) || 1;
+      if(current >= target){
+        current = target;
+        clearInterval(countUp);
+      }
+      countEl.textContent = current.toLocaleString('pt-BR');
+    }, 40);
+  }
+
+  function hidePopup(){
+    popup.classList.remove('show');
+  }
+
+  setTimeout(showPopup, 2200);
+  setTimeout(hidePopup, 13000);
+
+  closeBtn.addEventListener('click', hidePopup);
+})();
 </script>
 
 <script>
