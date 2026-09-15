@@ -254,16 +254,21 @@
 
 <div class="shell">
   <aside class="sidebar">
-    <div class="brand">Julia Theila</div>
+    <div class="brand">{{ loja.nome or 'Julia Theila' }}</div>
     <div class="brand-sub">Painel administrativo</div>
     <nav>
       <a href="#dados-gerais">Dados gerais</a>
+      {% if loja.slug_url == 'dbc' %}
+      <a href="#conteudo-dbc">Fotos e textos da página</a>
+      <a href="#leads-dbc">Inscritos (leads)</a>
+      {% else %}
       <a href="#textos-site">Textos do site</a>
       <a href="#visibilidade">Visibilidade</a>
       <a href="#conteudo-extra">Acordeão, Comunidade &amp; FAQ</a>
       <a href="#grupos">Grupos</a>
       <a href="#planos">Planos</a>
       <a href="#blog">Blog</a>
+      {% endif %}
       <a href="#seguranca">Senha de acesso</a>
       <a href="/{{ loja.slug_url }}/" target="_blank" rel="noopener">Ver site ↗</a>
     </nav>
@@ -330,25 +335,35 @@
       </section>
 
       <section class="card-section" id="textos-site">
+        {% if loja.slug_url == 'dbc' %}
+        <h2>Fotos e textos da página</h2>
+        <div class="section-sub">As 3 fotos da identidade DBC e os textos que dá pra trocar sem mexer em código.</div>
+        {% else %}
         <h2>Textos do site</h2>
         <div class="section-sub">Os títulos e frases que aparecem nas seções da home.</div>
+        {% endif %}
 
         <div class="card">
+          {% if loja.slug_url == 'dbc' %}
+          <h3>Foto do topo (hero)</h3>
+          {% else %}
           <h3>Banner principal (topo do site)</h3>
-          <div class="field">
+          {% endif %}
+          <div class="field" {% if loja.slug_url == 'dbc' %}style="display:none"{% endif %}>
             <label for="f-b1t">Título</label>
             <input type="text" id="f-b1t" name="banner1_titulo" value="{{ loja.banner1_titulo or '' }}">
           </div>
           <div class="field">
-            <label for="f-b1s">Subtítulo</label>
+            <label for="f-b1s">{% if loja.slug_url == 'dbc' %}Texto de apoio (abaixo do título "DE BOA COM A COMIDA"){% else %}Subtítulo{% endif %}</label>
             <textarea id="f-b1s" name="banner1_subtitulo">{{ loja.banner1_subtitulo or '' }}</textarea>
+            {% if loja.slug_url == 'dbc' %}<span class="hint">Se deixar em branco, usa o texto padrão da página.</span>{% endif %}
           </div>
-          <div class="field">
+          <div class="field" {% if loja.slug_url == 'dbc' %}style="display:none"{% endif %}>
             <label for="f-b1b">Texto do botão</label>
             <input type="text" id="f-b1b" name="banner1_botao" value="{{ loja.banner1_botao or '' }}">
           </div>
           <div class="img-preview">
-            {% if loja.banner1_url %}<img src="{{ loja.banner1_url }}" alt="Banner principal atual">{% else %}<span class="hint">Sem foto cadastrada ainda.</span>{% endif %}
+            {% if loja.banner1_url %}<img src="{{ loja.banner1_url }}" alt="Foto do topo atual">{% else %}<span class="hint">Sem foto cadastrada ainda — a página usa a foto padrão.</span>{% endif %}
             <div class="field" style="margin-bottom:0;">
               <label for="f-banner1img">Trocar foto</label>
               <input type="file" id="f-banner1img" name="bannerprincipal1" accept="image/*">
@@ -357,21 +372,25 @@
         </div>
 
         <div class="card">
+          {% if loja.slug_url == 'dbc' %}
+          <h3>Foto da colagem (seção "Sobre a DBC")</h3>
+          {% else %}
           <h3>Banner "Filosofia" (Sem dieta. Sem pressa.)</h3>
-          <div class="field">
+          {% endif %}
+          <div class="field" {% if loja.slug_url == 'dbc' %}style="display:none"{% endif %}>
             <label for="f-b2t">Título</label>
             <input type="text" id="f-b2t" name="banner2_titulo" value="{{ loja.banner2_titulo or '' }}">
           </div>
-          <div class="field">
+          <div class="field" {% if loja.slug_url == 'dbc' %}style="display:none"{% endif %}>
             <label for="f-b2s">Texto</label>
             <textarea id="f-b2s" name="banner2_subtitulo">{{ loja.banner2_subtitulo or '' }}</textarea>
           </div>
-          <div class="field">
+          <div class="field" {% if loja.slug_url == 'dbc' %}style="display:none"{% endif %}>
             <label for="f-b2b">Texto do botão</label>
             <input type="text" id="f-b2b" name="banner2_botao" value="{{ loja.banner2_botao or '' }}">
           </div>
           <div class="img-preview">
-            {% if loja.banner2_url %}<img src="{{ loja.banner2_url }}" alt="Banner Filosofia atual">{% else %}<span class="hint">Sem foto cadastrada ainda.</span>{% endif %}
+            {% if loja.banner2_url %}<img src="{{ loja.banner2_url }}" alt="Foto da colagem atual">{% else %}<span class="hint">Sem foto cadastrada ainda — a página usa a foto padrão.</span>{% endif %}
             <div class="field" style="margin-bottom:0;">
               <label for="f-banner2img">Trocar foto</label>
               <input type="file" id="f-banner2img" name="bannerprincipal2" accept="image/*">
@@ -379,7 +398,7 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card" {% if loja.slug_url == 'dbc' %}style="display:none"{% endif %}>
           <h3>Frase rolante (marquee)</h3>
           <div class="grid-3">
             <div class="field">
@@ -398,23 +417,35 @@
         </div>
 
         <div class="card">
+          {% if loja.slug_url == 'dbc' %}
+          <h3>Foto da Julia (seção "Quem está por trás da DBC")</h3>
+          {% else %}
           <h3>Seção "Sobre"</h3>
-          <div class="grid-2">
+          {% endif %}
+          <div class="grid-2" {% if loja.slug_url == 'dbc' %}style="display:none"{% endif %}>
             <div class="field">
               <label for="f-menusobre">Texto do item "Sobre" no menu</label>
               <input type="text" id="f-menusobre" name="titulo_menu_sobre" value="{{ loja.titulo_menu_sobre or '' }}">
             </div>
             <div class="field">
-              <label for="f-sobretit">Título</label>
+              <label for="f-sobretit">{% if loja.slug_url == 'dbc' %}Título da seção "Sobre a DBC"{% else %}Título{% endif %}</label>
               <input type="text" id="f-sobretit" name="sobre_titulo" value="{{ loja.sobre_titulo or '' }}">
             </div>
           </div>
+          {% if loja.slug_url == 'dbc' %}
           <div class="field">
-            <label for="f-sobretexto">Parágrafo</label>
+            <label for="f-sobretit">Título da seção "Sobre a DBC"</label>
+            <input type="text" id="f-sobretit-dbc" name="sobre_titulo" value="{{ loja.sobre_titulo or '' }}" style="display:none">
+            <span class="hint">Esse campo tem input duplicado escondido acima por causa do grid — ignore, é o mesmo.</span>
+          </div>
+          {% endif %}
+          <div class="field">
+            <label for="f-sobretexto">{% if loja.slug_url == 'dbc' %}Parágrafo da seção "Sobre a DBC"{% else %}Parágrafo{% endif %}</label>
             <textarea id="f-sobretexto" name="sobre_texto">{{ loja.sobre_texto or '' }}</textarea>
+            {% if loja.slug_url == 'dbc' %}<span class="hint">Se deixar em branco, usa o texto padrão da página.</span>{% endif %}
           </div>
           <div class="img-preview">
-            {% if loja.sobre_imagem_url %}<img src="{{ loja.sobre_imagem_url }}" alt="Foto atual">{% else %}<span class="hint">Sem foto cadastrada ainda.</span>{% endif %}
+            {% if loja.sobre_imagem_url %}<img src="{{ loja.sobre_imagem_url }}" alt="Foto atual">{% else %}<span class="hint">Sem foto cadastrada ainda — a página usa a foto padrão.</span>{% endif %}
             <div class="field" style="margin-bottom:0;">
               <label for="f-sobreimg">Trocar foto</label>
               <input type="file" id="f-sobreimg" name="sobre_imagem" accept="image/*">
@@ -423,8 +454,7 @@
         </div>
 
         <div class="card">
-          <h3>Outros títulos</h3>
-          <div class="grid-2">
+          <div class="grid-2" {% if loja.slug_url == 'dbc' %}style="display:none"{% endif %}>
             <div class="field">
               <label for="f-titprod">Título da seção "Acompanhamento"</label>
               <input type="text" id="f-titprod" name="titulo_produtos" value="{{ loja.titulo_produtos or '' }}">
@@ -435,14 +465,18 @@
             </div>
           </div>
           <div class="field full">
-            <label for="f-chamada">Citação ("Mudanças reais acontecem sem pressa...")</label>
+            <label for="f-chamada">{% if loja.slug_url == 'dbc' %}Frase do rodapé ("1% melhor a cada dia ♥"){% else %}Citação ("Mudanças reais acontecem sem pressa..."){% endif %}</label>
             <textarea id="f-chamada" name="chamada_rodape">{{ loja.chamada_rodape or '' }}</textarea>
+            {% if loja.slug_url == 'dbc' %}
+            <span class="hint">Se deixar em branco, usa "1% melhor a cada dia ♥".</span>
+            {% else %}
             <span class="hint">Essa frase aparece duas vezes no site (seção "Um convite" e no rodapé) — as duas usam este mesmo texto.</span>
+            {% endif %}
           </div>
         </div>
       </section>
 
-      <section class="card-section" id="visibilidade">
+      <section class="card-section" id="visibilidade" {% if loja.slug_url == 'dbc' %}style="display:none"{% endif %}>
         <h2>Visibilidade</h2>
         <div class="section-sub">Ligue ou desligue seções inteiras do site.</div>
         <div class="card">
