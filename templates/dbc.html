@@ -1,0 +1,434 @@
+<!--
+  TEMPLATE: dbc.html
+  ─────────────────────────────────────────────────────────────
+  Landing page da comunidade "DBC — De Boa com a Comida" (Julia
+  Theila), convertida do HTML estático pra Jinja seguindo o MESMO
+  contrato de variáveis que os demais templates (julia.html,
+  micasa.html etc.) recebem da rota index() do app.py — nada no
+  app.py precisa mudar além do elif de roteamento já combinado
+  (template_name = 'dbc' pro slug 'dbc').
+
+  JÁ DINÂMICO NESTA VERSÃO:
+  - LOGO: a marca "DBC✦" no header é texto/CSS por padrão (fiel ao
+    design original). Se a loja tiver `loja.logo` preenchido no
+    painel, uma imagem substitui o wordmark automaticamente.
+  - FORMULÁRIO DE LEAD (seção #inscricao): faz POST via fetch/AJAX
+    pra `/{{ loja.slug_url }}/captura-lead` (rota que já existe no
+    app.py e salva em clientes_loja, filtrado por loja_id). Mostra
+    mensagem de sucesso in-page sem redirect. Campos: nome,
+    whatsapp, email — os mesmos que a rota espera via request.form.
+
+  AINDA ESTÁTICO (conteúdo/design da cliente, não vem do painel):
+  as 3 fotos da identidade DBC (hero, colagem, foto da Julia) e
+  todos os textos de copy/FAQ/preço. As fotos foram extraídas do
+  HTML original (que estava com elas embutidas em base64, ~17MB)
+  e salvas como arquivos separados — veja "ANTES DE SUBIR" abaixo.
+
+  ANTES DE SUBIR PARA PRODUÇÃO:
+  1) Salvar este arquivo como /templates/dbc.html
+  2) Subir os 3 arquivos de imagem (entregues junto com este
+     template) para a pasta static do projeto, no caminho:
+       /static/dbc/dbc-hero.png
+       /static/dbc/dbc-collage.png
+       /static/dbc/dbc-julia.png
+     (se preferir outro caminho, só ajustar os 3 `url_for('static', ...)`
+     abaixo)
+  3) Confirmar que o elif 'dbc' já foi adicionado em app.py nos dois
+     blocos (template_name e template_painel) — combinado à parte.
+  4) Criar a loja "dbc" no Directus com slug `dbc`, nome sugerido
+     "De Boa com a Comida", e um e-mail válido (pro fluxo de
+     "esqueci minha senha" funcionar).
+  ─────────────────────────────────────────────────────────────
+-->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DBC — De Boa com a Comida</title>
+<meta name="description" content="Uma comunidade para aprender mais sobre alimentação e saúde, trocar experiências e construir hábitos possíveis para a vida.">
+
+<!-- PREVIEW DO LINK (WhatsApp, Instagram, Facebook etc.) — Open Graph.
+     Segue o mesmo padrão dos outros templates: usa loja.logo com
+     fallback pra uma das fotos estáticas da identidade DBC. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DBC — De Boa com a Comida">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="DBC — De Boa com a Comida">
+<meta property="og:description" content="Uma comunidade para aprender mais sobre alimentação e saúde, trocar experiências e construir hábitos possíveis para a vida.">
+<meta property="og:image" content="{{ loja.logo or url_for('static', filename='dbc/dbc-hero.png', _external=True) }}">
+<meta property="og:image:alt" content="Identidade visual DBC — De Boa com a Comida">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DBC — De Boa com a Comida">
+<meta name="twitter:description" content="Uma comunidade para aprender mais sobre alimentação e saúde, trocar experiências e construir hábitos possíveis para a vida.">
+<meta name="twitter:image" content="{{ loja.logo or url_for('static', filename='dbc/dbc-hero.png', _external=True) }}">
+{% if loja.logo %}<link rel="icon" type="image/png" href="{{ loja.logo }}">{% endif %}
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:opsz,wght@9..144,700&family=Permanent+Marker&display=swap');
+
+:root {
+  --cream:#f6f0df;
+  --paper:#fffaf0;
+  --ink:#172018;
+  --wine:#5c1718;
+  --red:#df3e2f;
+  --lime:#c9ef57;
+  --green:#24351d;
+  --muted:#706d61;
+  --line:rgba(23,32,24,.25);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:"DM Sans",sans-serif;line-height:1.55}
+a{color:inherit;text-decoration:none}
+.container{width:min(1180px,calc(100% - 40px));margin:auto}
+nav{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:24px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.02em}
+.logo-mark{font-family:Georgia,serif;font-size:34px;font-weight:900;color:var(--wine);letter-spacing:-.08em}
+.logo-img{height:38px;width:auto;display:block}
+.logo-sub{font-size:11px;text-transform:uppercase;letter-spacing:.16em}
+.navlinks{display:flex;gap:26px;font-size:13px;font-weight:700}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 22px;border-radius:999px;background:var(--green);color:white;font-weight:700;font-size:13px;transition:.2s;box-shadow:4px 4px 0 var(--wine);border:0;cursor:pointer;font-family:inherit}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--wine)}
+.btn:disabled{opacity:.6;cursor:default;transform:none}
+.hero{position:relative;overflow:hidden;padding:72px 0 76px;background:var(--paper)}
+.hero-grid{display:grid;grid-template-columns:1fr 1.1fr;align-items:center;gap:45px}
+.kicker{display:inline-block;background:var(--lime);padding:7px 13px;transform:rotate(-2deg);font-family:"Permanent Marker";font-size:16px}
+h1{font-family:Fraunces,Georgia,serif;font-size:clamp(58px,7vw,105px);line-height:.87;margin:22px 0;color:var(--ink);letter-spacing:-.055em}
+h1 span{color:var(--red)}
+.lead{font-size:19px;max-width:570px}
+.hero-art{position:relative;min-height:490px}
+.photo{position:absolute;inset:0 5% 0 5%;overflow:hidden;background:var(--red);transform:rotate(2deg);padding:20px;box-shadow:12px 14px 0 var(--wine)}
+.photo img{width:100%;height:100%;object-fit:cover}
+.sticker{position:absolute;z-index:2;background:var(--lime);padding:20px 24px;max-width:230px;font-family:"Permanent Marker";font-size:18px;line-height:1.25;transform:rotate(-5deg);bottom:35px;left:-20px}
+.star{position:absolute;color:var(--red);font-size:80px;right:0;top:-30px;line-height:1}
+.tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:25px;font-size:12px;font-weight:700}
+.tags span::after{content:"•";margin-left:10px;color:var(--red)}
+.tags span:last-child::after{content:""}
+.section{padding:100px 0}
+.paper{background:var(--paper)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}
+.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700}
+h2{font-family:Fraunces,Georgia,serif;font-size:clamp(42px,5vw,72px);line-height:.95;margin:14px 0 25px;letter-spacing:-.04em}
+h2 em{font-style:normal;color:var(--red)}
+.copy{font-size:17px;max-width:620px}
+.collage{position:relative;min-height:420px}
+.collage img{width:80%;height:330px;object-fit:cover;display:block;transform:rotate(-4deg);border:16px solid white;box-shadow:8px 10px 0 var(--wine)}
+.note{position:absolute;right:0;bottom:0;width:250px;background:var(--lime);padding:30px;font-family:"Permanent Marker";font-size:18px;transform:rotate(5deg);box-shadow:6px 7px 0 var(--ink)}
+.dark{background:var(--green);color:var(--paper);position:relative;overflow:hidden}
+.dark h2{color:var(--paper)}
+.dark h2 em{color:var(--lime)}
+.features{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:50px;border-top:1px solid rgba(255,250,240,.35)}
+.feature{padding:28px 18px;border-right:1px solid rgba(255,250,240,.35)}
+.feature:last-child{border-right:0}
+.icon{font-size:28px;margin-bottom:15px;color:var(--lime)}
+.feature h3{font-size:16px;line-height:1.1;margin:0 0 12px}
+.feature p{font-size:13px;color:rgba(255,250,240,.78);margin:0}
+.warning{margin:35px auto 0;background:var(--lime);color:var(--ink);padding:13px 20px;border-radius:999px;max-width:900px;text-align:center;font-size:12px;font-weight:700}
+.checks{display:grid;gap:16px;margin-top:28px}
+.check{display:flex;gap:12px;align-items:flex-start;font-weight:500}
+.check b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--lime);color:var(--green);flex:0 0 24px}
+.not-box{background:#dff58e;padding:30px;border:2px solid var(--ink);transform:rotate(1.5deg)}
+.not-box h3{margin-top:0;color:var(--red);font-family:"Permanent Marker";font-size:23px}
+.not-box ul{margin:0;padding-left:18px}
+.julia{background:var(--red);color:var(--paper)}
+.julia-grid{display:grid;grid-template-columns:.85fr 1.15fr;align-items:center;gap:60px}
+.julia-photo{height:440px;overflow:hidden;background:var(--cream);border:14px solid var(--paper);transform:rotate(-3deg);box-shadow:12px 12px 0 var(--wine)}
+.julia-photo img{width:100%;height:100%;object-fit:cover}
+.julia h2{color:white}
+.julia h2 em{color:var(--lime)}
+.signature{font-family:"Permanent Marker";font-size:22px;margin-top:25px}
+.price-section{text-align:center;background:var(--wine)}
+.price-section .eyebrow{color:var(--lime)}
+.price-section h2{color:var(--paper)}
+.price-section h2 em{color:var(--lime);font-style:normal}
+.price-card{width:min(640px,100%);margin:40px auto 0;background:var(--red);padding:56px 40px;border-radius:20px;box-shadow:none;transform:none}
+.price-card .eyebrow-sm{font-weight:700;text-transform:uppercase;letter-spacing:.12em;font-size:12.5px;color:var(--lime)}
+.price-amount{font-family:Fraunces,Georgia,serif;font-size:64px;line-height:1;margin:16px 0 6px;color:var(--lime)}
+.price-amount small{font-family:"DM Sans";font-size:16px;font-weight:700;color:var(--paper)}
+.price-card .fine{font-size:14px;color:rgba(255,250,240,.85);max-width:440px;margin:0 auto 28px}
+.price-card .btn{background:var(--lime);color:var(--ink);box-shadow:none}
+.price-card .btn:hover{transform:translateY(-2px)}
+.price-note{margin-top:20px;font-size:12.5px;color:rgba(255,250,240,.7)}
+.lead-form{display:flex;flex-direction:column;gap:12px;max-width:420px;margin:0 auto}
+.lead-form input{width:100%;padding:14px 18px;border-radius:999px;border:0;font-family:inherit;font-size:14px;background:var(--paper);color:var(--ink)}
+.lead-form input::placeholder{color:var(--muted)}
+.lead-form .btn{justify-content:center;width:100%}
+.lead-success{background:var(--lime);color:var(--ink);padding:20px 24px;border-radius:16px;font-weight:700;max-width:440px;margin:0 auto}
+.lead-error{background:#ffdede;color:var(--wine);padding:12px 18px;border-radius:999px;font-size:13px;font-weight:700;max-width:440px;margin:0 auto}
+.statement{text-align:center}
+.statement .container{max-width:720px}
+.statement .eyebrow{display:block;text-align:center}
+.statement p{font-size:16.5px;color:var(--muted);margin:0 auto 14px;max-width:600px}
+.statement p:last-of-type{color:var(--ink)}
+.apresenta-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center}
+.lema-box{background:var(--lime);padding:42px 36px;border-radius:22px;transform:rotate(1.2deg);box-shadow:10px 10px 0 var(--wine)}
+.lema-label{font-family:"Permanent Marker";font-size:17px;color:var(--wine);margin-bottom:8px}
+.lema-text{font-family:Fraunces,Georgia,serif;font-size:38px;line-height:1.05;color:var(--ink);margin-bottom:18px}
+.lema-box p{font-size:14.5px;color:var(--green);margin:0}
+@media(max-width:900px){.apresenta-grid{grid-template-columns:1fr}}
+.faq{display:grid;gap:12px;margin-top:35px}
+details{background:var(--paper);border:1px solid var(--line);padding:20px 24px}
+summary{cursor:pointer;font-weight:700}
+details p{color:var(--muted);margin-bottom:0}
+footer{background:var(--wine);color:var(--paper);padding:40px 0}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;gap:30px}
+.footer-logo{font-family:Georgia,serif;font-size:44px;font-weight:900}
+.footer-note{font-family:"Permanent Marker";color:var(--lime);font-size:18px}
+@media(max-width:900px){
+ .navlinks{display:none} .hero-grid,.two,.julia-grid{grid-template-columns:1fr}
+ .hero-art{min-height:380px} .features{grid-template-columns:repeat(2,1fr)}
+ .feature:nth-child(2n){border-right:0} .section{padding:75px 0}
+}
+@media(max-width:560px){
+ .container{width:min(100% - 28px,1180px)} nav{height:66px}
+ .logo-mark{font-size:29px} .logo-sub{font-size:9px}
+ .hero{padding:48px 0} h1{font-size:58px}
+ .lead{font-size:16px} .hero-art{min-height:320px}
+ .photo{inset:0} .sticker{left:0;bottom:10px;max-width:190px;font-size:15px}
+ .features{grid-template-columns:1fr} .feature{border-right:0;border-bottom:1px solid rgba(255,250,240,.35)}
+ .price{font-size:64px}
+ .footer-inner{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<header class="container">
+<nav>
+  <a class="logo" href="#">
+    {% if loja.logo %}
+      <img class="logo-img" src="{{ loja.logo }}" alt="{{ loja.nome or 'DBC' }}">
+    {% else %}
+      <span class="logo-mark">DBC<span style="color:var(--red)">✦</span></span>
+    {% endif %}
+    <span class="logo-sub">De Boa com a Comida</span>
+  </a>
+  <div class="navlinks">
+    <a href="#sobre">Sobre a DBC</a>
+    <a href="#encontra">O que você encontra</a>
+    <a href="#julia">A Julia</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <a class="btn" href="#inscricao">QUERO FAZER PARTE →</a>
+</nav>
+</header>
+
+<main>
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="kicker">comunidade</span>
+      <h1>DE BOA COM<br><span>A COMIDA</span></h1>
+      <p class="lead"><strong>Cuidar da sua alimentação pode ser mais leve do que você imagina.</strong></p>
+      <p class="lead">Uma comunidade para quem quer aprender mais sobre alimentação e saúde, trocar experiências e construir hábitos possíveis para a vida — com informação confiável e sem precisar fazer tudo perfeitamente.</p>
+      <a class="btn" href="#inscricao">QUERO FAZER PARTE →</a>
+      <div class="tags"><span>Nutrição</span><span>saúde</span><span>comportamento</span><span>bem-estar</span><span>comunidade</span></div>
+    </div>
+    <div class="hero-art">
+      <div class="star">✦</div>
+      <div class="photo"><img src="{{ url_for('static', filename='dbc/dbc-hero.png') }}" alt="Identidade visual DBC"></div>
+      <div class="sticker">informação<br>troca<br>& cuidado<br>vida real ♥</div>
+    </div>
+  </div>
+</section>
+
+<section class="section paper" id="sobre">
+<div class="container two">
+  <div>
+    <div class="eyebrow">Sobre a DBC</div>
+    <h2>Talvez não esteja faltando informação.<br><em>Talvez esteja faltando um lugar onde toda essa informação faça sentido.</em></h2>
+    <p class="copy">Você abre as redes sociais e encontra alguém dizendo para cortar um alimento. Depois, outra pessoa dizendo exatamente o contrário. Surge uma dieta nova. Uma regra nova. Um alimento milagroso. Outro que virou vilão.</p>
+    <p class="copy">E cuidar da alimentação, que poderia ser algo natural, começa a parecer cada vez mais complicado.</p>
+    <p class="copy"><strong>A DBC nasce para tornar essa conversa mais simples, próxima e confiável.</strong></p>
+  </div>
+  <div class="collage">
+    <img src="{{ url_for('static', filename='dbc/dbc-collage.png') }}" alt="Arte DBC">
+    <div class="note">A DBC é uma comunidade ligada à Julia Nutri, dentro do mesmo ecossistema — sem precisar criar um novo Instagram.</div>
+  </div>
+</div>
+</section>
+
+<section class="section paper statement" id="alem-do-prato">
+<div class="container">
+  <div class="eyebrow">Saúde para além do prato</div>
+  <h2>Saúde não acontece<br><em>só no prato.</em></h2>
+  <p>Comida faz parte da nossa rotina, das nossas relações, das nossas emoções e da nossa vida.</p>
+  <p>Por isso, aqui a conversa não vai ser só sobre nutrientes ou sobre o que colocar no prato. Vamos falar sobre alimentação, comportamento, movimento, saúde emocional, rotina, relações e bem-estar.</p>
+  <p><strong>Porque cuidar de si envolve muito mais do que simplesmente saber o que comer.</strong></p>
+</div>
+</section>
+
+<section class="section paper" id="apresentacao">
+<div class="container apresenta-grid">
+  <div>
+    <div class="eyebrow">Apresentação da DBC</div>
+    <h2>Foi daí que nasceu<br><em>a De Boa com a Comida.</em></h2>
+    <p class="copy">A DBC é uma comunidade criada por mim, Julia Theila, para aproximar informação, conhecimento, troca e cuidado de quem quer cuidar melhor da alimentação e da saúde.</p>
+    <p class="copy">Um espaço para aprender com profissionais, conversar sobre as dúvidas que aparecem na vida real, trocar experiências com outras pessoas e transformar conhecimento em pequenas mudanças possíveis na rotina.</p>
+    <p class="copy"><strong>Sem precisar fazer tudo perfeitamente.</strong></p>
+  </div>
+  <div class="lema-box">
+    <div class="lema-label">Nosso lema?</div>
+    <div class="lema-text">Ser 1% melhor a cada dia.</div>
+    <p>Não para buscar uma versão perfeita de você. Mas para construir, aos poucos, escolhas que façam sentido para a sua vida.</p>
+  </div>
+</div>
+</section>
+
+<section class="section dark" id="encontra">
+<div class="container">
+  <div class="eyebrow">O que você encontra</div>
+  <h2>Tudo o que você precisa<br><em>para se cuidar, em um só lugar.</em></h2>
+  <div class="features">
+    <article class="feature"><div class="icon">✦</div><h3>Rodas de conversa com a Ju</h3><p>Encontros para conversar sobre temas de nutrição, dúvidas e assuntos atuais.</p></article>
+    <article class="feature"><div class="icon">✦</div><h3>Profissionais convidados</h3><p>Psicologia, educação física, fisioterapia, medicina e outras áreas.</p></article>
+    <article class="feature"><div class="icon">✦</div><h3>Receitas e materiais</h3><p>E-books, conteúdos e receitas para transformar informação em algo aplicável.</p></article>
+    <article class="feature"><div class="icon">✦</div><h3>Troca entre participantes</h3><p>Experiências, dificuldades, histórias e aprendizados compartilhados.</p></article>
+    <article class="feature"><div class="icon">✦</div><h3>Saúde para além da alimentação</h3><p>Saúde emocional, movimento, relações, rotina e comportamento também entram.</p></article>
+  </div>
+  <div class="warning">IMPORTANTE • A DBC não substitui consulta nutricional individual. Avaliações e condutas individuais continuam sendo trabalhadas em consulta.</div>
+</div>
+</section>
+
+<section class="section paper">
+<div class="container two">
+  <div>
+    <div class="eyebrow">Para quem é a DBC?</div>
+    <h2>A DBC é para você que...</h2>
+    <div class="checks">
+      <div class="check"><b>✓</b><span>Quer cuidar melhor da alimentação, da saúde e do estilo de vida.</span></div>
+      <div class="check"><b>✓</b><span>Quer entender mais sobre nutrição sem depender de informações soltas da internet.</span></div>
+      <div class="check"><b>✓</b><span>Gosta de aprender, trocar experiências e fazer parte de uma comunidade.</span></div>
+      <div class="check"><b>✓</b><span>Acredita que cuidar da saúde pode envolver muito mais do que seguir regras sobre o que comer.</span></div>
+    </div>
+    <p class="signature">Aqui, você não precisa ser perfeita.<br>Só precisa estar disposta a dar o próximo passo.</p>
+  </div>
+  <div class="not-box">
+    <h3>IMPORTANTE: O QUE A DBC NÃO É</h3>
+    <ul>
+      <li>Não substitui uma consulta nutricional individual.</li>
+      <li>Não é uma consulta em grupo.</li>
+      <li>Não serão prescritas condutas individuais dentro da comunidade.</li>
+      <li>É um espaço de educação, informação, troca e cuidado.</li>
+      <li>Avaliações e questões individuais continuam sendo trabalhadas em consulta nutricional.</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<section class="section julia" id="julia">
+<div class="container julia-grid">
+  <div class="julia-photo"><img src="{{ url_for('static', filename='dbc/dbc-julia.png') }}" alt="Imagem da identidade DBC"></div>
+  <div>
+    <div class="eyebrow">Quem está por trás da DBC?</div>
+    <h2>Oi, eu sou a <em>Julia!</em></h2>
+    <p>Sou nutricionista e, antes mesmo de estar desse lado, também já vivi as dificuldades de tentar entender a alimentação no meio de tantas regras, informações e cobranças.</p>
+    <p>Foi a minha própria relação com a comida que despertou em mim a vontade de entender por que comer bem pode parecer tão difícil — e me mostrou que simplesmente seguir mais uma dieta não era a resposta.</p>
+    <p>Estudando nutrição e comportamento alimentar, entendi que cuidar da saúde vai muito além do que colocamos no prato. Envolve rotina, emoções, relações, movimento e escolhas que façam sentido para a vida.</p>
+    <p>E foi dessa vontade de tornar o cuidado mais próximo e acessível que nasceu a De Boa com a Comida: um espaço para aprender, conversar, trocar experiências e ter acesso a informações em que você possa confiar.</p>
+    <p><strong>Sem precisar fazer tudo perfeitamente. Só buscando ser 1% melhor a cada dia.</strong></p>
+    <p class="signature">Nutricionista pela PUC-Campinas<br>Pós-graduanda em Neurociência e Comportamento Alimentar</p>
+  </div>
+</div>
+</section>
+
+<section class="section price-section" id="inscricao">
+<div class="container">
+  <div class="eyebrow">Condição de lançamento</div>
+  <h2>As 20 primeiras entram<br><em>com condição especial</em></h2>
+  <div class="price-card">
+    <div class="eyebrow-sm">As 20 primeiras pessoas</div>
+    <div class="price-amount">R$ 24,90 <small>/ mês</small></div>
+    <p class="fine">Depois, o valor passa para R$ 29,90/mês e, posteriormente, para o valor regular de R$ 39,90/mês. O link de acesso será disponibilizado primeiro para o grupo de espera.</p>
+
+    <!-- FORMULÁRIO DE CAPTURA DE LEAD
+         POST via fetch pra /{{ loja.slug_url }}/captura-lead (rota
+         já existente em app.py). Campos batem com os que a rota lê
+         via request.form: nome, whatsapp, email. -->
+    <form id="dbc-lead-form" class="lead-form" action="/{{ loja.slug_url }}/captura-lead" method="POST">
+      <input type="text" name="nome" placeholder="Seu nome" required>
+      <input type="tel" name="whatsapp" placeholder="WhatsApp (com DDD)" required>
+      <input type="email" name="email" placeholder="Seu e-mail" required>
+      <button type="submit" class="btn">QUERO FAZER PARTE DA DBC →</button>
+    </form>
+    <div id="dbc-lead-success" class="lead-success" style="display:none">
+      Prontinho! Você entrou na lista de espera da DBC 🎉<br>Em breve a Julia entra em contato com os próximos passos.
+    </div>
+    <div id="dbc-lead-error" class="lead-error" style="display:none"></div>
+  </div>
+  <div class="price-note">Abertura em 05/10 · vagas de lançamento limitadas às 20 primeiras pessoas</div>
+</div>
+</section>
+
+<section class="section paper" id="faq">
+<div class="container">
+  <div class="eyebrow">Dúvidas frequentes</div>
+  <h2>Antes de entrar, <em>tudo bem perguntar.</em></h2>
+  <div class="faq">
+    <details><summary>Onde a comunidade vai funcionar?</summary><p>A DBC ficará hospedada no Circle, uma plataforma própria para comunidades, onde você encontrará conteúdos, materiais e informações sobre os encontros.</p></details>
+    <details><summary>Os encontros serão ao vivo?</summary><p>Sim! Teremos encontros ao vivo 1 ou 2 vezes por mês, com as datas avisadas com antecedência.</p></details>
+    <details><summary>Os encontros ficarão gravados?</summary><p>A princípio, não. A ideia é que os encontros sejam momentos de troca e participação ao vivo.</p></details>
+    <details><summary>Preciso ser paciente da Julia para participar?</summary><p>Não! A DBC é aberta para qualquer pessoa que queira aprender mais sobre alimentação, saúde e bem-estar e fazer parte dessa troca.</p></details>
+    <details><summary>A DBC substitui uma consulta nutricional?</summary><p>Não. A comunidade é um espaço de educação, informação e troca. Avaliações, orientações e condutas individualizadas continuam sendo realizadas em consulta nutricional.</p></details>
+    <details><summary>Posso cancelar minha assinatura?</summary><p>Sim. A assinatura pode ser cancelada a qualquer momento, sem multa.</p></details>
+    <details><summary>Onde encontro os materiais?</summary><p>Tudo ficará organizado dentro do Circle. É por lá que você terá acesso aos materiais, conteúdos e demais recursos.</p></details>
+    <details><summary>Só consigo acessar pelo computador?</summary><p>Não! Além do navegador, você também poderá acompanhar a comunidade pelo aplicativo do Circle no celular.</p></details>
+    <details><summary>Quando começam os encontros?</summary><p>Já na primeira semana da DBC! A proposta é que você entre e já tenha uma primeira experiência de encontro e troca com a comunidade.</p></details>
+  </div>
+</div>
+</section>
+</main>
+
+<footer>
+<div class="container footer-inner">
+  <div><div class="footer-logo">DBC ✦</div><div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase">De Boa com a Comida</div></div>
+  <div class="footer-note">1% melhor a cada dia ♥</div>
+</div>
+</footer>
+
+<script>
+(function(){
+  var form = document.getElementById('dbc-lead-form');
+  var successBox = document.getElementById('dbc-lead-success');
+  var errorBox = document.getElementById('dbc-lead-error');
+  if (!form) return;
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn = form.querySelector('button[type="submit"]');
+    var originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+    errorBox.style.display = 'none';
+
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form)
+    })
+    .then(function(res){
+      return res.json().then(function(data){ return { ok: res.ok, data: data }; });
+    })
+    .then(function(result){
+      if (result.ok && result.data && result.data.sucesso) {
+        form.style.display = 'none';
+        successBox.style.display = 'block';
+      } else {
+        errorBox.textContent = (result.data && result.data.erro) || 'Ops, algo deu errado. Tenta de novo em instantes.';
+        errorBox.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    })
+    .catch(function(){
+      errorBox.textContent = 'Ops, algo deu errado. Tenta de novo em instantes.';
+      errorBox.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = originalText;
+    });
+  });
+})();
+</script>
+</body>
+</html>
