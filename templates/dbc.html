@@ -210,12 +210,18 @@ h2 em{font-style:normal;color:var(--red)}
 .full-bleed-photo{display:block;line-height:0;background:var(--red)}
 .full-bleed-photo img{display:block;width:100%;height:auto}
 .faq{display:grid;gap:12px;margin-top:35px}
+@media(min-width:901px){
+  .hero{padding-bottom:38px}
+  #sobre{padding-top:50px}
+}
 details{background:var(--paper);border:1px solid var(--line);padding:20px 24px}
 summary{cursor:pointer;font-weight:700}
 details p{color:var(--muted);margin-bottom:0}
 footer{background:var(--wine);color:var(--paper);padding:40px 0}
 .footer-inner{display:flex;justify-content:space-between;align-items:center;gap:30px}
 .footer-logo{font-family:Georgia,serif;font-size:44px;font-weight:900}
+.footer-logos{display:flex;align-items:center;gap:18px;margin-bottom:8px}
+.footer-logo-img{height:52px;width:auto;display:block}
 .footer-note{font-family:"Permanent Marker";color:var(--lime);font-size:18px}
 @media(max-width:900px){
  .navlinks{display:none} .hero-grid,.two,.julia-grid{grid-template-columns:1fr}
@@ -251,7 +257,7 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
     {% else %}
       <span class="logo-mark">DBC<span style="color:var(--red)">✦</span></span>
     {% endif %}
-    <span class="logo-sub">De Boa com a Comida</span>
+    <span class="logo-sub">1% melhor a cada dia</span>
   </a>
   <div class="navlinks">
     <a href="#sobre">Sobre a DBC</a>
@@ -414,14 +420,14 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
          POST via fetch pra /{{ loja.slug_url }}/captura-lead (rota
          já existente em app.py). Campos batem com os que a rota lê
          via request.form: nome, whatsapp, email. -->
-    <form id="dbc-lead-form" class="lead-form" action="/{{ loja.slug_url }}/captura-lead" method="POST">
+    <form id="dbc-lead-form" class="lead-form" action="/{{ loja.slug_url }}/captura-lead" method="POST" data-whatsapp="{{ loja.whatsapp_comercial or '5519971541008' }}">
       <input type="text" name="nome" placeholder="Seu nome" required>
       <input type="tel" name="whatsapp" placeholder="WhatsApp (com DDD)" required>
       <input type="email" name="email" placeholder="Seu e-mail" required>
       <button type="submit" class="btn">QUERO FAZER PARTE DA DBC →</button>
     </form>
     <div id="dbc-lead-success" class="lead-success" style="display:none">
-      Prontinho! Você entrou na lista de espera da DBC 🎉<br>Em breve a Julia entra em contato com os próximos passos.
+      Prontinho! Você entrou na lista de espera da DBC 🎉<br>Redirecionando para o WhatsApp...
     </div>
     <div id="dbc-lead-error" class="lead-error" style="display:none"></div>
   </div>
@@ -450,7 +456,17 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
 
 <footer>
 <div class="container footer-inner">
-  <div><div class="footer-logo">DBC ✦</div><div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase">De Boa com a Comida</div></div>
+  <div>
+    <div class="footer-logos">
+      {% if loja.logo %}
+        <img class="footer-logo-img" src="{{ loja.logo }}" alt="{{ loja.nome or 'DBC' }}">
+      {% else %}
+        <span class="footer-logo">DBC <span style="color:var(--lime)">✦</span></span>
+      {% endif %}
+      <img class="footer-logo-img" src="https://directus.leanttro.com/assets/cebebb11-102d-422c-8a26-fb585b0c8922?quality=80&format=webp" alt="Logo De Boa com a Comida">
+    </div>
+    <div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase">De Boa com a Comida</div>
+  </div>
   <div class="footer-note">1% melhor a cada dia ♥</div>
 </div>
 </footer>
@@ -479,8 +495,19 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
     })
     .then(function(result){
       if (result.ok && result.data && result.data.sucesso) {
+        var nome = (form.querySelector('[name="nome"]').value || '').trim();
+        var whatsapp = (form.querySelector('[name="whatsapp"]').value || '').trim();
+        var email = (form.querySelector('[name="email"]').value || '').trim();
+        var numeroDestino = (form.dataset.whatsapp || '').replace(/\D/g, '');
+
         form.style.display = 'none';
         successBox.style.display = 'block';
+
+        if (numeroDestino) {
+          var mensagem = 'Oii! Quero fazer parte da DBC 🎉\n\nNome: ' + nome + '\nWhatsApp: ' + whatsapp + '\nE-mail: ' + email;
+          var linkWpp = 'https://wa.me/' + numeroDestino + '?text=' + encodeURIComponent(mensagem);
+          setTimeout(function(){ window.location.href = linkWpp; }, 1200);
+        }
       } else {
         errorBox.textContent = (result.data && result.data.erro) || 'Ops, algo deu errado. Tenta de novo em instantes.';
         errorBox.style.display = 'block';
