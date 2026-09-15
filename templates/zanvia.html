@@ -227,6 +227,19 @@
   }
   .spc-slide.active{ opacity:1; pointer-events:auto; }
   .spc-slide img{ width:100%; height:100%; object-fit:contain; display:block; }
+  .spc-arrow{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:38px; height:38px; border-radius:50%;
+    background:rgba(10,27,54,0.55); border:1px solid rgba(255,255,255,0.35);
+    color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:background 0.15s ease; z-index:2;
+  }
+  .spc-arrow:hover{ background:rgba(10,27,54,0.8); }
+  .spc-arrow.spc-prev{ left:10px; }
+  .spc-arrow.spc-next{ right:10px; }
+  @media (max-width:480px){
+    .spc-arrow{ width:32px; height:32px; }
+  }
   .spc-dots{
     display:flex; justify-content:center; gap:9px; margin-top:18px;
   }
@@ -1143,6 +1156,12 @@
           <div class="spc-slide"><img src="https://directus.leanttro.com/assets/9ee16b38-88b0-4ddd-94af-425e595bbc77?quality=80&format=webp" alt="Avaliação 5 estrelas de Renata Alves Santos sobre atendimento da Zanvia" loading="lazy"></div>
           <div class="spc-slide"><img src="https://directus.leanttro.com/assets/29b4cede-72ea-4867-8f02-29285550357d?quality=80&format=webp" alt="Avaliação 5 estrelas de Giseli Rodrigues Fernandes sobre atendimento da Zanvia" loading="lazy"></div>
           <div class="spc-slide"><img src="https://directus.leanttro.com/assets/634ac011-a8ed-4815-b16b-6cb941e4eeaf?quality=80&format=webp" alt="Avaliação 5 estrelas de Stephany Silva sobre atendimento da Zanvia" loading="lazy"></div>
+          <button type="button" class="spc-arrow spc-prev" id="spcPrev" aria-label="Avaliação anterior">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button type="button" class="spc-arrow spc-next" id="spcNext" aria-label="Próxima avaliação">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
         </div>
         <div class="spc-dots" id="spcDots"></div>
       </div>
@@ -1681,12 +1700,18 @@
   }
 
   function next(){ goTo((current + 1) % slides.length); }
+  function prev(){ goTo((current - 1 + slides.length) % slides.length); }
 
   var timer = setInterval(next, intervalMs);
   function resetTimer(){
     clearInterval(timer);
     timer = setInterval(next, intervalMs);
   }
+
+  var prevBtn = document.getElementById('spcPrev');
+  var nextBtn = document.getElementById('spcNext');
+  if(prevBtn) prevBtn.addEventListener('click', function(){ prev(); resetTimer(); });
+  if(nextBtn) nextBtn.addEventListener('click', function(){ next(); resetTimer(); });
 })();
 </script>
 
