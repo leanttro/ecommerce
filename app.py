@@ -602,6 +602,8 @@ def index(loja_slug):
         template_name = 'onepiece'
     elif loja_slug == 'oscar':
         template_name = 'oscar'
+    elif loja_slug == 'dbc':
+        template_name = 'dbc'
     else:
         template_name = g.loja.get('template_ativo') or 'index'
         if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional', 'institucional2', 'tecnologia', 'onepiece', 'oscar', 'portal_cliente','iot', 'life', 'micasa', 'leanttro', 'zanvia', 'julia']:
@@ -1003,6 +1005,8 @@ def admin_painel(loja_slug):
     elif loja_slug == 'variasfita':
         template_painel = 'painel_creapes.html'
     elif loja_slug == 'julia':
+        template_painel = 'painel_julia.html'
+    elif loja_slug == 'dbc':
         template_painel = 'painel_julia.html'
 
     return render_template(template_painel, 
