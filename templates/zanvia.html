@@ -1601,69 +1601,65 @@
 
   const leadForm = document.getElementById('leadForm');
   if (leadForm) {
-    leadForm.addEventListener('submit', async function(e){
+    leadForm.addEventListener('submit', function(e){
       e.preventDefault();
       const btn = this.querySelector('button[type=submit]');
       const textWrapper = btn.querySelector('.btn-text-wrapper');
-      const originalHTML = textWrapper.innerHTML;
-
-      textWrapper.innerHTML = 'ENVIANDO...';
+      textWrapper.innerHTML = 'REDIRECIONANDO...';
       btn.disabled = true;
 
       const formData = new FormData(this);
-      try {
-        const response = await fetch('/{{ loja.slug_url }}/captura-lead', {
-          method: 'POST',
-          body: formData
-        });
-        const result = await response.json();
-        if (result.sucesso || response.ok) {
-          this.style.display = 'none';
-          document.getElementById('leadSuccessMsg').style.display = 'block';
-        } else {
-          alert('Erro ao enviar. Tente novamente.');
-          textWrapper.innerHTML = originalHTML;
-          btn.disabled = false;
-        }
-      } catch(err) {
-        alert('Erro de conexão. Verifique sua internet e tente novamente.');
-        textWrapper.innerHTML = originalHTML;
-        btn.disabled = false;
+      const nome = (formData.get('nome') || '').toString().trim();
+      const whatsapp = (formData.get('whatsapp') || '').toString().trim();
+      const email = (formData.get('email') || '').toString().trim();
+      const profissao = (formData.get('profissao') || 'Não informado').toString().trim();
+
+      // Salva o lead no sistema. sendBeacon é feito pra sobreviver ao redirecionamento;
+      // se o navegador não suportar, cai no fetch com keepalive.
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/{{ loja.slug_url }}/captura-lead', formData);
+      } else {
+        fetch('/{{ loja.slug_url }}/captura-lead', { method: 'POST', body: formData, keepalive: true }).catch(function(){});
       }
+
+      const mensagem = 'Olá! Vim pelo site da Zanvia e preenchi o formulário de cotação.\n\n' +
+        'Nome: ' + nome + '\n' +
+        'WhatsApp: ' + whatsapp + '\n' +
+        'E-mail: ' + email + '\n' +
+        'Procuro plano para: ' + profissao;
+
+      window.location.href = 'https://wa.me/5511966460811?text=' + encodeURIComponent(mensagem);
     });
   }
 
   const miniQuoteForm = document.getElementById('miniQuoteForm');
   if (miniQuoteForm) {
-    miniQuoteForm.addEventListener('submit', async function(e){
+    miniQuoteForm.addEventListener('submit', function(e){
       e.preventDefault();
       const btn = this.querySelector('button[type=submit]');
       const textEl = btn.querySelector('.mq-btn-text');
-      const originalText = textEl.textContent;
-
-      textEl.textContent = 'ENVIANDO...';
+      textEl.textContent = 'REDIRECIONANDO...';
       btn.disabled = true;
 
       const formData = new FormData(this);
-      try {
-        const response = await fetch('/{{ loja.slug_url }}/captura-lead', {
-          method: 'POST',
-          body: formData
-        });
-        const result = await response.json();
-        if (result.sucesso || response.ok) {
-          this.style.display = 'none';
-          document.getElementById('miniQuoteSuccess').style.display = 'block';
-        } else {
-          alert('Erro ao enviar. Tente novamente.');
-          textEl.textContent = originalText;
-          btn.disabled = false;
-        }
-      } catch(err) {
-        alert('Erro de conexão. Verifique sua internet e tente novamente.');
-        textEl.textContent = originalText;
-        btn.disabled = false;
+      const nome = (formData.get('nome') || '').toString().trim();
+      const whatsapp = (formData.get('whatsapp') || '').toString().trim();
+      const email = (formData.get('email') || '').toString().trim();
+
+      // Salva o lead no sistema. sendBeacon é feito pra sobreviver ao redirecionamento;
+      // se o navegador não suportar, cai no fetch com keepalive.
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/{{ loja.slug_url }}/captura-lead', formData);
+      } else {
+        fetch('/{{ loja.slug_url }}/captura-lead', { method: 'POST', body: formData, keepalive: true }).catch(function(){});
       }
+
+      const mensagem = 'Olá! Vim pelo site da Zanvia e preenchi o formulário de cotação.\n\n' +
+        'Nome: ' + nome + '\n' +
+        'WhatsApp: ' + whatsapp + '\n' +
+        'E-mail: ' + email;
+
+      window.location.href = 'https://wa.me/5511966460811?text=' + encodeURIComponent(mensagem);
     });
   }
 </script>
