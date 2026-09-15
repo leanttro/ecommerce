@@ -246,13 +246,6 @@
     <section class="title-spread">
         <div>
             <h1 class="title-spread__name"><span>{{ p.nome }}</span></h1>
-            <div class="title-spread__lead">
-                {% if p.descricao %}
-                    <p>{{ p.descricao | truncate(170) }}</p>
-                {% else %}
-                    <p>Um projeto conduzido com atenção aos detalhes, do conceito à entrega.</p>
-                {% endif %}
-            </div>
         </div>
 
         <figure class="framed-figure">
@@ -306,56 +299,22 @@
         </div>
     </section>
 
-    {% if p.imagem1 or p.imagem2 or p.imagem_secundaria or p.imagem3 or p.imagem4 or p.imagem5 %}
+    {% set ns = namespace(imgs=[]) %}
+    {% if p.imagem1 and p.imagem_destaque %}{% set ns.imgs = ns.imgs + [(p.imagem1, 'Detalhe do projeto')] %}{% endif %}
+    {% if p.imagem2 %}{% set ns.imgs = ns.imgs + [(p.imagem2, 'Detalhe do projeto')] %}{% endif %}
+    {% if p.imagem_secundaria %}{% set ns.imgs = ns.imgs + [(p.imagem_secundaria, 'Detalhe do projeto')] %}{% endif %}
+    {% if p.imagem3 %}{% set ns.imgs = ns.imgs + [(p.imagem3, 'Detalhe do projeto')] %}{% endif %}
+    {% if p.imagem4 %}{% set ns.imgs = ns.imgs + [(p.imagem4, 'Detalhe do projeto')] %}{% endif %}
+    {% if p.imagem5 %}{% set ns.imgs = ns.imgs + [(p.imagem5, 'Detalhe do projeto')] %}{% endif %}
+
+    {% if ns.imgs %}
     <section class="collage">
-
-        {% if p.imagem1 %}
-        <figure class="span-7 reveal-fade">
-            <img src="{{ p.imagem1 }}" alt="Detalhe do Projeto 1">
-            <figcaption><span>Nº 02</span></figcaption>
+        {% for img, alt in ns.imgs %}
+        <figure class="{{ loop.cycle('span-7','span-5','span-4') }} {% if loop.index0 % 2 == 1 %}offset-down{% endif %} reveal-fade">
+            <img src="{{ img }}" alt="{{ alt }}">
+            <figcaption><span>Nº {{ '%02d' | format(loop.index + 1) }}</span></figcaption>
         </figure>
-        {% endif %}
-
-        {% if p.imagem2 %}
-        <figure class="span-5 offset-down reveal-fade">
-            <img src="{{ p.imagem2 }}" alt="Detalhe do Projeto 2">
-            <figcaption><span>Nº 03</span></figcaption>
-        </figure>
-        {% elif p.imagem_secundaria %}
-        <figure class="span-5 offset-down reveal-fade">
-            <img src="{{ p.imagem_secundaria }}" alt="Detalhe do Projeto 3">
-            <figcaption><span>Nº 03</span></figcaption>
-        </figure>
-        {% endif %}
-
-        {% if p.imagem2 and p.imagem_secundaria %}
-        <figure class="span-5 reveal-fade">
-            <img src="{{ p.imagem_secundaria }}" alt="Detalhe do Projeto 3">
-            <figcaption><span>Nº 04</span></figcaption>
-        </figure>
-        {% endif %}
-
-        {% if p.imagem3 %}
-        <figure class="span-4 reveal-fade">
-            <img src="{{ p.imagem3 }}" alt="Detalhe do Projeto 4">
-            <figcaption><span>Nº 05</span></figcaption>
-        </figure>
-        {% endif %}
-
-        {% if p.imagem4 %}
-        <figure class="span-4 offset-down reveal-fade">
-            <img src="{{ p.imagem4 }}" alt="Detalhe do Projeto 5">
-            <figcaption><span>Nº 06</span></figcaption>
-        </figure>
-        {% endif %}
-
-        {% if p.imagem5 %}
-        <figure class="span-4 reveal-fade">
-            <img src="{{ p.imagem5 }}" alt="Detalhe do Projeto 6">
-            <figcaption><span>Nº 07</span></figcaption>
-        </figure>
-        {% endif %}
-
+        {% endfor %}
     </section>
     {% endif %}
 
