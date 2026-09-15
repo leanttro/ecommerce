@@ -205,8 +205,10 @@ h2 em{font-style:normal;color:var(--red)}
 .dbc-section .closing:before{content:"";position:absolute;left:-12px;top:-11px;width:28px;height:28px;background:var(--red);clip-path:polygon(50% 0,61% 37%,100% 24%,69% 51%,100% 72%,61% 64%,50% 100%,39% 64%,0 76%,31% 50%,0 26%,39% 37%)}
 .dbc-section .closing p{margin:0;font-size:20px;font-weight:700;text-align:center}
 .dbc-section .closing span{color:var(--lime)}
-@media(max-width:900px){.dbc-section{padding:85px 28px 90px}.dbc-section .inner{grid-template-columns:1fr;gap:55px}.dbc-section .visual{min-height:360px;width:min(600px,100%);margin:auto}.dbc-section .visual-card{height:330px;width:84%}.dbc-section .closing{margin-top:55px}}
-@media(max-width:560px){.dbc-section{padding:65px 20px 75px;min-height:auto}.dbc-section .star.one{left:8px;top:45px;font-size:48px}.dbc-section .star.two{right:5px;bottom:35px;font-size:65px}.dbc-section .star.three{right:10%;top:65px}.dbc-section .eyebrow{font-size:10px;letter-spacing:.18em}.dbc-section h1{font-size:clamp(49px,15vw,70px)}.dbc-section h1 .underline:after{height:6px;bottom:-7px}.dbc-section .description{font-size:16px;margin-top:36px}.dbc-section .description strong{font-size:17px}.dbc-section .visual{min-height:300px}.dbc-section .visual-card{height:275px;right:2%;width:88%}.dbc-section .visual-card:before{width:205px;height:205px}.dbc-section .visual-card:after{width:135px;height:135px}.dbc-section .sticker{left:-7px;width:170px;font-size:16px;padding:17px}.dbc-section .food-word{font-size:17px}.dbc-section .closing{padding:22px 20px}.dbc-section .closing p{font-size:16px}}
+@media(max-width:900px){.dbc-section{padding:85px 28px 90px;min-height:auto}.dbc-section .inner{grid-template-columns:1fr;gap:55px}.dbc-section .visual{min-height:360px;width:min(600px,100%);margin:auto}.dbc-section .visual-card{height:330px;width:84%}.dbc-section .closing{margin-top:55px}}
+@media(max-width:560px){.dbc-section{padding:48px 20px 56px;min-height:auto}.dbc-section .star.one{left:8px;top:45px;font-size:48px}.dbc-section .star.two{right:5px;bottom:35px;font-size:65px}.dbc-section .star.three{right:10%;top:65px}.dbc-section .eyebrow{font-size:10px;letter-spacing:.18em}.dbc-section h1{font-size:clamp(49px,15vw,70px)}.dbc-section h1 .underline:after{height:6px;bottom:-7px}.dbc-section .description{font-size:16px;margin-top:28px}.dbc-section .description strong{font-size:17px}.dbc-section .visual{min-height:280px}.dbc-section .visual-card{height:250px;right:2%;width:88%}.dbc-section .visual-card:before{width:205px;height:205px}.dbc-section .visual-card:after{width:135px;height:135px}.dbc-section .sticker{left:-7px;width:170px;font-size:16px;padding:17px}.dbc-section .food-word{font-size:17px}.dbc-section .closing{margin-top:36px;padding:22px 20px}.dbc-section .closing p{font-size:16px}}
+.full-bleed-photo{display:block;line-height:0;background:var(--red)}
+.full-bleed-photo img{display:block;width:100%;height:auto}
 .faq{display:grid;gap:12px;margin-top:35px}
 details{background:var(--paper);border:1px solid var(--line);padding:20px 24px}
 summary{cursor:pointer;font-weight:700}
@@ -218,14 +220,21 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
 @media(max-width:900px){
  .navlinks{display:none} .hero-grid,.two,.julia-grid{grid-template-columns:1fr}
  .hero-art{min-height:380px} .features{grid-template-columns:repeat(2,1fr)}
- .feature:nth-child(2n){border-right:0} .section{padding:75px 0}
+ .feature:nth-child(2n){border-right:0} .section{padding:60px 0}
+ .two,.julia-grid{gap:40px} .apresenta-grid{gap:34px}
 }
 @media(max-width:560px){
  .container{width:min(100% - 28px,1180px)} nav{min-height:76px}
- .logo-mark{font-size:58px} .logo-img{height:56px} .logo-sub{font-size:9px}
- .hero{padding:48px 0} h1{font-size:58px}
- .lead{font-size:16px} .hero-art{min-height:320px}
+ .logo-mark{font-size:64px} .logo-img{height:62px} .logo-sub{font-size:9px}
+ nav .btn{padding:10px 14px;font-size:11px;gap:5px}
+ .section{padding:42px 0}
+ .hero{padding:34px 0 38px}
+ .hero-grid{gap:30px}
+ h1{font-size:58px}
+ .lead{font-size:16px} .hero-art{min-height:280px}
  .photo{inset:0} .sticker{left:0;bottom:10px;max-width:190px;font-size:15px}
+ .two,.julia-grid{gap:28px}
+ .price-card{padding:38px 24px}
  .features{grid-template-columns:1fr} .feature{border-right:0;border-bottom:1px solid rgba(255,250,240,.35)}
  .price{font-size:64px}
  .footer-inner{flex-direction:column;align-items:flex-start}
@@ -261,13 +270,13 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
       <span class="kicker">comunidade</span>
       <h1 class="hero-title-img"><img src="https://directus.leanttro.com/assets/c92b3497-b002-4a01-95f0-1ff3061fdb22?quality=80&format=webp" alt="De boa com a comida"></h1>
       <p class="lead"><strong>Cuidar da sua alimentação pode ser mais leve do que você imagina.</strong></p>
-      <p class="lead">Uma comunidade para quem quer aprender mais sobre alimentação e saúde, trocar experiências e construir hábitos possíveis para a vida — com informação confiável e sem precisar fazer tudo perfeitamente.</p>
+      <p class="lead">{{ loja.banner1_subtitulo or 'Uma comunidade para quem quer aprender mais sobre alimentação e saúde, trocar experiências e construir hábitos possíveis para a vida — com informação confiável e sem precisar fazer tudo perfeitamente.' }}</p>
       <a class="btn" href="#inscricao">QUERO FAZER PARTE →</a>
       <div class="tags"><span>Nutrição</span><span>saúde</span><span>comportamento</span><span>bem-estar</span><span>comunidade</span></div>
     </div>
     <div class="hero-art">
       <div class="star">✦</div>
-      <div class="photo"><img src="{{ loja.bannermenor2 or url_for('static', filename='dbc/dbc-hero.png') }}" alt="Identidade visual DBC"></div>
+      <div class="photo"><img src="{{ loja.banner1 or url_for('static', filename='dbc/dbc-hero.png') }}" alt="Identidade visual DBC"></div>
       <div class="sticker">informação<br>troca<br>& cuidado<br>vida real ♥</div>
     </div>
   </div>
@@ -283,7 +292,7 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
     <p class="copy"><strong>A DBC nasce para tornar essa conversa mais simples, próxima e confiável.</strong></p>
   </div>
   <div class="collage">
-    <img src="{{ url_for('static', filename='dbc/dbc-collage.png') }}" alt="Arte DBC">
+    <img src="{{ loja.banner2 or url_for('static', filename='dbc/dbc-collage.png') }}" alt="Arte DBC">
     <div class="note">A DBC é uma comunidade ligada à Julia Nutri, dentro do mesmo ecossistema — sem precisar criar um novo Instagram.</div>
   </div>
 </div>
@@ -312,6 +321,10 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
 </div>
 </div>
 <div class="closing"><p>Aqui, a gente olha para <span>você por inteiro.</span> Não só para o que existe no seu prato.</p></div>
+</section>
+
+<section class="full-bleed-photo">
+<img src="https://directus.leanttro.com/assets/b635c32e-7430-457d-a095-13d1ddb8b4f5?quality=80&format=webp" alt="De Boa com a Comida — Respira, é só comida.">
 </section>
 
 <section class="section paper" id="apresentacao">
@@ -374,7 +387,7 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
 
 <section class="section julia" id="julia">
 <div class="container julia-grid">
-  <div class="julia-photo"><img src="{{ url_for('static', filename='dbc/dbc-julia.png') }}" alt="Imagem da identidade DBC"></div>
+  <div class="julia-photo"><img src="{{ loja.sobre_imagem_url or url_for('static', filename='dbc/dbc-julia.png') }}" alt="Imagem da identidade DBC"></div>
   <div>
     <div class="eyebrow">Quem está por trás da DBC?</div>
     <h2>Oi, eu sou a <em>Julia!</em></h2>
