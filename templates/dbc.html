@@ -88,6 +88,7 @@ nav{min-height:96px;padding:10px 0;display:flex;align-items:center;justify-conte
 .logo-mark{font-family:Georgia,serif;font-size:68px;font-weight:900;color:var(--wine);letter-spacing:-.08em}
 .logo-img{height:76px;width:auto;display:block}
 .logo-sub{font-size:11px;text-transform:uppercase;letter-spacing:.16em}
+.logo-sub-mobile{display:none}
 .navlinks{display:flex;gap:26px;font-size:13px;font-weight:700}
 .btn{display:inline-flex;align-items:center;gap:10px;padding:15px 22px;border-radius:999px;background:var(--green);color:white;font-weight:700;font-size:13px;transition:.2s;box-shadow:4px 4px 0 var(--wine);border:0;cursor:pointer;font-family:inherit}
 .btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--wine)}
@@ -228,10 +229,14 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
  .hero-art{min-height:380px} .features{grid-template-columns:repeat(2,1fr)}
  .feature:nth-child(2n){border-right:0} .section{padding:60px 0}
  .two,.julia-grid{gap:40px} .apresenta-grid{gap:34px}
+ nav{flex-wrap:wrap}
+ .logo-sub{display:none}
+ .logo-sub-mobile{display:block;flex-basis:100%;order:5;margin-top:8px;font-size:17px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--wine)}
 }
 @media(max-width:560px){
- .container{width:min(100% - 28px,1180px)} nav{min-height:76px;flex-wrap:wrap;row-gap:10px}
- .logo-mark{font-size:64px} .logo-img{height:62px} .logo-sub{font-size:9px}
+ .container{width:min(100% - 28px,1180px)} nav{min-height:76px;flex-wrap:wrap;row-gap:10px;align-items:center}
+ .logo-mark{font-size:48px} .logo-img{height:44px} .logo-sub{font-size:9px}
+ .logo-sub-mobile{font-size:14px;margin-top:6px}
  nav .btn{padding:8px 14px;font-size:10.5px;gap:5px;white-space:nowrap;box-shadow:3px 3px 0 var(--wine)}
  .section{padding:42px 0}
  .hero{padding:34px 0 38px}
@@ -266,6 +271,7 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
     <a href="#faq">FAQ</a>
   </div>
   <a class="btn" href="#inscricao">QUERO FAZER PARTE →</a>
+  <span class="logo-sub-mobile">1% melhor a cada dia</span>
 </nav>
 </header>
 
