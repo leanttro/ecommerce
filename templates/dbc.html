@@ -129,6 +129,9 @@ h2 em{font-style:normal;color:var(--red)}
 .feature h3{font-size:16px;line-height:1.1;margin:0 0 12px}
 .feature p{font-size:13px;color:rgba(255,250,240,.78);margin:0}
 .warning{margin:35px auto 0;background:var(--lime);color:var(--ink);padding:13px 20px;border-radius:999px;max-width:900px;text-align:center;font-size:12px;font-weight:700}
+.reassurance-box{margin:26px auto 0;background:var(--lime);color:var(--green);padding:28px 32px;border-radius:22px;max-width:700px;text-align:center;box-shadow:8px 8px 0 var(--wine)}
+.reassurance-box strong{display:block;font-family:Fraunces,Georgia,serif;font-size:21px;line-height:1.15;margin-bottom:8px;color:var(--wine)}
+.reassurance-box p{margin:0;font-size:14.5px;font-weight:500}
 .checks{display:grid;gap:16px;margin-top:28px}
 .check{display:flex;gap:12px;align-items:flex-start;font-weight:500}
 .check b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--lime);color:var(--green);flex:0 0 24px}
@@ -170,6 +173,12 @@ h2 em{font-style:normal;color:var(--red)}
 .lema-label{font-family:"Permanent Marker";font-size:17px;color:var(--wine);margin-bottom:8px}
 .lema-text{font-family:Fraunces,Georgia,serif;font-size:38px;line-height:1.05;color:var(--ink);margin-bottom:18px}
 .lema-box p{font-size:14.5px;color:var(--green);margin:0}
+.topics-box{margin-top:64px}
+.topics-heading{font-family:Fraunces,Georgia,serif;font-size:clamp(30px,3.4vw,40px);line-height:1.08;letter-spacing:-.03em;margin:0 0 24px;max-width:640px}
+.topics-heading em{font-style:normal;color:var(--red)}
+.topic-chips{display:flex;flex-wrap:wrap;gap:12px}
+.topic-chip{background:var(--paper);border:2px solid var(--wine);color:var(--wine);padding:9px 18px;border-radius:999px;font-size:13.5px;font-weight:700;box-shadow:3px 3px 0 var(--ink)}
+.topic-chip.more{background:var(--lime);border-color:var(--ink);color:var(--green)}
 @media(max-width:900px){.apresenta-grid{grid-template-columns:1fr}}
 .dbc-section{position:relative;min-height:760px;overflow:hidden;padding:115px 6vw 125px;background:var(--cream);isolation:isolate}
 .dbc-section:before{content:"";position:absolute;inset:0;opacity:.18;pointer-events:none;z-index:-1;background-image:radial-gradient(rgba(23,32,25,.12) .7px,transparent .7px),radial-gradient(rgba(217,71,53,.08) .6px,transparent .6px);background-size:17px 17px,23px 23px;background-position:0 0,8px 11px}
@@ -198,8 +207,8 @@ h2 em{font-style:normal;color:var(--red)}
 .dbc-section .leaf.b{right:17%;bottom:20%;transform:rotate(150deg);background:var(--cream)}
 .dbc-section .leaf.c{left:37%;bottom:17%;width:72px;background:var(--green);border-color:var(--cream)}
 .dbc-section .line{position:absolute;z-index:3;width:170px;height:3px;background:var(--green);left:21%;top:57%;transform:rotate(63deg)}
-.dbc-section .food-word{position:absolute;z-index:4;top:27px;left:27px;color:var(--cream);font-family:"Permanent Marker",cursive;font-size:22px;transform:rotate(-7deg)}
-.dbc-section .food-word.red{top:auto;left:auto;right:25px;bottom:25px;color:var(--lime);font-size:19px;transform:rotate(5deg)}
+.dbc-section .food-word{position:absolute;z-index:4;top:27px;left:27px;color:var(--red);font-family:"Permanent Marker",cursive;font-size:22px;transform:rotate(-7deg);text-shadow:-2px -2px 0 var(--paper),2px -2px 0 var(--paper),-2px 2px 0 var(--paper),2px 2px 0 var(--paper),0 -2px 0 var(--paper),0 2px 0 var(--paper),-2px 0 0 var(--paper),2px 0 0 var(--paper)}
+.dbc-section .food-word.red{top:auto;left:auto;right:25px;bottom:25px;color:var(--lime);font-size:19px;transform:rotate(5deg);text-shadow:-2px -2px 0 #e8720c,2px -2px 0 #e8720c,-2px 2px 0 #e8720c,2px 2px 0 #e8720c,0 -2px 0 #e8720c,0 2px 0 #e8720c,-2px 0 0 #e8720c,2px 0 0 #e8720c}
 .dbc-section .sticker{position:absolute;z-index:5;left:-35px;bottom:18px;width:205px;padding:22px 20px 24px;background:var(--lime);color:var(--ink);font-family:"Permanent Marker",cursive;font-size:19px;line-height:1.2;transform:rotate(-5deg);box-shadow:7px 8px 0 var(--wine)}
 .dbc-section .sticker:after{content:"♥";position:absolute;right:15px;bottom:7px;font-size:17px}
 .dbc-section .closing{position:relative;width:min(1200px,100%);margin:75px auto 0;padding:27px 34px 29px;background:var(--green);color:var(--cream);transform:rotate(-.7deg);box-shadow:8px 9px 0 var(--wine)}
@@ -267,7 +276,7 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
   <div class="navlinks">
     <a href="#sobre">Sobre a DBC</a>
     <a href="#encontra">O que você encontra</a>
-    <a href="#julia">A Julia</a>
+    <a href="#julia">A Júlia Theila</a>
     <a href="#faq">FAQ</a>
   </div>
   <a class="btn" href="#inscricao">QUERO FAZER PARTE →</a>
@@ -305,7 +314,7 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
   </div>
   <div class="collage">
     <img src="{{ loja.banner2 or url_for('static', filename='dbc/dbc-collage.png') }}" alt="Arte DBC">
-    <div class="note">A DBC é uma comunidade ligada à Julia Nutri, dentro do mesmo ecossistema — sem precisar criar um novo Instagram.</div>
+    <div class="note">Menos "eu vi na internet". Mais informação em que você pode confiar.</div>
   </div>
 </div>
 </section>
@@ -354,6 +363,27 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
     <p>Não para buscar uma versão perfeita de você. Mas para construir, aos poucos, escolhas que façam sentido para a sua vida.</p>
   </div>
 </div>
+<div class="container">
+  <div class="topics-box">
+    <h2 class="topics-heading">Do que a gente vai falar <em>por lá?</em></h2>
+    <div class="topic-chips">
+      <span class="topic-chip">Fome e saciedade</span>
+      <span class="topic-chip">Comer emocional</span>
+      <span class="topic-chip">Organização da rotina</span>
+      <span class="topic-chip">Relação com o corpo</span>
+      <span class="topic-chip">Exercício físico</span>
+      <span class="topic-chip">Saúde da mulher</span>
+      <span class="topic-chip">Mitos da alimentação</span>
+      <span class="topic-chip">Sono</span>
+      <span class="topic-chip">Comportamento alimentar</span>
+      <span class="topic-chip">Receitas</span>
+      <span class="topic-chip">Exames e saúde</span>
+      <span class="topic-chip">Movimento</span>
+      <span class="topic-chip">Aquelas dúvidas que aparecem no meio da vida</span>
+      <span class="topic-chip more">E muito mais ✦</span>
+    </div>
+  </div>
+</div>
 </section>
 
 <section class="section dark" id="encontra">
@@ -368,6 +398,10 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
     <article class="feature"><div class="icon">✦</div><h3>Saúde para além da alimentação</h3><p>Saúde emocional, movimento, relações, rotina e comportamento também entram.</p></article>
   </div>
   <div class="warning">IMPORTANTE • A DBC não substitui consulta nutricional individual. Avaliações e condutas individuais continuam sendo trabalhadas em consulta.</div>
+  <div class="reassurance-box">
+    <strong>Perdeu um conteúdo? Não participou de uma conversa? Tudo bem.</strong>
+    <p>A DBC não foi criada para ser mais uma cobrança na sua rotina. Você participa e aproveita a comunidade do jeito que fizer sentido para você.</p>
+  </div>
 </div>
 </section>
 
@@ -378,7 +412,7 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
     <h2>A DBC é para você que...</h2>
     <div class="checks">
       <div class="check"><b>✓</b><span>Quer cuidar melhor da alimentação, da saúde e do estilo de vida.</span></div>
-      <div class="check"><b>✓</b><span>Quer entender mais sobre nutrição sem depender de informações soltas da internet.</span></div>
+      <div class="check"><b>✓</b><span>Menos "eu vi na internet". Mais informação em que você pode confiar.</span></div>
       <div class="check"><b>✓</b><span>Gosta de aprender, trocar experiências e fazer parte de uma comunidade.</span></div>
       <div class="check"><b>✓</b><span>Acredita que cuidar da saúde pode envolver muito mais do que seguir regras sobre o que comer.</span></div>
     </div>
@@ -420,20 +454,22 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
   <div class="price-card">
     <div class="eyebrow-sm">As 20 primeiras pessoas</div>
     <div class="price-amount">R$ 24,90 <small>/ mês</small></div>
-    <p class="fine">Depois, o valor passa para R$ 29,90/mês e, posteriormente, para o valor regular de R$ 39,90/mês. O link de acesso será disponibilizado primeiro para o grupo de espera.</p>
 
     <!-- FORMULÁRIO DE CAPTURA DE LEAD
          POST via fetch pra /{{ loja.slug_url }}/captura-lead (rota
          já existente em app.py). Campos batem com os que a rota lê
-         via request.form: nome, whatsapp, email. -->
-    <form id="dbc-lead-form" class="lead-form" action="/{{ loja.slug_url }}/captura-lead" method="POST" data-whatsapp="{{ loja.whatsapp_comercial or '5519971541008' }}">
+         via request.form: nome, whatsapp, email.
+         Depois de salvar o lead, o usuário é redirecionado direto pro
+         link do GRUPO do WhatsApp (data-grupo-whatsapp) — não é mais
+         gerado um link wa.me individual a partir do número da loja. -->
+    <form id="dbc-lead-form" class="lead-form" action="/{{ loja.slug_url }}/captura-lead" method="POST" data-grupo-whatsapp="https://chat.whatsapp.com/Knbypbihp0FDrrQxvhCpTw?s=sh&p=i&mlu=4&ilr=4">
       <input type="text" name="nome" placeholder="Seu nome" required>
       <input type="tel" name="whatsapp" placeholder="WhatsApp (com DDD)" required>
       <input type="email" name="email" placeholder="Seu e-mail" required>
       <button type="submit" class="btn">QUERO FAZER PARTE DA DBC →</button>
     </form>
     <div id="dbc-lead-success" class="lead-success" style="display:none">
-      Prontinho! Você entrou na lista de espera da DBC 🎉<br>Redirecionando para o WhatsApp...
+      Prontinho! Você entrou na lista de espera da DBC 🎉<br>Redirecionando para o grupo do WhatsApp...
     </div>
     <div id="dbc-lead-error" class="lead-error" style="display:none"></div>
   </div>
@@ -444,7 +480,7 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
 <section class="section paper" id="faq">
 <div class="container">
   <div class="eyebrow">Dúvidas frequentes</div>
-  <h2>Antes de entrar, <em>tudo bem perguntar.</em></h2>
+  <h2>Antes de entrar, <em>tudo bem perguntar:</em></h2>
   <div class="faq">
     <details><summary>Onde a comunidade vai funcionar?</summary><p>A DBC ficará hospedada no Circle, uma plataforma própria para comunidades, onde você encontrará conteúdos, materiais e informações sobre os encontros.</p></details>
     <details><summary>Os encontros serão ao vivo?</summary><p>Sim! Teremos encontros ao vivo 1 ou 2 vezes por mês, com as datas avisadas com antecedência.</p></details>
@@ -501,18 +537,13 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
     })
     .then(function(result){
       if (result.ok && result.data && result.data.sucesso) {
-        var nome = (form.querySelector('[name="nome"]').value || '').trim();
-        var whatsapp = (form.querySelector('[name="whatsapp"]').value || '').trim();
-        var email = (form.querySelector('[name="email"]').value || '').trim();
-        var numeroDestino = (form.dataset.whatsapp || '').replace(/\D/g, '');
+        var linkGrupo = form.dataset.grupoWhatsapp;
 
         form.style.display = 'none';
         successBox.style.display = 'block';
 
-        if (numeroDestino) {
-          var mensagem = 'Oii! Quero fazer parte da DBC 🎉\n\nNome: ' + nome + '\nWhatsApp: ' + whatsapp + '\nE-mail: ' + email;
-          var linkWpp = 'https://wa.me/' + numeroDestino + '?text=' + encodeURIComponent(mensagem);
-          setTimeout(function(){ window.location.href = linkWpp; }, 1200);
+        if (linkGrupo) {
+          setTimeout(function(){ window.location.href = linkGrupo; }, 1200);
         }
       } else {
         errorBox.textContent = (result.data && result.data.erro) || 'Ops, algo deu errado. Tenta de novo em instantes.';
