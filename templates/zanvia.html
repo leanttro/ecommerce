@@ -100,7 +100,11 @@
   .nav-links a{ font-size:14.5px; font-weight:600; color:var(--navy); }
   .nav-links a:hover{ color:var(--gold); }
   .nav-cta{ display:flex; align-items:center; gap:18px; }
-  .nav-subtitle{ display:none; }
+  .nav-subtitle{
+    display:block; text-align:center; margin-top:-6px;
+    font-size:14px; color:var(--ink-soft); letter-spacing:0.01em;
+  }
+  .nav-logo{ display:flex; flex-direction:column; align-items:center; }
   .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:6px; }
   .nav-toggle span{ display:block; width:24px; height:2px; background:var(--navy); margin:5px 0; }
   @media (max-width:880px){
@@ -805,7 +809,7 @@
 <header class="site">
   <nav class="nav">
     <a href="#top" class="nav-logo">
-      <img src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1788609965/zanvia_lxvqlb.png" alt="Zanvia Consultoria em Planos de Saúde">
+      <img src="https://directus.leanttro.com/assets/3d207236-7836-4a33-97fc-51cea6245bda?quality=80&format=webp" alt="Zanvia Consultoria em Planos de Saúde">
     </a>
     <p class="nav-subtitle">Consultoria em planos de saúde</p>
     <div class="nav-links">
@@ -869,6 +873,7 @@
           <div class="spc-slide"><img src="https://directus.leanttro.com/assets/9ee16b38-88b0-4ddd-94af-425e595bbc77?quality=80&format=webp" alt="Avaliação 5 estrelas de Renata Alves Santos sobre atendimento da Zanvia" loading="lazy"></div>
           <div class="spc-slide"><img src="https://directus.leanttro.com/assets/29b4cede-72ea-4867-8f02-29285550357d?quality=80&format=webp" alt="Avaliação 5 estrelas de Giseli Rodrigues Fernandes sobre atendimento da Zanvia" loading="lazy"></div>
           <div class="spc-slide"><img src="https://directus.leanttro.com/assets/634ac011-a8ed-4815-b16b-6cb941e4eeaf?quality=80&format=webp" alt="Avaliação 5 estrelas de Stephany Silva sobre atendimento da Zanvia" loading="lazy"></div>
+          <div class="spc-slide"><img src="https://directus.leanttro.com/assets/5cc7c3a4-cc95-44d5-8d6b-10bef2ea40c1?quality=80&format=webp" alt="Avaliação 5 estrelas sobre atendimento da Zanvia" loading="lazy"></div>
           <button type="button" class="spc-arrow spc-prev" id="spcPrev" aria-label="Avaliação anterior">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
           </button>
