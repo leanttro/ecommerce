@@ -206,11 +206,8 @@ def identificar_loja():
     if not loja_encontrada:
         headers = get_headers()
 
-        # 1 VERIFICAÇÃO DE DOMÍNIO PRÓPRIO
-        # Se não for o domínio principal do SaaS nem localhost
-        # NOTA: hosts com domínio próprio de clientes são identificados aqui
         # EXCEÇÃO FORÇADA: garante que esse host sempre caia no template dbc,
-        # ignorando o campo dominio_proprio (não afeta nenhum outro domínio/loja)
+        # ignorando o campo dominio_proprio. Não afeta nenhum outro domínio/loja.
         if host in ['dbc.juliatheila.com.br', 'www.dbc.juliatheila.com.br']:
             try:
                 url = f"{DIRECTUS_URL}/items/lojas?filter[slug][_eq]=dbc&fields=*"
@@ -221,8 +218,11 @@ def identificar_loja():
             except Exception as e:
                 print(f"Erro Middleware Host Forçado DBC: {e}")
 
+        # 1 VERIFICAÇÃO DE DOMÍNIO PRÓPRIO
+        # Se não for o domínio principal do SaaS nem localhost
+        # NOTA: hosts com domínio próprio de clientes são identificados aqui
         elif host not in ['leanttro.com', 'www.leanttro.com', 'catalogo.leanttro.com', 'localhost', '127.0.0.1'] or \
-             host in ['creapes.com.br', 'www.creapes.com.br']:
+           host in ['creapes.com.br', 'www.creapes.com.br']:
             try:
                 host_clean = host.replace('www.', '')
                 url = f"{DIRECTUS_URL}/items/lojas?filter[_or][0][dominio_proprio][_eq]={host_clean}&filter[_or][1][dominio_proprio][_eq]=www.{host_clean}&fields=*"
