@@ -260,6 +260,15 @@ def identificar_loja():
         if loja_encontrada:
             cache.set(cache_key, loja_encontrada, timeout=300)
 
+    # CORREÇÃO: quando a loja vem do CACHE (cache hit), o bloco acima é pulado
+    # inteiro e g.slug_atual nunca é preenchido (fica None, resetado no início
+    # de cada request). Sem isso, toda loja identificada por domínio próprio
+    # cai no template genérico depois do primeiro acesso, assim que o cache
+    # esquenta. Isso não mexe em nenhuma busca nem em nenhum outro fluxo,
+    # só garante que o slug já encontrado seja usado.
+    if loja_encontrada and not g.slug_atual:
+        g.slug_atual = loja_encontrada.get('slug')
+
     # SE A LOJA FOI IDENTIFICADA Por Domínio ou Slug configura o ambiente
     if loja_encontrada:
         g.loja = loja_encontrada
