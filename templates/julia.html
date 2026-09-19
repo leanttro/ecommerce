@@ -68,6 +68,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&text=J&display=swap" rel="stylesheet">
 <style>
   :root{
     /* Paleta oficial Julia Theila (manual de marca, MDZ Studio) */
@@ -249,8 +250,12 @@
   }
   .marquee-track{
     display: inline-flex;
-    animation: scroll 32s linear infinite;
+    width: max-content;
+    animation: scroll 60s linear infinite;
+    will-change: transform;
   }
+  /* dois grupos idênticos, cada um bem mais largo que a tela: -50% fecha o loop sem nunca aparecer vazio */
+  .marquee-group{ display: inline-flex; flex-shrink: 0; }
   .marquee span{
     font-size: 0.86rem;
     font-weight: 500;
@@ -529,7 +534,112 @@
     }
   }
 
-  /* ============ ESPECIALIDADES ATENDIDAS ============ */
+
+  /* ============ "TALVEZ VOCÊ ESTEJA BUSCANDO…" (substitui as fotos verticais) ============ */
+  .wish{ padding: clamp(40px, 5vw, 72px) 0 clamp(20px, 3vw, 40px); background: var(--bg); }
+  .wish-head{ max-width: 640px; margin: 0 auto clamp(26px, 3.4vw, 40px); text-align: center; }
+  .wish-head h2{ font-size: clamp(1.7rem, 3vw, 2.3rem); font-weight: 600; line-height: 1.25; color: var(--text); }
+  .wish-grid{ display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(14px, 1.8vw, 20px); }
+  .wish-card{
+    position: relative;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 26px 24px 24px;
+    transition: transform .25s ease, box-shadow .35s ease, border-color .35s ease;
+  }
+  .wish-card::before{
+    content: ''; display: block; width: 28px; height: 3px; border-radius: 3px;
+    background: var(--clay); margin-bottom: 16px;
+  }
+  .wish-card:nth-child(3n+2)::before{ background: #DF3E2F; }
+  .wish-card:nth-child(3n+3)::before{ background: var(--sky); }
+  .wish-card:hover{ transform: translateY(-4px); box-shadow: 0 22px 40px -22px rgba(23,40,66,0.28); border-color: rgba(48,129,194,0.35); }
+  .wish-card h3{ font-size: 1.12rem; font-weight: 600; line-height: 1.3; margin: 0 0 8px; color: var(--text); }
+  .wish-card p{ font-size: 0.92rem; line-height: 1.55; color: var(--text-soft); margin: 0; }
+  @media (max-width: 900px){ .wish-grid{ grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px){ .wish-grid{ grid-template-columns: 1fr; } }
+
+  /* ============ EM QUE O ACOMPANHAMENTO PODE TE AJUDAR ============ */
+  .ob{ padding: clamp(40px, 5vw, 72px) 0 clamp(56px, 7vw, 96px); background: var(--bg); }
+  .ob-head{ max-width: 720px; margin: 0 auto clamp(28px, 3.6vw, 44px); text-align: center; }
+  .ob-head .eyebrow{ justify-content: center; }
+  .ob-head .eyebrow::before{ display: none; }
+  .ob-head h2{ font-size: clamp(1.7rem, 3.2vw, 2.5rem); font-weight: 600; line-height: 1.2; margin-bottom: 14px; }
+  .ob-head p{ font-size: 1rem; line-height: 1.6; color: var(--text-soft); margin: 0 auto; max-width: 600px; }
+
+  .ob-main{ display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(14px, 1.8vw, 22px); }
+  .ob-big{
+    display: flex; flex-direction: column;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform .25s ease, box-shadow .35s ease;
+  }
+  .ob-big:hover{ transform: translateY(-4px); box-shadow: 0 24px 44px -24px rgba(23,40,66,0.3); }
+  .ob-media{ height: 170px; display: flex; align-items: center; justify-content: center; }
+  .ob-media svg{ width: 150px; height: auto; }
+  .ob-media img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ob-big--a .ob-media{ background: #F3E9D8; }
+  .ob-big--b .ob-media{ background: #F8E4E0; }
+  .ob-big--c .ob-media{ background: #E3EEF7; }
+  .ob-body{ padding: 24px 24px 26px; display: flex; flex-direction: column; flex: 1; }
+  .ob-body h3{ font-size: 1.3rem; font-weight: 600; line-height: 1.25; margin: 0 0 10px; }
+  .ob-body p{ font-size: 0.93rem; line-height: 1.6; color: var(--text-soft); margin: 0 0 16px; }
+  .ob-tags{ display: flex; flex-wrap: wrap; gap: 7px; margin-top: auto; }
+  .ob-tags span{
+    display: inline-block; background: var(--surface); color: var(--olive-dark);
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase;
+    padding: 5px 11px; border-radius: 999px;
+  }
+  .ob-big--b .ob-tags span{ background: #F8E4E0; }
+  .ob-big--c .ob-tags span{ background: #E3EEF7; }
+
+  .ob-sub{
+    display: flex; align-items: center; gap: 18px;
+    margin: clamp(34px, 4.4vw, 56px) 0 clamp(18px, 2.4vw, 26px);
+    font-size: 0.82rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-soft);
+  }
+  .ob-sub::before, .ob-sub::after{ content: ''; flex: 1; height: 1px; background: var(--line); }
+
+  .ob-mini-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: clamp(14px, 1.8vw, 20px); }
+  .ob-mini{
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px 24px;
+    transition: box-shadow .35s ease, border-color .35s ease;
+  }
+  .ob-mini:hover{ box-shadow: 0 20px 40px -22px rgba(23,40,66,0.22); border-color: rgba(48,129,194,0.35); }
+  .ob-mini h3{ font-size: 1.05rem; font-weight: 600; line-height: 1.3; margin: 0 0 8px; }
+  .ob-mini p{ font-size: 0.9rem; line-height: 1.55; color: var(--text-soft); margin: 0 0 14px; }
+  .ob-mini .ob-tags span{ font-size: 0.66rem; padding: 4px 10px; }
+
+  .ob-cta{
+    margin-top: clamp(30px, 4vw, 48px);
+    background: var(--surface);
+    border-radius: 22px;
+    padding: clamp(28px, 4vw, 44px) clamp(20px, 4vw, 48px);
+    text-align: center;
+  }
+  .ob-cta h3{ font-size: clamp(1.25rem, 2.2vw, 1.6rem); font-weight: 600; line-height: 1.3; margin: 0 auto 10px; max-width: 520px; }
+  .ob-cta p{ font-size: 0.98rem; line-height: 1.6; color: var(--text-soft); margin: 0 auto 22px; max-width: 520px; }
+  .ob-cta-btn{
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--clay); color: #fff; text-decoration: none;
+    font-size: 0.86rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+    padding: 15px 28px; border-radius: 999px; transition: background .2s ease, transform .2s ease;
+  }
+  .ob-cta-btn:hover{ background: var(--clay-dark); transform: translateY(-2px); }
+
+  @media (max-width: 900px){
+    .ob-main{ grid-template-columns: 1fr; }
+    .ob-media{ height: 150px; }
+  }
+  @media (max-width: 760px){ .ob-mini-grid{ grid-template-columns: 1fr; } }
+
+  /* ============ ESPECIALIDADES ATENDIDAS (antigo, não usado) ============ */
   .especialidades{
     position: relative;
     padding: clamp(32px, 4vw, 56px) 0 clamp(56px, 7vw, 96px);
@@ -922,6 +1032,7 @@
   }
   .blog-marquee-track{
     display: inline-flex;
+    width: max-content;
     animation: scroll 28s linear infinite;
   }
   .blog-marquee span{
@@ -1279,7 +1390,7 @@
   }
 
   @media (prefers-reduced-motion: reduce){
-    .eyebrow, .sub, .cta-row, .credential, .hero-visual img, .visual-tag, h1.display .line span, .marquee-track{
+    .eyebrow, .sub, .cta-row, .credential, .hero-visual img, .visual-tag, h1.display .line span{
       animation: none !important; opacity: 1 !important; transform: none !important;
     }
   }
@@ -1454,6 +1565,8 @@
     line-height: 1;
     text-shadow: 0 1px 10px rgba(2,10,25,0.55), 0 1px 3px rgba(2,10,25,0.5);
   }
+  /* J reto: a Fraunces tem um J que desce abaixo da linha; aqui só a letra J vem da Lora (assenta na linha de base) */
+  .jfix{ font-family: 'Lora', 'Fraunces', serif; font-weight: 600; }
   .ll-hero-role{
     font-size: 0.82rem;
     font-weight: 600;
@@ -1589,6 +1702,7 @@
   .ll-hero-card--clay{ background: var(--clay); color: #fff; }
   .ll-hero-card--clay .ll-hero-card-icon{ background: rgba(255,255,255,0.22); }
   .ll-hero-card--cream{ background: var(--surface); color: var(--text); }
+  .ll-hero-card--orange{ background: #DF3E2F; color: #fff; }
   .ll-hero-card--ink{ background: var(--olive-dark); color: var(--cream); }
   .ll-hero-card--ink .ll-hero-card-icon{ background: rgba(238,223,200,0.16); }
 
@@ -1947,7 +2061,7 @@
   </div>
   <div class="ll-hero-grid">
     <div class="ll-hero-brandblock">
-      <h2 class="ll-hero-brand">Julia Theila</h2>
+      <h2 class="ll-hero-brand"><span class="jfix">J</span>ulia Theila</h2>
       <p class="ll-hero-role">Nutricionista Clínica</p>
     </div>
     <div class="ll-hero-copy">
@@ -1962,34 +2076,65 @@
 </section>
 
 <div class="ll-hero-cards">
-  <a class="ll-hero-card ll-hero-card--clay" href="#acompanhamento">
-    <span class="ll-hero-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg></span>
+  <a class="ll-hero-card ll-hero-card--cream" href="#acompanhamento">
     <h3>Acompanhamento Individual</h3>
     <p>Cuidado nutricional personalizado, no seu ritmo, sem dietas prontas nem culpa.</p>
     <span>Ver planos →</span>
   </a>
-  <a class="ll-hero-card ll-hero-card--cream" href="#comunidade">
-    <span class="ll-hero-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#172842" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c1-3.6 3.6-5.6 6.5-5.6s5.5 2 6.5 5.6"/><circle cx="17" cy="8.6" r="2.4"/><path d="M15.6 14.6c2.4.2 4.3 2.1 5.1 5.4"/></svg></span>
+  <a class="ll-hero-card ll-hero-card--orange" href="#comunidade">
     <h3>Comunidade sem pressa</h3>
     <p>Aulas, trocas e apoio contínuo pra sua jornada com a comida nunca ser solitária.</p>
     <span>Conhecer a comunidade →</span>
   </a>
   <a class="ll-hero-card ll-hero-card--ink" href="#filosofia">
-    <span class="ll-hero-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#EEDFC8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="4"/></svg></span>
     <h3>Sem Terrorismo Nutricional</h3>
     <p>Ciência de verdade, sem regras rígidas, listas proibidas ou promessas milagrosas.</p>
     <span>Conhecer a filosofia →</span>
   </a>
 </div>
 
-<div class="marquee">
+<div class="marquee" aria-hidden="true">
   <div class="marquee-track">
+  <div class="marquee-group">
     <span>{{ loja.frase1 or 'sem terrorismo nutricional' }}</span>
     <span>{{ loja.frase2 or 'ciência e acolhimento' }}</span>
     <span>{{ loja.frase3 or 'seu ritmo, sua história' }}</span>
     <span>{{ loja.frase1 or 'sem terrorismo nutricional' }}</span>
     <span>{{ loja.frase2 or 'ciência e acolhimento' }}</span>
     <span>{{ loja.frase3 or 'seu ritmo, sua história' }}</span>
+    <span>{{ loja.frase1 or 'sem terrorismo nutricional' }}</span>
+    <span>{{ loja.frase2 or 'ciência e acolhimento' }}</span>
+    <span>{{ loja.frase3 or 'seu ritmo, sua história' }}</span>
+    <span>{{ loja.frase1 or 'sem terrorismo nutricional' }}</span>
+    <span>{{ loja.frase2 or 'ciência e acolhimento' }}</span>
+    <span>{{ loja.frase3 or 'seu ritmo, sua história' }}</span>
+    <span>{{ loja.frase1 or 'sem terrorismo nutricional' }}</span>
+    <span>{{ loja.frase2 or 'ciência e acolhimento' }}</span>
+    <span>{{ loja.frase3 or 'seu ritmo, sua história' }}</span>
+    <span>{{ loja.frase1 or 'sem terrorismo nutricional' }}</span>
+    <span>{{ loja.frase2 or 'ciência e acolhimento' }}</span>
+    <span>{{ loja.frase3 or 'seu ritmo, sua história' }}</span>
+  </div>
+  <div class="marquee-group">
+    <span>{{ loja.frase1 or 'sem terrorismo nutricional' }}</span>
+    <span>{{ loja.frase2 or 'ciência e acolhimento' }}</span>
+    <span>{{ loja.frase3 or 'seu ritmo, sua história' }}</span>
+    <span>{{ loja.frase1 or 'sem terrorismo nutricional' }}</span>
+    <span>{{ loja.frase2 or 'ciência e acolhimento' }}</span>
+    <span>{{ loja.frase3 or 'seu ritmo, sua história' }}</span>
+    <span>{{ loja.frase1 or 'sem terrorismo nutricional' }}</span>
+    <span>{{ loja.frase2 or 'ciência e acolhimento' }}</span>
+    <span>{{ loja.frase3 or 'seu ritmo, sua história' }}</span>
+    <span>{{ loja.frase1 or 'sem terrorismo nutricional' }}</span>
+    <span>{{ loja.frase2 or 'ciência e acolhimento' }}</span>
+    <span>{{ loja.frase3 or 'seu ritmo, sua história' }}</span>
+    <span>{{ loja.frase1 or 'sem terrorismo nutricional' }}</span>
+    <span>{{ loja.frase2 or 'ciência e acolhimento' }}</span>
+    <span>{{ loja.frase3 or 'seu ritmo, sua história' }}</span>
+    <span>{{ loja.frase1 or 'sem terrorismo nutricional' }}</span>
+    <span>{{ loja.frase2 or 'ciência e acolhimento' }}</span>
+    <span>{{ loja.frase3 or 'seu ritmo, sua história' }}</span>
+  </div>
   </div>
 </div>
 
@@ -2069,96 +2214,113 @@
      Cada item vira uma coluna: nome -> legenda acima, imagem -> foto abaixo, ordenadas pelo
      campo sort (já vem ordenado do app.py). Categoria "Objetivos" nunca aparece na grade de
      planos (ver filtro acima). Enquanto não houver item cadastrado, a seção inteira fica oculta. -->
-{% if objetivos_produtos and objetivos_produtos|length > 0 %}
-<section class="focos" id="objetivos">
+<!-- TALVEZ VOCÊ ESTEJA BUSCANDO… (substitui a faixa de fotos verticais) -->
+<section class="wish" id="objetivos">
   <div class="wrap">
-    <div class="focos-head">
-      <span class="eyebrow">Onde posso te ajudar</span>
-      <h2>{{ loja.titulo_objetivos or 'Meu trabalho pode ajudar diversos objetivos' }}</h2>
+    <div class="wish-head">
+      <h2>Talvez você esteja buscando…</h2>
+    </div>
+    <div class="wish-grid">
+      <div class="wish-card">
+        <h3>Emagrecer com mais equilíbrio</h3>
+        <p>Sem entrar em mais um ciclo de restrição, culpa e efeito sanfona.</p>
+      </div>
+      <div class="wish-card">
+        <h3>Melhorar sua relação com a comida</h3>
+        <p>Comer com mais tranquilidade, entendendo fome, saciedade e suas escolhas.</p>
+      </div>
+      <div class="wish-card">
+        <h3>Cuidar da sua saúde</h3>
+        <p>Construir uma alimentação que faça sentido para suas necessidades e para sua rotina.</p>
+      </div>
+      <div class="wish-card">
+        <h3>Ter mais disposição no dia a dia</h3>
+        <p>Organizar sua alimentação para ter energia sem depender de uma rotina perfeita.</p>
+      </div>
+      <div class="wish-card">
+        <h3>Ganhar massa muscular</h3>
+        <p>Adequar sua alimentação aos seus objetivos e à prática de atividade física.</p>
+      </div>
+      <div class="wish-card">
+        <h3>Aprender a comer melhor</h3>
+        <p>Ter autonomia para fazer escolhas sem precisar viver seguindo regras alimentares.</p>
+      </div>
     </div>
   </div>
-  <div class="focos-strip">
-    {% for o in objetivos_produtos %}
-    <div class="foco-col">
-      <span class="foco-label">{{ o.nome }}</span>
-      {% if o.imagem %}
-      <img src="{{ o.imagem }}" alt="{{ o.nome }}" loading="lazy">
-      {% endif %}
+</section>
     </div>
     {% endfor %}
   </div>
 </section>
 {% endif %}
 
-<!-- ESPECIALIDADES ATENDIDAS
-     Seção nova (não veio do painel) — lista fixa dos 4 grandes eixos de
-     atendimento individual, cada um com sua lista de tags. Usa o mesmo
-     sistema de scroll-reveal / tilt / split-word do resto do template
-     (classes adicionadas via JS no script de movimento, no fim do arquivo),
-     mais um pacote de animação próprio (blobs de fundo, ícone com leve
-     flutuação contínua, tags entrando em cascata, brilho ao passar o mouse). -->
-<section class="especialidades" id="especialidades">
-  <div class="esp-blob esp-blob-a" aria-hidden="true"></div>
-  <div class="esp-blob esp-blob-b" aria-hidden="true"></div>
+<!-- EM QUE O ACOMPANHAMENTO PODE TE AJUDAR
+     3 objetivos principais em destaque + 4 temas complementares em cards menores + CTA único.
+     Para usar fotos em vez das ilustrações, troque o <svg> dentro de .ob-media por <img src="..." alt="...">. -->
+<section class="ob" id="especialidades">
   <div class="wrap">
-    <div class="especialidades-head">
-      <span class="eyebrow">Atendimento individual</span>
+    <div class="ob-head">
+      <span class="eyebrow">Em que o acompanhamento pode te ajudar?</span>
+      <h2>Mais saúde, leveza e autonomia na sua alimentação</h2>
+      <p>Cada pessoa chega com uma história, um momento de vida e um objetivo diferente. O meu trabalho é te ajudar a construir uma alimentação que faça sentido para a sua realidade, sem dietas restritivas e com mais liberdade.</p>
     </div>
 
-    <div class="esp-grid">
-
-      <div class="esp-card">
-        <div class="esp-card-top"></div>
-        <h3>Relação com a comida e comportamento alimentar</h3>
-        <p>Para quem enfrenta culpa ao comer, restrições, desorganização alimentar ou dificuldade de confiar nos próprios sinais e necessidades.</p>
-        <div class="esp-tags">
-          <span>Comer emocional</span>
-          <span>Culpa ao comer</span>
-          <span>Transtornos alimentares</span>
-          <span>Restrição alimentar</span>
-          <span>Perda de controle</span>
+    <div class="ob-main">
+      <div class="ob-big ob-big--a">
+        <div class="ob-media"><svg viewBox="0 0 160 100" fill="none" stroke="#172842" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M35 54h90a45 30 0 0 1-90 0z" fill="#fff"/><path d="M80 50c-14-4-20-16-18-30 12 2 20 12 18 30z" fill="#DDE7C8"/><path d="M80 50c8-8 20-10 30-20-12-4-28 4-30 20z" fill="#DDE7C8"/></svg></div>
+        <div class="ob-body">
+          <h3>Emagrecer com equilíbrio</h3>
+          <p>Alcançar um peso saudável sem entrar em mais um ciclo de restrição, culpa e efeito sanfona.</p>
+          <div class="ob-tags"><span>Emagrecimento</span><span>Hábitos alimentares</span><span>Composição corporal</span><span>Disposição</span></div>
         </div>
       </div>
-
-      <div class="esp-card">
-        <div class="esp-card-top"></div>
-        <h3>Condições clínicas e saúde metabólica</h3>
-        <p>Cuidado nutricional que concilia as necessidades de saúde com suas preferências, sua rotina e as possibilidades reais da sua vida.</p>
-        <div class="esp-tags">
-          <span>Pré-diabetes</span>
-          <span>Diabetes tipo 2</span>
-          <span>Hipertensão</span>
-          <span>Dislipidemia</span>
-          <span>Esteatose hepática</span>
+      <div class="ob-big ob-big--b">
+        <div class="ob-media"><svg viewBox="0 0 160 100" fill="none" stroke="#172842" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M50 28h52v40a14 14 0 0 1-14 14H64a14 14 0 0 1-14-14z" fill="#fff"/><path d="M102 40h8a10 10 0 0 1 0 22h-8"/><path d="M76 68c-8-6-12-10-12-15a6 6 0 0 1 12-2 6 6 0 0 1 12 2c0 5-4 9-12 15z" fill="#DF3E2F" stroke="#DF3E2F"/></svg></div>
+        <div class="ob-body">
+          <h3>Melhorar a relação com a comida</h3>
+          <p>Comer com mais tranquilidade, entendendo seus sinais de fome, saciedade e aprendendo a lidar com os desafios do dia.</p>
+          <div class="ob-tags"><span>Comer emocional</span><span>Culpa ao comer</span><span>Restrição alimentar</span><span>Episódios de exagero</span></div>
         </div>
       </div>
+      <div class="ob-big ob-big--c">
+        <div class="ob-media"><svg viewBox="0 0 160 100" fill="none" stroke="#172842" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M80 88C44 64 38 42 52 31c10-8 22-2 28 8 6-10 18-16 28-8 14 11 8 33-28 57z" fill="#fff"/><path d="M48 56h24l6-14 10 28 8-14h20" stroke="#3081C2"/></svg></div>
+        <div class="ob-body">
+          <h3>Cuidar da saúde</h3>
+          <p>Prevenir e tratar condições de saúde, com um plano alimentar individualizado, que respeita suas preferências e sua rotina.</p>
+          <div class="ob-tags"><span>Saúde metabólica</span><span>Diabetes</span><span>Hipertensão</span><span>Colesterol</span><span>Esteatose hepática</span></div>
+        </div>
+      </div>
+    </div>
 
-      <div class="esp-card">
-        <div class="esp-card-top"></div>
+    <div class="ob-sub">Também posso te acompanhar em:</div>
+
+    <div class="ob-mini-grid">
+      <div class="ob-mini">
+        <h3>Ganho de massa muscular e desempenho</h3>
+        <p>Estratégias nutricionais para potencializar seus resultados e ter mais energia no dia a dia.</p>
+        <div class="ob-tags"><span>Ganho de massa muscular</span><span>Desempenho</span><span>Disposição</span><span>Alimentação no esporte</span></div>
+      </div>
+      <div class="ob-mini">
         <h3>Imagem corporal e reconexão com o corpo</h3>
-        <p>Para compreender a insatisfação corporal, reconhecer os sinais do corpo e construir uma relação mais respeitosa consigo.</p>
-        <div class="esp-tags">
-          <span>Imagem corporal</span>
-          <span>Insatisfação corporal</span>
-          <span>Mindfulness</span>
-          <span>Pressão estética</span>
-          <span>Percepção corporal</span>
-        </div>
+        <p>Um espaço para compreender a insatisfação corporal, reconhecer os sinais do seu corpo e construir uma relação mais respeitosa e gentil consigo.</p>
+        <div class="ob-tags"><span>Imagem corporal</span><span>Insatisfação corporal</span><span>Pressão estética</span><span>Percepção corporal</span></div>
       </div>
-
-      <div class="esp-card">
-        <div class="esp-card-top"></div>
+      <div class="ob-mini">
         <h3>Cirurgia bariátrica e medicamentos GLP-1</h3>
-        <p>Acompanhamento para as mudanças alimentares, corporais e emocionais envolvidas na cirurgia bariátrica e no uso de medicamentos GLP-1.</p>
-        <div class="esp-tags">
-          <span>Suporte nutricional</span>
-          <span>Prevenção de deficiências</span>
-          <span>Relação com a comida</span>
-          <span>Reganho de peso</span>
-          <span>Desmame medicamentoso</span>
-        </div>
+        <p>Acompanhamento nutricional para as mudanças alimentares, corporais e emocionais antes e depois da cirurgia bariátrica ou durante o uso de medicamentos GLP-1.</p>
+        <div class="ob-tags"><span>Adequação nutricional</span><span>Prevenção de deficiências</span><span>Relação com a comida</span><span>Manutenção de resultados</span></div>
       </div>
+      <div class="ob-mini">
+        <h3>Reeducação alimentar e autonomia</h3>
+        <p>Aprender a comer melhor, com mais liberdade, fazendo escolhas que cabem na sua vida e que podem ser mantidas a longo prazo.</p>
+        <div class="ob-tags"><span>Planejamento de refeições</span><span>Rotina alimentar</span><span>Autonomia</span><span>Qualidade de vida</span></div>
+      </div>
+    </div>
 
+    <div class="ob-cta">
+      <h3>Não sabe exatamente em qual desses pontos você se encaixa?</h3>
+      <p>Tudo bem! Na primeira consulta, vamos conversar sobre o seu momento, suas necessidades e o que faz mais sentido trabalhar juntas.</p>
+      <a class="ob-cta-btn" href="#acompanhamento">Quero conhecer o acompanhamento <span aria-hidden="true">→</span></a>
     </div>
   </div>
 </section>
@@ -2619,10 +2781,12 @@
     '.ll-banner .eyebrow, .ll-banner p',
     '.ll-about2-copy .eyebrow, .ll-about2-lead, .ll-about2-quote, .ll-about2-creds .ll-cred, .ll-about2-copy .ll-btn-solid',
     '.ll-accordion',
-    '.focos-head .eyebrow',
-    '.foco-col',
-    '.especialidades-head .eyebrow, .especialidades-head p',
-    '.esp-card',
+    '.wish-head h2',
+    '.wish-card',
+    '.ob-head .eyebrow, .ob-head h2, .ob-head p',
+    '.ob-big',
+    '.ob-mini',
+    '.ob-cta',
     '.process-head .eyebrow, .process-head p',
     '.plan-card',
     '.community-head h2, .community-head p',
@@ -2664,7 +2828,7 @@
     el.appendChild(frag);
   }
   var headings = document.querySelectorAll(
-    '.ll-banner h2, .ll-about2-copy h2, .focos-head h2, .especialidades-head h2, .process-head h2, .community-head h2, .blog-head h2, .faq-head h2'
+    '.ll-banner h2, .ll-about2-copy h2, .wish-head h2, .ob-head h2, .process-head h2, .community-head h2, .blog-head h2, .faq-head h2'
   );
   headings.forEach(function(h){
     splitWords(h);
