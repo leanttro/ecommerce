@@ -1,0 +1,702 @@
+<!--
+  TEMPLATE: bio.html
+  ─────────────────────────────────────────────────────────────
+  Página de links ("link na bio") da Julia Theila, convertida do
+  julia-theila-links.html estático pra Jinja, seguindo o MESMO
+  contrato de variáveis que index() do app.py já manda para todos
+  os templates (loja, categorias, produtos, posts, agenda...).
+  Nada no app.py muda além do elif de roteamento (slug 'bio').
+
+  DE ONDE VEM CADA COISA (tudo editável em /bio/admin/painel,
+  usando o painel_julia.html — ramo is_bio):
+
+  LOGO ............ loja.logo                  (Dados gerais → Trocar logo)
+                    Sem logo cadastrada: usa o nome da loja em texto,
+                    no mesmo estilo (1ª palavra manuscrita + resto em serifa).
+  Cargo (sob logo)  loja.banner1_botao         (padrão: Nutricionista Clínica)
+  FOTO DO TOPO .... loja.banner1               (bannerprincipal1)
+  Linha pequena ... loja.banner2_titulo        (acima do título do topo)
+  Título do topo .. loja.banner1_titulo        (parte normal)
+  Parte destacada . loja.banner2_subtitulo     (final do título, na cor de destaque)
+  Descrição ....... loja.banner1_subtitulo
+  Rabiscos (3) .... loja.frase1 / frase2 / frase3
+  Título da lista . loja.titulo_produtos
+  LINKS ........... produtos (cada produto = 1 card):
+                      nome ................. título
+                      descricao ............ texto curto
+                      imagem ............... foto (p.imagem, já resolvida no app.py)
+                      link_projeto ......... URL do botão (sem link = card sem clique)
+                      nome do grupo ........ rótulo pequeno acima do título
+                      sort ................. ordem
+                    O grupo chamado "Fotos" nunca aparece (mesma convenção do julia.html).
+  SOBRE ........... loja.titulo_menu_sobre (linha pequena) /
+                    loja.sobre_titulo / loja.sobre_texto
+                    loja.ocultar_sobre esconde o bloco inteiro.
+  RODAPÉ .......... loja.chamada_rodape (assinatura) / loja.nome /
+                    loja.endereco_fisico (linha de baixo, ex: CRN) +
+                    atalhos opcionais: instagram_url, whatsapp_comercial, email.
+  GA4 / PIXEL ..... loja.ga4_id / loja.facebook_pixel
+
+  Todo texto tem fallback igual ao design original, então a página
+  já nasce completa antes de qualquer coisa ser preenchida.
+  ─────────────────────────────────────────────────────────────
+-->
+{%- set nome_loja = loja.nome or 'Júlia Theila' -%}
+{%- set desc_meta = loja.banner1_subtitulo or 'Júlia Theila — Nutricionista Clínica. Links, acompanhamento, comunidade e conteúdos.' -%}
+{%- set og_img = loja.logo or loja.banner1 -%}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f6efe3">
+  <meta name="description" content="{{ desc_meta | truncate(160) }}">
+  <title>{{ nome_loja }} — Links</title>
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ nome_loja }}">
+  <meta property="og:title" content="{{ nome_loja }} — Links">
+  <meta property="og:description" content="{{ desc_meta | truncate(160) }}">
+  <meta property="og:url" content="{{ request.url }}">
+  {% if og_img %}<meta property="og:image" content="{{ og_img }}">{% endif %}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ nome_loja }} — Links">
+  <meta name="twitter:description" content="{{ desc_meta | truncate(160) }}">
+  {% if og_img %}<meta name="twitter:image" content="{{ og_img }}">{% endif %}
+  {% if loja.logo %}<link rel="icon" type="image/png" href="{{ loja.logo }}">{% endif %}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+
+  {% if loja.ga4_id %}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ loja.ga4_id }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ loja.ga4_id }}');
+  </script>
+  {% endif %}
+  {% if loja.facebook_pixel %}
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '{{ loja.facebook_pixel }}');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id={{ loja.facebook_pixel }}&ev=PageView&noscript=1"/></noscript>
+  {% endif %}
+
+  <style>
+    :root{
+      /* Paleta: laranja do site da Julia, só que clareado (tons de pêssego/damasco/areia)
+         pra página não ficar "colorida demais". O laranja forte (--accent) aparece só em detalhes. */
+      --cream:#f6efe3;
+      --paper:#fcf8f1;
+      --ink:#2a2018;
+      --muted:#6f6357;
+      --accent:#e2472f;
+      --accent-dark:#b8341f;
+      --accent-soft:#eb8a6c;
+      --peach:#f7c3ab;
+      --apricot:#fadfc8;
+      --sand:#fbebd8;
+      --amber:#f6d29a;
+      --line:rgba(42,32,24,.14);
+      --shadow:0 14px 35px rgba(58,43,25,.09);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 8% 4%, rgba(226,71,47,.08), transparent 18rem),
+        radial-gradient(circle at 92% 15%, rgba(246,210,154,.30), transparent 17rem),
+        var(--cream);
+      font-family:"DM Sans",system-ui,sans-serif;
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    body:before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.13;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
+      mix-blend-mode:multiply;
+      z-index:10;
+    }
+
+    a{color:inherit;text-decoration:none}
+
+    .page{
+      width:min(720px,100%);
+      margin:auto;
+      padding:28px 18px 42px;
+      position:relative;
+    }
+
+    .scribble{
+      position:absolute;
+      font-family:"Caveat",cursive;
+      font-size:25px;
+      color:var(--accent);
+      transform:rotate(-8deg);
+      pointer-events:none;
+    }
+    .scribble.one{top:118px;left:-2px}
+    .scribble.two{right:0;top:365px;transform:rotate(7deg);color:var(--accent-dark)}
+    .scribble.three{left:2px;bottom:190px;transform:rotate(-5deg);color:var(--accent)}
+
+    /* HERO */
+    .hero{
+      display:grid;
+      grid-template-columns:1fr 1.05fr;
+      gap:20px;
+      align-items:center;
+      padding:10px 0 28px;
+    }
+
+    .brand{ padding:12px 2px; }
+
+    .brand .logo-img{
+      display:block;
+      width:100%;
+      max-width:280px;
+      max-height:150px;
+      height:auto;
+      object-fit:contain;
+      object-position:left center;
+      margin:0 0 14px;
+    }
+
+    .brand .julia{
+      font-family:"Caveat",cursive;
+      color:var(--accent);
+      font-size:62px;
+      line-height:.7;
+      transform:rotate(-5deg);
+      display:block;
+      margin-left:8px;
+    }
+
+    .brand h1{
+      font-family:"DM Serif Display",Georgia,serif;
+      font-size:62px;
+      line-height:.78;
+      margin:5px 0 14px;
+      letter-spacing:-2.5px;
+    }
+
+    .brand .role{
+      display:inline-block;
+      letter-spacing:4px;
+      font-size:11px;
+      font-weight:700;
+      text-transform:uppercase;
+      border-top:1px solid var(--ink);
+      padding-top:9px;
+    }
+
+    .portrait{
+      position:relative;
+      aspect-ratio:4/5;
+      overflow:hidden;
+      border:8px solid var(--paper);
+      box-shadow:8px 10px 0 var(--accent-soft), var(--shadow);
+      transform:rotate(1.5deg);
+      background:var(--peach);
+    }
+
+    .portrait img{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:cover;
+      object-position:center;
+      filter:saturate(.92);
+    }
+
+    .portrait:after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(135deg,rgba(226,71,47,.08),transparent 45%);
+      pointer-events:none;
+    }
+
+    .hero-copy{
+      grid-column:1/-1;
+      background:var(--paper);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:22px 24px;
+      box-shadow:var(--shadow);
+      position:relative;
+    }
+
+    .hero-copy .eyebrow{
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:3px;
+      font-weight:800;
+      color:var(--ink);
+      margin-bottom:9px;
+    }
+
+    .hero-copy h2{
+      font-family:"DM Serif Display",Georgia,serif;
+      font-size:34px;
+      line-height:1;
+      margin:0 0 10px;
+      max-width:600px;
+    }
+
+    .hero-copy h2 em{
+      color:var(--accent);
+      font-style:normal;
+    }
+
+    .hero-copy p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.65;
+      font-size:14px;
+      max-width:620px;
+      white-space:pre-line;
+    }
+
+    /* LINKS */
+    .section-title{
+      display:flex;
+      align-items:end;
+      justify-content:space-between;
+      margin:18px 0 14px;
+    }
+
+    .section-title h3{
+      margin:0;
+      max-width:12ch;
+      font-family:"DM Serif Display",Georgia,serif;
+      font-size:38px;
+      line-height:1;
+      letter-spacing:-1px;
+    }
+
+    .section-title h3:after{
+      content:"";
+      display:block;
+      width:90px;
+      height:7px;
+      margin:5px 0 0 2px;
+      background:var(--accent);
+      border-radius:50%;
+      transform:rotate(-2deg);
+    }
+
+    .links{
+      display:grid;
+      gap:12px;
+    }
+
+    .link-card{
+      position:relative;
+      min-height:104px;
+      display:grid;
+      grid-template-columns:126px 1fr 42px;
+      align-items:stretch;
+      overflow:hidden;
+      border-radius:18px;
+      border:1px solid rgba(42,32,24,.12);
+      background:var(--paper);
+      box-shadow:0 8px 24px rgba(48,38,24,.07);
+      transition:transform .28s ease, box-shadow .28s ease;
+      isolation:isolate;
+    }
+
+    /* Cores dos cards: ciclo automático de tons claros de laranja, pela posição na lista
+       (o painel não precisa de campo de cor). */
+    .link-card:nth-child(4n+1){background:var(--peach);border-color:rgba(226,71,47,.25)}
+    .link-card:nth-child(4n+2){background:var(--paper)}
+    .link-card:nth-child(4n+3){background:var(--apricot)}
+    .link-card:nth-child(4n+4){background:var(--sand)}
+
+    a.link-card:hover{
+      transform:translateY(-4px) rotate(-.25deg);
+      box-shadow:0 16px 32px rgba(48,38,24,.13);
+    }
+
+    a.link-card:active{transform:scale(.985)}
+
+    .link-card.is-static .arrow{visibility:hidden}
+
+    .link-image{
+      min-height:104px;
+      overflow:hidden;
+      position:relative;
+      background:rgba(226,71,47,.10);
+    }
+
+    .link-image img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .link-image:after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg,transparent 55%,rgba(252,248,241,.18));
+    }
+
+    .link-body{
+      padding:14px 13px 13px 16px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      min-width:0;
+    }
+
+    .link-label{
+      font-size:9px;
+      letter-spacing:2.4px;
+      text-transform:uppercase;
+      font-weight:800;
+      margin-bottom:3px;
+      color:var(--accent-dark);
+    }
+
+    .link-title{
+      font-family:"DM Serif Display",Georgia,serif;
+      font-size:24px;
+      line-height:1;
+      margin-bottom:5px;
+    }
+
+    .link-desc{
+      font-size:11.5px;
+      line-height:1.35;
+      color:#625549;
+      display:-webkit-box;
+      -webkit-line-clamp:3;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+    }
+
+    .arrow{
+      display:grid;
+      place-items:center;
+      font-size:27px;
+      font-weight:300;
+      color:var(--accent-dark);
+    }
+
+    /* SOBRE */
+    .note{
+      margin:24px 0;
+      background:linear-gradient(135deg,var(--amber),var(--peach));
+      color:var(--ink);
+      border-radius:22px;
+      padding:24px 22px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .note:before{
+      content:"✦";
+      position:absolute;
+      right:18px;
+      top:-18px;
+      font-size:120px;
+      color:rgba(226,71,47,.14);
+    }
+
+    .note small{
+      text-transform:uppercase;
+      letter-spacing:3px;
+      color:var(--accent-dark);
+      font-size:9px;
+      font-weight:800;
+    }
+
+    .note h4{
+      font-family:"DM Serif Display",Georgia,serif;
+      font-size:31px;
+      line-height:1.03;
+      margin:7px 0 8px;
+      max-width:520px;
+      font-weight:400;
+    }
+
+    .note p{
+      font-size:13px;
+      line-height:1.55;
+      color:rgba(42,32,24,.82);
+      max-width:520px;
+      margin:0;
+      white-space:pre-line;
+    }
+
+    /* FOOTER */
+    footer{
+      text-align:center;
+      padding:18px 0 8px;
+    }
+
+    footer .signature{
+      font-family:"Caveat",cursive;
+      color:var(--accent);
+      font-size:29px;
+      transform:rotate(-4deg);
+      display:inline-block;
+      margin-bottom:5px;
+    }
+
+    footer strong{
+      display:block;
+      font-family:"DM Serif Display",Georgia,serif;
+      font-size:22px;
+      font-weight:400;
+    }
+
+    footer small{
+      display:block;
+      letter-spacing:2px;
+      font-size:8px;
+      font-weight:800;
+      text-transform:uppercase;
+      color:#7b6d5f;
+    }
+
+    .footer-links{
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:14px;
+    }
+
+    .footer-links a{
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.4px;
+      padding:7px 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:var(--paper);
+      transition:border-color .2s ease, color .2s ease;
+    }
+
+    .footer-links a:hover{border-color:var(--accent);color:var(--accent-dark)}
+
+    .reveal{
+      opacity:0;
+      transform:translateY(18px);
+      transition:opacity .7s ease, transform .7s ease;
+    }
+    .reveal.visible{opacity:1;transform:none}
+
+    @media(max-width:560px){
+      .page{padding:20px 14px 34px}
+      .hero{grid-template-columns:1fr 1fr;gap:12px}
+      .brand .julia{font-size:47px}
+      .brand h1{font-size:48px}
+      .brand .role{font-size:8px;letter-spacing:2.5px}
+      .hero-copy{padding:18px}
+      .hero-copy h2{font-size:28px}
+      .section-title h3{font-size:33px}
+      .link-card{grid-template-columns:92px 1fr 34px;min-height:92px}
+      .link-image{min-height:92px}
+      .link-title{font-size:20px}
+      .link-desc{font-size:10.5px}
+      .arrow{font-size:22px}
+      .scribble{display:none}
+    }
+
+    @media(max-width:390px){
+      .brand h1{font-size:42px}
+      .brand .julia{font-size:42px}
+      .link-card{grid-template-columns:78px 1fr 28px}
+      .link-title{font-size:18px}
+    }
+  </style>
+</head>
+
+<body>
+  {#- ───────── Prepara os dados dos links (produtos) ─────────
+      Mesmo padrão do julia.html: o grupo "Fotos" é só banco de imagens e nunca aparece. -#}
+  {%- set fotos_cat = categorias | selectattr('nome', 'equalto', 'Fotos') | list | first if categorias else none -%}
+  {%- set fotos_cat_id = fotos_cat.id if fotos_cat else none -%}
+  {%- set fotos_ids = [fotos_cat_id] | select('!=', none) | list -%}
+  {%- set links = produtos | rejectattr('categoria_id', 'in', fotos_ids) | list if fotos_ids else produtos -%}
+  {#- id do grupo -> nome do grupo (vira o rótulo pequeno acima do título do card) -#}
+  {%- set cat_nomes = {} -%}
+  {%- for c in (categorias or []) -%}
+    {%- set _ = cat_nomes.update({ (c.id | string): c.nome }) -%}
+  {%- endfor -%}
+
+  {#- Fallback do logo em texto: 1ª palavra manuscrita, resto em serifa -#}
+  {%- set partes = nome_loja.split(' ', 1) -%}
+  {%- set nome_1 = partes[0] -%}
+  {%- set nome_2 = partes[1] if partes | length > 1 else '' -%}
+
+  <main class="page">
+
+    <span class="scribble one">{{ loja.frase1 or 'nutrição sem terrorismo ↓' }}</span>
+    <span class="scribble two">{{ loja.frase2 or 'vem comigo!' }}</span>
+    <span class="scribble three">{{ loja.frase3 or 'comida é cuidado ♡' }}</span>
+
+    <section class="hero reveal">
+      <div class="brand">
+        {% if loja.logo %}
+          <img class="logo-img" src="{{ loja.logo }}" alt="{{ nome_loja }}">
+        {% elif nome_2 %}
+          <span class="julia">{{ nome_1 }}</span>
+          <h1>{{ nome_2 }}.</h1>
+        {% else %}
+          <h1>{{ nome_1 }}.</h1>
+        {% endif %}
+        <span class="role">{{ loja.banner1_botao or 'Nutricionista Clínica' }}</span>
+      </div>
+
+      <div class="portrait">
+        {% if loja.banner1 %}
+        <img src="{{ loja.banner1 }}" alt="{{ nome_loja }}" loading="eager">
+        {% endif %}
+      </div>
+
+      <div class="hero-copy">
+        <div class="eyebrow">{{ loja.banner2_titulo or 'Nutrição clínica · comportamento alimentar' }}</div>
+        <h2>
+          {%- if loja.banner1_titulo -%}
+            {{ loja.banner1_titulo }}{% if loja.banner2_subtitulo %} <em>{{ loja.banner2_subtitulo }}</em>{% endif %}
+          {%- else -%}
+            Faça as pazes com a comida, com o seu corpo e <em>com você.</em>
+          {%- endif -%}
+        </h2>
+        <p>{{ loja.banner1_subtitulo or 'Um espaço de ciência, acolhimento e estratégia para construir uma alimentação possível — sem dietas engessadas, culpa ou terrorismo nutricional.' }}</p>
+      </div>
+    </section>
+
+    {% if links and links | length > 0 %}
+    <section class="reveal">
+      <div class="section-title">
+        <h3>{{ loja.titulo_produtos or 'Por onde começamos?' }}</h3>
+      </div>
+
+      <div class="links">
+        {% for p in links %}
+          {#- Aceita link com ou sem "https://" (ex: wa.me/5519...). -#}
+          {%- set raw = (p.link_projeto or '') | trim -%}
+          {%- if raw.startswith(('http://', 'https://', 'mailto:', 'tel:', '/', '#')) -%}
+            {%- set url = raw -%}
+          {%- elif raw -%}
+            {%- set url = 'https://' ~ raw -%}
+          {%- else -%}
+            {%- set url = '' -%}
+          {%- endif -%}
+          {%- set rotulo = cat_nomes.get(p.categoria_id | string) if p.categoria_id else '' -%}
+
+        {% if url %}<a class="link-card" href="{{ url }}" target="_blank" rel="noopener">{% else %}<div class="link-card is-static">{% endif %}
+          <div class="link-image">
+            {% if p.imagem %}<img src="{{ p.imagem }}" alt="{{ p.nome }}" loading="lazy">{% endif %}
+          </div>
+          <div class="link-body">
+            {% if rotulo %}<div class="link-label">{{ rotulo }}</div>{% endif %}
+            <div class="link-title">{{ p.nome }}</div>
+            {% if p.descricao %}<div class="link-desc">{{ p.descricao }}</div>{% endif %}
+          </div>
+          <div class="arrow">→</div>
+        {% if url %}</a>{% else %}</div>{% endif %}
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    {% if not loja.ocultar_sobre %}
+    <section class="note reveal" id="sobre">
+      <small>{{ loja.titulo_menu_sobre or 'uma nutrição possível' }}</small>
+      <h4>{% if loja.sobre_titulo %}{{ loja.sobre_titulo }}{% else %}Não é sobre comer perfeito.<br>É sobre comer em paz.{% endif %}</h4>
+      <p>{{ loja.sobre_texto or 'Ciência + comportamento + acolhimento para você construir autonomia alimentar sem viver presa a regras.' }}</p>
+    </section>
+    {% endif %}
+
+    <footer class="reveal">
+      <span class="signature">{{ loja.chamada_rodape or 'com carinho,' }}</span>
+      <strong>{{ nome_loja }}</strong>
+      <small>{{ loja.endereco_fisico or 'Nutricionista Clínica · CRN 93914/P' }}</small>
+
+      {%- set zap = (loja.whatsapp_comercial or '') | string | replace(' ', '') | replace('+', '') | replace('-', '') | replace('(', '') | replace(')', '') -%}
+      {%- set ig = (loja.instagram_url or '') | trim -%}
+      {% if ig.startswith(('http://', 'https://')) or zap or loja.email %}
+      <div class="footer-links">
+        {% if ig.startswith(('http://', 'https://')) %}<a href="{{ ig }}" target="_blank" rel="noopener">Instagram</a>{% endif %}
+        {% if zap %}<a href="https://wa.me/{{ zap }}" target="_blank" rel="noopener">WhatsApp</a>{% endif %}
+        {% if loja.email %}<a href="mailto:{{ loja.email }}">E-mail</a>{% endif %}
+      </div>
+      {% endif %}
+    </footer>
+  </main>
+
+  <script>
+    // Entrada suave dos blocos
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          entry.target.style.transitionDelay = `${Math.min(index * 70, 350)}ms`;
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Trava de segurança: se o observer não disparar, nada fica invisível pra sempre.
+    setTimeout(() => {
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    }, 1500);
+
+    // Microinteração: toque/clique rápido nos cards clicáveis
+    document.querySelectorAll('a.link-card').forEach(card => {
+      card.addEventListener('pointerdown', () => {
+        card.style.setProperty('transform', 'scale(.985)');
+      });
+      card.addEventListener('pointerup', () => {
+        card.style.removeProperty('transform');
+      });
+      card.addEventListener('pointercancel', () => {
+        card.style.removeProperty('transform');
+      });
+      card.addEventListener('focus', () => card.style.outline = '3px solid var(--accent-soft)');
+      card.addEventListener('blur', () => card.style.outline = 'none');
+    });
+
+    // Pequeno efeito de parallax no retrato, somente em desktop
+    const portrait = document.querySelector('.portrait');
+    if (portrait) {
+      window.addEventListener('mousemove', (e) => {
+        if (window.innerWidth < 760) return;
+        const x = (e.clientX / window.innerWidth - .5) * 2;
+        const y = (e.clientY / window.innerHeight - .5) * 2;
+        portrait.style.transform = `rotate(${1.5 + x * .45}deg) translate(${x * 2}px, ${y * 2}px)`;
+      });
+    }
+  </script>
+</body>
+</html>
