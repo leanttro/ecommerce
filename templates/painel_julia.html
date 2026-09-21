@@ -243,6 +243,8 @@
 </style>
 </head>
 <body>
+{# Loja "bio" (página de links da Julia) reaproveita este mesmo painel. is_bio liga os ramos abaixo. #}
+{% set is_bio = (loja.slug_url == 'bio') %}
 
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
@@ -261,6 +263,11 @@
       {% if loja.slug_url == 'dbc' %}
       <a href="#conteudo-dbc">Fotos e textos da página</a>
       <a href="#leads-dbc">Inscritos (leads)</a>
+      {% elif is_bio %}
+      <a href="#textos-site">Textos da página</a>
+      <a href="#visibilidade">Visibilidade</a>
+      <a href="#grupos">Rótulos dos links</a>
+      <a href="#planos">Links</a>
       {% else %}
       <a href="#textos-site">Textos do site</a>
       <a href="#visibilidade">Visibilidade</a>
@@ -308,8 +315,9 @@
               <span class="hint">Aparece no rodapé. Se ficar vazio, o link fica oculto.</span>
             </div>
             <div class="field full">
-              <label for="f-endereco">Endereço físico</label>
-              <input type="text" id="f-endereco" name="endereco_fisico" value="{{ loja.endereco_fisico or '' }}">
+              <label for="f-endereco">{% if is_bio %}Linha do rodapé (abaixo do nome){% else %}Endereço físico{% endif %}</label>
+              <input type="text" id="f-endereco" name="endereco_fisico" value="{{ loja.endereco_fisico or '' }}"{% if is_bio %} placeholder="Ex: Nutricionista Clínica · CRN 93914/P"{% endif %}>
+              {% if is_bio %}<span class="hint">Se ficar vazio, usa "Nutricionista Clínica · CRN 93914/P".</span>{% endif %}
             </div>
           </div>
 
@@ -334,6 +342,7 @@
         </div>
       </section>
 
+      {% if not is_bio %}
       <section class="card-section" id="textos-site">
         {% if loja.slug_url == 'dbc' %}
         <h2>Fotos e textos da página</h2>
@@ -475,6 +484,112 @@
           </div>
         </div>
       </section>
+      {% else %}
+      <!-- ═══════════════ TEXTOS DA PÁGINA — LOJA "bio" ═══════════════
+           Mesmos names do payload de admin_painel(), só com rótulos próprios da página de links.
+           banner2_botao e titulo_blog não têm UI aqui: são ecoados como hidden mais abaixo
+           (app.py faz request.form.get sem fallback, senão seriam zerados a cada save). -->
+      <section class="card-section" id="textos-site">
+        <h2>Textos da página</h2>
+        <div class="section-sub">Tudo que aparece na página de links, do topo ao rodapé. Campo em branco = texto padrão.</div>
+
+        <div class="card">
+          <h3>Topo (abaixo do logo e ao lado da foto)</h3>
+          <div class="field">
+            <label for="f-b1b">Texto abaixo do logo</label>
+            <input type="text" id="f-b1b" name="banner1_botao" value="{{ loja.banner1_botao or '' }}" placeholder="Nutricionista Clínica">
+            <span class="hint">O logo é enviado em "Dados gerais → Trocar logo".</span>
+          </div>
+          <div class="img-preview">
+            {% if loja.banner1_url %}<img src="{{ loja.banner1_url }}" alt="Foto do topo atual">{% else %}<span class="hint">Sem foto cadastrada ainda.</span>{% endif %}
+            <div class="field" style="margin-bottom:0;">
+              <label for="f-banner1img">Trocar foto do topo</label>
+              <input type="file" id="f-banner1img" name="bannerprincipal1" accept="image/*">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Descrição do topo</h3>
+          <div class="field">
+            <label for="f-b2t">Linha pequena acima do título</label>
+            <input type="text" id="f-b2t" name="banner2_titulo" value="{{ loja.banner2_titulo or '' }}" placeholder="Nutrição clínica · comportamento alimentar">
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="f-b1t">Título</label>
+              <input type="text" id="f-b1t" name="banner1_titulo" value="{{ loja.banner1_titulo or '' }}" placeholder="Faça as pazes com a comida, com o seu corpo e">
+            </div>
+            <div class="field">
+              <label for="f-b2s">Final do título (aparece destacado em cor)</label>
+              <input type="text" id="f-b2s" name="banner2_subtitulo" value="{{ loja.banner2_subtitulo or '' }}" placeholder="com você.">
+            </div>
+          </div>
+          <span class="hint" style="display:block; margin:-6px 0 16px;">Se o título ficar em branco, a página usa o título padrão inteiro (com o destaque).</span>
+          <div class="field" style="margin-bottom:0;">
+            <label for="f-b1s">Descrição</label>
+            <textarea id="f-b1s" name="banner1_subtitulo">{{ loja.banner1_subtitulo or '' }}</textarea>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Rabiscos (frases manuscritas nas laterais)</h3>
+          <div class="grid-3">
+            <div class="field">
+              <label for="f-fr1">Rabisco 1</label>
+              <input type="text" id="f-fr1" name="frase1" value="{{ loja.frase1 or '' }}" placeholder="nutrição sem terrorismo ↓">
+            </div>
+            <div class="field">
+              <label for="f-fr2">Rabisco 2</label>
+              <input type="text" id="f-fr2" name="frase2" value="{{ loja.frase2 or '' }}" placeholder="vem comigo!">
+            </div>
+            <div class="field">
+              <label for="f-fr3">Rabisco 3</label>
+              <input type="text" id="f-fr3" name="frase3" value="{{ loja.frase3 or '' }}" placeholder="comida é cuidado ♡">
+            </div>
+          </div>
+          <span class="hint">Só aparecem no computador; no celular ficam ocultos.</span>
+        </div>
+
+        <div class="card">
+          <h3>Lista de links</h3>
+          <div class="field" style="margin-bottom:0;">
+            <label for="f-titprod">Título da lista</label>
+            <input type="text" id="f-titprod" name="titulo_produtos" value="{{ loja.titulo_produtos or '' }}" placeholder="Por onde começamos?">
+            <span class="hint">Os links em si são cadastrados na seção "Links", mais abaixo.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Sobre (caixa colorida no fim da página)</h3>
+          <div class="field">
+            <label for="f-menusobre">Linha pequena acima do título</label>
+            <input type="text" id="f-menusobre" name="titulo_menu_sobre" value="{{ loja.titulo_menu_sobre or '' }}" placeholder="uma nutrição possível">
+          </div>
+          <div class="field">
+            <label for="f-sobretit">Título</label>
+            <input type="text" id="f-sobretit" name="sobre_titulo" value="{{ loja.sobre_titulo or '' }}" placeholder="Não é sobre comer perfeito. É sobre comer em paz.">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="f-sobretexto">Texto</label>
+            <textarea id="f-sobretexto" name="sobre_texto">{{ loja.sobre_texto or '' }}</textarea>
+            <span class="hint">Pra esconder essa caixa inteira, marque "Ocultar a seção Sobre" em Visibilidade.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Rodapé</h3>
+          <div class="field" style="margin-bottom:0;">
+            <label for="f-chamada">Assinatura (frase manuscrita)</label>
+            <input type="text" id="f-chamada" name="chamada_rodape" value="{{ loja.chamada_rodape or '' }}" placeholder="com carinho,">
+            <span class="hint">Abaixo dela aparecem o nome da loja e a "Linha do rodapé" (em Dados gerais). Os atalhos de Instagram, WhatsApp e e-mail vêm dos Dados gerais e só aparecem se estiverem preenchidos.</span>
+          </div>
+        </div>
+
+        <input type="hidden" name="banner2_botao" value="{{ loja.banner2_botao or '' }}">
+        <input type="hidden" name="titulo_blog" value="{{ loja.titulo_blog or '' }}">
+      </section>
+      {% endif %}
 
       <section class="card-section" id="visibilidade" {% if loja.slug_url == 'dbc' %}style="display:none"{% endif %}>
         <h2>Visibilidade</h2>
@@ -484,6 +599,7 @@
             <input type="checkbox" id="f-ocultarsobre" name="ocultar_sobre" value="1" {% if loja.ocultar_sobre %}checked{% endif %}>
             <label for="f-ocultarsobre">Ocultar a seção "Sobre"</label>
           </div>
+          {% if not is_bio %}
           <div class="checkbox-row">
             <input type="checkbox" id="f-ocultarblog" name="ocultar_blog" value="1" {% if loja.ocultar_blog %}checked{% endif %}>
             <label for="f-ocultarblog">Ocultar a seção "Blog"</label>
@@ -492,11 +608,16 @@
             <input type="checkbox" id="f-whatsflut" name="mostrar_whatsapp_flutuante" value="1" {% if loja.mostrar_whatsapp_flutuante %}checked{% endif %}>
             <label for="f-whatsflut">Mostrar botão flutuante de WhatsApp no site</label>
           </div>
+          {% else %}
+          {# bio não tem blog nem botão flutuante: ecoa o valor atual pra não zerar no save #}
+          <input type="hidden" name="ocultar_blog" value="{{ '1' if loja.ocultar_blog else '' }}">
+          <input type="hidden" name="mostrar_whatsapp_flutuante" value="{{ '1' if loja.mostrar_whatsapp_flutuante else '' }}">
+          {% endif %}
         </div>
       </section>
 
       <!-- ═══════════════ CONSTRUTOR: conteudo_extra_json ═══════════════ -->
-      <section class="card-section" id="conteudo-extra">
+      <section class="card-section" id="conteudo-extra" {% if is_bio %}style="display:none"{% endif %}>
         <h2>Acordeão, Comunidade &amp; FAQ</h2>
         <div class="section-sub">Se você não mexer aqui, o site continua mostrando o conteúdo padrão já existente.</div>
 
@@ -597,11 +718,16 @@
 
     <!-- ═══════════════ GRUPOS (categorias de produto) ═══════════════ -->
     <section class="card-section" id="grupos">
+      {% if is_bio %}
+      <h2>Rótulos dos links</h2>
+      <div class="section-sub">O nome do grupo vira a palavrinha pequena acima do título de cada link (ex: Consulta, Comunidade, Blog). É opcional: link sem grupo aparece sem rótulo.</div>
+      {% else %}
       <h2>Grupos</h2>
       <div class="section-sub">Agrupe seus planos por tipo. Todo plano precisa pertencer a um grupo para ser cadastrado.</div>
+      {% endif %}
 
       <div class="card">
-        <h3>Grupos cadastrados</h3>
+        <h3>{% if is_bio %}Rótulos cadastrados{% else %}Grupos cadastrados{% endif %}</h3>
         {% if categorias and categorias|length > 0 %}
           {% for cat in categorias %}
           <div class="item-row">
@@ -619,12 +745,12 @@
       </div>
 
       <div class="card">
-        <h3>Novo grupo</h3>
+        <h3>{% if is_bio %}Novo rótulo{% else %}Novo grupo{% endif %}</h3>
         <form method="POST" action="/{{ loja.slug_url }}/admin/categoria/salvar" id="grupo-form">
           <div class="grid-2">
             <div class="field">
               <label for="grupo-nome">Nome do grupo</label>
-              <input type="text" name="nome" id="grupo-nome" placeholder="Ex: Consultas, Acompanhamento, Pacotes…" required>
+              <input type="text" name="nome" id="grupo-nome" placeholder="{% if is_bio %}Ex: Consulta, Comunidade, Blog, Instagram…{% else %}Ex: Consultas, Acompanhamento, Pacotes…{% endif %}" required>
             </div>
           </div>
           <button type="submit" class="btn btn-primary btn-small">Criar grupo</button>
@@ -642,20 +768,29 @@
     {% set fotos_produtos = produtos | selectattr('categoria_id', 'equalto', fotos_cat_id) | list if fotos_cat_id else [] %}
     {% set objetivos_produtos = produtos | selectattr('categoria_id', 'equalto', objetivos_cat_id) | list if objetivos_cat_id else [] %}
     <section class="card-section" id="planos">
+      {% if is_bio %}
+      <h2>Links</h2>
+      <div class="section-sub">Cada item vira um card com foto na página de links. A ordem segue o campo "Ordem de exibição".</div>
+      {% else %}
       <h2>Planos</h2>
       <div class="section-sub">Os planos de acompanhamento oferecidos no site.</div>
+      {% endif %}
 
       <div class="card">
-        <h3>Planos cadastrados</h3>
+        <h3>{% if is_bio %}Links cadastrados{% else %}Planos cadastrados{% endif %}</h3>
         {% if planos_normais and planos_normais|length > 0 %}
           {% for p in planos_normais %}
           <div class="item-row">
             <div class="item-row-info">
               <strong>{{ p.nome }}</strong>
+              {% if is_bio %}
+              <span>{{ p.link_projeto or 'Sem link (o card não fica clicável)' }}{% if p.descricao %} · {{ p.descricao | truncate(70) }}{% endif %}</span>
+              {% else %}
               <span>{% if p.consulte %}Sob consulta{% else %}R$ {{ '%.2f'|format(p.preco or 0) }}{% endif %}{% if p.descricao %} · {{ p.descricao | truncate(90) }}{% endif %}</span>
+              {% endif %}
             </div>
             <div class="item-row-actions">
-              <button type="button" class="btn btn-ghost btn-small" data-edit-produto data-id="{{ p.id }}" data-nome="{{ p.nome }}" data-preco="{{ p.preco }}" data-descricao="{{ p.descricao or '' }}" data-categoria="{{ p.categoria_id or '' }}" data-sort="{{ p.sort if p.sort is not none else '' }}" data-imagem="{{ p.imagem_destaque or '' }}">Editar</button>
+              <button type="button" class="btn btn-ghost btn-small" data-edit-produto data-id="{{ p.id }}" data-nome="{{ p.nome }}" data-preco="{{ p.preco }}" data-descricao="{{ p.descricao or '' }}" data-link="{{ p.link_projeto or '' }}" data-categoria="{{ p.categoria_id or '' }}" data-sort="{{ p.sort if p.sort is not none else '' }}" data-imagem="{{ p.imagem_destaque or '' }}">Editar</button>
               <a class="btn btn-danger btn-small" href="/{{ loja.slug_url }}/admin/produto/excluir/{{ p.id }}" onclick="return confirm('Excluir este plano?');">Excluir</a>
             </div>
           </div>
@@ -666,57 +801,72 @@
       </div>
 
       <div class="card">
-        <h3 id="produto-form-title">Novo plano</h3>
+        <h3 id="produto-form-title">{% if is_bio %}Novo link{% else %}Novo plano{% endif %}</h3>
         <form method="POST" action="/{{ loja.slug_url }}/admin/produto/salvar" enctype="multipart/form-data" id="produto-form">
           <input type="hidden" name="id" id="produto-id" value="">
           <div class="grid-2">
             <div class="field">
-              <label for="produto-nome">Nome do plano</label>
+              <label for="produto-nome">{% if is_bio %}Título do link{% else %}Nome do plano{% endif %}</label>
               <input type="text" name="nome" id="produto-nome" required>
             </div>
-            <div class="field">
+            <div class="field" {% if is_bio %}style="display:none"{% endif %}>
               <label for="produto-preco">Preço (R$)</label>
               <input type="text" name="preco" id="produto-preco" placeholder="Ex: 890.00">
             </div>
+            {% if is_bio %}
+            <div class="field full">
+              <label for="produto-link">Link (para onde o card leva)</label>
+              <input type="text" name="link_projeto" id="produto-link" placeholder="Ex: https://wa.me/5519971541008 ou https://www.instagram.com/seuusuario">
+              <span class="hint">Se deixar em branco, o card aparece na página mas sem clique.</span>
+            </div>
+            {% endif %}
             <div class="field">
-              <label for="produto-categoria">Grupo</label>
+              <label for="produto-categoria">{% if is_bio %}Rótulo (palavra pequena acima do título){% else %}Grupo{% endif %}</label>
               <select name="categoria_id" id="produto-categoria">
-                <option value="">— sem grupo —</option>
+                <option value="">{% if is_bio %}— sem rótulo —{% else %}— sem grupo —{% endif %}</option>
                 {% if categorias %}
                   {% for cat in categorias %}
                   <option value="{{ cat.id }}">{{ cat.nome }}</option>
                   {% endfor %}
                 {% endif %}
               </select>
+              {% if is_bio %}
+              <span class="hint">Crie os rótulos na seção acima primeiro (ex: Consulta, Comunidade). É opcional.</span>
+              {% else %}
               <span class="hint">Crie grupos na seção acima primeiro. Use o grupo "Fotos" pra guardar imagens sem exibir no site, ou o grupo "Objetivos" pra cadastrar os focos de atuação (com foto) exibidos no site.</span>
+              {% endif %}
             </div>
             <div class="field">
               <label for="produto-sort">Ordem de exibição</label>
               <input type="number" name="sort" id="produto-sort" placeholder="Ex: 1">
-              <span class="hint">Quanto menor o número, mais em cima o plano aparece no site.</span>
+              <span class="hint">Quanto menor o número, mais em cima o {% if is_bio %}link{% else %}plano{% endif %} aparece no site.</span>
             </div>
           </div>
           <div class="field full">
-            <label for="produto-descricao">Descrição</label>
+            <label for="produto-descricao">{% if is_bio %}Texto (linha curta abaixo do título){% else %}Descrição{% endif %}</label>
             <textarea name="descricao" id="produto-descricao"></textarea>
           </div>
           <div class="field full">
-            <label for="produto-imagem">Imagem</label>
+            <label for="produto-imagem">{% if is_bio %}Foto do card{% else %}Imagem{% endif %}</label>
             <div class="img-preview" id="produto-imagem-preview" style="display:none;">
               <img id="produto-imagem-atual" src="" alt="Imagem atual">
               <span>Imagem atual — envie uma nova abaixo só se quiser trocar.</span>
             </div>
             <input type="file" name="imagem" id="produto-imagem" accept="image/*">
+            {% if is_bio %}
+            <span class="hint">Aparece no lado esquerdo do card. Ao editar, só envie uma nova se quiser trocar a atual.</span>
+            {% else %}
             <span class="hint">Se o grupo for "Fotos", é essa imagem que vai aparecer na seção Banco de Fotos pra você copiar o link. Se o grupo for "Objetivos", é essa imagem (com o nome como legenda) que aparece na seção "Onde posso te ajudar" do site.</span>
+            {% endif %}
           </div>
-          <button type="submit" class="btn btn-primary btn-small">Salvar plano</button>
+          <button type="submit" class="btn btn-primary btn-small">{% if is_bio %}Salvar link{% else %}Salvar plano{% endif %}</button>
           <button type="button" class="btn btn-ghost btn-small" id="produto-cancelar" style="display:none;">Cancelar edição</button>
         </form>
       </div>
     </section>
 
     <!-- ═══════════════ BANCO DE FOTOS (categoria "Fotos" — não aparece no site) ═══════════════ -->
-    <section class="card-section" id="fotos-galeria">
+    <section class="card-section" id="fotos-galeria" {% if is_bio %}style="display:none"{% endif %}>
       <h2>Banco de Fotos</h2>
       <div class="section-sub">Itens do grupo "Fotos" — nunca aparecem no site, servem só pra você guardar a imagem e copiar o link direto do Directus.</div>
 
@@ -749,7 +899,7 @@
     </section>
 
     <!-- ═══════════════ OBJETIVOS DE ATUAÇÃO (categoria "Objetivos" — aparece no site) ═══════════════ -->
-    <section class="card-section" id="objetivos-galeria">
+    <section class="card-section" id="objetivos-galeria" {% if is_bio %}style="display:none"{% endif %}>
       <h2>Objetivos de Atuação</h2>
       <div class="section-sub">Itens do grupo "Objetivos" — aparecem no site na seção "Onde posso te ajudar", como colunas com foto e legenda. A ordem de exibição segue o campo "Ordem" de cada item.</div>
 
@@ -779,7 +929,7 @@
     </section>
 
     <!-- ═══════════════ BLOG (posts) ═══════════════ -->
-    <section class="card-section" id="blog">
+    <section class="card-section" id="blog" {% if is_bio %}style="display:none"{% endif %}>
       <h2>Blog</h2>
       <div class="section-sub">Artigos publicados na seção de blog do site.</div>
 
@@ -848,6 +998,8 @@
       document.getElementById('produto-preco').value = btn.dataset.preco || '';
       document.getElementById('produto-descricao').value = btn.dataset.descricao || '';
       document.getElementById('produto-sort').value = btn.dataset.sort || '';
+      var linkInput = document.getElementById('produto-link'); // só existe na loja bio
+      if (linkInput) linkInput.value = btn.dataset.link || '';
       var sel = document.getElementById('produto-categoria');
       if (sel) sel.value = btn.dataset.categoria || '';
       var imgPrev = document.getElementById('produto-imagem-preview');
@@ -866,12 +1018,13 @@
     });
   });
   var prodCancel = document.getElementById('produto-cancelar');
+  var prodTituloPadrao = document.getElementById('produto-form-title').textContent; // "Novo plano" ou "Novo link"
   if (prodCancel) prodCancel.addEventListener('click', function(){
     document.getElementById('produto-form').reset();
     document.getElementById('produto-id').value = '';
     document.getElementById('produto-imagem-preview').style.display = 'none';
     document.getElementById('produto-imagem-atual').src = '';
-    document.getElementById('produto-form-title').textContent = 'Novo plano';
+    document.getElementById('produto-form-title').textContent = prodTituloPadrao;
     prodCancel.style.display = 'none';
   });
 
