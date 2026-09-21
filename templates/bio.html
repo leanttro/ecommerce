@@ -31,6 +31,8 @@
                     O grupo chamado "Fotos" nunca aparece (mesma convenção do julia.html).
   SOBRE ........... loja.titulo_menu_sobre (linha pequena) /
                     loja.sobre_titulo / loja.sobre_texto
+                    loja.sobre_imagem (foto ao lado do texto — painel: Sobre → Trocar foto)
+                    Sem foto enviada: a caixa aparece só com texto, como antes.
                     loja.ocultar_sobre esconde o bloco inteiro.
   RODAPÉ .......... loja.chamada_rodape (assinatura) / loja.nome /
                     loja.endereco_fisico (linha de baixo, ex: CRN) +
@@ -175,8 +177,8 @@
     .brand .logo-img{
       display:block;
       width:100%;
-      max-width:280px;
-      max-height:150px;
+      max-width:100%;
+      max-height:240px;
       height:auto;
       object-fit:contain;
       object-position:left center;
@@ -199,6 +201,15 @@
       line-height:.78;
       margin:5px 0 14px;
       letter-spacing:-2.5px;
+    }
+
+    .brand .nome-site{
+      display:block;
+      font-family:"DM Serif Display",Georgia,serif;
+      font-size:46px;
+      line-height:1;
+      letter-spacing:-1px;
+      margin:0 0 12px;
     }
 
     .brand .role{
@@ -452,6 +463,33 @@
       white-space:pre-line;
     }
 
+    /* Sobre com foto: texto à esquerda, foto à direita */
+    .note.has-foto{
+      display:grid;
+      grid-template-columns:1fr 210px;
+      gap:24px;
+      align-items:center;
+    }
+
+    .note-foto{
+      position:relative;
+      aspect-ratio:4/5;
+      overflow:hidden;
+      border:6px solid var(--paper);
+      box-shadow:6px 8px 0 var(--accent-soft), var(--shadow);
+      transform:rotate(-2deg);
+      background:var(--peach);
+    }
+
+    .note-foto img{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:cover;
+      object-position:center;
+      filter:saturate(.92);
+    }
+
     /* FOOTER */
     footer{
       text-align:center;
@@ -516,6 +554,7 @@
       .hero{grid-template-columns:1fr 1fr;gap:12px}
       .brand .julia{font-size:47px}
       .brand h1{font-size:48px}
+      .brand .nome-site{font-size:34px}
       .brand .role{font-size:8px;letter-spacing:2.5px}
       .hero-copy{padding:18px}
       .hero-copy h2{font-size:28px}
@@ -526,11 +565,14 @@
       .link-desc{font-size:10.5px}
       .arrow{font-size:22px}
       .scribble{display:none}
+      .note.has-foto{grid-template-columns:1fr;gap:20px}
+      .note-foto{width:min(230px,72%);margin:0 auto 6px}
     }
 
     @media(max-width:390px){
       .brand h1{font-size:42px}
       .brand .julia{font-size:42px}
+      .brand .nome-site{font-size:30px}
       .link-card{grid-template-columns:78px 1fr 28px}
       .link-title{font-size:18px}
     }
@@ -557,21 +599,21 @@
 
   <main class="page">
 
-    <span class="scribble one">{{ loja.frase1 or 'nutrição sem terrorismo ↓' }}</span>
-    <span class="scribble two">{{ loja.frase2 or 'vem comigo!' }}</span>
     <span class="scribble three">{{ loja.frase3 or 'comida é cuidado ♡' }}</span>
 
     <section class="hero reveal">
       <div class="brand">
         {% if loja.logo %}
           <img class="logo-img" src="{{ loja.logo }}" alt="{{ nome_loja }}">
+          <span class="nome-site">{{ nome_loja }}</span>
         {% elif nome_2 %}
           <span class="julia">{{ nome_1 }}</span>
           <h1>{{ nome_2 }}.</h1>
         {% else %}
           <h1>{{ nome_1 }}.</h1>
         {% endif %}
-        <span class="role">{{ loja.banner1_botao or 'Nutricionista Clínica' }}</span>
+        {%- set cargo = loja.banner1_botao or 'Nutricionista Clínica' -%}
+        <span class="role">{{ cargo }}{% if 'CRN' not in cargo %} · CRN 93914/P{% endif %}</span>
       </div>
 
       <div class="portrait">
@@ -629,10 +671,20 @@
     {% endif %}
 
     {% if not loja.ocultar_sobre %}
-    <section class="note reveal" id="sobre">
-      <small>{{ loja.titulo_menu_sobre or 'uma nutrição possível' }}</small>
-      <h4>{% if loja.sobre_titulo %}{{ loja.sobre_titulo }}{% else %}Não é sobre comer perfeito.<br>É sobre comer em paz.{% endif %}</h4>
-      <p>{{ loja.sobre_texto or 'Ciência + comportamento + acolhimento para você construir autonomia alimentar sem viver presa a regras.' }}</p>
+    {#- Foto do Sobre: usa a URL já resolvida (sobre_imagem_url) e, se não houver, sobre_imagem só quando já for uma URL/caminho -#}
+    {%- set _si = (loja.sobre_imagem or '') | string -%}
+    {%- set sobre_foto = loja.sobre_imagem_url or (_si if (_si.startswith('http') or _si.startswith('/')) else '') -%}
+    <section class="note reveal{% if sobre_foto %} has-foto{% endif %}" id="sobre">
+      <div class="note-text">
+        <small>{{ loja.titulo_menu_sobre or 'uma nutrição possível' }}</small>
+        <h4>{% if loja.sobre_titulo %}{{ loja.sobre_titulo }}{% else %}Não é sobre comer perfeito.<br>É sobre comer em paz.{% endif %}</h4>
+        <p>{{ loja.sobre_texto or 'Ciência + comportamento + acolhimento para você construir autonomia alimentar sem viver presa a regras.' }}</p>
+      </div>
+      {% if sobre_foto %}
+      <div class="note-foto">
+        <img src="{{ sobre_foto }}" alt="{{ nome_loja }}" loading="lazy">
+      </div>
+      {% endif %}
     </section>
     {% endif %}
 
