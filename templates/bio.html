@@ -103,7 +103,7 @@
          pra página não ficar "colorida demais". O laranja forte (--accent) aparece só em detalhes. */
       --cream:#f6efe3;
       --paper:#fcf8f1;
-      --ink:#2a2018;
+      --ink:#172842;
       --muted:#6f6357;
       --accent:#e2472f;
       --accent-dark:#b8341f;
@@ -290,7 +290,39 @@
       white-space:pre-line;
     }
 
+    /* Botão que leva pra lista de links */
+    .cta-links{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      margin:4px 0 6px;
+      padding:17px 30px;
+      border-radius:999px;
+      background:var(--ink);
+      color:var(--cream);
+      font-size:15px;
+      font-weight:600;
+      box-shadow:0 12px 28px rgba(23,40,66,.28);
+      transition:transform .25s ease, box-shadow .25s ease, background .25s ease;
+    }
+
+    .cta-links span{
+      display:inline-block;
+      transition:transform .25s ease;
+    }
+
+    .cta-links:hover{
+      transform:translateY(-3px);
+      background:#1F3556;
+      box-shadow:0 18px 34px rgba(23,40,66,.34);
+    }
+
+    .cta-links:hover span{transform:translateX(5px)}
+    .cta-links:active{transform:scale(.97)}
+
     /* LINKS */
+    #lista-links{scroll-margin-top:16px}
+
     .section-title{
       display:flex;
       align-items:end;
@@ -353,6 +385,43 @@
     a.link-card:active{transform:scale(.985)}
 
     .link-card.is-static .arrow{visibility:hidden}
+
+    /* Entrada dos cards: cada um sobe, cresce e a foto "assenta", em sequência */
+    .link-card.card-wait{opacity:0}
+
+    .link-card.card-wait.card-in{
+      opacity:1;
+      animation:cardIn .9s cubic-bezier(.2,.75,.25,1) var(--d,0ms) backwards;
+    }
+
+    .link-card.card-wait.card-in .link-image img{
+      animation:cardImg 1.3s cubic-bezier(.2,.75,.25,1) var(--d,0ms) backwards;
+    }
+
+    .link-card.card-wait.card-in .link-body{
+      animation:cardText .8s ease calc(var(--d,0ms) + 220ms) backwards;
+    }
+
+    @keyframes cardIn{
+      from{opacity:0;transform:translateY(46px) scale(.94) rotate(1.2deg)}
+      to{opacity:1;transform:none}
+    }
+
+    @keyframes cardImg{
+      from{transform:scale(1.25)}
+      to{transform:scale(1)}
+    }
+
+    @keyframes cardText{
+      from{opacity:0;transform:translateX(-14px)}
+      to{opacity:1;transform:none}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      .link-card.card-wait.card-in,
+      .link-card.card-wait.card-in .link-image img,
+      .link-card.card-wait.card-in .link-body{animation:none}
+    }
 
     .link-image{
       min-height:104px;
@@ -552,6 +621,7 @@
     @media(max-width:560px){
       .page{padding:20px 14px 34px}
       .hero{grid-template-columns:1fr 1fr;gap:12px}
+      .brand .logo-img{width:86%}
       .brand .julia{font-size:47px}
       .brand h1{font-size:48px}
       .brand .nome-site{font-size:34px}
@@ -636,7 +706,9 @@
 
     {% if links and links | length > 0 %}
     <section class="reveal">
-      <div class="section-title">
+      <a class="cta-links" href="#lista-links">Veja o que faz sentido pra você <span aria-hidden="true">→</span></a>
+
+      <div class="section-title" id="lista-links">
         <h3>{{ loja.titulo_produtos or 'Por onde começamos?' }}</h3>
       </div>
 
@@ -722,6 +794,25 @@
     setTimeout(() => {
       document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
     }, 1500);
+
+    // Entrada dos cards, um a um, na hora em que aparecem na tela
+    if ('IntersectionObserver' in window) {
+      const cardObserver = new IntersectionObserver((entries) => {
+        let n = 0;
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.style.setProperty('--d', (n++ * 120) + 'ms');
+            entry.target.classList.add('card-in');
+            cardObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -6% 0px' });
+
+      document.querySelectorAll('.link-card').forEach((card) => {
+        card.classList.add('card-wait');
+        cardObserver.observe(card);
+      });
+    }
 
     // Microinteração: toque/clique rápido nos cards clicáveis
     document.querySelectorAll('a.link-card').forEach(card => {
