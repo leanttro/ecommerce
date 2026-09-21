@@ -11,9 +11,11 @@
   nada no app.py precisa mudar pra essas partes funcionarem.
 
   JÁ DINÂMICO NESTA VERSÃO:
-  - WHATSAPP: todos os links wa.me usam `loja.whatsapp_comercial`,
-    com fallback pro número atual (5519971541008) enquanto o campo
-    não é preenchido no painel.
+  - WHATSAPP: todos os links wa.me estão FIXOS no número 5519971541008
+    ((19) 97154-1008). Antes usavam `loja.whatsapp_comercial`; foi fixado
+    pra garantir o número certo mesmo se o painel tiver outro valor.
+  - CONTATO (rodapé): e-mail nutrijuliatheila@gmail.com e CRN 93914/P fixos.
+    Instagram vem de `loja.instagram_url` (o @ é montado por JS; sem link, o card se esconde).
   - LOGO: todas as ocorrências da logo usam `loja.logo` (já vem como
     URL resolvida do Directus via get_img_url), com fallback pra URL
     fixa atual.
@@ -929,16 +931,98 @@
     .plan-tag-spacer{ display: none; }
   }
 
-  /* ============ COMMUNITY GRID ============ */
+  /* ============ COMMUNITY (intro enxuta, com leve aceno visual à LP externa) ============ */
   .community{ background: var(--white); padding: clamp(36px, 4.5vw, 64px) 0 clamp(24px, 3vw, 42px); border-top: 1px solid var(--line); }
-  .community-head{ max-width: 680px; margin: 0 auto 48px; text-align: center; }
+  .community--dbc{ background: var(--surface); overflow: hidden; }
+
+  /* Layout em 2 colunas: texto à esquerda, celular "saindo" do círculo à direita. */
+  .community-stage{
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: center;
+    gap: clamp(28px, 5vw, 72px);
+  }
+  .community-copy{ max-width: 560px; }
+
+  /* Logo maior (antes 58px) */
+  .community-dbc-logo{
+    display: block;
+    height: clamp(96px, 11vw, 136px);
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: left center;
+    margin: 0 0 clamp(20px, 3vw, 30px);
+  }
+  .community-head{ margin: 0 0 clamp(24px, 3vw, 34px); text-align: left; }
   .community-head h2{
-    font-size: clamp(1.9rem, 3.4vw, 2.5rem);
+    font-size: clamp(2.1rem, 4.2vw, 3.2rem);
     font-weight: 700;
-    line-height: 1.18;
+    line-height: 1.12;
     margin-bottom: 18px;
   }
   .community-head p{ font-size: 1.05rem; line-height: 1.7; color: var(--text-soft); }
+
+  /* Palco do celular */
+  .community-visual{
+    position: relative;
+    width: min(100%, 480px);
+    aspect-ratio: 1 / 1.08;
+    margin-inline: auto;
+  }
+  .dbc-disc, .dbc-ring{
+    position: absolute;
+    left: 50%; top: 54%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .dbc-disc{ width: 90%; background: var(--text); }
+  .dbc-ring{ width: 104%; border: 2px dashed var(--community-orange-dark); }
+  .dbc-phone{
+    position: absolute;
+    left: 50%; bottom: 0;
+    width: 88%;
+    height: auto;
+    transform: translateX(-50%);
+    filter: drop-shadow(0 28px 32px rgba(23,40,66,0.38));
+    animation: dbc-float 7s ease-in-out infinite;
+  }
+  @keyframes dbc-float{
+    0%, 100%{ transform: translate(-50%, 0); }
+    50%{ transform: translate(-50%, -12px); }
+  }
+  @media (prefers-reduced-motion: reduce){ .dbc-phone{ animation: none; } }
+
+  .dbc-chip{
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    background: var(--white);
+    border-radius: 100px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    box-shadow: 0 10px 24px rgba(23,40,66,0.18);
+    white-space: nowrap;
+  }
+  .dbc-chip i{ width: 10px; height: 10px; border-radius: 50%; background: var(--community-orange); }
+  .dbc-chip--1{ top: 13%; left: -2%; transform: rotate(-6deg); }
+  .dbc-chip--2{ top: 42%; right: -3%; transform: rotate(5deg); }
+  .dbc-chip--2 i{ background: #D8402A; }
+  .dbc-chip--3{ bottom: 15%; left: 0; transform: rotate(-3deg); }
+  .dbc-chip--3 i{ background: #A9CB5F; }
+
+  @media (max-width: 860px){
+    .community-stage{ grid-template-columns: 1fr; }
+    .community-visual{ order: -1; width: min(100%, 360px); }
+    .community-copy{ max-width: 620px; margin-inline: auto; text-align: center; }
+    .community-dbc-logo{ margin-inline: auto; object-position: center; }
+    .community-head{ text-align: center; }
+    .dbc-chip{ font-size: 0.8rem; padding: 7px 12px; }
+  }
 
   .community-grid{
     display: flex;
@@ -1011,8 +1095,9 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 14px;
-    justify-content: center;
+    justify-content: flex-start;
   }
+  @media (max-width: 860px){ .community-actions{ justify-content: center; } }
   .community-actions .btn-primary{ background: var(--community-orange-dark); }
   .community-actions .btn-primary:hover{ background: var(--community-orange); }
   .community-actions .btn-secondary:hover{ border-color: var(--community-orange-dark); color: var(--community-orange-dark); }
@@ -1327,14 +1412,17 @@
 
   /* ============ CONTATO (rodapé) ============ */
   .contact-info{
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 20px;
     max-width: 1040px;
     margin: 0 auto 56px;
     text-align: left;
   }
   .contact-info-item{
+    flex: 0 1 calc(25% - 15px);
+    min-width: 0;
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 14px;
@@ -1365,7 +1453,13 @@
     color: #fff;
     margin-bottom: 4px;
     text-decoration: none;
+    overflow-wrap: anywhere;
   }
+  /* Com 5 cards (Instagram visível) o desktop vira 3 + 2 centralizado, em vez de 4 + 1 sozinho */
+  @media (min-width: 901px){
+    .contact-info:has(> .contact-info-item:nth-child(5)) .contact-info-item{ flex-basis: calc(33.333% - 14px); }
+  }
+  .contact-info-item .value--email{ font-size: 0.94rem; }
   .contact-info-item a.value:hover{ color: #EEDFC8; }
   .contact-info-item .desc{
     font-size: 0.85rem;
@@ -1383,10 +1477,10 @@
     margin-bottom: clamp(48px, 6vw, 72px);
   }
   @media (max-width: 900px){
-    .contact-info{ grid-template-columns: repeat(2, 1fr); }
+    .contact-info-item{ flex-basis: calc(50% - 10px); }
   }
   @media (max-width: 560px){
-    .contact-info{ grid-template-columns: 1fr; }
+    .contact-info-item{ flex-basis: 100%; }
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -1681,6 +1775,36 @@
     background: rgba(255,255,255,0.35);
   }
   .ll-hero-card-icon svg{ width: 18px; height: 18px; }
+  /* Logo da DBC: sticker inclinado no canto superior direito do card.
+     Fica FORA do fluxo (position:absolute) pra não empurrar o texto e manter os 3 cards alinhados.
+     O contorno branco (drop-shadows empilhados) dá o efeito de adesivo recortado e garante leitura
+     sobre o fundo vermelho. */
+  .ll-hero-card--orange{ position: relative; }
+  .ll-hero-card-logo{
+    position: absolute;
+    top: -68px;
+    right: 14px;
+    height: 96px;
+    width: auto;
+    max-width: 190px;
+    object-fit: contain;
+    transform: rotate(9deg);
+    transform-origin: 60% 60%;
+    transition: transform 0.35s cubic-bezier(.2,.7,.2,1);
+    pointer-events: none;
+    filter:
+      drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff)
+      drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)
+      drop-shadow(0 10px 14px rgba(2,10,25,0.32));
+  }
+  .ll-hero-card--orange:hover .ll-hero-card-logo{ transform: rotate(4deg) scale(1.06); }
+  @media (max-width: 900px){
+    .ll-hero-card-logo{ top: -54px; right: 12px; height: 74px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .ll-hero-card-logo{ transition: none; }
+    .ll-hero-card--orange:hover .ll-hero-card-logo{ transform: rotate(9deg); }
+  }
   .ll-hero-card h3{
     font-family: 'Fraunces', serif;
     font-size: 1.08rem;
@@ -1702,7 +1826,7 @@
   .ll-hero-card--clay{ background: var(--clay); color: #fff; }
   .ll-hero-card--clay .ll-hero-card-icon{ background: rgba(255,255,255,0.22); }
   .ll-hero-card--cream{ background: var(--surface); color: var(--text); }
-  .ll-hero-card--orange{ background: #DF3E2F; color: #fff; }
+  .ll-hero-card--orange{ background: linear-gradient(135deg, #E2472F 0%, #C22A1D 100%); color: #fff; }
   .ll-hero-card--ink{ background: var(--olive-dark); color: var(--cream); }
   .ll-hero-card--ink .ll-hero-card-icon{ background: rgba(238,223,200,0.16); }
 
@@ -2040,7 +2164,7 @@
     {% if not loja.ocultar_blog and posts and posts|length > 0 %}<li><a href="#blog">Blog</a></li>{% endif %}
   </ul>
   <div class="ll-nav-actions">
-    <a class="ll-nav-cta" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">
+    <a class="ll-nav-cta" href="https://wa.me/5519971541008?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">
       <span class="ll-nav-cta-text">Agendar consulta</span>
     </a>
     <button class="ll-burger" type="button" aria-label="Abrir menu" onclick="document.querySelector('.ll-mobile-menu').classList.toggle('is-open')"><span></span></button>
@@ -2069,7 +2193,7 @@
       <p>{{ loja.banner1_subtitulo or 'Meu trabalho não é entregar um plano alimentar engessado — é reconstruir, passo a passo, a sua relação com a comida, com o seu corpo e com o seu próprio ritmo.' }}</p>
     </div>
     <div class="ll-hero-actions">
-      <a class="ll-btn-dark" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">Agendar consulta</a>
+      <a class="ll-btn-dark" href="https://wa.me/5519971541008?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">Agendar consulta</a>
       {% if not loja.ocultar_sobre %}<a class="ll-btn-ghost" href="#sobre">Conheça a abordagem</a>{% endif %}
     </div>
   </div>
@@ -2082,7 +2206,8 @@
     <span>Ver planos →</span>
   </a>
   <a class="ll-hero-card ll-hero-card--orange" href="#comunidade">
-    <h3>Comunidade sem pressa</h3>
+    <img class="ll-hero-card-logo" src="https://directus.leanttro.com/assets/c92b3497-b002-4a01-95f0-1ff3061fdb22?quality=80&format=webp" alt="DBC - De Boa com a Comida" loading="lazy">
+    <h3>DBC · De Boa com a Comida</h3>
     <p>Aulas, trocas e apoio contínuo pra sua jornada com a comida nunca ser solitária.</p>
     <span>Conhecer a comunidade →</span>
   </a>
@@ -2178,7 +2303,7 @@
       </div>
       {% endif %}
 
-      <a class="ll-btn-solid" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">Agendar consulta</a>
+      <a class="ll-btn-solid" href="https://wa.me/5519971541008?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">Agendar consulta</a>
     </div>
 
     <div class="ll-about2-photo-wrap">
@@ -2364,7 +2489,7 @@
           {% endfor %}
         </ul>
         {% endif %}
-        <a class="plan-cta" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20plano%20{{ p.nome | urlencode }}." target="_blank" rel="noopener">Quero saber mais</a>
+        <a class="plan-cta" href="https://wa.me/5519971541008?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20plano%20{{ p.nome | urlencode }}." target="_blank" rel="noopener">Quero saber mais</a>
       </div>
       {% endfor %}
     </div>
@@ -2380,7 +2505,7 @@
         <li>Estratégias práticas para encaixar a boa alimentação na sua rotina real.</li>
         <li>Acesso exclusivo à nossa Comunidade de Pacientes — uma rede de apoio ativa.</li>
       </ul>
-      <a class="plan-cta" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">Quero saber mais sobre o acompanhamento</a>
+      <a class="plan-cta" href="https://wa.me/5519971541008?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">Quero saber mais sobre o acompanhamento</a>
     </div>
     {% endif %}
   </div>
@@ -2459,60 +2584,37 @@
 </section>
 
 <!-- COMMUNITY -->
-<section class="community" id="comunidade">
+<!-- Seção intencionalmente enxuta: apenas uma introdução + CTA levando para a landing page
+     própria da "De Boa com a Comida". Fundo creme (--surface) e a logo real da DBC dão um
+     leve aceno visual à identidade daquela LP, sem copiar o layout dela aqui. -->
+<section class="community community--dbc" id="comunidade">
   <div class="wrap">
-    <div class="community-head">
-      <h2>De Boa com a Comida.</h2>
-      <p>Nutrição, saúde, encontros e troca em uma comunidade criada pela nutricionista Julia Theila.</p>
-    </div>
+    <div class="community-stage">
 
-    <div class="community-grid">
-      <!-- Fallback estático. Substituído em runtime se loja.conteudo_extra_json.comunidade_features existir. -->
-      <div class="feature-list" id="ll-community-features">
-        <div class="feature-item">
-          <span class="mark"></span>
-          <p>Aulas sobre alimentação e comportamento alimentar</p>
+      <div class="community-copy">
+        <div class="community-head">
+          <img class="community-dbc-logo" src="https://directus.leanttro.com/assets/c92b3497-b002-4a01-95f0-1ff3061fdb22?quality=80&format=webp" alt="DBC - De Boa com a Comida" loading="lazy">
+          <h2>De Boa com a Comida.</h2>
+          <p>Nutrição, saúde, encontros e troca em uma comunidade criada pela nutricionista Julia Theila — um espaço pra aprender sobre alimentação, trocar experiências e construir hábitos possíveis, sem precisar fazer tudo perfeito.</p>
         </div>
-        <div class="feature-item">
-          <span class="mark"></span>
-          <p>Trocas e desafios de alimentação consciente</p>
-        </div>
-        <div class="feature-item">
-          <span class="mark"></span>
-          <p>Interação com a nutricionista em horários específicos</p>
-        </div>
-        <div class="feature-item">
-          <span class="mark"></span>
-          <p>Guias práticos e exercícios de consciência alimentar</p>
+
+        <!-- Botão placebo — trocar o href="#" pela URL real da LP da comunidade quando existir. -->
+        <div class="community-actions">
+          <a href="#" class="btn-primary" target="_blank" rel="noopener">Conhecer a comunidade DBC →</a>
         </div>
       </div>
 
-      <!-- Fallback estático. Substituído em runtime se loja.conteudo_extra_json.comunidade_quote existir.
-           Foto: reaproveita o campo bannermenor2 (upload já suportado pelo app.py) — ver painel. -->
-      <div class="quote-card" id="ll-community-quote">
-        <div class="quote-card-text">
-          <div class="quote-card-lines">
-            <span class="mark-big">✦</span>
-            <h3>Um espaço de apoio real</h3>
-            <p>Mudar de estilo de vida fica mais leve perto de quem entende do assunto.</p>
-            <div class="plan-tags">
-              <span>Essencial</span>
-              <span>Intensivo</span>
-            </div>
-          </div>
-        </div>
-        <div class="quote-card-photo">
-          {% if loja.bannermenor2 %}
-          <img src="{{ loja.bannermenor2 }}" alt="Julia Theila">
-          {% endif %}
-        </div>
+      <!-- Celular da DBC "saindo" de um círculo azul-marinho, com anel tracejado laranja
+           e 3 selos flutuantes. Foto: PNG sem fundo (Directus). -->
+      <div class="community-visual">
+        <span class="dbc-ring" aria-hidden="true"></span>
+        <span class="dbc-disc" aria-hidden="true"></span>
+        <img class="dbc-phone" src="https://directus.leanttro.com/assets/86f5d60b-c944-41b3-952d-7b72eade0981?quality=80&format=webp" alt="Celular mostrando o app da comunidade De Boa com a Comida" width="444" height="562" loading="lazy">
+        <span class="dbc-chip dbc-chip--1"><i></i>Nutrição</span>
+        <span class="dbc-chip dbc-chip--2"><i></i>Encontros</span>
+        <span class="dbc-chip dbc-chip--3"><i></i>Troca de experiências</span>
       </div>
 
-      <!-- Botões placebo — trocar os href="#" pela LP da comunidade e pela página de links quando existirem. -->
-      <div class="community-actions">
-        <a href="#" class="btn-primary">Saber mais sobre a comunidade</a>
-        <a href="#" class="btn-secondary">Nossos links</a>
-      </div>
     </div>
   </div>
 </section>
@@ -2599,15 +2701,26 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
         </div>
         <span class="label">WhatsApp</span>
-        <a class="value" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">(11) 99786-9097</a>
+        <a class="value" href="https://wa.me/5519971541008?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">(19) 97154-1008</a>
         <span class="desc">Para dúvidas e agendamentos</span>
       </div>
       <div class="contact-info-item">
         <div class="contact-info-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+        </div>
+        <span class="label">E-mail</span>
+        <a class="value value--email" href="mailto:nutrijuliatheila@gmail.com">nutrijuliatheila@gmail.com</a>
+        <span class="desc">Para contato e envio de documentos</span>
+      </div>
+      <!-- Instagram: o @ é montado por JS a partir de loja.instagram_url. Se o link não estiver
+           preenchido no painel (ou o template não for renderizado), o card se esconde sozinho
+           em vez de mostrar código na tela. -->
+      <div class="contact-info-item" data-ig-card>
+        <div class="contact-info-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
         </div>
         <span class="label">Instagram</span>
-        <a class="value" href="{{ loja.instagram_url }}" target="_blank" rel="noopener">{{ '@' + loja.instagram_url.rstrip('/').split('/')[-1] if loja.instagram_url else '' }}</a>
+        <a class="value" data-ig href="{{ loja.instagram_url }}" target="_blank" rel="noopener">Siga no Instagram</a>
         <span class="desc">Conteúdos sobre alimentação, corpo e sociedade</span>
       </div>
       <div class="contact-info-item">
@@ -2623,20 +2736,20 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/></svg>
         </div>
         <span class="label">Registro</span>
-        <span class="value">CRN3 87499</span>
+        <span class="value">CRN 93914/P</span>
         <span class="desc">Nutricionista clínica comportamental e terapeuta nutricional</span>
       </div>
     </div>
     <div class="contact-info-cta">
-      <a class="ll-btn-dark" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">Agendar consulta</a>
+      <a class="ll-btn-dark" href="https://wa.me/5519971541008?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">Agendar consulta</a>
     </div>
   </div>
   <div class="wrap final-cta-inner">
     <blockquote>"{{ loja.chamada_rodape or 'Mudanças reais acontecem sem pressa, mas com consistência.' }}"</blockquote>
     <div class="final-links">
-      {% if loja.instagram_url %}<a href="{{ loja.instagram_url }}" target="_blank" rel="noopener">Instagram</a>{% endif %}
-      {% if loja.email %}<a href="mailto:{{ loja.email }}">E-mail</a>{% endif %}
-      <a href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">WhatsApp</a>
+      <a data-ig href="{{ loja.instagram_url }}" target="_blank" rel="noopener">Instagram</a>
+      <a href="mailto:nutrijuliatheila@gmail.com">E-mail</a>
+      <a href="https://wa.me/5519971541008?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">WhatsApp</a>
     </div>
   </div>
   <div class="wrap footer-bar">
@@ -2646,7 +2759,7 @@
 </footer>
 
 {% if loja.mostrar_whatsapp_flutuante %}
-<a class="ll-whatsapp-float" href="https://wa.me/{{ loja.whatsapp_comercial or '5519971541008' }}?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+<a class="ll-whatsapp-float" href="https://wa.me/5519971541008?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
   <svg viewBox="0 0 32 32" width="28" height="28" fill="currentColor" aria-hidden="true"><path d="M16.02 3C9.4 3 4 8.4 4 15.02c0 2.4.7 4.63 1.9 6.5L4 29l7.65-1.87a11.9 11.9 0 0 0 4.37.83h.01c6.62 0 12.02-5.4 12.02-12.02C28.05 8.4 22.65 3 16.02 3zm0 21.9c-1.5 0-2.96-.4-4.24-1.16l-.3-.18-4.53 1.11 1.2-4.4-.2-.32a9.87 9.87 0 0 1-1.53-5.93c0-5.5 4.48-9.98 9.98-9.98 5.5 0 9.98 4.48 9.98 9.98s-4.42 9.88-9.88 9.88z"/><path d="M21.2 18.34c-.3-.15-1.76-.87-2.04-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17-.35.22-.65.07a8.1 8.1 0 0 1-2.4-1.48 9 9 0 0 1-1.66-2.06c-.17-.3 0-.46.13-.6.13-.13.3-.35.45-.53.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.6-.9-2.2-.24-.58-.49-.5-.67-.5h-.57c-.2 0-.52.07-.8.37s-1.05 1.03-1.05 2.5 1.08 2.9 1.23 3.1c.15.2 2.13 3.25 5.16 4.55.72.3 1.28.49 1.72.63.72.23 1.38.2 1.9.12.58-.09 1.76-.72 2-1.4.24-.7.24-1.3.17-1.4-.07-.13-.27-.2-.57-.35z"/></svg>
 </a>
 {% endif %}
@@ -2788,6 +2901,7 @@
     '.feature-item',
     '.quote-card',
     '.community-actions',
+    '.community-visual',
     '.blog-head .eyebrow',
     '.blog-card',
     '.blog-cta',
@@ -2909,5 +3023,19 @@
 })();
 </script>
 
+<script>
+/* Instagram do rodapé: monta o @ a partir do link; se não houver link válido, esconde o card/atalho. */
+(function(){
+  document.querySelectorAll('a[data-ig]').forEach(function(a){
+    var href = (a.getAttribute('href') || '').trim();
+    var box = a.closest('[data-ig-card]') || a;
+    if (!/^https?:\/\//i.test(href)) { box.hidden = true; box.style.display = 'none'; return; }
+    if (a.closest('[data-ig-card]')) {
+      var handle = href.split('?')[0].replace(/\/+$/, '').split('/').pop();
+      if (handle) a.textContent = '@' + handle.replace(/^@/, '');
+    }
+  });
+})();
+</script>
 </body>
 </html>
