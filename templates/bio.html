@@ -605,7 +605,7 @@
       <div class="brand">
         {% if loja.logo %}
           <img class="logo-img" src="{{ loja.logo }}" alt="{{ nome_loja }}">
-          <span class="nome-site">{{ nome_loja }}</span>
+          <span class="nome-site">Júlia Theila</span>
         {% elif nome_2 %}
           <span class="julia">{{ nome_1 }}</span>
           <h1>{{ nome_2 }}.</h1>
@@ -623,7 +623,6 @@
       </div>
 
       <div class="hero-copy">
-        <div class="eyebrow">{{ loja.banner2_titulo or 'Nutrição clínica · comportamento alimentar' }}</div>
         <h2>
           {%- if loja.banner1_titulo -%}
             {{ loja.banner1_titulo }}{% if loja.banner2_subtitulo %} <em>{{ loja.banner2_subtitulo }}</em>{% endif %}
