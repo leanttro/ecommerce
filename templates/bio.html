@@ -388,7 +388,12 @@
     .link-card.is-static .arrow{visibility:hidden}
 
     /* Entrada dos cards: cada um sobe, cresce e a foto "assenta", em sequência */
-    .link-card.card-wait{opacity:0}
+    /* Saiu da tela: some (desce um pouco e encolhe). Voltou pra tela: entra de novo. */
+    .link-card.card-wait:not(.card-in){
+      opacity:0;
+      transform:translateY(34px) scale(.94);
+      transition:opacity .45s ease, transform .45s ease, box-shadow .28s ease;
+    }
 
     .link-card.card-wait.card-in{
       opacity:1;
@@ -796,18 +801,19 @@
       document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
     }, 1500);
 
-    // Entrada dos cards, um a um, na hora em que aparecem na tela
+    // Cards aparecem ao entrar na tela e somem ao sair (repete a cada rolagem)
     if ('IntersectionObserver' in window) {
       const cardObserver = new IntersectionObserver((entries) => {
         let n = 0;
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.style.setProperty('--d', (n++ * 120) + 'ms');
+            entry.target.style.setProperty('--d', (n++ * 90) + 'ms');
             entry.target.classList.add('card-in');
-            cardObserver.unobserve(entry.target);
+          } else {
+            entry.target.classList.remove('card-in');
           }
         });
-      }, { threshold: 0.15, rootMargin: '0px 0px -6% 0px' });
+      }, { threshold: 0.2, rootMargin: '-6% 0px -6% 0px' });
 
       document.querySelectorAll('.link-card').forEach((card) => {
         card.classList.add('card-wait');
