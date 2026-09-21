@@ -570,10 +570,17 @@
             <label for="f-sobretit">Título</label>
             <input type="text" id="f-sobretit" name="sobre_titulo" value="{{ loja.sobre_titulo or '' }}" placeholder="Não é sobre comer perfeito. É sobre comer em paz.">
           </div>
-          <div class="field" style="margin-bottom:0;">
+          <div class="field">
             <label for="f-sobretexto">Texto</label>
             <textarea id="f-sobretexto" name="sobre_texto">{{ loja.sobre_texto or '' }}</textarea>
             <span class="hint">Pra esconder essa caixa inteira, marque "Ocultar a seção Sobre" em Visibilidade.</span>
+          </div>
+          <div class="img-preview">
+            {% if loja.sobre_imagem_url %}<img src="{{ loja.sobre_imagem_url }}" alt="Foto do Sobre atual">{% else %}<span class="hint">Sem foto cadastrada ainda — a caixa aparece só com o texto.</span>{% endif %}
+            <div class="field" style="margin-bottom:0;">
+              <label for="f-sobreimg">Foto do Sobre (aparece ao lado do texto)</label>
+              <input type="file" id="f-sobreimg" name="sobre_imagem" accept="image/*">
+            </div>
           </div>
         </div>
 
