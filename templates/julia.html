@@ -1203,137 +1203,377 @@
     line-height: 1.25;
     color: var(--clay-dark);
   }
+  .journey-head h2{ color: var(--text); }
   .journey-phases-row{
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
     max-width: 1200px;
-    margin: 44px auto 8px;
-    padding: 0 clamp(4px, 2vw, 20px);
+    margin: 36px auto 6px;
+    padding: 0 16px;
     position: relative;
     z-index: 1;
   }
   .journey-phase-label{
-    font-size: 0.85rem;
+    appearance: none;
+    font-family: inherit;
+    font-size: 0.82rem;
     font-weight: 600;
-    color: var(--text-soft);
+    color: var(--text);
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(23,40,66,0.14);
+    border-radius: 999px;
+    padding: 9px 18px;
+    cursor: pointer;
+    transition: background .4s ease, color .4s ease, border-color .4s ease, box-shadow .4s ease;
   }
-  .journey-phase-label:first-child{ grid-column: 1 / 5; text-align: left; }
-  .journey-phase-label:last-child{ grid-column: 5 / 9; text-align: left; }
-  .journey-track{
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 14px;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 clamp(4px, 2vw, 20px);
+  .journey-phase-label.is-active{
+    background: linear-gradient(135deg, #E2472F 0%, #C22A1D 100%);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 8px 20px rgba(194,42,29,0.28);
+  }
+
+  /* carrossel de cards — um passo por vez, os vizinhos espiam nas laterais */
+  .journey-carousel{
     position: relative;
     z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 8px;
+    outline: none;
   }
-  .journey-item{
-    flex: 1;
-    min-width: 0;
-    text-align: left;
+  .journey-stage{
+    position: relative;
+    height: clamp(300px, 29vw, 330px);
+    margin-top: 28px;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
   }
-  /* zigue-zague fiel à referência: itens 2, 5 e 7 descem; o item 4 sobe (pico) */
-  .journey-track .journey-item:nth-child(2),
-  .journey-track .journey-item:nth-child(5),
-  .journey-track .journey-item:nth-child(7){
-    margin-top: 54px;
+  .j-card{
+    --o: 0; --a: 0;
+    --w: min(440px, 78vw);
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 50%;
+    width: var(--w);
+    margin-left: calc(var(--w) / -2);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: clamp(24px, 3vw, 34px);
+    background: #FFFFFF;
+    border: 1px solid rgba(23,40,66,0.08);
+    border-radius: 28px;
+    box-shadow: 0 10px 26px rgba(23,40,66,0.07);
+    overflow: hidden;
+    cursor: pointer;
+    transform: translateX(calc(var(--o) * 58%)) scale(calc(1 - var(--a) * 0.09));
+    opacity: calc(1 - var(--a) * 0.42);
+    filter: blur(calc(var(--a) * 0.6px));
+    transition: transform .8s cubic-bezier(.22,.8,.3,1), opacity .6s ease, filter .6s ease, box-shadow .6s ease;
+    will-change: transform, opacity;
   }
-  .journey-track .journey-item:nth-child(4){
-    margin-top: -26px;
+  .j-card.is-active{
+    cursor: default;
+    box-shadow: 0 22px 48px rgba(23,40,66,0.14);
+    border-color: rgba(226,71,47,0.28);
   }
-  .journey-item .icon{
-    width: 26px; height: 26px;
-    color: var(--text-soft);
-    margin-bottom: 8px;
-  }
-  .journey-item .icon svg{ width: 100%; height: 100%; }
-  .journey-item .num{
-    display: block;
+  .j-card.is-hidden{ opacity: 0; pointer-events: none; }
+  .j-bgnum{
+    position: absolute;
+    right: -6px; bottom: -34px;
     font-family: 'Fraunces', serif;
-    font-size: clamp(2.2rem, 3vw, 2.7rem);
     font-weight: 600;
-    color: var(--clay-dark);
+    font-size: clamp(9rem, 15vw, 12rem);
     line-height: 1;
-    margin-bottom: 10px;
+    color: #E2472F;
+    opacity: 0.09;
+    pointer-events: none;
   }
-  .journey-item h4{
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--clay-dark);
+  .j-top{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 22px;
+  }
+  .j-icon{
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #E2472F 0%, #C22A1D 100%);
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(194,42,29,0.28);
+  }
+  .j-icon svg{ width: 26px; height: 26px; }
+  .j-chip{
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+    background: rgba(226,71,47,0.10);
+    border-radius: 999px;
+    padding: 6px 12px;
+  }
+  .j-num{
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #C22A1D;
     margin-bottom: 8px;
-    line-height: 1.3;
   }
-  .journey-item p{
-    font-size: 0.82rem;
-    line-height: 1.5;
-    color: var(--text-soft);
+  .j-card h3{
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.45rem, 2.4vw, 1.8rem);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text);
+    margin: 0 0 12px;
+    position: relative;
+  }
+  .j-card p{
+    font-size: 0.98rem;
+    line-height: 1.6;
+    color: rgba(23,40,66,0.82);
     margin: 0;
-    max-width: 15ch;
+    max-width: 30ch;
+    position: relative;
   }
-  @media (max-width: 980px){
-    .journey-track{ flex-wrap: wrap; row-gap: 40px; }
-    .journey-item{ flex: 1 1 40%; }
-    .journey-track .journey-item:nth-child(2),
-    .journey-track .journey-item:nth-child(4),
-    .journey-track .journey-item:nth-child(5),
-    .journey-track .journey-item:nth-child(7){ margin-top: 0; }
-    .journey-phases-row{ grid-template-columns: 1fr; gap: 10px; text-align: center; }
-    .journey-phase-label:first-child, .journey-phase-label:last-child{ grid-column: 1 / 2; text-align: center; }
+  .journey-controls{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 30px;
+  }
+  .j-arrow{
+    appearance: none;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 1px solid rgba(23,40,66,0.2);
+    background: rgba(255,255,255,0.7);
+    color: var(--text);
+    cursor: pointer;
+    transition: background .25s ease, transform .25s ease, box-shadow .25s ease;
+  }
+  .j-arrow:hover{ background: #FFFFFF; box-shadow: 0 6px 16px rgba(23,40,66,0.16); transform: translateY(-1px); }
+  .j-arrow svg{ width: 20px; height: 20px; }
+  .j-dots{ display: flex; align-items: center; gap: 8px; }
+  .j-dot{
+    appearance: none;
+    position: relative;
+    height: 8px; width: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(23,40,66,0.2);
+    overflow: hidden;
+    cursor: pointer;
+    transition: width .5s cubic-bezier(.22,.8,.3,1), background .4s ease;
+  }
+  .j-dot i{
+    position: absolute; inset: 0;
+    display: block;
+    width: 0;
+    background: linear-gradient(90deg, #E2472F, #C22A1D);
+    border-radius: inherit;
+  }
+  .j-dot.is-active{ width: 34px; }
+  .j-dot.is-active i{ width: 100%; }
+  .journey-carousel.run .j-dot.is-active i{ animation: jfill 6s linear; }
+  .journey-carousel.is-paused .j-dot.is-active i{ animation-play-state: paused; }
+  @keyframes jfill{ from{ width: 0; } to{ width: 100%; } }
+  .journey-phase-label:focus-visible, .j-arrow:focus-visible, .j-dot:focus-visible, .journey-carousel:focus-visible{
+    outline: 2px solid #E2472F;
+    outline-offset: 3px;
   }
   @media (max-width: 560px){
-    /* Versão mobile: cards centralizados conectados por uma linha (ligação),
-       reaproveitando o mesmo HTML/markup da versão desktop — nada além
-       destas regras muda, então o layout desktop/tablet fica intacto. */
-    .journey-track{
-      position: relative;
-      row-gap: 46px;
-    }
-    .journey-track::before{
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 50%;
-      width: 2px;
-      background: repeating-linear-gradient(to bottom, rgba(48,129,194,0.5) 0 6px, transparent 6px 13px);
-      transform: translateX(-50%);
-      z-index: 0;
-    }
-    .journey-item{
-      flex: 1 1 100%;
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      max-width: 300px;
-      margin: 0 auto;
-      text-align: center;
-      background: #FFFFFF;
-      border-radius: 24px;
-      padding: 34px 24px 28px;
-      box-shadow: 0 16px 36px rgba(23,40,66,0.12);
-      border: 1px solid rgba(48,129,194,0.14);
-    }
-    .journey-item .icon{ display: none; }
-    .journey-item .num{
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 54px;
-      height: 54px;
-      margin: 0 auto 14px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--clay), var(--clay-dark));
-      color: #FFF8F1;
-      font-size: 1.3rem;
-      box-shadow: 0 10px 20px rgba(31,95,146,0.4);
-    }
-    .journey-item h4{ text-align: center; }
-    .journey-item p{ max-width: none; text-align: center; }
+    .journey-phases-row{ gap: 8px; margin-top: 28px; }
+    .journey-phase-label{ font-size: 0.74rem; padding: 8px 14px; }
+    .journey-stage{ height: 320px; }
+    .j-card{ --w: 76vw; transform: translateX(calc(var(--o) * 54%)) scale(calc(1 - var(--a) * 0.09)); }
+    .j-card p{ max-width: none; font-size: 0.95rem; }
+    .j-bgnum{ font-size: 9rem; }
+    .journey-controls{ gap: 12px; margin-top: 24px; }
+    .j-arrow{ width: 38px; height: 38px; }
+    .j-dots{ gap: 6px; }
+    .j-dot.is-active{ width: 26px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .j-card{ transition: none; filter: none; }
+    .j-dot, .journey-phase-label{ transition: none; }
+  }
+
+  /* ============ INSTAGRAM (seção em destaque) ============ */
+  .igx{
+    position: relative;
+    overflow: hidden;
+    padding: clamp(56px, 7vw, 100px) 0;
+    background: var(--olive-dark);
+    color: var(--cream);
+  }
+  .igx::before{
+    content: "";
+    position: absolute;
+    right: -160px; top: -180px;
+    width: 520px; height: 520px;
+    background: radial-gradient(circle at 40% 40%, rgba(226,71,47,0.32), rgba(226,71,47,0) 68%);
+    pointer-events: none;
+  }
+  .igx::after{
+    content: "";
+    position: absolute;
+    left: -180px; bottom: -220px;
+    width: 460px; height: 460px;
+    background: radial-gradient(circle at 60% 40%, rgba(48,129,194,0.28), rgba(48,129,194,0) 70%);
+    pointer-events: none;
+  }
+  .igx-inner{
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: center;
+    gap: clamp(32px, 6vw, 80px);
+  }
+  .igx-kicker{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #F4A08F;
+    margin-bottom: 18px;
+  }
+  .igx-kicker svg{ width: 18px; height: 18px; }
+  .igx h2{
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.9rem, 3.8vw, 2.9rem);
+    font-weight: 600;
+    line-height: 1.15;
+    color: #fff;
+    margin: 0 0 18px;
+  }
+  .igx h2 em{ font-style: italic; font-weight: 500; color: #F4A08F; }
+  .igx-copy p{
+    font-size: 1.02rem;
+    line-height: 1.65;
+    color: rgba(238,223,200,0.86);
+    max-width: 46ch;
+    margin: 0 0 26px;
+  }
+  .igx-tags{ display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 32px; padding: 0; list-style: none; }
+  .igx-tags li{
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--cream);
+    border: 1px solid rgba(238,223,200,0.22);
+    border-radius: 999px;
+    padding: 7px 14px;
+  }
+  .igx-btn{
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 30px;
+    border-radius: 100px;
+    background: linear-gradient(135deg, #E2472F 0%, #C22A1D 100%);
+    color: #fff;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: 0 16px 32px rgba(194,42,29,0.38);
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .igx-btn:hover{ transform: translateY(-2px); box-shadow: 0 20px 38px rgba(194,42,29,0.5); }
+  .igx-btn svg{ width: 22px; height: 22px; flex-shrink: 0; }
+  .igx-btn:focus-visible{ outline: 2px solid #fff; outline-offset: 3px; }
+
+  .igx-card{
+    justify-self: center;
+    width: 100%;
+    max-width: 400px;
+    background: #FFFFFF;
+    color: var(--text);
+    border-radius: 28px;
+    padding: 26px;
+    box-shadow: 0 30px 60px rgba(2,10,25,0.4);
+    transform: rotate(2deg);
+    transition: transform .5s cubic-bezier(.22,.8,.3,1);
+    text-decoration: none;
+    display: block;
+  }
+  .igx-card:hover{ transform: rotate(0deg) translateY(-4px); }
+  .igx-profile{ display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .igx-avatar{
+    flex-shrink: 0;
+    width: 68px; height: 68px;
+    border-radius: 50%;
+    padding: 3px;
+    background: linear-gradient(135deg, #F2A93B 0%, #E2472F 55%, #C22A1D 100%);
+  }
+  .igx-avatar span{
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: var(--olive-dark);
+    border: 3px solid #fff;
+    color: #fff;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.35rem;
+  }
+  .igx-handle{ display: block; font-weight: 700; font-size: 1.05rem; color: var(--text); }
+  .igx-role{ display: block; font-size: 0.82rem; color: rgba(23,40,66,0.72); margin-top: 3px; }
+  .igx-tiles{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .igx-tile{
+    aspect-ratio: 1 / 1;
+    border-radius: 16px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.2;
+    padding: 8px;
+  }
+  .igx-tile svg{ width: 24px; height: 24px; }
+  .igx-tile:nth-child(1), .igx-tile:nth-child(5){ background: linear-gradient(135deg, #E2472F, #C22A1D); color: #fff; }
+  .igx-tile:nth-child(2), .igx-tile:nth-child(6){ background: rgba(226,71,47,0.10); color: #C22A1D; }
+  .igx-tile:nth-child(3), .igx-tile:nth-child(4){ background: var(--olive-dark); color: var(--cream); }
+  .igx-follow{
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 18px;
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(23,40,66,0.06);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  @media (max-width: 860px){
+    .igx-inner{ grid-template-columns: 1fr; }
+    .igx-copy{ text-align: center; }
+    .igx-copy p{ margin-left: auto; margin-right: auto; }
+    .igx-tags{ justify-content: center; }
+    .igx-card{ transform: none; max-width: 360px; }
+    .igx-card:hover{ transform: translateY(-3px); }
+  }
+  @media (max-width: 420px){
+    .igx-btn{ width: 100%; justify-content: center; padding: 15px 20px; }
+    .igx-card{ padding: 20px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .igx-card, .igx-btn{ transition: none; }
   }
 
   /* ============ FAQ ============ */
@@ -1666,10 +1906,12 @@
     font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--sky);
+    color: #fff;
     margin: 0 0 28px;
     text-shadow: 0 1px 8px rgba(2,10,25,0.55);
   }
+  .ll-hero-sep{ margin: 0 0.6em; opacity: 0.7; }
+  .ll-hero-crn{ white-space: nowrap; }
   .ll-hero-actions{
     display: flex;
     flex-wrap: wrap;
@@ -2186,7 +2428,7 @@
   <div class="ll-hero-grid">
     <div class="ll-hero-brandblock">
       <h2 class="ll-hero-brand"><span class="jfix">J</span>ulia Theila</h2>
-      <p class="ll-hero-role">Nutricionista Clínica</p>
+      <p class="ll-hero-role">Nutricionista Clínica<span class="ll-hero-sep" aria-hidden="true">·</span><span class="ll-hero-crn">CRN 93914/P</span></p>
     </div>
     <div class="ll-hero-copy">
       <h1>Faça as pazes com a comida, com o seu corpo <em>e com você</em>.</h1>
@@ -2339,41 +2581,6 @@
      Cada item vira uma coluna: nome -> legenda acima, imagem -> foto abaixo, ordenadas pelo
      campo sort (já vem ordenado do app.py). Categoria "Objetivos" nunca aparece na grade de
      planos (ver filtro acima). Enquanto não houver item cadastrado, a seção inteira fica oculta. -->
-<!-- TALVEZ VOCÊ ESTEJA BUSCANDO… (substitui a faixa de fotos verticais) -->
-<section class="wish" id="objetivos">
-  <div class="wrap">
-    <div class="wish-head">
-      <h2>Talvez você esteja buscando…</h2>
-    </div>
-    <div class="wish-grid">
-      <div class="wish-card">
-        <h3>Emagrecer com mais equilíbrio</h3>
-        <p>Sem entrar em mais um ciclo de restrição, culpa e efeito sanfona.</p>
-      </div>
-      <div class="wish-card">
-        <h3>Melhorar sua relação com a comida</h3>
-        <p>Comer com mais tranquilidade, entendendo fome, saciedade e suas escolhas.</p>
-      </div>
-      <div class="wish-card">
-        <h3>Cuidar da sua saúde</h3>
-        <p>Construir uma alimentação que faça sentido para suas necessidades e para sua rotina.</p>
-      </div>
-      <div class="wish-card">
-        <h3>Ter mais disposição no dia a dia</h3>
-        <p>Organizar sua alimentação para ter energia sem depender de uma rotina perfeita.</p>
-      </div>
-      <div class="wish-card">
-        <h3>Ganhar massa muscular</h3>
-        <p>Adequar sua alimentação aos seus objetivos e à prática de atividade física.</p>
-      </div>
-      <div class="wish-card">
-        <h3>Aprender a comer melhor</h3>
-        <p>Ter autonomia para fazer escolhas sem precisar viver seguindo regras alimentares.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- EM QUE O ACOMPANHAMENTO PODE TE AJUDAR
      3 objetivos principais em destaque + 4 temas complementares em cards menores + CTA único.
      Para usar fotos em vez das ilustrações, troque o <svg> dentro de .ob-media por <img src="..." alt="...">. -->
@@ -2524,64 +2731,203 @@
   <div class="wrap">
     <div class="journey-head">
       <span class="spark">✦</span>
-      <h2>A Jornada do Seu<br>Acompanhamento Nutricional</h2>
+      <h2>A <span class="jfix">J</span>ornada do Seu<br>Acompanhamento Nutricional</h2>
     </div>
-    <div class="journey-phases-row">
-      <span class="journey-phase-label">Fase Inicial: Preparação e Planejamento</span>
-      <span class="journey-phase-label">Fase de Execução: Prática e Autonomia</span>
+    <div class="journey-phases-row" id="journey-phases">
+      <button type="button" class="journey-phase-label is-active" data-go="0">Fase Inicial: Preparação e Planejamento</button>
+      <button type="button" class="journey-phase-label" data-go="4">Fase de Execução: Prática e Autonomia</button>
     </div>
-    <div class="journey-track">
-      <div class="journey-item">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9 15 2 2 4-4"/></svg></span>
-        <span class="num">1</span>
-        <h4>Agendamento</h4>
+    <div class="journey-carousel" id="journey-carousel" role="region" aria-roledescription="carrossel" aria-label="Etapas do acompanhamento nutricional" tabindex="0">
+      <div class="journey-stage" id="journey-stage">
+      <article class="j-card" data-i="0" aria-roledescription="slide" aria-label="Passo 1 de 8">
+        <span class="j-bgnum" aria-hidden="true">1</span>
+        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9 15 2 2 4-4"/></svg></span><span class="j-chip">Fase Inicial</span></div>
+        <span class="j-num">Passo 1 de 8</span>
+        <h3>Agendamento</h3>
         <p>Escolha do horário ideal e recebimento das orientações iniciais para começar.</p>
-      </div>
-      <div class="journey-item">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></span>
-        <span class="num">2</span>
-        <h4>Questionário<br>Pré-Consulta</h4>
+      </article>
+      <article class="j-card" data-i="1" aria-roledescription="slide" aria-label="Passo 2 de 8">
+        <span class="j-bgnum" aria-hidden="true">2</span>
+        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></span><span class="j-chip">Fase Inicial</span></div>
+        <span class="j-num">Passo 2 de 8</span>
+        <h3>Questionário Pré-Consulta</h3>
         <p>Análise profunda da sua rotina, história e objetivos antes do encontro.</p>
-      </div>
-      <div class="journey-item">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12a8.5 8.5 0 0 1-4-1L4 20l1.2-4A8.4 8.4 0 1 1 21 11.5Z"/></svg></span>
-        <span class="num">3</span>
-        <h4>Primeira<br>Consulta</h4>
+      </article>
+      <article class="j-card" data-i="2" aria-roledescription="slide" aria-label="Passo 3 de 8">
+        <span class="j-bgnum" aria-hidden="true">3</span>
+        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12a8.5 8.5 0 0 1-4-1L4 20l1.2-4A8.4 8.4 0 1 1 21 11.5Z"/></svg></span><span class="j-chip">Fase Inicial</span></div>
+        <span class="j-num">Passo 3 de 8</span>
+        <h3>Primeira Consulta</h3>
         <p>Conversa acolhedora para construir um plano de ação totalmente personalizado.</p>
-      </div>
-      <div class="journey-item">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span>
-        <span class="num">4</span>
-        <h4>Estratégias<br>Personalizadas</h4>
+      </article>
+      <article class="j-card" data-i="3" aria-roledescription="slide" aria-label="Passo 4 de 8">
+        <span class="j-bgnum" aria-hidden="true">4</span>
+        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span><span class="j-chip">Fase Inicial</span></div>
+        <span class="j-num">Passo 4 de 8</span>
+        <h3>Estratégias Personalizadas</h3>
         <p>Entrega de materiais e orientações práticas adaptadas à sua realidade real.</p>
-      </div>
-      <div class="journey-item">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v6a1.5 1.5 0 0 0 1.5 1.5V22"/><path d="M4 2v4M6 2v4"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2.2"/><path d="M20 2c1 3 .5 6-1 7.5S18 12 18 16v6"/></svg></span>
-        <span class="num">5</span>
-        <h4>Colocando<br>em Prática</h4>
+      </article>
+      <article class="j-card" data-i="4" aria-roledescription="slide" aria-label="Passo 5 de 8">
+        <span class="j-bgnum" aria-hidden="true">5</span>
+        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v6a1.5 1.5 0 0 0 1.5 1.5V22"/><path d="M4 2v4M6 2v4"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2.2"/><path d="M20 2c1 3 .5 6-1 7.5S18 12 18 16v6"/></svg></span><span class="j-chip">Fase de Execução</span></div>
+        <span class="j-num">Passo 5 de 8</span>
+        <h3>Colocando em Prática</h3>
         <p>Aplicação das estratégias no dia a dia, respeitando sua rotina e hábitos.</p>
-      </div>
-      <div class="journey-item">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="6" r="3"/><path d="M5.5 19v-1.5a5.5 5.5 0 0 1 11 0V19"/><path d="M11 10.5v3M9.3 12h3.4"/><circle cx="17.5" cy="17.5" r="3.2"/><path d="m16.2 17.5.9.9 1.7-1.8"/></svg></span>
-        <span class="num">6</span>
-        <h4>Consulta de<br>Retorno</h4>
+      </article>
+      <article class="j-card" data-i="5" aria-roledescription="slide" aria-label="Passo 6 de 8">
+        <span class="j-bgnum" aria-hidden="true">6</span>
+        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="6" r="3"/><path d="M5.5 19v-1.5a5.5 5.5 0 0 1 11 0V19"/><path d="M11 10.5v3M9.3 12h3.4"/><circle cx="17.5" cy="17.5" r="3.2"/><path d="m16.2 17.5.9.9 1.7-1.8"/></svg></span><span class="j-chip">Fase de Execução</span></div>
+        <span class="j-num">Passo 6 de 8</span>
+        <h3>Consulta de Retorno</h3>
         <p>Revisão dos avanços e ajustes no plano conforme sua evolução individual.</p>
-      </div>
-      <div class="journey-item">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 6h6v6"/></svg></span>
-        <span class="num">7</span>
-        <h4>Evolução<br>Contínua</h4>
+      </article>
+      <article class="j-card" data-i="6" aria-roledescription="slide" aria-label="Passo 7 de 8">
+        <span class="j-bgnum" aria-hidden="true">7</span>
+        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 6h6v6"/></svg></span><span class="j-chip">Fase de Execução</span></div>
+        <span class="j-num">Passo 7 de 8</span>
+        <h3>Evolução Contínua</h3>
         <p>Fortalecimento da autonomia e consolidação das mudanças que duram para sempre.</p>
-      </div>
-      <div class="journey-item">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14v6"/><path d="M12 14c-2.5 0-4.5-1.8-4.5-4.5 2.5 0 4.5 1 4.5 3 0-2 2-3 4.5-3 0 2.7-2 4.5-4.5 4.5Z"/><path d="M5 20c1-2.5 3.5-4 7-4s6 1.5 7 4"/></svg></span>
-        <span class="num">8</span>
-        <h4>Autonomia<br>Alimentar</h4>
+      </article>
+      <article class="j-card" data-i="7" aria-roledescription="slide" aria-label="Passo 8 de 8">
+        <span class="j-bgnum" aria-hidden="true">8</span>
+        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14v6"/><path d="M12 14c-2.5 0-4.5-1.8-4.5-4.5 2.5 0 4.5 1 4.5 3 0-2 2-3 4.5-3 0 2.7-2 4.5-4.5 4.5Z"/><path d="M5 20c1-2.5 3.5-4 7-4s6 1.5 7 4"/></svg></span><span class="j-chip">Fase de Execução</span></div>
+        <span class="j-num">Passo 8 de 8</span>
+        <h3>Autonomia Alimentar</h3>
         <p>Confiança para fazer boas escolhas de forma independente e sem restrições.</p>
+      </article>
+      </div>
+      <div class="journey-controls">
+        <button type="button" class="j-arrow" data-dir="-1" aria-label="Passo anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button>
+        <div class="j-dots" id="journey-dots">
+        <button type="button" class="j-dot" data-i="0" aria-label="Ir para o passo 1"><i></i></button>
+        <button type="button" class="j-dot" data-i="1" aria-label="Ir para o passo 2"><i></i></button>
+        <button type="button" class="j-dot" data-i="2" aria-label="Ir para o passo 3"><i></i></button>
+        <button type="button" class="j-dot" data-i="3" aria-label="Ir para o passo 4"><i></i></button>
+        <button type="button" class="j-dot" data-i="4" aria-label="Ir para o passo 5"><i></i></button>
+        <button type="button" class="j-dot" data-i="5" aria-label="Ir para o passo 6"><i></i></button>
+        <button type="button" class="j-dot" data-i="6" aria-label="Ir para o passo 7"><i></i></button>
+        <button type="button" class="j-dot" data-i="7" aria-label="Ir para o passo 8"><i></i></button>
+        </div>
+        <button type="button" class="j-arrow" data-dir="1" aria-label="Próximo passo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
       </div>
     </div>
   </div>
 </section>
+
+<script>
+(function(){
+  var carousel = document.getElementById('journey-carousel');
+  if(!carousel) return;
+  var cards  = Array.prototype.slice.call(carousel.querySelectorAll('.j-card'));
+  var dots   = Array.prototype.slice.call(carousel.querySelectorAll('.j-dot'));
+  var phases = Array.prototype.slice.call(document.querySelectorAll('#journey-phases .journey-phase-label'));
+  var total = cards.length, current = 0, startX = null, moved = false;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var visible = false, held = false;
+
+  function offsetOf(i){
+    var d = i - current;
+    var half = total / 2;
+    if(d > half) d -= total;
+    if(d < -half) d += total;
+    return d;
+  }
+  function render(){
+    cards.forEach(function(card, i){
+      var o = offsetOf(i), a = Math.abs(o);
+      var hidden = a > 2;
+      var oc = Math.max(-2, Math.min(2, o));
+      card.style.setProperty('--o', oc);
+      card.style.setProperty('--a', Math.min(a, 2));
+      card.style.zIndex = String(10 - Math.min(a, 9));
+      card.classList.toggle('is-active', o === 0);
+      card.classList.toggle('is-hidden', hidden);
+      card.setAttribute('aria-hidden', o === 0 ? 'false' : 'true');
+    });
+    dots.forEach(function(d, i){
+      d.classList.toggle('is-active', i === current);
+      d.setAttribute('aria-current', i === current ? 'true' : 'false');
+    });
+    phases.forEach(function(p, k){
+      p.classList.toggle('is-active', k === (current < 4 ? 0 : 1));
+    });
+  }
+  function restartProgress(){
+    carousel.classList.remove('run');
+    void carousel.offsetWidth;
+    if(!reduce) carousel.classList.add('run');
+  }
+  function go(i){
+    current = ((i % total) + total) % total;
+    render();
+    restartProgress();
+  }
+  function syncPause(){
+    carousel.classList.toggle('is-paused', !visible || held);
+  }
+
+  carousel.querySelectorAll('.j-arrow').forEach(function(b){
+    b.addEventListener('click', function(){ go(current + parseInt(b.getAttribute('data-dir'), 10)); });
+  });
+  dots.forEach(function(d){
+    d.addEventListener('click', function(){ go(parseInt(d.getAttribute('data-i'), 10)); });
+  });
+  phases.forEach(function(p){
+    p.addEventListener('click', function(){ go(parseInt(p.getAttribute('data-go'), 10)); });
+  });
+  cards.forEach(function(c){
+    c.addEventListener('click', function(){
+      if(moved) return;
+      var i = parseInt(c.getAttribute('data-i'), 10);
+      if(i !== current) go(i);
+    });
+  });
+
+  /* avança sozinho quando a barrinha do ponto ativo termina */
+  document.getElementById('journey-dots').addEventListener('animationend', function(e){
+    if(e.target && e.target.tagName === 'I') go(current + 1);
+  });
+
+  /* teclado */
+  carousel.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight'){ go(current + 1); e.preventDefault(); }
+    if(e.key === 'ArrowLeft'){ go(current - 1); e.preventDefault(); }
+  });
+
+  /* arrastar / deslizar */
+  var stage = document.getElementById('journey-stage');
+  stage.addEventListener('pointerdown', function(e){ startX = e.clientX; moved = false; held = true; syncPause(); });
+  stage.addEventListener('pointermove', function(e){
+    if(startX !== null && Math.abs(e.clientX - startX) > 8) moved = true;
+  });
+  function endDrag(e){
+    if(startX === null) return;
+    var dx = e.clientX - startX;
+    startX = null;
+    if(Math.abs(dx) > 45) go(current + (dx < 0 ? 1 : -1));
+    held = carousel.matches(':hover') && window.matchMedia('(hover: hover)').matches;
+    syncPause();
+    setTimeout(function(){ moved = false; }, 0);
+  }
+  stage.addEventListener('pointerup', endDrag);
+  stage.addEventListener('pointercancel', endDrag);
+
+  /* pausa com o mouse em cima (só desktop) e quando a seção sai da tela */
+  if(window.matchMedia && window.matchMedia('(hover: hover)').matches){
+    carousel.addEventListener('mouseenter', function(){ held = true; syncPause(); });
+    carousel.addEventListener('mouseleave', function(){ held = false; syncPause(); });
+  }
+  carousel.addEventListener('focusin',  function(){ held = true; syncPause(); });
+  carousel.addEventListener('focusout', function(){ held = false; syncPause(); });
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(en){ visible = en[0].isIntersecting; syncPause(); }, { threshold: 0.35 }).observe(carousel);
+  } else { visible = true; }
+
+  render();
+  restartProgress();
+  syncPause();
+})();
+</script>
 
 <!-- COMMUNITY -->
 <!-- Seção intencionalmente enxuta: apenas uma introdução + CTA levando para a landing page
@@ -2598,9 +2944,8 @@
           <p>Nutrição, saúde, encontros e troca em uma comunidade criada pela nutricionista Julia Theila — um espaço pra aprender sobre alimentação, trocar experiências e construir hábitos possíveis.</p>
         </div>
 
-        <!-- Botão placebo — trocar o href="#" pela URL real da LP da comunidade quando existir. -->
         <div class="community-actions">
-          <a href="#" class="btn-primary" target="_blank" rel="noopener">Conhecer a comunidade DBC →</a>
+          <a href="https://dbc.juliatheila.com.br/?utm_source=site&utm_medium=botao&utm_campaign=comunidade_dbc" class="btn-primary" target="_blank" rel="noopener">Conhecer a comunidade DBC →</a>
         </div>
       </div>
 
@@ -2663,6 +3008,42 @@
   </div>
 </section>
 {% endif %}
+
+<!-- INSTAGRAM -->
+<section class="igx" id="instagram">
+  <div class="wrap">
+    <div class="igx-inner">
+      <div class="igx-copy">
+        <span class="igx-kicker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="0.6" fill="currentColor"/></svg>Instagram</span>
+        <h2>O cuidado com a comida <em>continua por lá</em>.</h2>
+        <ul class="igx-tags">
+          <li>Nutrição clínica</li>
+          <li>Comportamento alimentar</li>
+          <li>Dicas do dia a dia</li>
+        </ul>
+        <a class="igx-btn" href="https://www.instagram.com/nutrijuliatheila/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="0.6" fill="currentColor"/></svg>Seguir @nutrijuliatheila</a>
+      </div>
+      <a class="igx-card" href="https://www.instagram.com/nutrijuliatheila/" target="_blank" rel="noopener" aria-label="Abrir o Instagram @nutrijuliatheila">
+        <div class="igx-profile">
+          <div class="igx-avatar"><img src="https://directus.leanttro.com/assets/153fae3d-1256-47cd-9b66-05de2dc6abd6?quality=80&format=webp" alt="" width="68" height="68" style="width:100%;height:100%;border-radius:50%;border:3px solid #fff;object-fit:cover;display:block;" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'JT'}))"></div>
+          <div>
+            <span class="igx-handle">@nutrijuliatheila</span>
+            <span class="igx-role">Nutricionista Clínica · CRN 93914/P</span>
+          </div>
+        </div>
+        <div class="igx-tiles">
+          <div class="igx-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20c-4 0-7-3-7-7 4 0 7 2 7 6 0-4 3-6 7-6 0 4-3 7-7 7Z"/><path d="M12 20v-6"/></svg>Nutrição</div>
+          <div class="igx-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12a8.5 8.5 0 0 1-4-1L4 20l1.2-4A8.4 8.4 0 1 1 21 11.5Z"/></svg>Conversas</div>
+          <div class="igx-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.4-9.3-9A5.2 5.2 0 0 1 12 6.4 5.2 5.2 0 0 1 21.3 12c-2.3 4.6-9.3 9-9.3 9Z"/></svg>Sem culpa</div>
+          <div class="igx-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v6a1.5 1.5 0 0 0 1.5 1.5V22"/><path d="M4 2v4M6 2v4"/><path d="M20 2c1 3 .5 6-1 7.5S18 12 18 16v6"/></svg>Receitas</div>
+          <div class="igx-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg>Dicas</div>
+          <div class="igx-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 6h6v6"/></svg>Evolução</div>
+        </div>
+        <span class="igx-follow">Acessar perfil <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
 
 <!-- FAQ -->
 <section class="faq">
