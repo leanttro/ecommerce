@@ -923,7 +923,11 @@
   @media (min-width: 781px){
     .plans-grid .plan-card h3{
       font-size: 1.32rem;
-      white-space: nowrap;
+      white-space: normal;
+      overflow-wrap: break-word;
+      min-height: 2.6em;
+      display: flex;
+      align-items: center;
     }
     .plan-tag-spacer{ visibility: hidden; }
   }
@@ -1555,15 +1559,14 @@
   .igx-tile:nth-child(2), .igx-tile:nth-child(6){ background: rgba(226,71,47,0.10); color: #C22A1D; }
   .igx-tile:nth-child(3), .igx-tile:nth-child(4){ background: var(--olive-dark); color: var(--cream); }
   .igx-follow{
-    display: flex; align-items: center; justify-content: center; gap: 8px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
     margin-top: 18px;
-    padding: 12px;
-    border-radius: 14px;
-    background: rgba(23,40,66,0.06);
-    font-size: 0.88rem;
+    padding: 4px;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: var(--text);
+    color: var(--text-soft);
   }
+  .igx-follow svg{ width: 14px; height: 14px; flex-shrink: 0; stroke-width: 2; }
   @media (max-width: 860px){
     .igx-inner{ grid-template-columns: 1fr; }
     .igx-copy{ text-align: center; }
