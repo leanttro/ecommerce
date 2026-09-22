@@ -1090,6 +1090,10 @@
   }
   @media (max-width: 780px){ .quote-card-photo{ min-height: 240px; order: -1; } }
 
+  .community-copy .feature-list{ grid-template-columns: 1fr 1fr; gap: 20px 24px; margin: 0 0 clamp(24px, 3vw, 34px); }
+  @media (max-width: 560px){ .community-copy .feature-list{ grid-template-columns: 1fr; text-align: left; } }
+  .community-note{ font-size: 0.85rem; color: var(--text-soft); margin: 10px 0 0; }
+  @media (max-width: 860px){ .community-note{ text-align: center; } }
   .community-actions{
     display: flex;
     flex-wrap: wrap;
@@ -1439,7 +1443,7 @@
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
     align-items: center;
     gap: clamp(32px, 6vw, 80px);
   }
@@ -2403,7 +2407,7 @@
     <li><a href="#filosofia">Filosofia</a></li>
     <li><a href="#acompanhamento">Acompanhamento</a></li>
     <li><a href="#comunidade">Comunidade</a></li>
-    {% if not loja.ocultar_blog and posts and posts|length > 0 %}<li><a href="#blog">Blog</a></li>{% endif %}
+    {% if not loja.ocultar_blog and posts and posts|length > 0 %}<li><a href="#blog">Diário da Nutri</a></li>{% endif %}
   </ul>
   <div class="ll-nav-actions">
     <a class="ll-nav-cta" href="https://wa.me/5519971541008?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">
@@ -2416,7 +2420,7 @@
     <a href="#filosofia">Filosofia</a>
     <a href="#acompanhamento">Acompanhamento</a>
     <a href="#comunidade">Comunidade</a>
-    {% if not loja.ocultar_blog and posts and posts|length > 0 %}<a href="#blog">Blog</a>{% endif %}
+    {% if not loja.ocultar_blog and posts and posts|length > 0 %}<a href="#blog">Diário da Nutri</a>{% endif %}
   </div>
 </nav>
 
@@ -2715,6 +2719,19 @@
       <a class="plan-cta" href="https://wa.me/5519971541008?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">Quero saber mais sobre o acompanhamento</a>
     </div>
     {% endif %}
+
+    <div class="plan-card plan-card--meet">
+      <div>
+        <span class="plan-tag plan-tag-alt">Sem compromisso</span>
+        <h3>Quer me conhecer melhor antes de fechar?</h3>
+      </div>
+      <ul class="plan-list">
+        <li>Um encontro de 30 minutos, só pra gente se conhecer e conversar sobre o seu momento.</li>
+        <li>Espaço pra tirar dúvidas e entender como funciona o acompanhamento.</li>
+        <li>Você decide, sem pressão, se faz sentido dar continuidade.</li>
+      </ul>
+      <a class="plan-cta" href="https://wa.me/5519971541008?text=Oii%2C%20gostaria%20de%20agendar%20um%20encontro%20para%20nos%20conhecermos%20melhor." target="_blank" rel="noopener">Quero agendar esse encontro</a>
+    </div>
   </div>
 </section>
 
@@ -2778,7 +2795,7 @@
         <span class="j-bgnum" aria-hidden="true">6</span>
         <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="6" r="3"/><path d="M5.5 19v-1.5a5.5 5.5 0 0 1 11 0V19"/><path d="M11 10.5v3M9.3 12h3.4"/><circle cx="17.5" cy="17.5" r="3.2"/><path d="m16.2 17.5.9.9 1.7-1.8"/></svg></span><span class="j-chip">Fase de Execução</span></div>
         <span class="j-num">Passo 6 de 8</span>
-        <h3>Consulta de Retorno</h3>
+        <h3>Próximos Encontros</h3>
         <p>Revisão dos avanços e ajustes no plano conforme sua evolução individual.</p>
       </article>
       <article class="j-card" data-i="6" aria-roledescription="slide" aria-label="Passo 7 de 8">
@@ -2941,12 +2958,32 @@
         <div class="community-head">
           <img class="community-dbc-logo" src="https://directus.leanttro.com/assets/c92b3497-b002-4a01-95f0-1ff3061fdb22?quality=80&format=webp" alt="DBC - De Boa com a Comida" loading="lazy">
           <h2>Respira. É só Comida!</h2>
-          <p>Nutrição, saúde, encontros e troca em uma comunidade criada pela nutricionista Julia Theila — um espaço pra aprender sobre alimentação, trocar experiências e construir hábitos possíveis.</p>
+          <p>Uma comunidade para mulheres que querem aprender a comer melhor sem viver de dieta — encontros, trocas e conteúdo criados pela nutricionista Julia Theila.</p>
+        </div>
+
+        <div class="feature-list">
+          <div class="feature-item">
+            <span class="mark"></span>
+            <p><strong>Encontros ao vivo</strong><br>para conversar, aprender e tirar dúvidas.</p>
+          </div>
+          <div class="feature-item">
+            <span class="mark"></span>
+            <p><strong>Conteúdos exclusivos</strong><br>nutrição traduzida para a vida real.</p>
+          </div>
+          <div class="feature-item">
+            <span class="mark"></span>
+            <p><strong>Trocas entre mulheres</strong><br>um espaço para compartilhar experiências.</p>
+          </div>
+          <div class="feature-item">
+            <span class="mark"></span>
+            <p><strong>Convidados especiais</strong><br>profissionais de diferentes áreas para ampliar nossas conversas.</p>
+          </div>
         </div>
 
         <div class="community-actions">
-          <a href="https://dbc.juliatheila.com.br/?utm_source=site&utm_medium=botao&utm_campaign=comunidade_dbc" class="btn-primary" target="_blank" rel="noopener">Conhecer a comunidade DBC →</a>
+          <a href="https://dbc.juliatheila.com.br/?utm_source=site&utm_medium=botao&utm_campaign=comunidade_dbc" class="btn-primary" target="_blank" rel="noopener">Quero conhecer a comunidade DBC →</a>
         </div>
+        <p class="community-note">Não precisa ser minha paciente para participar.</p>
       </div>
 
       <!-- Celular da DBC "saindo" de um círculo azul-marinho, com anel tracejado laranja
@@ -3013,6 +3050,16 @@
 <section class="igx" id="instagram">
   <div class="wrap">
     <div class="igx-inner">
+      <a class="igx-card" href="https://www.instagram.com/nutrijuliatheila/" target="_blank" rel="noopener" aria-label="Abrir o Instagram @nutrijuliatheila">
+        <div class="igx-profile">
+          <div class="igx-avatar"><img src="https://directus.leanttro.com/assets/153fae3d-1256-47cd-9b66-05de2dc6abd6?quality=80&format=webp" alt="" width="68" height="68" style="width:100%;height:100%;border-radius:50%;border:3px solid #fff;object-fit:cover;display:block;" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'JT'}))"></div>
+          <div>
+            <span class="igx-handle">@nutrijuliatheila</span>
+            <span class="igx-role">Nutricionista Clínica · CRN 93914/P</span>
+          </div>
+        </div>
+        <span class="igx-follow">Acessar perfil <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+      </a>
       <div class="igx-copy">
         <span class="igx-kicker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="0.6" fill="currentColor"/></svg>Instagram</span>
         <h2>O cuidado com a comida <em>continua por lá</em>.</h2>
@@ -3023,24 +3070,6 @@
         </ul>
         <a class="igx-btn" href="https://www.instagram.com/nutrijuliatheila/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="0.6" fill="currentColor"/></svg>Seguir @nutrijuliatheila</a>
       </div>
-      <a class="igx-card" href="https://www.instagram.com/nutrijuliatheila/" target="_blank" rel="noopener" aria-label="Abrir o Instagram @nutrijuliatheila">
-        <div class="igx-profile">
-          <div class="igx-avatar"><img src="https://directus.leanttro.com/assets/153fae3d-1256-47cd-9b66-05de2dc6abd6?quality=80&format=webp" alt="" width="68" height="68" style="width:100%;height:100%;border-radius:50%;border:3px solid #fff;object-fit:cover;display:block;" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'JT'}))"></div>
-          <div>
-            <span class="igx-handle">@nutrijuliatheila</span>
-            <span class="igx-role">Nutricionista Clínica · CRN 93914/P</span>
-          </div>
-        </div>
-        <div class="igx-tiles">
-          <div class="igx-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20c-4 0-7-3-7-7 4 0 7 2 7 6 0-4 3-6 7-6 0 4-3 7-7 7Z"/><path d="M12 20v-6"/></svg>Nutrição</div>
-          <div class="igx-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12a8.5 8.5 0 0 1-4-1L4 20l1.2-4A8.4 8.4 0 1 1 21 11.5Z"/></svg>Conversas</div>
-          <div class="igx-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.4-9.3-9A5.2 5.2 0 0 1 12 6.4 5.2 5.2 0 0 1 21.3 12c-2.3 4.6-9.3 9-9.3 9Z"/></svg>Sem culpa</div>
-          <div class="igx-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v6a1.5 1.5 0 0 0 1.5 1.5V22"/><path d="M4 2v4M6 2v4"/><path d="M20 2c1 3 .5 6-1 7.5S18 12 18 16v6"/></svg>Receitas</div>
-          <div class="igx-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg>Dicas</div>
-          <div class="igx-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 6h6v6"/></svg>Evolução</div>
-        </div>
-        <span class="igx-follow">Acessar perfil <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
-      </a>
     </div>
   </div>
 </section>
@@ -3063,7 +3092,7 @@
       </details>
       <details>
         <summary>Como funciona a comunidade De Boa com a Comida?</summary>
-        <p>É um espaço aberto pra qualquer pessoa que queira participar, com trocas, encontros e conteúdo sobre alimentação. Pacientes em acompanhamento têm uma condição especial de valor pra fazer parte.</p>
+        <p>É um espaço aberto para mulheres que queiram participar, com trocas, encontros e conteúdo sobre alimentação. Pacientes em acompanhamento têm uma condição especial de valor pra fazer parte.</p>
       </details>
       <details>
         <summary>Você atende pelo plano de saúde?</summary>
@@ -3118,7 +3147,6 @@
         </div>
         <span class="label">Registro</span>
         <span class="value">CRN 93914/P</span>
-        <span class="desc">Nutricionista clínica comportamental e terapeuta nutricional</span>
       </div>
     </div>
     <div class="contact-info-cta">
