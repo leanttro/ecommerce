@@ -66,6 +66,11 @@
      correspondente — a estrutura do app.py já suporta isso.
   ─────────────────────────────────────────────────────────────
 -->
+<!--
+  RODADA 1 (02/09/2026) — aplicado: itens 2, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 (textos/estrutura).
+  PENDENTE: (1/15) novo logo, (3) correção PT/EN, (5) novo ramo botânico,
+            (11) confirmar tempos marcados "CONFIRMAR TEMPO", (12) link do Booking.com.
+-->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -457,6 +462,7 @@ button{font-family:inherit;}
 .loc-highlight span{font-size:.86rem;color:rgba(247,243,236,.8);}
 .loc-address{display:flex;gap:.8rem;font-size:.98rem;color:rgba(247,243,236,.92);margin-bottom:1.8rem;line-height:1.6;}
 .loc-address i{width:18px;height:18px;flex-shrink:0;margin-top:.15rem;}
+.loc-address-title{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#E7B79A;margin:0 0 .7rem;}
 .loc-route-title{font-family:'Fraunces',serif;font-size:1.02rem;color:#fff;margin:1.6rem 0 .9rem;}
 .loc-route-list{display:flex;flex-direction:column;gap:.7rem;margin-bottom:1.8rem;}
 .loc-route-item{display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.92rem;color:rgba(247,243,236,.92);border-bottom:1px solid var(--line-dark);padding-bottom:.6rem;cursor:pointer;transition:padding-left .2s ease,border-color .2s ease;border-radius:6px;}
@@ -483,6 +489,18 @@ button{font-family:inherit;}
 .dep-rating-num{font-family:'Fraunces',serif;font-size:2.6rem;font-weight:600;color:var(--olive-dker);}
 .dep-rating-stars{display:inline-flex;align-items:center;}
 .dep-rating-sub{font-size:.84rem;color:var(--muted);}
+/* Avaliações lado a lado (Google + Booking.com) */
+.dep-ratings{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:2.6rem;}
+.dep-rating-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:1.3rem 1.5rem;display:flex;flex-direction:column;gap:.55rem;}
+.dep-rating-source{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--terracotta);}
+.dep-rating-main{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;}
+.dep-rating-scale{font-size:1rem;color:var(--muted);margin-left:-.5rem;font-weight:700;}
+.dep-ratings .dep-rating-links{margin-left:0;flex-wrap:wrap;margin-top:.2rem;}
+.dep-stars{position:relative;display:inline-block;line-height:0;}
+.dep-stars-base{display:flex;color:var(--line);}
+.dep-stars-fill{position:absolute;top:0;left:0;height:100%;overflow:hidden;display:flex;color:var(--terracotta);}
+.dep-stars-fill svg{flex-shrink:0;}
+@media(max-width:640px){.dep-ratings{grid-template-columns:1fr;}}
 .dep-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.8rem;}
 .dep-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:2rem;position:relative;}
 .dep-quote-mark{font-family:'Fraunces',serif;font-size:3rem;color:var(--terracotta);line-height:1;opacity:.5;margin-bottom:.4rem;}
@@ -716,9 +734,10 @@ setTimeout(function(){
   <span class="eyebrow on-dark">Menu</span>
   <a href="#home" onclick="closeMobile()">Início</a>
   <a href="#acomodacoes" onclick="closeMobile()">Quartos</a>
+  <a href="#servicos" onclick="closeMobile()">Serviços</a>
   <a href="#localizacao" onclick="closeMobile()">Localização</a>
   <a href="#blog" onclick="closeMobile()">Blog</a>
-  <a href="javascript:void(0)" onclick="closeMobile();openManualModal()">Manual</a>
+  <a href="javascript:void(0)" onclick="closeMobile();openManualModal()">Manual do Hóspede</a>
   <a href="#contato" onclick="closeMobile()">Contato</a>
 </div>
 
@@ -731,9 +750,10 @@ setTimeout(function(){
     <ul class="nav-links">
       <li><a href="#home">Início</a></li>
       <li><a href="#acomodacoes">Quartos</a></li>
+      <li><a href="#servicos">Serviços</a></li>
       <li><a href="#localizacao">Localização</a></li>
       <li><a href="#blog">Blog</a></li>
-      <li><a href="javascript:void(0)" onclick="openManualModal()">Manual</a></li>
+      <li><a href="javascript:void(0)" onclick="openManualModal()">Manual do Hóspede</a></li>
       <li class="nav-lang">
         <a href="javascript:void(0)" id="nav-lang-pt" class="nav-lang-active" onclick="selectLang('pt','Português')">PT</a><span class="nav-lang-sep">/</span><a href="javascript:void(0)" id="nav-lang-en" onclick="selectLang('en','English')">EN</a>
       </li>
@@ -749,8 +769,8 @@ setTimeout(function(){
   <div class="container">
     <div class="hero-grid">
       <div class="hero-text">
-        <h1 class="hero-headline"><span class="script">Mi Casa,<br class="micasa-br">Su Casa</span>Sua casa em São Paulo,<br class="paulo-br"> a 5 min do Aeroporto de Congonhas</h1>
-        <p class="hero-subtitle">Quartos coletivos e privados, jardim, varanda e cozinha compartilhada em Campo Belo. O tipo de lugar onde você chega de mochila nas costas e sai com endereço de gente nova pra visitar no mundo todo.</p>
+        <h1 class="hero-headline"><span class="script">Micasa Hostel</span>Sua casa em São Paulo,<br class="paulo-br"> a 5 min do Aeroporto de Congonhas</h1>
+        <p class="hero-subtitle">Quartos privativos e coletivos, jardim, varanda e cozinha comunitária em Campo Belo, em um ambiente seguro e tranquilo, longe do barulho dos aviões.</p>
         <div class="hero-actions">
           <!-- WHATSAPP A CONFIRMAR: trocar 5511999999999 pelo número real -->
           <a href="https://wa.me/5511991021064?text=Oi!%20Vim%20pelo%20site%20e%20queria%20saber%20mais%20sobre%20o%20Micasa%20Hostel." target="_blank" class="btn btn-whats">
@@ -779,8 +799,8 @@ setTimeout(function(){
   <div class="container">
     <div class="hero-strip">
       <div class="hero-strip-item"><i data-lucide="plane" aria-hidden="true"></i><span><strong>5 min</strong> do Aeroporto de Congonhas</span></div>
-      <div class="hero-strip-item"><i data-lucide="star" aria-hidden="true"></i><span><strong>4.5/5</strong> em 463 avaliações</span></div>
-      <div class="hero-strip-item"><i data-lucide="bed-double" aria-hidden="true"></i><span><strong>8 quartos</strong> coletivos e privados</span></div>
+      <div class="hero-strip-item"><i data-lucide="star" aria-hidden="true"></i><span><strong>4,5/5</strong> em 463 avaliações</span></div>
+      <div class="hero-strip-item"><i data-lucide="bed-double" aria-hidden="true"></i><span><strong>6 quartos</strong> privativos e coletivos</span></div>
       <div class="hero-strip-item"><i data-lucide="map-pin" aria-hidden="true"></i><span><strong>Campo Belo</strong>, São Paulo/SP</span></div>
     </div>
   </div>
@@ -808,12 +828,12 @@ setTimeout(function(){
     <div class="bv-text reveal" style="transition-delay:.1s">
       <span class="eyebrow">Bem-vindo à Micasa</span>
       <h2 class="section-title">Menos corredor de hotel, mais quintal de casa</h2>
-      <p>A <strong>Micasa Hostel</strong> nasceu com uma ideia simples: hospedagem não precisa parecer prédio comercial. Em vez disso, um casarão em Campo Belo com jardim, varanda pra tomar café da manhã e cozinha compartilhada onde rola papo com gente do mundo todo.</p>
-      <p>Estamos a <strong>5 minutos do Aeroporto de Congonhas</strong> — ótimo pra quem tem conexão de voo ou só quer conhecer São Paulo sem gastar horas de trajeto todo dia. E como somos pequenos (8 quartos), o atendimento é do jeito que a gente gosta: pessoal, direto, sem essa de recepção fria.</p>
+      <p>A <strong>Micasa Hostel</strong> nasceu com uma ideia simples: hospedagem não precisa ter o ambiente frio e impessoal de um grande hotel. Aqui, o aconchego de casa encontra um casarão em Campo Belo, cercado de plantas, com um jardim incrível, varanda para tomar café da manhã e cozinha comunitária, onde rola papo com gente do mundo todo.</p>
+      <p>Estamos a <strong>5 minutos do Aeroporto de Congonhas</strong> e próximos a importantes pontos da Zona Sul de São Paulo, como Parque Ibirapuera, WTC São Paulo, São Paulo Expo, Aquário de São Paulo, Jardim Botânico, Autódromo de Interlagos e Estádio do Morumbi. Uma localização estratégica tanto para quem vem a São Paulo a lazer quanto a trabalho.</p>
       <div class="bv-list">
         <div class="bv-list-item"><i data-lucide="check" aria-hidden="true"></i><span>Localização estratégica em Campo Belo</span></div>
-        <div class="bv-list-item"><i data-lucide="check" aria-hidden="true"></i><span>Atendimento próximo, direto com o anfitrião</span></div>
-        <div class="bv-list-item"><i data-lucide="check" aria-hidden="true"></i><span>Ótimo custo-benefício — diárias a partir de $29</span></div>
+        <div class="bv-list-item"><i data-lucide="check" aria-hidden="true"></i><span>Atendimento personalizado e acolhedor</span></div>
+        <div class="bv-list-item"><i data-lucide="check" aria-hidden="true"></i><span>Ótimo custo-benefício — diárias a partir de R$ 50</span></div>
       </div>
     </div>
   </div>
@@ -833,7 +853,7 @@ setTimeout(function(){
   <div class="container">
     <span class="eyebrow on-dark">Nossas Acomodações</span>
     <h2 class="section-title">Escolha o seu tipo de quarto</h2>
-    <p class="section-lede">Três formatos pra combinar com o seu jeito de viajar — sempre com muita limpeza e conforto.</p>
+    <p class="section-lede">Quartos privativos e coletivos para combinar com o seu jeito de viajar — com muita limpeza, conforto e uma hospitalidade que faz você se sentir em casa.</p>
 
     {% set quartos = [] %}
     {% set servicos = [] %}
@@ -927,8 +947,8 @@ setTimeout(function(){
 <section id="servicos" class="section">
   <div class="container">
     <span class="eyebrow">Serviços</span>
-    <h2 class="section-title">Outros serviços da casa</h2>
-    <p class="section-lede">Day use, guarda-volumes, estacionamento, lavanderia — tudo pra deixar sua estadia mais fácil.</p>
+    <h2 class="section-title">Outros serviços para sua hospedagem</h2>
+    <p class="section-lede">Day use, guarda-volumes, estacionamento e lavanderia — tudo para deixar sua estadia mais agradável.</p>
 
     <div class="servico-grid">
       {% for s in servicos %}
@@ -956,8 +976,8 @@ setTimeout(function(){
 <!-- ═══ ESTRUTURA DA CASA ═══ -->
 <section id="estrutura" class="section">
   <div class="container">
-    <span class="eyebrow">Estrutura da Casa</span>
-    <h2 class="section-title">Espaços pra usar como se fosse sua casa mesmo</h2>
+    <span class="eyebrow">Estruturas Comuns</span>
+    <h2 class="section-title">Espaços para você usar como se fosse a sua casa</h2>
 
     <div class="estrutura-grid">
       <div class="estrutura-card reveal" style="transition-delay:0s">
@@ -972,7 +992,7 @@ setTimeout(function(){
       </div>
       <div class="estrutura-card reveal" style="transition-delay:.12s">
         <div class="estrutura-icon"><i data-lucide="chef-hat" aria-hidden="true"></i></div>
-        <h4>Cozinha Compartilhada</h4>
+        <h4>Cozinha Comunitária</h4>
         <p>Prepare suas próprias refeições e economize na viagem.</p>
       </div>
       <div class="estrutura-card reveal" style="transition-delay:.18s">
@@ -988,14 +1008,11 @@ setTimeout(function(){
 <section id="localizacao" class="section" style="position:relative;overflow:hidden;">
   <div class="container">
     <span class="eyebrow">Localização</span>
-    <h2 class="section-title">Em Campo Belo, a um pulo do Aeroporto de Congonhas</h2>
+    <h2 class="section-title">Em Campo Belo, em local estratégico na Zona Sul de São Paulo</h2>
 
     <div class="loc-grid">
       <div class="reveal">
-        <div class="loc-highlight">
-          <i data-lucide="plane" aria-hidden="true"></i>
-          <div><strong>5 minutos</strong><span>até o Aeroporto de Congonhas</span></div>
-        </div>
+        <p class="loc-address-title">Endereço do Micasa Hostel</p>
         <div class="loc-address">
           <i data-lucide="map-pin" aria-hidden="true"></i>
           <span>Rua Tapes, 740 – Campo Belo, São Paulo/SP, 04631-011</span>
@@ -1009,21 +1026,42 @@ setTimeout(function(){
             <span class="dest"><i data-lucide="plane" aria-hidden="true"></i>Aeroporto de Congonhas</span>
             <strong>~5 min</strong>
           </div>
+          <div class="loc-route-item" data-dest="São Paulo Expo, São Paulo, SP">
+            <span class="dest"><i data-lucide="calendar-check" aria-hidden="true"></i>São Paulo Expo Center</span>
+            <strong>~18 min</strong>
+          </div>
           <div class="loc-route-item" data-dest="Parque Ibirapuera, São Paulo, SP">
             <span class="dest"><i data-lucide="trees" aria-hidden="true"></i>Parque Ibirapuera</span>
             <strong>~10 min</strong>
           </div>
+          <!-- CONFIRMAR TEMPO no Google Maps (valor provisório) -->
+          <div class="loc-route-item" data-dest="Estação Washington Luís, São Paulo, SP">
+            <span class="dest"><i data-lucide="train-front" aria-hidden="true"></i>Estação Washington Luís (Linha 17-Ouro)</span>
+            <strong>~5 min</strong>
+          </div>
+          <!-- CONFIRMAR TEMPO no Google Maps (valor provisório) -->
+          <div class="loc-route-item" data-dest="Estádio do Morumbi, São Paulo, SP">
+            <span class="dest"><i data-lucide="trophy" aria-hidden="true"></i>Estádio do Morumbi</span>
+            <strong>~20 min</strong>
+          </div>
+          <!-- CONFIRMAR TEMPO no Google Maps (valor provisório) -->
+          <div class="loc-route-item" data-dest="Autódromo de Interlagos, São Paulo, SP">
+            <span class="dest"><i data-lucide="flag" aria-hidden="true"></i>Autódromo de Interlagos</span>
+            <strong>~25 min</strong>
+          </div>
+          <!-- CONFIRMAR TEMPO no Google Maps (valor provisório) -->
+          <div class="loc-route-item" data-dest="Aquário de São Paulo, São Paulo, SP">
+            <span class="dest"><i data-lucide="fish" aria-hidden="true"></i>Aquário de São Paulo</span>
+            <strong>~20 min</strong>
+          </div>
+          <!-- CONFIRMAR TEMPO no Google Maps (valor provisório) -->
+          <div class="loc-route-item" data-dest="Parque da Mônica, São Paulo, SP">
+            <span class="dest"><i data-lucide="ferris-wheel" aria-hidden="true"></i>Parque da Mônica</span>
+            <strong>~15 min</strong>
+          </div>
           <div class="loc-route-item" data-dest="WTC São Paulo, São Paulo, SP">
             <span class="dest"><i data-lucide="building-2" aria-hidden="true"></i>WTC São Paulo</span>
             <strong>~8 min</strong>
-          </div>
-          <div class="loc-route-item" data-dest="Estação Campo Belo, São Paulo, SP">
-            <span class="dest"><i data-lucide="train-front" aria-hidden="true"></i>Estação Campo Belo (Metrô)</span>
-            <strong>~5 min</strong>
-          </div>
-          <div class="loc-route-item" data-dest="São Paulo Expo, São Paulo, SP">
-            <span class="dest"><i data-lucide="calendar-check" aria-hidden="true"></i>São Paulo Expo</span>
-            <strong>~18 min</strong>
           </div>
         </div>
         <p style="font-size:.78rem;color:rgba(247,243,236,.65);margin-top:-1rem;margin-bottom:1.6rem;">Tempos estimados de carro, podem variar com o trânsito.</p>
@@ -1047,35 +1085,33 @@ setTimeout(function(){
 <section id="depoimentos" class="section">
   <div class="container">
     <span class="eyebrow">O que dizem de nós</span>
-    <h2 class="section-title">Hóspedes que já passaram por aqui</h2>
+    <h2 class="section-title">Hóspedes que já passaram pelo Micasa</h2>
 
-    <div class="dep-rating reveal">
-      <span class="dep-rating-num">4.5</span>
-      <div>
-        <div class="dep-rating-stars" aria-label="4.5 de 5 estrelas">
-          <svg viewBox="0 0 96 16" width="96" height="16" aria-hidden="true">
-            <defs>
-              <linearGradient id="starHalfFill">
-                <stop offset="50%" stop-color="var(--terracotta)"/>
-                <stop offset="50%" stop-color="var(--line)"/>
-              </linearGradient>
-            </defs>
-            <path fill="var(--terracotta)" transform="translate(0,0)" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/>
-            <path fill="var(--terracotta)" transform="translate(20,0)" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/>
-            <path fill="var(--terracotta)" transform="translate(40,0)" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/>
-            <path fill="var(--terracotta)" transform="translate(60,0)" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/>
-            <path fill="url(#starHalfFill)" transform="translate(80,0)" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/>
-          </svg>
+    <div class="dep-ratings reveal">
+      <!-- GOOGLE -->
+      <div class="dep-rating-card">
+        <span class="dep-rating-source">Google</span>
+        <div class="dep-rating-main">
+          <span class="dep-rating-num">4,5</span><span class="dep-rating-scale">/5</span>
+          <div class="dep-stars" role="img" aria-label="4,5 de 5 estrelas no Google"><div class="dep-stars-base"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg></div><div class="dep-stars-fill" style="width:90%"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg></div></div>
         </div>
         <span class="dep-rating-sub">463 avaliações no Google</span>
+        <div class="dep-rating-links">
+          <a href="https://www.google.com/search?q=micasa+hostel&oq=micasa&gs_lcrp=EgZjaHJvbWUqCAgAEEUYJxg7MggIABBFGCcYOzIICAEQRRgnGDsyBggCEEUYOzIbCAMQLhhDGK8BGMcBGIAEGIoFGI4FGJgFGJkFMgcIBBAAGIAEMgwIBRAAGBQYhwIYgAQyBwgGEAAYgAQyEAgHEC4YrwEYxwEYgAQYjgUyEAgIEC4YrwEYxwEYgAQYjgUyEAgJEC4YrwEYxwEYgAQYjgXSAQkxNzMyajBqMTWoAgiwAgHxBTTjBH3VhIuv8QU04wR91YSLrw&sourceid=chrome&source=chrome.rb&ie=UTF-8#mpd=~5651416693121156481/customers/reviews" target="_blank" rel="noopener">Ver todas as avaliações</a>
+          <span aria-hidden="true">•</span>
+          <a href="https://g.page/r/CT6wKFrgr_kyEAE/review" target="_blank" rel="noopener">Deixe sua avaliação</a>
+        </div>
       </div>
-      <div class="dep-rating-links">
-        <a href="https://www.google.com/search?q=micasa+hostel&oq=micasa&gs_lcrp=EgZjaHJvbWUqCAgAEEUYJxg7MggIABBFGCcYOzIICAEQRRgnGDsyBggCEEUYOzIbCAMQLhhDGK8BGMcBGIAEGIoFGI4FGJgFGJkFMgcIBBAAGIAEMgwIBRAAGBQYhwIYgAQyBwgGEAAYgAQyEAgHEC4YrwEYxwEYgAQYjgUyEAgIEC4YrwEYxwEYgAQYjgUyEAgJEC4YrwEYxwEYgAQYjgXSAQkxNzMyajBqMTWoAgiwAgHxBTTjBH3VhIuv8QU04wR91YSLrw&sourceid=chrome&source=chrome.rb&ie=UTF-8#mpd=~5651416693121156481/customers/reviews" target="_blank" rel="noopener">Ver todas as avaliações</a>
-        <span aria-hidden="true">•</span>
-        <a href="https://g.page/r/CT6wKFrgr_kyEAE/review" target="_blank" rel="noopener">Deixe sua avaliação</a>
+      <!-- BOOKING.COM — FALTA o link do hostel no Booking (pedir ao cliente): adicionar "Ver todas as avaliações" aqui -->
+      <div class="dep-rating-card">
+        <span class="dep-rating-source">Booking.com</span>
+        <div class="dep-rating-main">
+          <span class="dep-rating-num">8,9</span><span class="dep-rating-scale">/10</span>
+          <div class="dep-stars" role="img" aria-label="8,9 de 10 no Booking.com"><div class="dep-stars-base"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg></div><div class="dep-stars-fill" style="width:89%"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.79L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg></div></div>
+        </div>
+        <span class="dep-rating-sub">605 avaliações no Booking.com</span>
       </div>
     </div>
-
     <div class="dep-grid">
       <!-- Avaliação real do Google (Roger Valmorbida, 13/jul/2025, 5★) — paráfrase, não citação literal -->
       <div class="dep-card reveal" style="transition-delay:0s">
@@ -1238,7 +1274,7 @@ setTimeout(function(){
     <div class="hospede-wrap">
       <div>
         <span class="eyebrow">Já é hóspede?</span>
-        <h2 class="section-title" style="margin-bottom:1rem;">Manual Rápido do Hóspede</h2>
+        <h2 class="section-title" style="margin-bottom:1rem;">Manual do Hóspede</h2>
         <p class="section-lede" style="margin-bottom:1.6rem;">Wi-Fi, horários, regras da casa, lavanderia e tudo que você precisa saber pra aproveitar sua estadia com tranquilidade — reunimos tudo num guia rápido, sem precisar procurar em vários lugares.</p>
         <button onclick="openManualModal()" class="btn btn-dark">
           <i data-lucide="book-open" aria-hidden="true"></i> Abrir Manual do Hóspede
@@ -1278,7 +1314,7 @@ setTimeout(function(){
   </svg>
   <div class="container contato-wrap">
     <span class="eyebrow on-dark">Fale com a gente</span>
-    <h2 class="section-title">Bora marcar sua estadia?</h2>
+    <h2 class="section-title">Reserve a sua estadia</h2>
     <p class="section-lede">É só chamar no WhatsApp — a gente responde rapidinho com disponibilidade e valores da diária.</p>
     <!-- WHATSAPP A CONFIRMAR: trocar 5511999999999 pelo número real -->
     <a href="https://wa.me/5511991021064?text=Oi!%20Vim%20pelo%20site%20e%20queria%20saber%20mais%20sobre%20o%20Micasa%20Hostel." target="_blank" class="btn btn-whats">
@@ -1298,7 +1334,7 @@ setTimeout(function(){
     <div class="footer-top">
       <div class="footer-brand">
         <img class="logo-img" src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1784235480/Massas_Sabores_36_pxcet2.png" alt="Micasa Hostel">
-        <p>Mi Casa, Su Casa. Hospedagem aconchegante em Campo Belo, São Paulo, a 5 minutos do Aeroporto de Congonhas.</p>
+        <p>Micasa Hostel. Hospedagem aconchegante em Campo Belo, São Paulo, a 5 minutos do Aeroporto de Congonhas.</p>
       </div>
       <div class="footer-nav">
         <div class="footer-col">
@@ -1306,6 +1342,7 @@ setTimeout(function(){
           <ul>
             <li><a href="#home">Início</a></li>
             <li><a href="#acomodacoes">Quartos</a></li>
+      <li><a href="#servicos">Serviços</a></li>
             <li><a href="#localizacao">Localização</a></li>
             <li><a href="#blog">Blog</a></li>
             <li><a href="/static/docs/regulamento-micasa-hostel.html" target="_blank" rel="noopener">Manual do Hóspede</a></li>
