@@ -580,9 +580,9 @@
     transition: transform .25s ease, box-shadow .35s ease;
   }
   .ob-big:hover{ transform: translateY(-4px); box-shadow: 0 24px 44px -24px rgba(23,40,66,0.3); }
-  .ob-media{ height: 170px; display: flex; align-items: center; justify-content: center; }
+  .ob-media{ position: relative; width: 100%; aspect-ratio: 1 / 1; height: auto; flex: 0 0 auto; overflow: hidden; display: flex; align-items: center; justify-content: center; }
   .ob-media svg{ width: 150px; height: auto; }
-  .ob-media img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ob-media img{ position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
   .ob-big--a .ob-media{ background: #F3E9D8; }
   .ob-big--b .ob-media{ background: #F8E4E0; }
   .ob-big--c .ob-media{ background: #E3EEF7; }
@@ -637,7 +637,6 @@
 
   @media (max-width: 900px){
     .ob-main{ grid-template-columns: 1fr; }
-    .ob-media{ height: 150px; }
   }
   @media (max-width: 760px){ .ob-mini-grid{ grid-template-columns: 1fr; } }
 
@@ -853,6 +852,19 @@
     color: var(--text-soft);
     border: 1px solid var(--line);
   }
+  .plan-highlight{
+    display: block;
+    font-weight: 700;
+    font-size: 1.02rem;
+    line-height: 1.35;
+    color: var(--clay-dark);
+    background: rgba(48,129,194,0.10);
+    border-left: 4px solid var(--clay);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 6px 0 10px;
+  }
+  .plan-card--meet{ margin-top: 28px; }
   .plan-card h3{
     font-size: clamp(1.6rem, 2.6vw, 2rem);
     font-weight: 700;
@@ -970,31 +982,34 @@
   /* Palco do celular */
   .community-visual{
     position: relative;
-    width: min(100%, 480px);
-    aspect-ratio: 1 / 1.08;
+    width: min(100%, 520px);
+    aspect-ratio: 1 / 0.95;
     margin-inline: auto;
   }
-  .dbc-disc, .dbc-ring{
-    position: absolute;
-    left: 50%; top: 54%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
+  .dbc-blob{ position: absolute; background: #C4674B; }
+  .dbc-blob--main{
+    right: 2%; top: 20%; width: 58%; height: 74%;
+    border-radius: 48% 52% 46% 54% / 40% 45% 55% 60%;
+    transform: rotate(8deg);
   }
-  .dbc-disc{ width: 90%; background: var(--text); }
-  .dbc-ring{ width: 104%; border: 2px dashed var(--community-orange-dark); }
+  .dbc-blob--sage{
+    left: 6%; bottom: 8%; width: 26%; height: 36%;
+    background: #A9B48F; opacity: 0.75;
+    border-radius: 50% 50% 45% 55% / 55% 45% 55% 45%;
+  }
   .dbc-phone{
     position: absolute;
-    left: 50%; bottom: 0;
-    width: 88%;
+    left: 50%; bottom: -4%;
+    width: 60%;
     height: auto;
-    transform: translateX(-50%);
-    filter: drop-shadow(0 28px 32px rgba(23,40,66,0.38));
+    transform: translateX(-50%) rotate(10deg);
+    transform-origin: 50% 90%;
+    filter: drop-shadow(0 22px 26px rgba(23,40,66,0.30));
     animation: dbc-float 7s ease-in-out infinite;
   }
   @keyframes dbc-float{
-    0%, 100%{ transform: translate(-50%, 0); }
-    50%{ transform: translate(-50%, -12px); }
+    0%, 100%{ transform: translateX(-50%) rotate(10deg) translateY(0); }
+    50%{ transform: translateX(-50%) rotate(10deg) translateY(-10px); }
   }
   @media (prefers-reduced-motion: reduce){ .dbc-phone{ animation: none; } }
 
@@ -1002,22 +1017,26 @@
     position: absolute;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 9px 16px;
-    background: var(--white);
+    gap: 12px;
+    padding: 12px 24px 12px 12px;
+    background: #F3DDD3;
     border-radius: 100px;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    color: var(--text);
-    box-shadow: 0 10px 24px rgba(23,40,66,0.18);
-    white-space: nowrap;
+    line-height: 1.25;
+    color: #2A3A4A;
+    box-shadow: 0 10px 22px rgba(23,40,66,0.14);
   }
-  .dbc-chip i{ width: 10px; height: 10px; border-radius: 50%; background: var(--community-orange); }
-  .dbc-chip--1{ top: 13%; left: -2%; transform: rotate(-6deg); }
-  .dbc-chip--2{ top: 42%; right: -3%; transform: rotate(5deg); }
-  .dbc-chip--2 i{ background: #D8402A; }
-  .dbc-chip--3{ bottom: 15%; left: 0; transform: rotate(-3deg); }
-  .dbc-chip--3 i{ background: #A9CB5F; }
+  .dbc-chip-ic{
+    flex: 0 0 auto;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: rgba(255,255,255,0.55);
+    display: grid; place-items: center;
+  }
+  .dbc-chip-ic svg{ width: 26px; height: 26px; stroke: #2A3A4A; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .dbc-chip--1{ top: 6%; left: -4%; transform: rotate(-8deg); }
+  .dbc-chip--2{ top: 38%; right: -6%; transform: rotate(-9deg); }
+  .dbc-chip--3{ bottom: 6%; right: -6%; transform: rotate(6deg); background: #DDE3D0; }
 
   @media (max-width: 860px){
     .community-stage{ grid-template-columns: 1fr; }
@@ -1025,7 +1044,10 @@
     .community-copy{ max-width: 620px; margin-inline: auto; text-align: center; }
     .community-dbc-logo{ margin-inline: auto; object-position: center; }
     .community-head{ text-align: center; }
-    .dbc-chip{ font-size: 0.8rem; padding: 7px 12px; }
+    .dbc-chip{ font-size: 0.78rem; padding: 8px 16px 8px 8px; gap: 8px; }
+    .dbc-chip-ic{ width: 34px; height: 34px; }
+    .dbc-chip-ic svg{ width: 20px; height: 20px; }
+    .dbc-chip--1{ left: -2%; } .dbc-chip--2, .dbc-chip--3{ right: -2%; }
   }
 
   .community-grid{
@@ -2410,7 +2432,7 @@
     <li><a href="#filosofia">Filosofia</a></li>
     <li><a href="#acompanhamento">Acompanhamento</a></li>
     <li><a href="#comunidade">Comunidade</a></li>
-    {% if not loja.ocultar_blog and posts and posts|length > 0 %}<li><a href="#blog">Diário da Nutri</a></li>{% endif %}
+    {% if not loja.ocultar_blog and posts and posts|length > 0 %}<li><a href="#blog">Newsletter</a></li>{% endif %}
   </ul>
   <div class="ll-nav-actions">
     <a class="ll-nav-cta" href="https://wa.me/5519971541008?text=Oii%2C%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20sua%20consulta." target="_blank" rel="noopener">
@@ -2423,7 +2445,7 @@
     <a href="#filosofia">Filosofia</a>
     <a href="#acompanhamento">Acompanhamento</a>
     <a href="#comunidade">Comunidade</a>
-    {% if not loja.ocultar_blog and posts and posts|length > 0 %}<a href="#blog">Diário da Nutri</a>{% endif %}
+    {% if not loja.ocultar_blog and posts and posts|length > 0 %}<a href="#blog">Newsletter</a>{% endif %}
   </div>
 </nav>
 
@@ -2601,7 +2623,7 @@
 
     <div class="ob-main">
       <div class="ob-big ob-big--a">
-        <div class="ob-media"><svg viewBox="0 0 160 100" fill="none" stroke="#172842" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M35 54h90a45 30 0 0 1-90 0z" fill="#fff"/><path d="M80 50c-14-4-20-16-18-30 12 2 20 12 18 30z" fill="#DDE7C8"/><path d="M80 50c8-8 20-10 30-20-12-4-28 4-30 20z" fill="#DDE7C8"/></svg></div>
+        <div class="ob-media"><img src="https://directus.leanttro.com/assets/d7f25e19-91c5-4a85-8bd4-475717569a44?quality=80&format=webp" alt="Emagrecer com equilíbrio" loading="lazy"></div>
         <div class="ob-body">
           <h3>Emagrecer com equilíbrio</h3>
           <p>Alcançar um peso saudável sem entrar em mais um ciclo de restrição, culpa e efeito sanfona.</p>
@@ -2609,7 +2631,7 @@
         </div>
       </div>
       <div class="ob-big ob-big--b">
-        <div class="ob-media"><svg viewBox="0 0 160 100" fill="none" stroke="#172842" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M50 28h52v40a14 14 0 0 1-14 14H64a14 14 0 0 1-14-14z" fill="#fff"/><path d="M102 40h8a10 10 0 0 1 0 22h-8"/><path d="M76 68c-8-6-12-10-12-15a6 6 0 0 1 12-2 6 6 0 0 1 12 2c0 5-4 9-12 15z" fill="#DF3E2F" stroke="#DF3E2F"/></svg></div>
+        <div class="ob-media"><img src="https://directus.leanttro.com/assets/17b41d9e-8221-451f-b733-24a51cc26160?quality=80&format=webp" alt="Melhorar a relação com a comida" loading="lazy"></div>
         <div class="ob-body">
           <h3>Melhorar a relação com a comida</h3>
           <p>Comer com mais tranquilidade, entendendo seus sinais de fome, saciedade e aprendendo a lidar com os desafios do dia.</p>
@@ -2617,7 +2639,7 @@
         </div>
       </div>
       <div class="ob-big ob-big--c">
-        <div class="ob-media"><svg viewBox="0 0 160 100" fill="none" stroke="#172842" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M80 88C44 64 38 42 52 31c10-8 22-2 28 8 6-10 18-16 28-8 14 11 8 33-28 57z" fill="#fff"/><path d="M48 56h24l6-14 10 28 8-14h20" stroke="#3081C2"/></svg></div>
+        <div class="ob-media"><img src="https://directus.leanttro.com/assets/d6794cfe-dfbb-4952-b70e-a64e93120cf8?quality=80&format=webp" alt="Cuidar da saúde" loading="lazy"></div>
         <div class="ob-body">
           <h3>Cuidar da saúde</h3>
           <p>Prevenir e tratar condições de saúde, com um plano alimentar individualizado, que respeita suas preferências e sua rotina.</p>
@@ -2678,16 +2700,18 @@
     {% if planos_normais and planos_normais|length > 0 %}
     <div class="plans-grid">
       {% for p in planos_normais %}
+      {% set destaque_q = (planos_normais|length == 3 and loop.index == 2) %}
       <div class="plan-card">
         <div>
           {% if planos_normais|length == 3 and loop.index == 2 %}
             <span class="plan-tag">Mais procurado</span>
-          {% elif planos_normais|length == 3 and loop.index == 1 %}
-            <span class="plan-tag plan-tag-alt">Sem compromisso</span>
           {% else %}
             <span class="plan-tag plan-tag-spacer" aria-hidden="true">Mais procurado</span>
           {% endif %}
           <h3>{{ p.nome }}</h3>
+          {% if planos_normais|length == 3 and loop.index == 2 %}
+            <span class="plan-highlight">Acompanhamento nutricional quinzenal</span>
+          {% endif %}
           {% if p.consulte %}
             <span class="plan-price">Consulte</span>
           {% elif p.a_partir_de and p.preco %}
@@ -2699,7 +2723,7 @@
         {% if p.descricao %}
         <ul class="plan-list">
           {% for linha in p.descricao.split('\n') %}
-            {% if linha.strip() %}<li>{{ linha.strip() }}</li>{% endif %}
+            {% if linha.strip() and not (destaque_q and (linha.strip()|lower).startswith('acompanhamento nutricional quinzenal')) %}<li>{{ linha.strip() }}</li>{% endif %}
           {% endfor %}
         </ul>
         {% endif %}
@@ -2725,7 +2749,6 @@
 
     <div class="plan-card plan-card--meet">
       <div>
-        <span class="plan-tag plan-tag-alt">Sem compromisso</span>
         <h3>Quer me conhecer melhor antes de fechar?</h3>
       </div>
       <ul class="plan-list">
@@ -2992,12 +3015,12 @@
       <!-- Celular da DBC "saindo" de um círculo azul-marinho, com anel tracejado laranja
            e 3 selos flutuantes. Foto: PNG sem fundo (Directus). -->
       <div class="community-visual">
-        <span class="dbc-ring" aria-hidden="true"></span>
-        <span class="dbc-disc" aria-hidden="true"></span>
+        <span class="dbc-blob dbc-blob--main" aria-hidden="true"></span>
+        <span class="dbc-blob dbc-blob--sage" aria-hidden="true"></span>
         <img class="dbc-phone" src="https://directus.leanttro.com/assets/86f5d60b-c944-41b3-952d-7b72eade0981?quality=80&format=webp" alt="Celular mostrando o app da comunidade De Boa com a Comida" width="444" height="562" loading="lazy">
-        <span class="dbc-chip dbc-chip--1"><i></i>Nutrição</span>
-        <span class="dbc-chip dbc-chip--2"><i></i>Encontros</span>
-        <span class="dbc-chip dbc-chip--3"><i></i>Troca de experiências</span>
+        <span class="dbc-chip dbc-chip--1"><span class="dbc-chip-ic"><svg viewBox="0 0 24 24"><path d="M5 19C5 10 11 4 20 4c0 9-6 15-15 15z"/><path d="M5 19L14 10"/></svg></span>Alimentação<br>sem terrorismo</span>
+        <span class="dbc-chip dbc-chip--2"><span class="dbc-chip-ic"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="13" height="10" rx="2"/><path d="M16 11l5-3v8l-5-3z"/></svg></span>Encontros<br>ao vivo</span>
+        <span class="dbc-chip dbc-chip--3"><span class="dbc-chip-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="2.6"/><circle cx="5.5" cy="10" r="2.2"/><circle cx="18.5" cy="10" r="2.2"/><path d="M7.5 19c0-3 2-5 4.5-5s4.5 2 4.5 5z"/><path d="M2 18c0-2.3 1.5-4 3.5-4M22 18c0-2.3-1.5-4-3.5-4"/></svg></span>Uma comunidade<br>de mulheres</span>
       </div>
 
     </div>
@@ -3020,7 +3043,7 @@
   <div class="wrap">
     <div class="blog-head">
       <span class="eyebrow">Por Júlia Theila</span>
-      <h2>{{ loja.titulo_blog or 'Leituras sem pressa sobre comida e comportamento.' }}</h2>
+      <h2>Entre livros e refeições</h2>
     </div>
     <div class="blog-grid">
       {% for post in posts %}
@@ -3065,7 +3088,7 @@
       </a>
       <div class="igx-copy">
         <span class="igx-kicker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Z"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="0.6" fill="currentColor"/></svg>Instagram</span>
-        <h2>O cuidado com a comida <em>continua por lá</em>.</h2>
+        <h2>O seu relacionamento com a comida <em>continua por lá</em>.</h2>
         <ul class="igx-tags">
           <li>Nutrição clínica</li>
           <li>Comportamento alimentar</li>
