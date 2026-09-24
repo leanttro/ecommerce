@@ -274,6 +274,8 @@
       <a href="#conteudo-extra">Acordeão, Comunidade &amp; FAQ</a>
       <a href="#grupos">Grupos</a>
       <a href="#planos">Planos</a>
+      <a href="#destaques-galeria">Cards do topo</a>
+      <a href="#jornada-galeria">Jornada</a>
       <a href="#blog">Blog</a>
       {% endif %}
       <a href="#seguranca">Senha de acesso</a>
@@ -770,10 +772,16 @@
     {% set fotos_cat_id = fotos_cat.id if fotos_cat else none %}
     {% set objetivos_cat = categorias | selectattr('nome', 'equalto', 'Objetivos') | list | first if categorias else none %}
     {% set objetivos_cat_id = objetivos_cat.id if objetivos_cat else none %}
-    {% set grupos_especiais_ids = [fotos_cat_id, objetivos_cat_id] | select('!=', none) | list %}
+    {% set destaques_cat = categorias | selectattr('nome', 'equalto', 'Destaques') | list | first if categorias else none %}
+    {% set destaques_cat_id = destaques_cat.id if destaques_cat else none %}
+    {% set jornada_cat = categorias | selectattr('nome', 'equalto', 'Jornada') | list | first if categorias else none %}
+    {% set jornada_cat_id = jornada_cat.id if jornada_cat else none %}
+    {% set grupos_especiais_ids = [fotos_cat_id, objetivos_cat_id, destaques_cat_id, jornada_cat_id] | select('!=', none) | list %}
     {% set planos_normais = produtos | rejectattr('categoria_id', 'in', grupos_especiais_ids) | list if grupos_especiais_ids else produtos %}
     {% set fotos_produtos = produtos | selectattr('categoria_id', 'equalto', fotos_cat_id) | list if fotos_cat_id else [] %}
     {% set objetivos_produtos = produtos | selectattr('categoria_id', 'equalto', objetivos_cat_id) | list if objetivos_cat_id else [] %}
+    {% set destaques_produtos = produtos | selectattr('categoria_id', 'equalto', destaques_cat_id) | list if destaques_cat_id else [] %}
+    {% set jornada_produtos = produtos | selectattr('categoria_id', 'equalto', jornada_cat_id) | list if jornada_cat_id else [] %}
     <section class="card-section" id="planos">
       {% if is_bio %}
       <h2>Links</h2>
@@ -816,17 +824,19 @@
               <label for="produto-nome">{% if is_bio %}Título do link{% else %}Nome do plano{% endif %}</label>
               <input type="text" name="nome" id="produto-nome" required>
             </div>
-            <div class="field" {% if is_bio %}style="display:none"{% endif %}>
+            <div class="field" id="produto-preco-field" {% if is_bio %}style="display:none"{% endif %}>
               <label for="produto-preco">Preço (R$)</label>
               <input type="text" name="preco" id="produto-preco" placeholder="Ex: 890.00">
             </div>
-            {% if is_bio %}
-            <div class="field full">
+            <div class="field full" {% if not is_bio %}id="produto-link-field" style="display:none"{% endif %}>
               <label for="produto-link">Link (para onde o card leva)</label>
-              <input type="text" name="link_projeto" id="produto-link" placeholder="Ex: https://wa.me/5519971541008 ou https://www.instagram.com/seuusuario">
+              <input type="text" name="link_projeto" id="produto-link" placeholder="Ex: https://wa.me/5519971541008, #acompanhamento ou https://www.instagram.com/seuusuario">
+              {% if is_bio %}
               <span class="hint">Se deixar em branco, o card aparece na página mas sem clique.</span>
+              {% else %}
+              <span class="hint">Só usado no grupo "Destaques": pra onde o card do topo leva ao clicar (ex: #acompanhamento, ou um link https://... que abre em nova aba).</span>
+              {% endif %}
             </div>
-            {% endif %}
             <div class="field">
               <label for="produto-categoria">{% if is_bio %}Rótulo (palavra pequena acima do título){% else %}Grupo{% endif %}</label>
               <select name="categoria_id" id="produto-categoria">
@@ -840,7 +850,7 @@
               {% if is_bio %}
               <span class="hint">Crie os rótulos na seção acima primeiro (ex: Consulta, Comunidade). É opcional.</span>
               {% else %}
-              <span class="hint">Crie grupos na seção acima primeiro. Use o grupo "Fotos" pra guardar imagens sem exibir no site, ou o grupo "Objetivos" pra cadastrar os focos de atuação (com foto) exibidos no site.</span>
+              <span class="hint">Crie grupos na seção acima primeiro. Grupos especiais: "Fotos" (banco de imagens, não aparece no site), "Objetivos" (focos de atuação), "Destaques" (3 cards do topo do site) e "Jornada" (passos do carrossel).</span>
               {% endif %}
             </div>
             <div class="field">
@@ -852,6 +862,7 @@
           <div class="field full">
             <label for="produto-descricao">{% if is_bio %}Texto (linha curta abaixo do título){% else %}Descrição{% endif %}</label>
             <textarea name="descricao" id="produto-descricao"></textarea>
+            {% if not is_bio %}<span class="hint" id="produto-descricao-hint" style="display:none"></span>{% endif %}
           </div>
           <div class="field full">
             <label for="produto-imagem">{% if is_bio %}Foto do card{% else %}Imagem{% endif %}</label>
@@ -863,7 +874,7 @@
             {% if is_bio %}
             <span class="hint">Aparece no lado esquerdo do card. Ao editar, só envie uma nova se quiser trocar a atual.</span>
             {% else %}
-            <span class="hint">Se o grupo for "Fotos", é essa imagem que vai aparecer na seção Banco de Fotos pra você copiar o link. Se o grupo for "Objetivos", é essa imagem (com o nome como legenda) que aparece na seção "Onde posso te ajudar" do site.</span>
+            <span class="hint" id="produto-imagem-hint">Se o grupo for "Fotos", é essa imagem que vai aparecer na seção Banco de Fotos pra você copiar o link. Se o grupo for "Objetivos", é essa imagem (com o nome como legenda) que aparece na seção "Onde posso te ajudar" do site.</span>
             {% endif %}
           </div>
           <button type="submit" class="btn btn-primary btn-small">{% if is_bio %}Salvar link{% else %}Salvar plano{% endif %}</button>
@@ -931,6 +942,80 @@
           {% endfor %}
         {% else %}
           <div class="empty-state">Nenhum objetivo cadastrado ainda. Crie um grupo chamado exatamente "Objetivos" (seção Grupos, acima) e depois cadastre um plano nesse grupo com nome curto (ex: "Emagrecimento") e uma imagem — ele aparece aqui e no site.</div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- ═══════════════ CARDS DO TOPO (categoria "Destaques" — aparece no site) ═══════════════ -->
+    <section class="card-section" id="destaques-galeria" {% if is_bio %}style="display:none"{% endif %}>
+      <h2>Cards do topo (Destaques)</h2>
+      <div class="section-sub">Os 3 cards coloridos logo abaixo do banner principal. Cada item do grupo "Destaques" vira um card: <strong>Nome</strong> = título · <strong>1ª linha da descrição</strong> = texto · <strong>2ª linha</strong> = texto do botão · <strong>Link</strong> = pra onde leva · <strong>Imagem</strong> = logo pequeno (opcional). Se o grupo estiver vazio, o site mostra os 3 cards padrão.</div>
+      <div class="card">
+        {% if not destaques_cat_id %}
+          <div class="empty-state">Pra editar esses cards, primeiro é preciso criar o grupo "Destaques".</div>
+          <form method="POST" action="/{{ loja.slug_url }}/admin/categoria/salvar" style="margin-top:10px;">
+            <input type="hidden" name="nome" value="Destaques">
+            <button type="submit" class="btn btn-primary btn-small">Ativar edição dos cards do topo</button>
+          </form>
+        {% else %}
+          {% if destaques_produtos and destaques_produtos|length > 0 %}
+            {% for d in destaques_produtos %}
+            <div class="item-row">
+              <div class="item-row-info" style="display:flex; align-items:center; gap:14px;">
+                {% if d.imagem_destaque %}
+                <img src="{{ d.imagem_destaque }}" alt="{{ d.nome }}" style="width:64px; height:64px; object-fit:contain; border-radius:10px; border:1px solid var(--line); background:var(--panel); flex-shrink:0;">
+                {% endif %}
+                <div>
+                  <strong>{{ d.nome }}</strong>
+                  <span>{{ (d.descricao or '').replace('\r','').split('\n')[0] | truncate(80) }} · Link: {{ d.link_projeto or '—' }} · Ordem: {{ d.sort if d.sort is not none else '—' }}</span>
+                </div>
+              </div>
+              <div class="item-row-actions">
+                <button type="button" class="btn btn-ghost btn-small" data-edit-produto data-id="{{ d.id }}" data-nome="{{ d.nome }}" data-preco="{{ d.preco }}" data-descricao="{{ d.descricao or '' }}" data-link="{{ d.link_projeto or '' }}" data-categoria="{{ d.categoria_id or '' }}" data-sort="{{ d.sort if d.sort is not none else '' }}" data-imagem="{{ d.imagem_destaque or '' }}">Editar</button>
+              <a class="btn btn-danger btn-small" href="/{{ loja.slug_url }}/admin/produto/excluir/{{ d.id }}" onclick="return confirm('Excluir este card?');">Excluir</a>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="empty-state">Nenhum card cadastrado — o site está mostrando os 3 cards padrão. Assim que você cadastrar o primeiro, o site passa a usar só os que estão aqui, então cadastre os 3 (ou clique abaixo pra carregar os atuais já prontos pra editar).</div>
+            <button type="button" class="btn btn-primary btn-small" data-seed="destaques" style="margin-top:10px;">Carregar os 3 cards atuais pra editar</button>
+          {% endif %}
+          <button type="button" class="btn btn-ghost btn-small" data-novo-grupo="destaques" style="margin-top:12px;">+ Novo card</button>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- ═══════════════ JORNADA (categoria "Jornada" — aparece no site) ═══════════════ -->
+    <section class="card-section" id="jornada-galeria" {% if is_bio %}style="display:none"{% endif %}>
+      <h2>Jornada do Acompanhamento</h2>
+      <div class="section-sub">Os passos do carrossel "A Jornada do Seu Acompanhamento Nutricional". Cada item do grupo "Jornada" vira um passo: <strong>Nome</strong> = título · <strong>1ª linha da descrição</strong> = texto · <strong>2ª linha</strong> (opcional) = nome da fase, ex: "Fase Inicial" / "Fase de Execução" · <strong>Ordem</strong> = posição no carrossel. Os ícones são automáticos. Se o grupo estiver vazio, o site mostra os 8 passos padrão.</div>
+      <div class="card">
+        {% if not jornada_cat_id %}
+          <div class="empty-state">Pra editar os passos, primeiro é preciso criar o grupo "Jornada".</div>
+          <form method="POST" action="/{{ loja.slug_url }}/admin/categoria/salvar" style="margin-top:10px;">
+            <input type="hidden" name="nome" value="Jornada">
+            <button type="submit" class="btn btn-primary btn-small">Ativar edição da jornada</button>
+          </form>
+        {% else %}
+          {% if jornada_produtos and jornada_produtos|length > 0 %}
+            {% for j in jornada_produtos %}
+            {% set jl = (j.descricao or '').replace('\r','').split('\n') %}
+            <div class="item-row">
+              <div class="item-row-info">
+                <strong>{{ loop.index }}. {{ j.nome }}</strong>
+                <span>{{ jl[0] | truncate(90) }}{% if jl|length > 1 and jl[1].strip() %} · Fase: {{ jl[1].strip() }}{% endif %} · Ordem: {{ j.sort if j.sort is not none else '—' }}</span>
+              </div>
+              <div class="item-row-actions">
+                <button type="button" class="btn btn-ghost btn-small" data-edit-produto data-id="{{ j.id }}" data-nome="{{ j.nome }}" data-preco="{{ j.preco }}" data-descricao="{{ j.descricao or '' }}" data-link="{{ j.link_projeto or '' }}" data-categoria="{{ j.categoria_id or '' }}" data-sort="{{ j.sort if j.sort is not none else '' }}" data-imagem="{{ j.imagem_destaque or '' }}">Editar</button>
+              <a class="btn btn-danger btn-small" href="/{{ loja.slug_url }}/admin/produto/excluir/{{ j.id }}" onclick="return confirm('Excluir este passo?');">Excluir</a>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="empty-state">Nenhum passo cadastrado — o site está mostrando os 8 passos padrão. Assim que você cadastrar o primeiro, o site passa a usar só os que estão aqui, então cadastre todos (ou clique abaixo pra carregar os 8 atuais já prontos pra editar).</div>
+            <button type="button" class="btn btn-primary btn-small" data-seed="jornada" style="margin-top:10px;">Carregar os 8 passos atuais pra editar</button>
+          {% endif %}
+          <button type="button" class="btn btn-ghost btn-small" data-novo-grupo="jornada" style="margin-top:12px;">+ Novo passo</button>
         {% endif %}
       </div>
     </section>
@@ -1005,10 +1090,11 @@
       document.getElementById('produto-preco').value = btn.dataset.preco || '';
       document.getElementById('produto-descricao').value = btn.dataset.descricao || '';
       document.getElementById('produto-sort').value = btn.dataset.sort || '';
-      var linkInput = document.getElementById('produto-link'); // só existe na loja bio
+      var linkInput = document.getElementById('produto-link');
       if (linkInput) linkInput.value = btn.dataset.link || '';
       var sel = document.getElementById('produto-categoria');
       if (sel) sel.value = btn.dataset.categoria || '';
+      if (window.__aplicaGrupoUI) window.__aplicaGrupoUI();
       var imgPrev = document.getElementById('produto-imagem-preview');
       var imgAtual = document.getElementById('produto-imagem-atual');
       if (btn.dataset.imagem) {
@@ -1033,6 +1119,7 @@
     document.getElementById('produto-imagem-atual').src = '';
     document.getElementById('produto-form-title').textContent = prodTituloPadrao;
     prodCancel.style.display = 'none';
+    if (window.__aplicaGrupoUI) window.__aplicaGrupoUI();
   });
 
   document.querySelectorAll('[data-edit-post]').forEach(function(btn){
@@ -1268,6 +1355,100 @@
     document.getElementById('conteudo_extra_json_field').value = hasContent ? JSON.stringify(payload) : '';
   });
 
+})();
+</script>
+
+<script>
+// ───────────────── Grupos especiais: Destaques (cards do topo) e Jornada (passos do carrossel) ─────────────────
+(function(){
+  var form = document.getElementById('produto-form');
+  var sel = document.getElementById('produto-categoria');
+  var linkField = document.getElementById('produto-link-field'); // só existe fora da loja bio
+  if (!form || !sel || !linkField) return;
+
+  var catDestaques = String({{ (destaques_cat_id or '') | tojson }});
+  var catJornada = String({{ (jornada_cat_id or '') | tojson }});
+  var precoField = document.getElementById('produto-preco-field');
+  var lblNome = document.querySelector('label[for="produto-nome"]');
+  var lblDesc = document.querySelector('label[for="produto-descricao"]');
+  var lblImg  = document.querySelector('label[for="produto-imagem"]');
+  var hintDesc = document.getElementById('produto-descricao-hint');
+  var hintImg = document.getElementById('produto-imagem-hint');
+  var orig = { nome: lblNome.textContent, desc: lblDesc.textContent, img: lblImg.textContent, hintImg: hintImg ? hintImg.textContent : '' };
+
+  window.__aplicaGrupoUI = function(){
+    var v = String(sel.value || '');
+    var isD = !!v && v === catDestaques;
+    var isJ = !!v && v === catJornada;
+    linkField.style.display = isD ? '' : 'none';
+    if (precoField) precoField.style.display = (isD || isJ) ? 'none' : '';
+    lblNome.textContent = isD ? 'Título do card' : (isJ ? 'Título do passo' : orig.nome);
+    lblDesc.textContent = isD ? 'Texto do card + botão' : (isJ ? 'Texto do passo + fase' : orig.desc);
+    lblImg.textContent  = isD ? 'Logo (opcional)' : (isJ ? 'Imagem (não usada neste grupo)' : orig.img);
+    if (hintDesc) {
+      hintDesc.style.display = (isD || isJ) ? '' : 'none';
+      hintDesc.textContent = isD
+        ? '1ª linha = texto do card. 2ª linha (Enter) = texto do botão (se vazio, fica "Saiba mais").'
+        : (isJ ? '1ª linha = texto do passo. 2ª linha (Enter) = nome da fase, ex: "Fase Inicial" ou "Fase de Execução" (se vazio, a 1ª metade dos passos vira Fase Inicial e a 2ª Fase de Execução).' : '');
+    }
+    if (hintImg) hintImg.textContent = isD ? 'Logo pequeno mostrado acima do título do card. Deixe em branco se não quiser logo.' : (isJ ? 'A jornada usa ícones automáticos, não precisa de imagem.' : orig.hintImg);
+  };
+  sel.addEventListener('change', window.__aplicaGrupoUI);
+  window.__aplicaGrupoUI();
+
+  // Botões "+ Novo card" / "+ Novo passo": limpa o form, já seleciona o grupo e rola até ele
+  document.querySelectorAll('[data-novo-grupo]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var cancel = document.getElementById('produto-cancelar');
+      if (cancel) cancel.click();
+      var isD = btn.getAttribute('data-novo-grupo') === 'destaques';
+      sel.value = isD ? catDestaques : catJornada;
+      window.__aplicaGrupoUI();
+      document.getElementById('produto-form-title').textContent = isD ? 'Novo card do topo' : 'Novo passo da jornada';
+      form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('produto-nome').focus();
+    });
+  });
+
+  // Botões "Carregar os atuais": cria os itens padrão no grupo (usa a mesma rota de salvar produto)
+  var SEED = {"destaques": [{"nome": "Acompanhamento Individual", "d": "Cuidado nutricional personalizado, no seu ritmo, sem dietas prontas nem culpa.\nVer planos", "link": "#acompanhamento"}, {"nome": "DBC · De Boa com a Comida", "d": "Aulas, trocas e apoio contínuo pra sua jornada com a comida nunca ser solitária.\nConhecer a comunidade", "link": "#comunidade", "logo": "https://directus.leanttro.com/assets/c92b3497-b002-4a01-95f0-1ff3061fdb22?quality=80&format=webp"}, {"nome": "Sem Terrorismo Nutricional", "d": "Ciência de verdade, sem regras rígidas, listas proibidas ou promessas milagrosas.\nConhecer a filosofia", "link": "#filosofia"}], "jornada": [{"nome": "Agendamento", "d": "Escolha do horário ideal e recebimento das orientações iniciais para começar.\nFase Inicial"}, {"nome": "Questionário Pré-Consulta", "d": "Análise profunda da sua rotina, história e objetivos antes do encontro.\nFase Inicial"}, {"nome": "Primeira Consulta", "d": "Conversa acolhedora para construir um plano de ação totalmente personalizado.\nFase Inicial"}, {"nome": "Estratégias Personalizadas", "d": "Entrega de materiais e orientações práticas adaptadas à sua realidade real.\nFase Inicial"}, {"nome": "Colocando em Prática", "d": "Aplicação das estratégias no dia a dia, respeitando sua rotina e hábitos.\nFase de Execução"}, {"nome": "Próximos Encontros", "d": "Revisão dos avanços e ajustes no plano conforme sua evolução individual.\nFase de Execução"}, {"nome": "Evolução Contínua", "d": "Fortalecimento da autonomia e consolidação das mudanças que duram para sempre.\nFase de Execução"}, {"nome": "Autonomia Alimentar", "d": "Confiança para fazer boas escolhas de forma independente e sem restrições.\nFase de Execução"}]};
+  document.querySelectorAll('[data-seed]').forEach(function(btn){
+    btn.addEventListener('click', async function(){
+      var tipo = btn.getAttribute('data-seed');
+      var catId = tipo === 'destaques' ? catDestaques : catJornada;
+      var lista = SEED[tipo];
+      if (!catId || !lista) return;
+      btn.disabled = true;
+      var acao = form.getAttribute('action');
+      try {
+        for (var i = 0; i < lista.length; i++) {
+          btn.textContent = 'Criando ' + (i + 1) + ' de ' + lista.length + '…';
+          var it = lista[i];
+          var fd = new FormData();
+          fd.append('nome', it.nome);
+          fd.append('categoria_id', catId);
+          fd.append('descricao', it.d);
+          fd.append('preco', '0');
+          fd.append('sort', String(i + 1));
+          if (it.link) fd.append('link_projeto', it.link);
+          if (it.logo) {
+            try {
+              var r = await fetch(it.logo);
+              if (r.ok) fd.append('imagem', await r.blob(), 'logo-dbc.webp');
+            } catch (e) { /* sem CORS: segue sem logo, dá pra enviar depois pelo Editar */ }
+          }
+          var resp = await fetch(acao, { method: 'POST', body: fd, credentials: 'same-origin' });
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        }
+        window.location.hash = tipo === 'destaques' ? '#destaques-galeria' : '#jornada-galeria';
+        window.location.reload();
+      } catch (e) {
+        alert('Não consegui carregar os itens padrão (' + e.message + '). Recarregue a página e confira o que já foi criado antes de tentar de novo.');
+        btn.disabled = false;
+        btn.textContent = 'Tentar de novo';
+      }
+    });
+  });
 })();
 </script>
 
