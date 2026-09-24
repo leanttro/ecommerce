@@ -2470,23 +2470,48 @@
   </div>
 </section>
 
+{# ===== CARDS DO TOPO (grupo "Destaques") =====
+   Painel: crie a categoria "Destaques" e cadastre até 3 planos nela.
+   - Nome do plano = título do card
+   - Descrição = 1ª linha vira o texto, 2ª linha (opcional) vira o texto do botão (padrão "Saiba mais")
+   - Link = para onde o card leva (ex: #acompanhamento, ou uma URL https://...)
+   - Imagem = logo pequeno mostrado acima do título (opcional)
+   Se o grupo não existir ou estiver vazio, os 3 cards padrão do site continuam aparecendo. #}
+{% set destaques_cat = categorias | selectattr('nome', 'equalto', 'Destaques') | list | first if categorias else none %}
+{% set destaques_cat_id = destaques_cat.id if destaques_cat else none %}
+{% set jornada_cat = categorias | selectattr('nome', 'equalto', 'Jornada') | list | first if categorias else none %}
+{% set jornada_cat_id = jornada_cat.id if jornada_cat else none %}
+{% set destaques_produtos = produtos | selectattr('categoria_id', 'equalto', destaques_cat_id) | list if destaques_cat_id else [] %}
+{% set destaques_padrao = [
+  {'nome':'Acompanhamento Individual','texto':'Cuidado nutricional personalizado, no seu ritmo, sem dietas prontas nem culpa.','botao':'Ver planos','link':'#acompanhamento','logo':none},
+  {'nome':'DBC · De Boa com a Comida','texto':'Aulas, trocas e apoio contínuo pra sua jornada com a comida nunca ser solitária.','botao':'Conhecer a comunidade','link':'#comunidade','logo':'https://directus.leanttro.com/assets/c92b3497-b002-4a01-95f0-1ff3061fdb22?quality=80&format=webp'},
+  {'nome':'Sem Terrorismo Nutricional','texto':'Ciência de verdade, sem regras rígidas, listas proibidas ou promessas milagrosas.','botao':'Conhecer a filosofia','link':'#filosofia','logo':none}
+] %}
+{% set destaques_cards = [] %}
+{% if destaques_produtos and destaques_produtos|length > 0 %}
+  {% for p in destaques_produtos %}
+    {% set linhas = (p.descricao or '').split('\n') | map('trim') | reject('equalto', '') | list %}
+    {% set _ = destaques_cards.append({
+      'nome': p.nome,
+      'texto': linhas[0] if linhas|length > 0 else '',
+      'botao': linhas[1] if linhas|length > 1 else 'Saiba mais',
+      'link': p.link_projeto or '#',
+      'logo': p.imagem
+    }) %}
+  {% endfor %}
+{% else %}
+  {% set destaques_cards = destaques_padrao %}
+{% endif %}
+
 <div class="ll-hero-cards">
-  <a class="ll-hero-card ll-hero-card--cream" href="#acompanhamento">
-    <h3>Acompanhamento Individual</h3>
-    <p>Cuidado nutricional personalizado, no seu ritmo, sem dietas prontas nem culpa.</p>
-    <span>Ver planos →</span>
+  {% for c in destaques_cards %}
+  <a class="ll-hero-card ll-hero-card--{{ ['cream', 'orange', 'ink'][loop.index0 % 3] }}" href="{{ c.link }}"{% if c.link.startswith('http') %} target="_blank" rel="noopener"{% endif %}>
+    {% if c.logo %}<img class="ll-hero-card-logo" src="{{ c.logo }}" alt="{{ c.nome }}" loading="lazy">{% endif %}
+    <h3>{{ c.nome }}</h3>
+    <p>{{ c.texto }}</p>
+    <span>{{ c.botao }} →</span>
   </a>
-  <a class="ll-hero-card ll-hero-card--orange" href="#comunidade">
-    <img class="ll-hero-card-logo" src="https://directus.leanttro.com/assets/c92b3497-b002-4a01-95f0-1ff3061fdb22?quality=80&format=webp" alt="DBC - De Boa com a Comida" loading="lazy">
-    <h3>DBC · De Boa com a Comida</h3>
-    <p>Aulas, trocas e apoio contínuo pra sua jornada com a comida nunca ser solitária.</p>
-    <span>Conhecer a comunidade →</span>
-  </a>
-  <a class="ll-hero-card ll-hero-card--ink" href="#filosofia">
-    <h3>Sem Terrorismo Nutricional</h3>
-    <p>Ciência de verdade, sem regras rígidas, listas proibidas ou promessas milagrosas.</p>
-    <span>Conhecer a filosofia →</span>
-  </a>
+  {% endfor %}
 </div>
 
 <div class="marquee" aria-hidden="true">
@@ -2598,7 +2623,7 @@
 {% set fotos_cat_id = fotos_cat.id if fotos_cat else none %}
 {% set objetivos_cat = categorias | selectattr('nome', 'equalto', 'Objetivos') | list | first if categorias else none %}
 {% set objetivos_cat_id = objetivos_cat.id if objetivos_cat else none %}
-{% set grupos_especiais_ids = [fotos_cat_id, objetivos_cat_id] | select('!=', none) | list %}
+{% set grupos_especiais_ids = [fotos_cat_id, objetivos_cat_id, destaques_cat_id, jornada_cat_id] | select('!=', none) | list %}
 {% set planos_normais = produtos | rejectattr('categoria_id', 'in', grupos_especiais_ids) | list if grupos_especiais_ids else produtos %}
 {% set objetivos_produtos = produtos | selectattr('categoria_id', 'equalto', objetivos_cat_id) | list if objetivos_cat_id else [] %}
 
@@ -2761,6 +2786,55 @@
   </div>
 </section>
 
+{# ===== JORNADA (grupo "Jornada") =====
+   Painel: crie a categoria "Jornada" e cadastre os passos nela (pode cadastrar quantos quiser).
+   - Nome do plano = título do passo
+   - Descrição = 1ª linha vira o texto, 2ª linha (opcional) vira o rótulo da fase (ex: "Fase Inicial" / "Fase de Execução")
+     Se não informar a 2ª linha, a metade da frente dos passos cadastrados vira "Fase Inicial" e a de trás "Fase de Execução".
+   - Ordem de exibição = define a posição do passo no carrossel
+   Os ícones ciclam entre os 8 desenhos já usados no site (não editável pelo painel).
+   Se o grupo não existir ou estiver vazio, os 8 passos padrão do site continuam aparecendo. #}
+{% set jornada_produtos = produtos | selectattr('categoria_id', 'equalto', jornada_cat_id) | list if jornada_cat_id else [] %}
+{% set jornada_icones = [
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9 15 2 2 4-4"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12a8.5 8.5 0 0 1-4-1L4 20l1.2-4A8.4 8.4 0 1 1 21 11.5Z"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v6a1.5 1.5 0 0 0 1.5 1.5V22"/><path d="M4 2v4M6 2v4"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2.2"/><path d="M20 2c1 3 .5 6-1 7.5S18 12 18 16v6"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="6" r="3"/><path d="M5.5 19v-1.5a5.5 5.5 0 0 1 11 0V19"/><path d="M11 10.5v3M9.3 12h3.4"/><circle cx="17.5" cy="17.5" r="3.2"/><path d="m16.2 17.5.9.9 1.7-1.8"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 6h6v6"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14v6"/><path d="M12 14c-2.5 0-4.5-1.8-4.5-4.5 2.5 0 4.5 1 4.5 3 0-2 2-3 4.5-3 0 2.7-2 4.5-4.5 4.5Z"/><path d="M5 20c1-2.5 3.5-4 7-4s6 1.5 7 4"/></svg>'
+] %}
+{% set jornada_padrao = [
+  {'titulo':'Agendamento','texto':'Escolha do horário ideal e recebimento das orientações iniciais para começar.','fase':'Fase Inicial'},
+  {'titulo':'Questionário Pré-Consulta','texto':'Análise profunda da sua rotina, história e objetivos antes do encontro.','fase':'Fase Inicial'},
+  {'titulo':'Primeira Consulta','texto':'Conversa acolhedora para construir um plano de ação totalmente personalizado.','fase':'Fase Inicial'},
+  {'titulo':'Estratégias Personalizadas','texto':'Entrega de materiais e orientações práticas adaptadas à sua realidade real.','fase':'Fase Inicial'},
+  {'titulo':'Colocando em Prática','texto':'Aplicação das estratégias no dia a dia, respeitando sua rotina e hábitos.','fase':'Fase de Execução'},
+  {'titulo':'Próximos Encontros','texto':'Revisão dos avanços e ajustes no plano conforme sua evolução individual.','fase':'Fase de Execução'},
+  {'titulo':'Evolução Contínua','texto':'Fortalecimento da autonomia e consolidação das mudanças que duram para sempre.','fase':'Fase de Execução'},
+  {'titulo':'Autonomia Alimentar','texto':'Confiança para fazer boas escolhas de forma independente e sem restrições.','fase':'Fase de Execução'}
+] %}
+{% set jornada_passos = [] %}
+{% if jornada_produtos and jornada_produtos|length > 0 %}
+  {% set corte = (jornada_produtos|length + 1) // 2 %}
+  {% for p in jornada_produtos %}
+    {% set linhas = (p.descricao or '').split('\n') | map('trim') | reject('equalto', '') | list %}
+    {% set _ = jornada_passos.append({
+      'titulo': p.nome,
+      'texto': linhas[0] if linhas|length > 0 else '',
+      'fase': linhas[1] if linhas|length > 1 else ('Fase Inicial' if loop.index0 < corte else 'Fase de Execução')
+    }) %}
+  {% endfor %}
+{% else %}
+  {% set jornada_passos = jornada_padrao %}
+{% endif %}
+{# acha o índice do 1º passo da 2ª fase, pro botão "Fase de Execução" pular pra lá #}
+{% set jn = namespace(virada=none) %}
+{% for st in jornada_passos %}
+  {% if jn.virada is none and st.fase != jornada_passos[0].fase %}{% set jn.virada = loop.index0 %}{% endif %}
+{% endfor %}
+
 <!-- JORNADA DO ACOMPANHAMENTO -->
 <section class="journey" id="jornada">
   <svg class="journey-deco tr" viewBox="0 0 420 420" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -2777,79 +2851,27 @@
       <h2>A <span class="jfix">J</span>ornada do Seu<br>Acompanhamento Nutricional</h2>
     </div>
     <div class="journey-phases-row" id="journey-phases">
-      <button type="button" class="journey-phase-label is-active" data-go="0">Fase Inicial: Preparação e Planejamento</button>
-      <button type="button" class="journey-phase-label" data-go="4">Fase de Execução: Prática e Autonomia</button>
+      <button type="button" class="journey-phase-label is-active" data-go="0">{{ jornada_passos[0].fase }}{% if not jornada_produtos %}: Preparação e Planejamento{% endif %}</button>
+      {% if jn.virada is not none %}<button type="button" class="journey-phase-label" data-go="{{ jn.virada }}">{{ jornada_passos[jn.virada].fase }}{% if not jornada_produtos %}: Prática e Autonomia{% endif %}</button>{% endif %}
     </div>
     <div class="journey-carousel" id="journey-carousel" role="region" aria-roledescription="carrossel" aria-label="Etapas do acompanhamento nutricional" tabindex="0">
       <div class="journey-stage" id="journey-stage">
-      <article class="j-card" data-i="0" aria-roledescription="slide" aria-label="Passo 1 de 8">
-        <span class="j-bgnum" aria-hidden="true">1</span>
-        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9 15 2 2 4-4"/></svg></span><span class="j-chip">Fase Inicial</span></div>
-        <span class="j-num">Passo 1 de 8</span>
-        <h3>Agendamento</h3>
-        <p>Escolha do horário ideal e recebimento das orientações iniciais para começar.</p>
+      {% for st in jornada_passos %}
+      <article class="j-card" data-i="{{ loop.index0 }}" aria-roledescription="slide" aria-label="Passo {{ loop.index }} de {{ loop.length }}">
+        <span class="j-bgnum" aria-hidden="true">{{ loop.index }}</span>
+        <div class="j-top"><span class="j-icon">{{ jornada_icones[loop.index0 % jornada_icones|length]|safe }}</span><span class="j-chip">{{ st.fase }}</span></div>
+        <span class="j-num">Passo {{ loop.index }} de {{ loop.length }}</span>
+        <h3>{{ st.titulo }}</h3>
+        <p>{{ st.texto }}</p>
       </article>
-      <article class="j-card" data-i="1" aria-roledescription="slide" aria-label="Passo 2 de 8">
-        <span class="j-bgnum" aria-hidden="true">2</span>
-        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></span><span class="j-chip">Fase Inicial</span></div>
-        <span class="j-num">Passo 2 de 8</span>
-        <h3>Questionário Pré-Consulta</h3>
-        <p>Análise profunda da sua rotina, história e objetivos antes do encontro.</p>
-      </article>
-      <article class="j-card" data-i="2" aria-roledescription="slide" aria-label="Passo 3 de 8">
-        <span class="j-bgnum" aria-hidden="true">3</span>
-        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4H12a8.5 8.5 0 0 1-4-1L4 20l1.2-4A8.4 8.4 0 1 1 21 11.5Z"/></svg></span><span class="j-chip">Fase Inicial</span></div>
-        <span class="j-num">Passo 3 de 8</span>
-        <h3>Primeira Consulta</h3>
-        <p>Conversa acolhedora para construir um plano de ação totalmente personalizado.</p>
-      </article>
-      <article class="j-card" data-i="3" aria-roledescription="slide" aria-label="Passo 4 de 8">
-        <span class="j-bgnum" aria-hidden="true">4</span>
-        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span><span class="j-chip">Fase Inicial</span></div>
-        <span class="j-num">Passo 4 de 8</span>
-        <h3>Estratégias Personalizadas</h3>
-        <p>Entrega de materiais e orientações práticas adaptadas à sua realidade real.</p>
-      </article>
-      <article class="j-card" data-i="4" aria-roledescription="slide" aria-label="Passo 5 de 8">
-        <span class="j-bgnum" aria-hidden="true">5</span>
-        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v6a1.5 1.5 0 0 0 1.5 1.5V22"/><path d="M4 2v4M6 2v4"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2.2"/><path d="M20 2c1 3 .5 6-1 7.5S18 12 18 16v6"/></svg></span><span class="j-chip">Fase de Execução</span></div>
-        <span class="j-num">Passo 5 de 8</span>
-        <h3>Colocando em Prática</h3>
-        <p>Aplicação das estratégias no dia a dia, respeitando sua rotina e hábitos.</p>
-      </article>
-      <article class="j-card" data-i="5" aria-roledescription="slide" aria-label="Passo 6 de 8">
-        <span class="j-bgnum" aria-hidden="true">6</span>
-        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="6" r="3"/><path d="M5.5 19v-1.5a5.5 5.5 0 0 1 11 0V19"/><path d="M11 10.5v3M9.3 12h3.4"/><circle cx="17.5" cy="17.5" r="3.2"/><path d="m16.2 17.5.9.9 1.7-1.8"/></svg></span><span class="j-chip">Fase de Execução</span></div>
-        <span class="j-num">Passo 6 de 8</span>
-        <h3>Próximos Encontros</h3>
-        <p>Revisão dos avanços e ajustes no plano conforme sua evolução individual.</p>
-      </article>
-      <article class="j-card" data-i="6" aria-roledescription="slide" aria-label="Passo 7 de 8">
-        <span class="j-bgnum" aria-hidden="true">7</span>
-        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 6h6v6"/></svg></span><span class="j-chip">Fase de Execução</span></div>
-        <span class="j-num">Passo 7 de 8</span>
-        <h3>Evolução Contínua</h3>
-        <p>Fortalecimento da autonomia e consolidação das mudanças que duram para sempre.</p>
-      </article>
-      <article class="j-card" data-i="7" aria-roledescription="slide" aria-label="Passo 8 de 8">
-        <span class="j-bgnum" aria-hidden="true">8</span>
-        <div class="j-top"><span class="j-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14v6"/><path d="M12 14c-2.5 0-4.5-1.8-4.5-4.5 2.5 0 4.5 1 4.5 3 0-2 2-3 4.5-3 0 2.7-2 4.5-4.5 4.5Z"/><path d="M5 20c1-2.5 3.5-4 7-4s6 1.5 7 4"/></svg></span><span class="j-chip">Fase de Execução</span></div>
-        <span class="j-num">Passo 8 de 8</span>
-        <h3>Autonomia Alimentar</h3>
-        <p>Confiança para fazer boas escolhas de forma independente e sem restrições.</p>
-      </article>
+      {% endfor %}
       </div>
       <div class="journey-controls">
         <button type="button" class="j-arrow" data-dir="-1" aria-label="Passo anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button>
         <div class="j-dots" id="journey-dots">
-        <button type="button" class="j-dot" data-i="0" aria-label="Ir para o passo 1"><i></i></button>
-        <button type="button" class="j-dot" data-i="1" aria-label="Ir para o passo 2"><i></i></button>
-        <button type="button" class="j-dot" data-i="2" aria-label="Ir para o passo 3"><i></i></button>
-        <button type="button" class="j-dot" data-i="3" aria-label="Ir para o passo 4"><i></i></button>
-        <button type="button" class="j-dot" data-i="4" aria-label="Ir para o passo 5"><i></i></button>
-        <button type="button" class="j-dot" data-i="5" aria-label="Ir para o passo 6"><i></i></button>
-        <button type="button" class="j-dot" data-i="6" aria-label="Ir para o passo 7"><i></i></button>
-        <button type="button" class="j-dot" data-i="7" aria-label="Ir para o passo 8"><i></i></button>
+        {% for st in jornada_passos %}
+        <button type="button" class="j-dot" data-i="{{ loop.index0 }}" aria-label="Ir para o passo {{ loop.index }}"><i></i></button>
+        {% endfor %}
         </div>
         <button type="button" class="j-arrow" data-dir="1" aria-label="Próximo passo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
       </div>
@@ -2864,6 +2886,7 @@
   var cards  = Array.prototype.slice.call(carousel.querySelectorAll('.j-card'));
   var dots   = Array.prototype.slice.call(carousel.querySelectorAll('.j-dot'));
   var phases = Array.prototype.slice.call(document.querySelectorAll('#journey-phases .journey-phase-label'));
+  var phaseSplit = {{ jn.virada if jn.virada is not none else jornada_passos|length }};
   var total = cards.length, current = 0, startX = null, moved = false;
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var visible = false, held = false;
@@ -2892,7 +2915,7 @@
       d.setAttribute('aria-current', i === current ? 'true' : 'false');
     });
     phases.forEach(function(p, k){
-      p.classList.toggle('is-active', k === (current < 4 ? 0 : 1));
+      p.classList.toggle('is-active', k === (current < phaseSplit ? 0 : 1));
     });
   }
   function restartProgress(){
