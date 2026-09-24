@@ -864,6 +864,31 @@
     padding: 10px 14px;
     margin: 6px 0 10px;
   }
+  /* Destaque com estrelas — usado nos cards "Essencial" (mensal) e "Transformação"
+     (semanal). Mais chamativo que o .plan-highlight do card do meio (que já tem o
+     selo "Mais procurado" chamando atenção), mas na mesma paleta do site. */
+  .plan-highlight-star{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 0.98rem;
+    line-height: 1.35;
+    color: #fff;
+    background: linear-gradient(120deg, var(--clay) 0%, var(--clay-dark) 100%);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin: 6px 0 10px;
+    text-align: center;
+    box-shadow: 0 6px 16px rgba(23,40,66,0.18);
+  }
+  .plan-highlight-star .star{
+    font-size: 0.9em;
+    line-height: 1;
+    color: var(--cream);
+    flex-shrink: 0;
+  }
   .plan-card--meet{ margin-top: 28px; }
   .plan-card h3{
     font-size: clamp(1.6rem, 2.6vw, 2rem);
@@ -2726,6 +2751,8 @@
     <div class="plans-grid">
       {% for p in planos_normais %}
       {% set destaque_q = (planos_normais|length == 3 and loop.index == 2) %}
+      {% set destaque_m = (planos_normais|length == 3 and loop.index == 1) %}
+      {% set destaque_s = (planos_normais|length == 3 and loop.index == 3) %}
       <div class="plan-card">
         <div>
           {% if planos_normais|length == 3 and loop.index == 2 %}
@@ -2734,8 +2761,12 @@
             <span class="plan-tag plan-tag-spacer" aria-hidden="true">Mais procurado</span>
           {% endif %}
           <h3>{{ p.nome }}</h3>
-          {% if planos_normais|length == 3 and loop.index == 2 %}
-            <span class="plan-highlight">Acompanhamento nutricional quinzenal</span>
+          {% if destaque_q %}
+            <span class="plan-highlight-star"><span class="star" aria-hidden="true">★</span>Acompanhamento nutricional quinzenal<span class="star" aria-hidden="true">★</span></span>
+          {% elif destaque_m %}
+            <span class="plan-highlight-star"><span class="star" aria-hidden="true">★</span>Acompanhamento nutricional mensal<span class="star" aria-hidden="true">★</span></span>
+          {% elif destaque_s %}
+            <span class="plan-highlight-star"><span class="star" aria-hidden="true">★</span>Acompanhamento nutricional semanal<span class="star" aria-hidden="true">★</span></span>
           {% endif %}
           {% if p.consulte %}
             <span class="plan-price">Consulte</span>
@@ -2748,7 +2779,12 @@
         {% if p.descricao %}
         <ul class="plan-list">
           {% for linha in p.descricao.split('\n') %}
-            {% if linha.strip() and not (destaque_q and (linha.strip()|lower).startswith('acompanhamento nutricional quinzenal')) %}<li>{{ linha.strip() }}</li>{% endif %}
+            {% set linha_lower = linha.strip()|lower %}
+            {% if linha.strip()
+              and not (destaque_q and linha_lower.startswith('acompanhamento nutricional quinzenal'))
+              and not (destaque_m and linha_lower.startswith('acompanhamento nutricional mensal'))
+              and not (destaque_s and linha_lower.startswith('acompanhamento nutricional semanal'))
+            %}<li>{{ linha.strip() }}</li>{% endif %}
           {% endfor %}
         </ul>
         {% endif %}
