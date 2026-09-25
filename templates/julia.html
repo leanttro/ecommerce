@@ -2417,6 +2417,185 @@
     transition: transform 0.2s ease, background 0.2s ease;
   }
   .ll-whatsapp-float:hover{ background: var(--olive-dark); transform: translateY(-2px); }
+
+  /* ============ MODAL "TODAS AS POSTAGENS" ============ */
+  .blog-modal{
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+  }
+  .blog-modal.is-open{ display: block; }
+  .blog-modal-backdrop{
+    position: absolute;
+    inset: 0;
+    background: rgba(23,40,66,0.55);
+    backdrop-filter: blur(2px);
+  }
+  .blog-modal-panel{
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+  }
+  .blog-modal.is-open .blog-modal-panel{ opacity: 1; transform: translateY(0); }
+
+  .blog-modal-top{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px clamp(20px, 4vw, 56px);
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+    flex: 0 0 auto;
+  }
+  .blog-modal-title{ display: flex; flex-direction: column; gap: 2px; }
+  .blog-modal-title .eyebrow{ margin: 0; }
+  .blog-modal-title h2{
+    font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+    font-weight: 700;
+  }
+  .blog-modal-actions{ display: flex; align-items: center; gap: 10px; }
+
+  .blog-view-toggle{
+    display: inline-flex;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 4px;
+    gap: 4px;
+  }
+  .blog-view-btn{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    background: transparent;
+    color: var(--text-soft);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .blog-view-btn svg{ width: 15px; height: 15px; flex: none; }
+  .blog-view-btn.is-active{ background: var(--text); color: var(--cream); }
+  .blog-view-btn:not(.is-active):hover{ color: var(--text); }
+
+  .blog-modal-close{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--white);
+    color: var(--text);
+    cursor: pointer;
+    flex: none;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+  .blog-modal-close:hover{ background: var(--text); color: var(--cream); transform: rotate(90deg); }
+  .blog-modal-close svg{ width: 18px; height: 18px; }
+
+  .blog-modal-body{
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: clamp(24px, 3.5vw, 44px) clamp(20px, 4vw, 56px) clamp(40px, 5vw, 64px);
+  }
+
+  /* --- Vista em grade dentro do modal (reaproveita .blog-card) --- */
+  .blog-modal-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px;
+  }
+  .blog-modal-grid .blog-card{ background: var(--white); }
+  @media (max-width: 980px){ .blog-modal-grid{ grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px){ .blog-modal-grid{ grid-template-columns: 1fr; } }
+
+  /* --- Vista em carrossel dentro do modal --- */
+  .blog-modal-carousel{ display: none; }
+  .blog-modal-carousel.is-active{ display: block; }
+  .blog-modal-grid.is-hidden{ display: none; }
+
+  .blog-carousel-track-wrap{
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin: 0 -6px;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .blog-carousel-track-wrap::-webkit-scrollbar{ display: none; }
+  .blog-carousel-track{
+    display: flex;
+    gap: 26px;
+    padding: 6px;
+  }
+  .blog-carousel-track .blog-card{
+    flex: 0 0 calc(33.333% - 17.4px);
+    background: var(--white);
+    scroll-snap-align: start;
+  }
+  @media (max-width: 980px){
+    .blog-carousel-track .blog-card{ flex-basis: calc(50% - 13px); }
+  }
+  @media (max-width: 640px){
+    .blog-carousel-track .blog-card{ flex-basis: 100%; }
+  }
+
+  .blog-carousel-controls{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+  }
+  .blog-carousel-arrow{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--white);
+    color: var(--text);
+    cursor: pointer;
+    flex: none;
+    transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  }
+  .blog-carousel-arrow:hover{ background: var(--text); color: var(--cream); }
+  .blog-carousel-arrow[disabled]{ opacity: 0.35; cursor: default; pointer-events: none; }
+  .blog-carousel-arrow svg{ width: 18px; height: 18px; }
+
+  .blog-carousel-dots{ display: flex; align-items: center; gap: 8px; }
+  .blog-carousel-dot{
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--line);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .blog-carousel-dot.is-active{ background: var(--clay); transform: scale(1.3); }
+
+  body.blog-modal-open{ overflow: hidden; }
 </style>
 {% if loja.ga4_id %}
 <!-- Google Analytics 4 -->
@@ -3123,12 +3302,98 @@
       </a>
       {% endfor %}
     </div>
-    <!-- Botão placebo — trocar href="#" pela página do blog quando ela existir. -->
     <div class="blog-cta">
-      <a href="#" class="btn-secondary">Ver todas as postagens</a>
+      <button type="button" class="btn-secondary" id="blog-open-modal" aria-haspopup="dialog" aria-controls="blog-modal">Ver todas as postagens</button>
     </div>
   </div>
 </section>
+
+<!-- MODAL "TODAS AS POSTAGENS" — abre ao clicar em "Ver todas as postagens".
+     Reaproveita o mesmo loop 'posts' do card do blog acima; alterna entre
+     vista em GRADE e vista em CARROSSEL sem precisar recarregar a página. -->
+<div class="blog-modal" id="blog-modal" role="dialog" aria-modal="true" aria-labelledby="blog-modal-title-text">
+  <div class="blog-modal-backdrop" data-blog-modal-close></div>
+  <div class="blog-modal-panel">
+    <div class="blog-modal-top">
+      <div class="blog-modal-title">
+        <span class="eyebrow">Por Júlia Theila</span>
+        <h2 id="blog-modal-title-text">Todas as postagens</h2>
+      </div>
+      <div class="blog-modal-actions">
+        <div class="blog-view-toggle" role="group" aria-label="Alternar visualização">
+          <button type="button" class="blog-view-btn is-active" data-blog-view="carousel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="14" height="12" rx="2"></rect><path d="M20 8v8M23 9v6"></path></svg>
+            Carrossel
+          </button>
+          <button type="button" class="blog-view-btn" data-blog-view="grid">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>
+            Grade
+          </button>
+        </div>
+        <button type="button" class="blog-modal-close" data-blog-modal-close aria-label="Fechar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="blog-modal-body">
+      <!-- Vista em carrossel -->
+      <div class="blog-modal-carousel is-active" id="blog-modal-carousel">
+        <div class="blog-carousel-track-wrap">
+          <div class="blog-carousel-track" id="blog-carousel-track">
+            {% for post in posts %}
+            <a class="blog-card" href="/{{ loja.slug_url }}/blog/{{ post.slug }}">
+              <div class="blog-card-img">
+                {% if post.capa %}
+                  <img src="{{ post.capa }}" alt="{{ post.titulo }}" loading="lazy">
+                {% else %}
+                  <div class="blog-card-img-placeholder"></div>
+                {% endif %}
+              </div>
+              <div class="blog-card-body">
+                {% if post.data %}<span class="blog-card-date">{{ post.data }}</span>{% endif %}
+                <h3>{{ post.titulo }}</h3>
+                {% if post.resumo %}<p>{{ post.resumo | truncate(110) }}</p>{% endif %}
+                <span class="blog-card-link">Ler artigo</span>
+              </div>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="blog-carousel-controls">
+          <button type="button" class="blog-carousel-arrow" id="blog-carousel-prev" aria-label="Postagens anteriores">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+          </button>
+          <div class="blog-carousel-dots" id="blog-carousel-dots"></div>
+          <button type="button" class="blog-carousel-arrow" id="blog-carousel-next" aria-label="Próximas postagens">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Vista em grade -->
+      <div class="blog-modal-grid is-hidden" id="blog-modal-grid">
+        {% for post in posts %}
+        <a class="blog-card" href="/{{ loja.slug_url }}/blog/{{ post.slug }}">
+          <div class="blog-card-img">
+            {% if post.capa %}
+              <img src="{{ post.capa }}" alt="{{ post.titulo }}" loading="lazy">
+            {% else %}
+              <div class="blog-card-img-placeholder"></div>
+            {% endif %}
+          </div>
+          <div class="blog-card-body">
+            {% if post.data %}<span class="blog-card-date">{{ post.data }}</span>{% endif %}
+            <h3>{{ post.titulo }}</h3>
+            {% if post.resumo %}<p>{{ post.resumo | truncate(110) }}</p>{% endif %}
+            <span class="blog-card-link">Ler artigo</span>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
 {% endif %}
 
 <!-- INSTAGRAM -->
@@ -3529,6 +3794,131 @@
       if (handle) a.textContent = '@' + handle.replace(/^@/, '');
     }
   });
+})();
+</script>
+
+<script>
+/* ============================================================
+   MODAL "TODAS AS POSTAGENS" — abre um popup em tela cheia com
+   todas as postagens do blog, alternando entre vista em
+   CARROSSEL (padrão) e vista em GRADE. Não depende de nenhuma
+   lib externa; usa scroll nativo com snap pro carrossel.
+   ============================================================ */
+(function(){
+  var modal = document.getElementById('blog-modal');
+  if (!modal) return; // seção de blog oculta (sem posts) — nada a fazer
+
+  var openBtn = document.getElementById('blog-open-modal');
+  var closeEls = modal.querySelectorAll('[data-blog-modal-close]');
+  var viewBtns = modal.querySelectorAll('.blog-view-btn');
+  var carouselView = document.getElementById('blog-modal-carousel');
+  var gridView = document.getElementById('blog-modal-grid');
+  var track = document.getElementById('blog-carousel-track');
+  var wrap = track ? track.parentElement : null;
+  var prevBtn = document.getElementById('blog-carousel-prev');
+  var nextBtn = document.getElementById('blog-carousel-next');
+  var dotsRoot = document.getElementById('blog-carousel-dots');
+  var lastFocused = null;
+
+  // ---------- abrir / fechar ----------
+  function openModal(){
+    lastFocused = document.activeElement;
+    modal.classList.add('is-open');
+    document.body.classList.add('blog-modal-open');
+    modal.setAttribute('aria-hidden', 'false');
+    setTimeout(buildDots, 50); // espera o layout assentar antes de medir
+    var closeBtn = modal.querySelector('.blog-modal-close');
+    if (closeBtn) closeBtn.focus();
+    document.addEventListener('keydown', onKeydown);
+  }
+  function closeModal(){
+    modal.classList.remove('is-open');
+    document.body.classList.remove('blog-modal-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.removeEventListener('keydown', onKeydown);
+    if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+  }
+  function onKeydown(e){
+    if (e.key === 'Escape') closeModal();
+  }
+  if (openBtn) openBtn.addEventListener('click', openModal);
+  closeEls.forEach(function(el){ el.addEventListener('click', closeModal); });
+
+  // ---------- alternar carrossel / grade ----------
+  viewBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var target = btn.getAttribute('data-blog-view');
+      viewBtns.forEach(function(b){ b.classList.toggle('is-active', b === btn); });
+      if (target === 'grid') {
+        carouselView.classList.remove('is-active');
+        gridView.classList.remove('is-hidden');
+      } else {
+        gridView.classList.add('is-hidden');
+        carouselView.classList.add('is-active');
+        setTimeout(buildDots, 50);
+      }
+    });
+  });
+
+  // ---------- carrossel: setas + pontinhos ----------
+  if (track && wrap && prevBtn && nextBtn && dotsRoot) {
+    var cards = Array.prototype.slice.call(track.children);
+
+    function perView(){
+      var w = window.innerWidth;
+      if (w <= 640) return 1;
+      if (w <= 980) return 2;
+      return 3;
+    }
+
+    function pageCount(){
+      return Math.max(1, Math.ceil(cards.length / perView()));
+    }
+
+    function currentPage(){
+      if (!wrap.clientWidth) return 0;
+      return Math.round(wrap.scrollLeft / wrap.clientWidth);
+    }
+
+    function buildDots(){
+      var count = pageCount();
+      dotsRoot.innerHTML = '';
+      if (count <= 1) { dotsRoot.style.display = 'none'; } else { dotsRoot.style.display = 'flex'; }
+      for (var i = 0; i < count; i++) {
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'blog-carousel-dot';
+        dot.setAttribute('aria-label', 'Ir para página ' + (i + 1) + ' de postagens');
+        (function(i){
+          dot.addEventListener('click', function(){ goToPage(i); });
+        })(i);
+        dotsRoot.appendChild(dot);
+      }
+      updateControls();
+    }
+
+    function goToPage(i){
+      var count = pageCount();
+      i = Math.max(0, Math.min(count - 1, i));
+      wrap.scrollTo({ left: i * wrap.clientWidth, behavior: 'smooth' });
+    }
+
+    function updateControls(){
+      var page = currentPage();
+      var count = pageCount();
+      prevBtn.disabled = page <= 0;
+      nextBtn.disabled = page >= count - 1;
+      var dots = dotsRoot.querySelectorAll('.blog-carousel-dot');
+      dots.forEach(function(d, i){ d.classList.toggle('is-active', i === page); });
+    }
+
+    prevBtn.addEventListener('click', function(){ goToPage(currentPage() - 1); });
+    nextBtn.addEventListener('click', function(){ goToPage(currentPage() + 1); });
+    wrap.addEventListener('scroll', function(){
+      window.requestAnimationFrame(updateControls);
+    }, { passive: true });
+    window.addEventListener('resize', function(){ buildDots(); });
+  }
 })();
 </script>
 </body>
