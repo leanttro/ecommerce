@@ -197,6 +197,11 @@ def identificar_loja():
 
     # Detecta Host e Path
     host = request.host.split(':')[0] # Remove porta se existir
+
+    # REDIRECT FIXO: admin.juliatheila.com.br -> painel admin da loja julia
+    if host in ['admin.juliatheila.com.br', 'www.admin.juliatheila.com.br']:
+        return redirect('https://catalogo.leanttro.com/julia/admin/painel')
+
     path_parts = request.path.strip('/').split('/')
     primeiro_segmento = path_parts[0] if path_parts else ""
 
