@@ -54,6 +54,7 @@
     --success-bg: #E9F4EE;
   }
   *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
   body{
     margin: 0;
     background: var(--bg);
@@ -64,6 +65,35 @@
   img{ max-width: 100%; display: block; }
   h1,h2,h3{ font-family: 'Fraunces', serif; margin: 0; font-weight: 600; color: var(--marinho); }
   a{ color: var(--azul); }
+
+  /* ============ TOPBAR (só aparece no celular/tablet) ============ */
+  .topbar{
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--marinho);
+    color: #fff;
+    padding: 14px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+  .topbar .brand{ font-family: 'Fraunces', serif; font-size: 1.02rem; font-weight: 600; color: #fff; }
+  .menu-btn{
+    display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; flex-shrink: 0;
+    border-radius: 10px; border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.08); color: #fff;
+    cursor: pointer;
+  }
+  .menu-btn svg{ width: 20px; height: 20px; }
+  .nav-overlay{
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(15,22,36,0.45);
+    z-index: 45;
+  }
 
   /* ============ LAYOUT ============ */
   .shell{ display: flex; min-height: 100vh; }
@@ -100,7 +130,7 @@
   .sidebar nav a:hover{ background: rgba(255,255,255,0.08); color: #fff; }
 
   .main{ flex: 1; min-width: 0; padding: 32px clamp(20px, 3vw, 48px) 80px; }
-  .page-head{ margin-bottom: 28px; }
+  .page-head{ margin-bottom: 24px; }
   .page-head p{ color: var(--text-soft); margin: 6px 0 0; font-size: 0.95rem; }
 
   /* ============ FLASH MESSAGES ============ */
@@ -115,22 +145,54 @@
   .flash.error{ background: var(--danger-bg); color: var(--danger); }
 
   /* ============ CARDS / SECTIONS ============ */
-  section.card-section{ margin-bottom: 44px; scroll-margin-top: 24px; }
+  section.card-section{ margin-bottom: 36px; scroll-margin-top: 24px; }
   section.card-section > h2{ font-size: 1.35rem; margin-bottom: 4px; }
-  section.card-section > .section-sub{ color: var(--text-soft); font-size: 0.88rem; margin-bottom: 18px; }
+  section.card-section > .section-sub{ color: var(--text-soft); font-size: 0.88rem; margin-bottom: 16px; }
 
   .card{
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 16px;
-    padding: clamp(20px, 3vw, 32px);
-    margin-bottom: 18px;
+    padding: clamp(18px, 3vw, 32px);
+    margin-bottom: 16px;
+    box-shadow: 0 1px 2px rgba(23,40,66,0.04);
   }
   .card h3{ font-size: 1.02rem; margin-bottom: 16px; color: var(--marinho); }
 
   .grid-2{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
   .grid-3{ display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px 20px; }
+  @media (max-width: 900px){ .grid-3{ grid-template-columns: 1fr 1fr; } }
   @media (max-width: 760px){ .grid-2, .grid-3{ grid-template-columns: 1fr; } }
+
+  /* ============ RESPONSIVO — celular e tablet ============ */
+  @media (max-width: 880px){
+    .topbar{ display: flex; }
+    .nav-overlay.is-open{ display: block; }
+
+    .shell{ display: block; }
+
+    .sidebar{
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      width: min(280px, 82vw);
+      z-index: 50;
+      transform: translateX(-100%);
+      transition: transform 0.2s ease;
+      box-shadow: 4px 0 24px rgba(0,0,0,0.18);
+    }
+    .sidebar.is-open{ transform: translateX(0); }
+
+    .main{ padding: 20px 16px 64px; }
+    .page-head{ margin-bottom: 18px; }
+    .page-head h1{ font-size: 1.3rem; }
+
+    section.card-section{ margin-bottom: 26px; scroll-margin-top: 76px; }
+    .card{ padding: 18px; }
+
+    .item-row{ flex-wrap: wrap; }
+    .item-row-actions{ width: 100%; justify-content: flex-end; }
+  }
 
   .field{ display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
   .field.full{ grid-column: 1 / -1; }
@@ -254,8 +316,17 @@
   {% endif %}
 {% endwith %}
 
+<div class="topbar">
+  <button type="button" class="menu-btn" id="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="painel-sidebar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+  </button>
+  <div class="brand">{{ loja.nome or 'Julia Theila' }}</div>
+  <a href="/{{ loja.slug_url }}/" target="_blank" rel="noopener" style="color:#fff; font-size:0.82rem; font-weight:600; white-space:nowrap;">Ver site ↗</a>
+</div>
+<div class="nav-overlay" id="nav-overlay"></div>
+
 <div class="shell">
-  <aside class="sidebar">
+  <aside class="sidebar" id="painel-sidebar">
     <div class="brand">{{ loja.nome or 'Julia Theila' }}</div>
     <div class="brand-sub">Painel administrativo</div>
     <nav>
@@ -1448,6 +1519,34 @@
         btn.textContent = 'Tentar de novo';
       }
     });
+  });
+})();
+</script>
+
+<script>
+// ───────────────── Menu mobile (abrir/fechar sidebar) ─────────────────
+(function(){
+  var sidebar = document.getElementById('painel-sidebar');
+  var overlay = document.getElementById('nav-overlay');
+  var toggle = document.getElementById('menu-toggle');
+  if (!sidebar || !overlay || !toggle) return;
+
+  function abrir(){
+    sidebar.classList.add('is-open');
+    overlay.classList.add('is-open');
+    toggle.setAttribute('aria-expanded', 'true');
+  }
+  function fechar(){
+    sidebar.classList.remove('is-open');
+    overlay.classList.remove('is-open');
+    toggle.setAttribute('aria-expanded', 'false');
+  }
+  toggle.addEventListener('click', function(){
+    sidebar.classList.contains('is-open') ? fechar() : abrir();
+  });
+  overlay.addEventListener('click', fechar);
+  sidebar.querySelectorAll('nav a').forEach(function(a){
+    a.addEventListener('click', fechar);
   });
 })();
 </script>
