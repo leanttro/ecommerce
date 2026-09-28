@@ -302,6 +302,22 @@
   .item-row-info span{ display: block; font-size: 0.82rem; color: var(--text-soft); margin-top: 2px; }
   .item-row-actions{ display: flex; gap: 8px; flex-shrink: 0; }
   .empty-state{ color: var(--text-soft); font-size: 0.88rem; padding: 10px 0; }
+
+  /* ───── Inscritos (leads) ───── */
+  .leads-toolbar{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  .leads-count{ font-size:.9rem; color:var(--text-soft); }
+  .leads-count strong{ color:var(--marinho); font-size:1.15rem; }
+  .leads-tools{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .leads-tools input[type=search]{ padding:10px 14px; border-radius:999px; border:1px solid var(--line); background:var(--bg); font:inherit; font-size:.88rem; min-width:220px; }
+  .leads-wrap{ overflow-x:auto; }
+  table.leads{ width:100%; border-collapse:collapse; font-size:.88rem; }
+  table.leads th{ text-align:left; font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--text-soft); padding:10px 12px; border-bottom:2px solid var(--line); white-space:nowrap; }
+  table.leads td{ padding:12px; border-bottom:1px solid var(--line); vertical-align:middle; }
+  table.leads tr:last-child td{ border-bottom:0; }
+  table.leads .num{ color:var(--text-soft); width:1%; }
+  table.leads a.wa{ display:inline-block; padding:5px 12px; border-radius:999px; background:var(--success-bg); color:var(--success); font-weight:600; text-decoration:none; white-space:nowrap; }
+  table.leads a.wa:hover{ background:var(--success); color:#fff; }
+  .leads-empty{ text-align:center; color:var(--text-soft); padding:28px 10px; }
 </style>
 </head>
 <body>
@@ -332,7 +348,7 @@
     <nav>
       <a href="#dados-gerais">Dados gerais</a>
       {% if loja.slug_url == 'dbc' %}
-      <a href="#conteudo-dbc">Fotos e textos da página</a>
+      <a href="#textos-site">Fotos e textos da página</a>
       <a href="#leads-dbc">Inscritos (leads)</a>
       {% elif is_bio %}
       <a href="#textos-site">Textos da página</a>
@@ -795,6 +811,45 @@
         <button type="submit" class="btn btn-primary">Salvar todas as alterações</button>
       </div>
     </form>
+
+
+    {% if loja.slug_url == 'dbc' %}
+    <!-- ═══════════════ INSCRITOS (LEADS) — DBC ═══════════════
+         Lê `inscritos` (coleção clientes_loja), já enviada por admin_painel() em app.py. -->
+    <section class="card-section" id="leads-dbc">
+      <h2>Inscritos (leads)</h2>
+      <div class="section-sub">Pessoas que preencheram o formulário “As 20 primeiras” no site, da mais recente para a mais antiga.</div>
+      <div class="card">
+        <div class="leads-toolbar">
+          <div class="leads-count"><strong id="leads-total">{{ inscritos|length }}</strong> inscrito(s)</div>
+          <div class="leads-tools">
+            <input type="search" id="leads-busca" placeholder="Buscar nome, e-mail ou WhatsApp">
+            <button type="button" class="btn btn-ghost" id="leads-csv">Baixar CSV</button>
+          </div>
+        </div>
+        {% if inscritos %}
+        <div class="leads-wrap">
+          <table class="leads" id="leads-table">
+            <thead><tr><th>#</th><th>Nome</th><th>WhatsApp</th><th>E-mail</th><th>Inscrito em</th></tr></thead>
+            <tbody>
+              {% for l in inscritos %}
+              <tr>
+                <td class="num">{{ inscritos|length - loop.index0 }}</td>
+                <td>{{ l.nome or '—' }}</td>
+                <td data-wa="{{ l.whatsapp or '' }}">{{ l.whatsapp or '—' }}</td>
+                <td>{{ l.email or '—' }}</td>
+                <td data-iso="{{ l.date_created or '' }}">{{ (l.date_created or '')[:10] }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="leads-empty">Ainda não há inscritos. Quando alguém preencher o formulário do site, aparece aqui.</div>
+        {% endif %}
+      </div>
+    </section>
+    {% endif %}
 
     <!-- ═══════════════ GRUPOS (categorias de produto) ═══════════════ -->
     <section class="card-section" id="grupos">
@@ -1551,5 +1606,62 @@
 })();
 </script>
 
+
+<script>
+// ───────────────── Inscritos: data local, link WhatsApp, busca e CSV ─────────────────
+(function(){
+  var table = document.getElementById('leads-table');
+  if (!table) return;
+  var pad = function(n){ return (n<10?'0':'')+n; };
+
+  table.querySelectorAll('td[data-iso]').forEach(function(td){
+    var iso = td.getAttribute('data-iso');
+    if (!iso) return;
+    var d = new Date(/Z|[+-]\d\d:?\d\d$/.test(iso) ? iso : iso.replace(' ','T') + 'Z');
+    if (isNaN(d)) return;
+    td.textContent = pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()+' às '+pad(d.getHours())+':'+pad(d.getMinutes());
+  });
+
+  table.querySelectorAll('td[data-wa]').forEach(function(td){
+    var raw = td.getAttribute('data-wa') || '';
+    var digits = raw.replace(/\D/g,'');
+    if (!digits) return;
+    if (digits.length <= 11) digits = '55' + digits;
+    var a = document.createElement('a');
+    a.className = 'wa'; a.target = '_blank'; a.rel = 'noopener';
+    a.href = 'https://wa.me/' + digits;
+    a.textContent = raw + ' ↗';
+    td.textContent = ''; td.appendChild(a);
+  });
+
+  var busca = document.getElementById('leads-busca');
+  var total = document.getElementById('leads-total');
+  busca.addEventListener('input', function(){
+    var q = busca.value.trim().toLowerCase(), n = 0;
+    table.querySelectorAll('tbody tr').forEach(function(tr){
+      var show = !q || tr.textContent.toLowerCase().indexOf(q) !== -1;
+      tr.style.display = show ? '' : 'none';
+      if (show) n++;
+    });
+    total.textContent = n;
+  });
+
+  document.getElementById('leads-csv').addEventListener('click', function(){
+    var rows = [['Nome','WhatsApp','E-mail','Inscrito em']];
+    table.querySelectorAll('tbody tr').forEach(function(tr){
+      if (tr.style.display === 'none') return;
+      var c = tr.querySelectorAll('td');
+      rows.push([c[1].textContent, (c[2].getAttribute('data-wa')||''), c[3].textContent, c[4].textContent]);
+    });
+    var csv = rows.map(function(r){
+      return r.map(function(v){ return '"'+String(v).replace(/"/g,'""')+'"'; }).join(';');
+    }).join('\r\n');
+    var blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'inscritos-dbc.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+})();
+</script>
 </body>
 </html>
