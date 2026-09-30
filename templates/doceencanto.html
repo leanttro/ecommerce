@@ -2,7 +2,8 @@
   TEMPLATE: doceencanto.html  (slug "doceencanto")
   DINAMICO (vem do painel; se vazio, usa o texto/imagem padrao abaixo):
    - loja.logo                -> logo do header, footer, favicon e og:image
-   - loja.banner1             -> imagem do banner principal (hero)
+   - loja.banner1             -> imagem do banner principal (hero) - aparece INTEIRA; texto fica sobre a area vazia da esquerda
+   - Produtos: so a categoria "Produtos" aparece nos cards ("Fotos do Site" nao aparece)
    - loja.banner1_titulo      -> titulo do hero (use "|" para separar a parte em script: "Pequenos detalhes|grandes emocoes.")
    - loja.banner1_subtitulo   -> texto do hero
    - loja.banner1_botao       -> texto do botao principal
@@ -63,42 +64,31 @@ h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:500;line-height
 .btn.ghost{background:transparent;color:var(--wine);box-shadow:none;padding-left:5px}
 .decor-butterfly{position:absolute;opacity:.35;pointer-events:none;font-size:70px;transform:rotate(-8deg)}
 
-/* header */
-header{
-  position:sticky;top:0;z-index:50;background:rgba(255,253,251,.94);
-  backdrop-filter:blur(14px);border-bottom:1px solid rgba(234,209,202,.75)
-}
-.nav{height:76px;display:flex;align-items:center;justify-content:space-between;gap:28px}
-.logo-wrap{display:flex;align-items:center;gap:11px;min-width:230px}
-.logo-wrap img{width:190px;height:auto;object-fit:contain}
+/* header (logo centralizado, menu embaixo, NAO fixo) */
+header{position:relative;z-index:50;background:#fffdfb;border-bottom:1px solid rgba(234,209,202,.75)}
+.nav{position:relative;display:flex;flex-direction:column;align-items:center;padding-top:14px}
+.logo-wrap{display:flex;justify-content:center;align-items:center}
+.logo-wrap img{width:170px;height:auto;object-fit:contain}
+.nav-bar{display:flex;align-items:center;justify-content:center;gap:34px;padding:10px 0 16px;width:100%}
 .navlinks{display:flex;gap:34px;font-size:.86rem;color:#704039}
 .navlinks a{position:relative}
 .navlinks a:after{content:"";position:absolute;left:0;bottom:-8px;width:0;height:1.5px;background:var(--rose-dark);transition:.25s}
 .navlinks a:hover:after,.navlinks a.active:after{width:100%}
-.menu-btn{display:none;border:0;background:none;font-size:25px;color:var(--wine);cursor:pointer}
+.nav-bar .btn{padding:10px 18px;font-size:.82rem}
+.menu-btn{display:none;position:absolute;right:0;top:50px;border:0;background:none;font-size:25px;color:var(--wine);cursor:pointer}
 
-/* hero */
-.hero{position:relative;overflow:hidden;background:linear-gradient(105deg,#fff9f6 0%,#fceee9 54%,#f6d6ce 100%)}
-.hero:before{
-  content:"";position:absolute;inset:0;
-  background:radial-gradient(circle at 76% 35%,rgba(255,255,255,.8),transparent 32%),
-             radial-gradient(circle at 15% 100%,rgba(239,179,167,.18),transparent 34%);
-}
-.hero-inner{min-height:570px;display:grid;grid-template-columns:1fr 1.06fr;align-items:center;position:relative;z-index:1}
-.hero-copy{padding:65px 0}
-.hero h1{font-size:clamp(3rem,5.5vw,5.25rem);max-width:650px;letter-spacing:-.045em}
+/* hero: banner inteiro + texto sobre a area vazia a esquerda */
+.hero{background:linear-gradient(105deg,#fff9f6 0%,#fceee9 54%,#f6d6ce 100%)}
+.hero-banner{position:relative}
+.hero-img{display:block;width:100%;height:auto;max-height:700px;object-fit:cover;object-position:right center}
+.hero-overlay{position:absolute;inset:0;display:flex;align-items:center}
+.hero-overlay .container{width:min(var(--max),calc(100% - 40px))}
+.hero-copy{max-width:44%}
+.hero .eyebrow{margin-bottom:10px}
+.hero h1{font-size:clamp(1.9rem,3.9vw,3.9rem);letter-spacing:-.045em}
 .hero h1 .script{color:var(--rose-dark);font-size:.78em;display:block;margin-top:3px}
-.hero p{max-width:500px;color:#76534d;margin:24px 0 30px;font-size:1rem}
+.hero p{max-width:500px;color:#76534d;margin:14px 0 20px;font-size:clamp(.85rem,1.1vw,1rem)}
 .hero-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.hero-visual{height:570px;position:relative;overflow:hidden}
-.hero-visual:before{
-  content:"";position:absolute;inset:0;
-  background-image:url('{{ loja.banner1 or url_for('static', filename='doceencanto/colagem.png') }}');
-  background-size:cover;background-position:center 30%;
-  filter:saturate(.92);
-}
-.hero-visual:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#fceee9 0%,transparent 34%)}
-.hero-tag{position:absolute;z-index:2;right:32px;bottom:34px;background:rgba(255,253,251,.88);padding:13px 17px;border-radius:16px;box-shadow:var(--shadow);font-family:Georgia,serif;font-size:1.05rem}
 
 /* about */
 .about{background:var(--cream)}
@@ -121,10 +111,10 @@ header{
 .product-photo{height:205px;overflow:hidden;background:#f6ded7}
 .product-photo img{width:100%;height:100%;object-fit:cover;transition:.4s}
 .product-card:hover .product-photo img{transform:scale(1.04)}
-.product-card:nth-child(1) .product-photo img{object-position:center 84%}
-.product-card:nth-child(2) .product-photo img{object-position:center 25%}
-.product-card:nth-child(3) .product-photo img{object-position:20% 65%}
-.product-card:nth-child(4) .product-photo img{object-position:80% 55%}
+.product-card.fallback:nth-child(1) .product-photo img{object-position:center 84%}
+.product-card.fallback:nth-child(2) .product-photo img{object-position:center 25%}
+.product-card.fallback:nth-child(3) .product-photo img{object-position:20% 65%}
+.product-card.fallback:nth-child(4) .product-photo img{object-position:80% 55%}
 .product-body{padding:20px 18px 22px;text-align:center}
 .product-body h3{font-size:1.25rem}
 .product-body p{font-size:.82rem;color:#80615b;min-height:48px;margin:8px 0 15px}
@@ -170,12 +160,18 @@ footer p,footer a{font-size:.8rem;color:#80615b}
 .footer-bottom{border-top:1px solid var(--line);margin-top:28px;padding-top:15px;text-align:center;font-size:.72rem;color:#9b7b75}
 
 /* responsive */
+@media(max-width:1080px){
+  .hero-banner{display:flex;flex-direction:column}
+  .hero-overlay{position:static;order:-1;display:block}
+  .hero-copy{max-width:none;text-align:center;padding:40px 0 28px}
+  .hero h1{font-size:clamp(2.4rem,9vw,3.8rem)}
+  .hero p{margin:16px auto 22px;font-size:.96rem}
+  .hero-actions{justify-content:center}
+  .hero-img{aspect-ratio:2/1;max-height:none}
+}
 @media(max-width:980px){
   .navlinks{gap:20px}
-  .hero-inner{grid-template-columns:1fr}
-  .hero-copy{padding:62px 0 35px}
-  .hero-visual{height:420px}
-  .hero-visual:after{background:linear-gradient(180deg,#fceee9 0%,transparent 35%)}
+  .nav-bar{gap:22px}
   .about-grid{gap:38px}
   .product-grid{grid-template-columns:repeat(2,1fr)}
   .universe-grid{grid-template-columns:1fr 1fr}
@@ -184,17 +180,15 @@ footer p,footer a{font-size:.8rem;color:#80615b}
 @media(max-width:720px){
   .container{width:min(var(--max),calc(100% - 28px))}
   .section{padding:68px 0}
-  .nav{height:68px}
-  .logo-wrap img{width:160px}
-  .menu-btn{display:block}
-  .navlinks{display:none;position:absolute;top:68px;left:0;right:0;background:#fffdfb;padding:20px 24px 25px;flex-direction:column;gap:17px;border-bottom:1px solid var(--line);box-shadow:0 15px 30px rgba(90,42,37,.08)}
-  .navlinks.open{display:flex}
-  .nav .btn{display:none}
-  .hero-copy{padding:48px 0 28px}
-  .hero h1{font-size:clamp(2.7rem,13vw,4rem)}
+  .nav{padding-top:10px}
+  .logo-wrap img{width:135px}
+  .menu-btn{display:block;top:34px}
+  .nav-bar{display:none;flex-direction:column;gap:16px;padding:16px 0 22px;border-top:1px solid var(--line);margin-top:8px}
+  .nav-bar.open{display:flex}
+  .navlinks{flex-direction:column;align-items:center;gap:16px;font-size:.95rem}
+  .hero-copy{padding:32px 0 24px}
+  .hero h1{font-size:clamp(2.4rem,11vw,3.4rem)}
   .hero p{font-size:.93rem}
-  .hero-visual{height:360px;margin:0 -14px}
-  .hero-tag{right:18px;bottom:18px;font-size:.9rem}
   .about-grid{grid-template-columns:1fr;gap:28px}
   .about-image{min-height:340px}
   .about-copy h2{font-size:2.65rem}
@@ -218,7 +212,6 @@ footer p,footer a{font-size:.8rem;color:#80615b}
   .product-photo{height:190px}
   .hero-actions .btn{width:100%}
   .hero-actions .btn.ghost{width:auto}
-  .logo-wrap img{width:145px}
 }
 </style>
 </head>
@@ -226,24 +219,29 @@ footer p,footer a{font-size:.8rem;color:#80615b}
 
 <header>
   <div class="container nav">
-    <a class="logo-wrap" href="#inicio" aria-label="Doce Encanto">
+    <a class="logo-wrap" href="#inicio" aria-label="{{ loja.nome or 'Doce Encanto' }}">
       <img src="{{ loja.logo or url_for('static', filename='doceencanto/logo.png') }}" alt="{{ loja.nome or 'Doce Encanto' }}">
     </a>
-    <nav class="navlinks" id="navlinks">
-      <a class="active" href="#inicio">Início</a>
-      <a href="#sobre">Sobre</a>
-      <a href="#produtos">Produtos</a>
-      <a href="#universo">Instagram</a>
-    </nav>
-    <a class="btn" href="#contato">♡ Fale conosco</a>
     <button class="menu-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
+    <div class="nav-bar" id="navbar">
+      <nav class="navlinks" id="navlinks">
+        <a class="active" href="#inicio">Início</a>
+        <a href="#sobre">Sobre</a>
+        <a href="#produtos">Produtos</a>
+        <a href="#universo">Instagram</a>
+      </nav>
+      <a class="btn" href="#contato">♡ Fale conosco</a>
+    </div>
   </div>
 </header>
 
 <main>
 <section class="hero" id="inicio">
-  <div class="container hero-inner">
-    <div class="hero-copy">
+  <div class="hero-banner">
+    <img class="hero-img" src="{{ loja.banner1 or url_for('static', filename='doceencanto/colagem.png') }}" alt="{{ loja.nome or 'Doce Encanto' }}">
+    <div class="hero-overlay">
+      <div class="container">
+        <div class="hero-copy">
       <div class="eyebrow">Detalhes que fazem bem</div>
       {% set h_partes = (loja.banner1_titulo or '').split('|') %}
       {% if loja.banner1_titulo %}
@@ -256,9 +254,8 @@ footer p,footer a{font-size:.8rem;color:#80615b}
         <a class="btn" href="#produtos">{{ loja.banner1_botao or 'Conheça nossos presentes →' }}</a>
         <a class="btn ghost" href="#contato">♡ Fale conosco</a>
       </div>
-    </div>
-    <div class="hero-visual" aria-label="Composição visual Doce Encanto">
-      <div class="hero-tag">Sonho Presenteie Encante ♡</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -295,23 +292,45 @@ footer p,footer a{font-size:.8rem;color:#80615b}
       <h2>Encontre o seu encanto <span class="script">♡</span></h2>
       <p>Detalhes pensados para surpreender, demonstrar carinho e transformar momentos em memórias.</p>
     </div>
+    {# So aparecem produtos da categoria "Produtos". Categoria "Fotos do Site" (ou qualquer outra) NAO aparece aqui. #}
+    {% set ns_prod = namespace(cat_id=None) %}
+    {% for cat in categorias %}
+      {% if cat.nome and cat.nome|trim|lower == 'produtos' %}{% set ns_prod.cat_id = cat.id %}{% endif %}
+    {% endfor %}
+    {% set lista_produtos = [] %}
+    {% if ns_prod.cat_id %}
+      {% for p in produtos %}
+        {% if (p.categoria_id|string) == (ns_prod.cat_id|string) %}{% set _ = lista_produtos.append(p) %}{% endif %}
+      {% endfor %}
+    {% endif %}
     <div class="product-grid">
+    {% if lista_produtos %}
+      {% for p in lista_produtos %}
       <article class="product-card">
+        <div class="product-photo">{% if p.imagem %}<img src="{{ p.imagem }}" alt="{{ p.nome }}" loading="lazy">{% endif %}</div>
+        <div class="product-body"><h3>{{ p.nome }}</h3><p>{{ (p.descricao or '')|striptags|truncate(90) }}</p><a href="#contato">Ver detalhes →</a></div>
+      </article>
+      {% endfor %}
+    {% else %}
+
+      <article class="product-card fallback">
         <div class="product-photo"><img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Kits Presente"></div>
         <div class="product-body"><h3>Kits Presente</h3><p>Presentes preparados para surpreender.</p><a href="#contato">Ver detalhes →</a></div>
       </article>
-      <article class="product-card">
+      <article class="product-card fallback">
         <div class="product-photo"><img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Oratórios Artesanais"></div>
         <div class="product-body"><h3>Oratórios Artesanais</h3><p>Detalhes feitos para momentos especiais.</p><a href="#contato">Ver detalhes →</a></div>
       </article>
-      <article class="product-card">
+      <article class="product-card fallback">
         <div class="product-photo"><img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Sabonetes Artesanais"></div>
         <div class="product-body"><h3>Sabonetes Artesanais</h3><p>Cuidado, delicadeza e perfume.</p><a href="#contato">Ver detalhes →</a></div>
       </article>
-      <article class="product-card">
+      <article class="product-card fallback">
         <div class="product-photo"><img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Aromas e Lembranças"></div>
         <div class="product-body"><h3>Aromas &amp; Lembranças</h3><p>Pequenos detalhes que fazem diferença.</p><a href="#contato">Ver detalhes →</a></div>
       </article>
+    
+    {% endif %}
     </div>
   </div>
 </section>
@@ -384,9 +403,9 @@ footer p,footer a{font-size:.8rem;color:#80615b}
 
 <script>
 const btn = document.getElementById('menuBtn');
-const nav = document.getElementById('navlinks');
+const nav = document.getElementById('navbar');
 btn.addEventListener('click', () => nav.classList.toggle('open'));
-document.querySelectorAll('#navlinks a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
+document.querySelectorAll('#navbar a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
 </script>
 </body>
 </html>
