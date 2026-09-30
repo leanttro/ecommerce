@@ -1,16 +1,13 @@
 {#
-  TEMPLATE: doceencanto.html  (slug "doceencanto")
-  DINAMICO (vem do painel; se vazio, usa o texto/imagem padrao abaixo):
-   - loja.logo                -> logo do header, footer, favicon e og:image
-   - loja.banner1             -> imagem do banner principal (hero) - aparece INTEIRA; texto fica sobre a area vazia da esquerda
-   - Produtos: so a categoria "Produtos" aparece nos cards ("Fotos do Site" nao aparece)
-   - loja.banner1_titulo      -> titulo do hero (use "|" para separar a parte em script: "Pequenos detalhes|grandes emocoes.")
-   - loja.banner1_subtitulo   -> texto do hero
-   - loja.banner1_botao       -> texto do botao principal
-   - loja.sobre_titulo        -> titulo da secao Sobre (mesmo padrao do "|")
-   - loja.sobre_texto         -> texto do Sobre (cada linha vira um paragrafo)
-   - loja.nome                -> <title>, alt das imagens
-  Imagens de fallback: /static/doceencanto/{logo,colagem,galeria}.png
+  TEMPLATE: doceencanto.html  (slug "doceencanto") - 100% alimentado pelo painel, sem arquivos em /static
+   - Logo ............ loja.logo  (topo, rodape, favicon, WhatsApp/Google)
+   - Banner Principal 1 ... hero (aparece inteiro; no celular tambem vira fundo do texto)
+   - Banner Principal 2 ... fundo da secao final "Seu proximo presente..."
+   - Banner Menor 1 e 2 ... galeria da secao "Um pouco do nosso universo"
+   - Sobre ........... Imagem de Perfil/Empresa, Titulo da Secao, Texto, Titulo do Menu, Ocultar
+   - Produtos ........ so categoria "Produtos" (cards)
+   - Fotos do Site ... categoria "Fotos do Site": NAO aparece nos cards; vira as fotinhas do Instagram
+   - Titulos: use "|" para a parte em letra cursiva  ex: Pequenos detalhes,|grandes emocoes.
 #}
 <!doctype html>
 <html lang="pt-BR">
@@ -18,12 +15,26 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ loja.nome or 'Doce Encanto — Presentes' }}</title>
+{% set logo_png = (loja.logo|replace('format=webp','format=png')) if loja.logo else '' %}
+{% set logo_og = (logo_png ~ '&width=600') if 'format=' in logo_png else logo_png %}
+{% set logo_fav = (logo_png ~ '&width=256') if 'format=' in logo_png else logo_png %}
 <meta name="description" content="{{ loja.sobre_texto[:160] if loja.sobre_texto else 'Doce Encanto — presentes artesanais, kits, oratórios, sabonetes e aromas preparados com carinho.' }}">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ loja.nome or 'Doce Encanto' }}">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="{{ request.url }}">
 <meta property="og:title" content="{{ loja.nome or 'Doce Encanto — Presentes' }}">
 <meta property="og:description" content="{{ loja.banner1_subtitulo or 'Presentes artesanais preparados com carinho.' }}">
-<meta property="og:image" content="{{ loja.logo or url_for('static', filename='doceencanto/logo.png', _external=True) }}">
-{% if loja.logo %}<link rel="icon" href="{{ loja.logo }}">{% endif %}
+{% if logo_og %}<meta property="og:image" content="{{ logo_og }}">
+<meta property="og:image:alt" content="{{ loja.nome or 'Doce Encanto' }}">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="{{ logo_og }}">
+<link rel="icon" type="image/png" href="{{ logo_fav }}">
+<link rel="apple-touch-icon" href="{{ logo_fav }}">{% endif %}
+{% set ld = {'@context':'https://schema.org','@type':'Organization','name':(loja.nome or 'Doce Encanto'),'url':request.url} %}
+{% if logo_og %}{% set _ = ld.update({'logo':logo_og}) %}{% endif %}
+{% if loja.instagram_url %}{% set _ = ld.update({'sameAs':[loja.instagram_url]}) %}{% endif %}
+<script type="application/ld+json">{{ ld|tojson }}</script>
 <style>
 :root{
   --cream:#fff8f4;
@@ -62,13 +73,13 @@ h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:500;line-height
 .btn:hover{transform:translateY(-2px);background:#b85f58}
 .btn.light{background:#f8d4cc;color:var(--wine);box-shadow:none}
 .btn.ghost{background:transparent;color:var(--wine);box-shadow:none;padding-left:5px}
-.decor-butterfly{position:absolute;opacity:.35;pointer-events:none;font-size:70px;transform:rotate(-8deg)}
 
 /* header (logo centralizado, menu embaixo, NAO fixo) */
 header{position:relative;z-index:50;background:#fffdfb;border-bottom:1px solid rgba(234,209,202,.75)}
 .nav{position:relative;display:flex;flex-direction:column;align-items:center;padding-top:14px}
 .logo-wrap{display:flex;justify-content:center;align-items:center}
 .logo-wrap img{width:170px;height:auto;object-fit:contain}
+.logo-text{font-family:"Brush Script MT","Segoe Script",cursive;font-style:italic;font-size:2.2rem;color:var(--rose-dark);padding:14px 0}
 .nav-bar{display:flex;align-items:center;justify-content:center;gap:34px;padding:10px 0 16px;width:100%}
 .navlinks{display:flex;gap:34px;font-size:.86rem;color:#704039}
 .navlinks a{position:relative}
@@ -81,18 +92,26 @@ header{position:relative;z-index:50;background:#fffdfb;border-bottom:1px solid r
 .hero{background:linear-gradient(105deg,#fff9f6 0%,#fceee9 54%,#f6d6ce 100%)}
 .hero-banner{position:relative}
 .hero-img{display:block;width:100%;height:auto;max-height:700px;object-fit:cover;object-position:right center}
-.hero-overlay{position:absolute;inset:0;display:flex;align-items:center}
-.hero-overlay .container{width:min(var(--max),calc(100% - 40px))}
-.hero-copy{max-width:44%}
-.hero .eyebrow{margin-bottom:10px}
-.hero h1{font-size:clamp(1.9rem,3.9vw,3.9rem);letter-spacing:-.045em}
+.hero-overlay{position:absolute;inset:0;display:flex;align-items:center;padding:0 4% 0 13%}
+.hero-overlay .container{width:100%;max-width:none;margin:0;padding:0}
+.hero-copy{position:relative;isolation:isolate;max-width:min(37vw,560px)}
+/* brilho branco suave atras do texto (desktop) */
+.hero-copy:before{content:"";position:absolute;inset:-34px -44px;z-index:-1;background:radial-gradient(ellipse at center,rgba(255,250,247,.78) 0%,rgba(255,250,247,.5) 45%,rgba(255,250,247,0) 72%);filter:blur(8px)}
+.hero .eyebrow{margin-bottom:10px;text-shadow:0 0 10px rgba(255,255,255,.95)}
+.hero h1{font-size:clamp(1.9rem,3.6vw,3.6rem);letter-spacing:-.045em;text-shadow:0 0 18px rgba(255,255,255,.95),0 0 6px rgba(255,255,255,.9),0 1px 2px rgba(255,255,255,.8)}
 .hero h1 .script{color:var(--rose-dark);font-size:.78em;display:block;margin-top:3px}
-.hero p{max-width:500px;color:#76534d;margin:14px 0 20px;font-size:clamp(.85rem,1.1vw,1rem)}
+.hero p{max-width:500px;color:#6a4640;margin:14px 0 20px;font-size:clamp(.85rem,1.1vw,1rem);text-shadow:0 0 12px rgba(255,255,255,.95),0 0 4px rgba(255,255,255,.85)}
 .hero-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+/* sem imagem no painel */
+.hero-banner.sem-img .hero-overlay{position:static;padding:70px 0;justify-content:center}
+.hero-banner.sem-img .hero-copy{max-width:720px;text-align:center}
+.hero-banner.sem-img .hero-copy:before{display:none}
+.hero-banner.sem-img .hero-actions{justify-content:center}
 
 /* about */
 .about{background:var(--cream)}
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}
+.about-grid.no-img{grid-template-columns:1fr;max-width:760px}
 .about-image{position:relative;min-height:430px;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
 .about-image img{width:100%;height:100%;object-fit:cover;object-position:center}
 .about-copy h2{font-size:clamp(2.4rem,4vw,4rem);max-width:580px}
@@ -111,10 +130,7 @@ header{position:relative;z-index:50;background:#fffdfb;border-bottom:1px solid r
 .product-photo{height:205px;overflow:hidden;background:#f6ded7}
 .product-photo img{width:100%;height:100%;object-fit:cover;transition:.4s}
 .product-card:hover .product-photo img{transform:scale(1.04)}
-.product-card.fallback:nth-child(1) .product-photo img{object-position:center 84%}
-.product-card.fallback:nth-child(2) .product-photo img{object-position:center 25%}
-.product-card.fallback:nth-child(3) .product-photo img{object-position:20% 65%}
-.product-card.fallback:nth-child(4) .product-photo img{object-position:80% 55%}
+.products-empty{text-align:center;color:#80615b;padding:30px 0}
 .product-body{padding:20px 18px 22px;text-align:center}
 .product-body h3{font-size:1.25rem}
 .product-body p{font-size:.82rem;color:#80615b;min-height:48px;margin:8px 0 15px}
@@ -123,10 +139,9 @@ header{position:relative;z-index:50;background:#fffdfb;border-bottom:1px solid r
 /* universe */
 .universe{background:#fcefe9}
 .universe-grid{display:grid;grid-template-columns:1.05fr 1fr 1fr;gap:28px;align-items:center}
-.gallery{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.gallery .big{grid-column:1/-1;height:240px}
-.gallery .small{height:130px}
-.gallery img{width:100%;height:100%;object-fit:cover;border-radius:15px}
+.universe-grid.no-gallery{grid-template-columns:1fr 1fr}
+.gallery{display:grid;grid-template-columns:1fr;gap:12px}
+.gallery img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:15px;display:block}
 .universe-copy h2{font-size:clamp(2.2rem,3.5vw,3.6rem)}
 .universe-copy p{color:#76534d;margin:18px 0 24px}
 .points{display:grid;gap:15px}
@@ -142,13 +157,12 @@ header{position:relative;z-index:50;background:#fffdfb;border-bottom:1px solid r
 
 /* CTA */
 .cta{position:relative;overflow:hidden;background:linear-gradient(105deg,#f4c7bd,#e99a90)}
-.cta:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 13% 80%,rgba(255,255,255,.48),transparent 25%),radial-gradient(circle at 88% 25%,rgba(255,255,255,.30),transparent 22%)}
+.cta.has-img{background:linear-gradient(105deg,rgba(246,205,195,.80),rgba(234,158,148,.78)),var(--cta-bg) center/cover no-repeat}
+.cta:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 13% 80%,rgba(255,255,255,.40),transparent 25%),radial-gradient(circle at 88% 25%,rgba(255,255,255,.25),transparent 22%)}
 .cta-inner{position:relative;text-align:center;max-width:760px;margin:auto;color:#54251f}
 .cta h2{font-size:clamp(2.8rem,5vw,4.7rem)}
-.cta p{max-width:540px;margin:18px auto 26px;color:#6b3c35}
+.cta p{max-width:540px;margin:18px auto 26px;color:#5e2f29}
 .cta .btn{background:#6b332c}
-.cta-butterfly{position:absolute;left:3%;bottom:-20px;font-size:120px;opacity:.22;transform:rotate(-18deg)}
-.cta-butterfly.right{left:auto;right:3%;top:-20px;bottom:auto;transform:rotate(18deg)}
 
 /* footer */
 footer{background:#fffaf7;border-top:1px solid var(--line);padding:34px 0 20px}
@@ -162,10 +176,15 @@ footer p,footer a{font-size:.8rem;color:#80615b}
 /* responsive */
 @media(max-width:1080px){
   .hero-banner{display:flex;flex-direction:column}
-  .hero-overlay{position:static;order:-1;display:block}
-  .hero-copy{max-width:none;text-align:center;padding:40px 0 28px}
+  /* texto em cima: foto do banner ampliada ao fundo + sombra rosa por cima */
+  .hero-overlay{position:relative;order:-1;display:block;overflow:hidden;padding:0;isolation:isolate}
+  .hero-overlay:before{content:"";position:absolute;inset:0;z-index:-2;background:var(--banner,none) 72% center/cover no-repeat;transform:scale(1.4)}
+  .hero-overlay:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(250,224,217,.90) 0%,rgba(248,210,201,.84) 100%)}
+  .hero-overlay .container{width:min(var(--max),calc(100% - 28px));margin:auto}
+  .hero-copy{max-width:none;text-align:center;padding:44px 0 34px}
+  .hero-copy:before{display:none}
   .hero h1{font-size:clamp(2.4rem,9vw,3.8rem)}
-  .hero p{margin:16px auto 22px;font-size:.96rem}
+  .hero p{margin:16px auto 22px;font-size:.96rem;color:#5e3a34}
   .hero-actions{justify-content:center}
   .hero-img{aspect-ratio:2/1;max-height:none}
 }
@@ -198,12 +217,10 @@ footer p,footer a{font-size:.8rem;color:#80615b}
   .product-body h3{font-size:1.05rem}
   .product-body p{font-size:.74rem;min-height:55px}
   .universe-grid{grid-template-columns:1fr;gap:28px}
-  .gallery .big{height:210px}
-  .gallery .small{height:105px}
   .insta{border-top:1px solid var(--line);padding-top:25px}
   .insta-grid img{height:120px}
+  .universe-grid.no-gallery{grid-template-columns:1fr}
   .cta{padding:72px 0}
-  .cta-butterfly{font-size:85px}
   .footer-grid{grid-template-columns:1fr;gap:22px}
   .footer-social{text-align:left}
 }
@@ -220,13 +237,13 @@ footer p,footer a{font-size:.8rem;color:#80615b}
 <header>
   <div class="container nav">
     <a class="logo-wrap" href="#inicio" aria-label="{{ loja.nome or 'Doce Encanto' }}">
-      <img src="{{ loja.logo or url_for('static', filename='doceencanto/logo.png') }}" alt="{{ loja.nome or 'Doce Encanto' }}">
+      {% if loja.logo %}<img src="{{ loja.logo }}" alt="{{ loja.nome or 'Doce Encanto' }}">{% else %}<span class="logo-text">{{ loja.nome or 'Doce Encanto' }}</span>{% endif %}
     </a>
     <button class="menu-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
     <div class="nav-bar" id="navbar">
       <nav class="navlinks" id="navlinks">
         <a class="active" href="#inicio">Início</a>
-        <a href="#sobre">Sobre</a>
+        {% if not loja.ocultar_sobre %}<a href="#sobre">{{ loja.titulo_menu_sobre or 'Sobre' }}</a>{% endif %}
         <a href="#produtos">Produtos</a>
         <a href="#universo">Instagram</a>
       </nav>
@@ -236,9 +253,9 @@ footer p,footer a{font-size:.8rem;color:#80615b}
 </header>
 
 <main>
-<section class="hero" id="inicio">
-  <div class="hero-banner">
-    <img class="hero-img" src="{{ loja.banner1 or url_for('static', filename='doceencanto/colagem.png') }}" alt="{{ loja.nome or 'Doce Encanto' }}">
+<section class="hero" id="inicio"{% if loja.banner1 %} style="--banner:url('{{ loja.banner1 }}')"{% endif %}>
+  <div class="hero-banner{% if not loja.banner1 %} sem-img{% endif %}">
+    {% if loja.banner1 %}<img class="hero-img" src="{{ loja.banner1 }}" alt="{{ loja.nome or 'Doce Encanto' }}">{% endif %}
     <div class="hero-overlay">
       <div class="container">
         <div class="hero-copy">
@@ -260,11 +277,14 @@ footer p,footer a{font-size:.8rem;color:#80615b}
   </div>
 </section>
 
+{% if not loja.ocultar_sobre %}
 <section class="section about" id="sobre">
-  <div class="container about-grid">
+  <div class="container about-grid{% if not loja.sobre_imagem_url %} no-img{% endif %}">
+    {% if loja.sobre_imagem_url %}
     <div class="about-image">
-      <img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Universo visual da Doce Encanto">
+      <img src="{{ loja.sobre_imagem_url }}" alt="{{ loja.nome or 'Doce Encanto' }}">
     </div>
+    {% endif %}
     <div class="about-copy">
       <div class="eyebrow">Sobre a Doce Encanto</div>
       {% set s_partes = (loja.sobre_titulo or '').split('|') %}
@@ -284,6 +304,7 @@ footer p,footer a{font-size:.8rem;color:#80615b}
     </div>
   </div>
 </section>
+{% endif %}
 
 <section class="section products" id="produtos">
   <div class="container">
@@ -303,6 +324,16 @@ footer p,footer a{font-size:.8rem;color:#80615b}
         {% if (p.categoria_id|string) == (ns_prod.cat_id|string) %}{% set _ = lista_produtos.append(p) %}{% endif %}
       {% endfor %}
     {% endif %}
+    {% set ns_fotos = namespace(cat_id=None) %}
+    {% for cat in categorias %}
+      {% if cat.nome and cat.nome|trim|lower == 'fotos do site' %}{% set ns_fotos.cat_id = cat.id %}{% endif %}
+    {% endfor %}
+    {% set fotos_site = [] %}
+    {% if ns_fotos.cat_id %}
+      {% for p in produtos %}
+        {% if (p.categoria_id|string) == (ns_fotos.cat_id|string) and p.imagem %}{% set _ = fotos_site.append(p) %}{% endif %}
+      {% endfor %}
+    {% endif %}
     <div class="product-grid">
     {% if lista_produtos %}
       {% for p in lista_produtos %}
@@ -312,36 +343,20 @@ footer p,footer a{font-size:.8rem;color:#80615b}
       </article>
       {% endfor %}
     {% else %}
-
-      <article class="product-card fallback">
-        <div class="product-photo"><img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Kits Presente"></div>
-        <div class="product-body"><h3>Kits Presente</h3><p>Presentes preparados para surpreender.</p><a href="#contato">Ver detalhes →</a></div>
-      </article>
-      <article class="product-card fallback">
-        <div class="product-photo"><img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Oratórios Artesanais"></div>
-        <div class="product-body"><h3>Oratórios Artesanais</h3><p>Detalhes feitos para momentos especiais.</p><a href="#contato">Ver detalhes →</a></div>
-      </article>
-      <article class="product-card fallback">
-        <div class="product-photo"><img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Sabonetes Artesanais"></div>
-        <div class="product-body"><h3>Sabonetes Artesanais</h3><p>Cuidado, delicadeza e perfume.</p><a href="#contato">Ver detalhes →</a></div>
-      </article>
-      <article class="product-card fallback">
-        <div class="product-photo"><img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Aromas e Lembranças"></div>
-        <div class="product-body"><h3>Aromas &amp; Lembranças</h3><p>Pequenos detalhes que fazem diferença.</p><a href="#contato">Ver detalhes →</a></div>
-      </article>
-    
+      <p class="products-empty" style="grid-column:1/-1">Em breve, novos encantos por aqui ♡</p>
     {% endif %}
     </div>
   </div>
 </section>
 
 <section class="section universe" id="universo">
-  <div class="container universe-grid">
+  <div class="container universe-grid{% if not (loja.bannermenor1 or loja.bannermenor2) %} no-gallery{% endif %}">
+    {% if loja.bannermenor1 or loja.bannermenor2 %}
     <div class="gallery">
-      <img class="big" src="{{ url_for('static', filename='doceencanto/galeria.png') }}" alt="Doce Encanto — presentes e detalhes">
-      <img class="small" src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Detalhes Doce Encanto">
-      <img class="small" src="{{ url_for('static', filename='doceencanto/logo.png') }}" alt="Identidade Doce Encanto">
+      {% if loja.bannermenor1 %}<img src="{{ loja.bannermenor1 }}" alt="{{ loja.nome or 'Doce Encanto' }}" loading="lazy">{% endif %}
+      {% if loja.bannermenor2 %}<img src="{{ loja.bannermenor2 }}" alt="{{ loja.nome or 'Doce Encanto' }}" loading="lazy">{% endif %}
     </div>
+    {% endif %}
     <div class="universe-copy">
       <div class="eyebrow">Um pouco do nosso universo</div>
       <h2>Detalhes que <span class="script">fazem bem.</span></h2>
@@ -355,26 +370,25 @@ footer p,footer a{font-size:.8rem;color:#80615b}
       <div class="eyebrow">Siga a Doce Encanto</div>
       <h3>@doceencanto</h3>
       <div class="insta-handle">Um pouco mais do nosso universo ♡</div>
+      {% if fotos_site %}
       <div class="insta-grid">
-        <img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Instagram Doce Encanto 1">
-        <img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Instagram Doce Encanto 2">
-        <img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Instagram Doce Encanto 3">
-        <img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Instagram Doce Encanto 4">
+        {% for f in fotos_site[:4] %}<img src="{{ f.imagem }}" alt="{{ f.nome }}" loading="lazy">{% endfor %}
       </div>
       <br>
-      <a class="btn light" href="#" onclick="return false;">Seguir no Instagram →</a>
+      {% endif %}
+      <a class="btn light" href="{{ loja.instagram_url or '#' }}"{% if loja.instagram_url %} target="_blank" rel="noopener"{% endif %}>Seguir no Instagram →</a>
     </div>
   </div>
 </section>
 
-<section class="section cta" id="contato">
-  <div class="cta-butterfly">🦋</div>
-  <div class="cta-butterfly right">🦋</div>
+{% set wa = (loja.whatsapp_comercial or '')|replace('(','')|replace(')','')|replace(' ','')|replace('-','')|replace('+','') %}
+{% if wa and wa|length <= 11 %}{% set wa = '55' ~ wa %}{% endif %}
+<section class="section cta{% if loja.banner2 %} has-img{% endif %}" id="contato"{% if loja.banner2 %} style="--cta-bg:url('{{ loja.banner2 }}')"{% endif %}>
   <div class="container cta-inner">
     <div class="eyebrow">Um detalhe especial está esperando por você</div>
     <h2>Seu próximo presente pode começar aqui.</h2>
     <p>Escolha um detalhe especial e transforme carinho em uma lembrança.</p>
-    <a class="btn" href="https://wa.me/5500000000000" target="_blank" rel="noopener">◉ Fale conosco pelo WhatsApp</a>
+    <a class="btn" href="https://wa.me/{{ wa or '5500000000000' }}" target="_blank" rel="noopener">◉ Fale conosco pelo WhatsApp</a>
   </div>
 </section>
 </main>
@@ -383,18 +397,18 @@ footer p,footer a{font-size:.8rem;color:#80615b}
   <div class="container">
     <div class="footer-grid">
       <div>
-        <img class="footer-logo" src="{{ loja.logo or url_for('static', filename='doceencanto/logo.png') }}" alt="{{ loja.nome or 'Doce Encanto' }}">
+        {% if loja.logo %}<img class="footer-logo" src="{{ loja.logo }}" alt="{{ loja.nome or 'Doce Encanto' }}">{% else %}<span class="logo-text">{{ loja.nome or 'Doce Encanto' }}</span>{% endif %}
         <p style="margin-top:8px">Presentes • Artesanato • Carinho</p>
       </div>
       <div>
         <p style="font-weight:800;color:#5a2a25;margin-bottom:12px">Navegação</p>
         <div class="footer-links">
-          <a href="#inicio">Início</a><a href="#sobre">Sobre</a><a href="#produtos">Produtos</a><a href="#universo">Instagram</a>
+          <a href="#inicio">Início</a>{% if not loja.ocultar_sobre %}<a href="#sobre">{{ loja.titulo_menu_sobre or 'Sobre' }}</a>{% endif %}<a href="#produtos">Produtos</a><a href="#universo">Instagram</a>
         </div>
       </div>
       <div class="footer-social">
         <p style="font-weight:800;color:#5a2a25;margin-bottom:8px">Vamos conversar?</p>
-        <a href="#contato">WhatsApp</a> &nbsp;·&nbsp; <a href="#" onclick="return false;">Instagram</a>
+        <a href="#contato">WhatsApp</a> &nbsp;·&nbsp; <a href="{{ loja.instagram_url or '#' }}"{% if loja.instagram_url %} target="_blank" rel="noopener"{% endif %}>Instagram</a>
       </div>
     </div>
     <div class="footer-bottom">© 2026 Doce Encanto. Todos os direitos reservados.</div>
