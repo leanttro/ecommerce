@@ -1,523 +1,392 @@
-<!DOCTYPE html>
+{#
+  TEMPLATE: doceencanto.html  (slug "doceencanto")
+  DINAMICO (vem do painel; se vazio, usa o texto/imagem padrao abaixo):
+   - loja.logo                -> logo do header, footer, favicon e og:image
+   - loja.banner1             -> imagem do banner principal (hero)
+   - loja.banner1_titulo      -> titulo do hero (use "|" para separar a parte em script: "Pequenos detalhes|grandes emocoes.")
+   - loja.banner1_subtitulo   -> texto do hero
+   - loja.banner1_botao       -> texto do botao principal
+   - loja.sobre_titulo        -> titulo da secao Sobre (mesmo padrao do "|")
+   - loja.sobre_texto         -> texto do Sobre (cada linha vira um paragrafo)
+   - loja.nome                -> <title>, alt das imagens
+  Imagens de fallback: /static/doceencanto/{logo,colagem,galeria}.png
+#}
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{ loja.nome }} | Produtora Audiovisual</title>
-<meta name="description" content="{{ loja.sobre_texto or (loja.nome ~ ' — produtora audiovisual.') }}">
-
-<!-- ══ OPEN GRAPH ══ -->
-<meta property="og:title" content="{{ loja.nome }}">
-<meta property="og:description" content="{{ loja.sobre_texto or '' }}">
-{% if loja.logo %}<meta property="og:image" content="{{ loja.logo }}">{% endif %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ loja.nome or 'Doce Encanto — Presentes' }}</title>
+<meta name="description" content="{{ loja.sobre_texto[:160] if loja.sobre_texto else 'Doce Encanto — presentes artesanais, kits, oratórios, sabonetes e aromas preparados com carinho.' }}">
 <meta property="og:type" content="website">
-
-<!-- ══ SCHEMA.ORG ══ -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "MovieTheater",
-  "name": "{{ loja.nome }}",
-  "description": "{{ loja.sobre_texto or '' }}"
-}
-</script>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-
+<meta property="og:title" content="{{ loja.nome or 'Doce Encanto — Presentes' }}">
+<meta property="og:description" content="{{ loja.banner1_subtitulo or 'Presentes artesanais preparados com carinho.' }}">
+<meta property="og:image" content="{{ loja.logo or url_for('static', filename='doceencanto/logo.png', _external=True) }}">
+{% if loja.logo %}<link rel="icon" href="{{ loja.logo }}">{% endif %}
 <style>
 :root{
-  --bg: {{ loja.cor_fundo or '#16120F' }};
-  --ink: {{ loja.cor_texto or '#F1ECE0' }};
-  --tape: {{ loja.cor_primaria or '#C1272D' }};
-  --olive: #6E7350;
-  --card: #221C16;
-  --line: rgba(241,236,224,0.14);
-  --ink-dim: rgba(241,236,224,0.62);
-  --f-title: 'Montserrat', sans-serif;
-  --f-body: 'Work Sans', sans-serif;
-  --f-mono: 'IBM Plex Mono', monospace;
+  --cream:#fff8f4;
+  --cream-2:#fdf0eb;
+  --rose:#e89b91;
+  --rose-dark:#c96f67;
+  --wine:#5a2a25;
+  --brown:#704039;
+  --line:#ead1ca;
+  --white:#fffdfb;
+  --shadow:0 18px 50px rgba(91,42,37,.10);
+  --radius:22px;
+  --max:1180px;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 body{
-  background:var(--bg); color:var(--ink); font-family:var(--f-body);
-  overflow-x:hidden; -webkit-font-smoothing:antialiased;
+  font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--wine); background:var(--cream); line-height:1.55;
 }
-img{max-width:100%; display:block;}
-a{color:inherit; text-decoration:none;}
-.wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.container{width:min(var(--max),calc(100% - 40px));margin:auto}
+.section{padding:92px 0}
 .eyebrow{
-  font-family:var(--f-mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
-  color:var(--tape); display:flex; align-items:center; gap:10px; margin-bottom:18px;
+  font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--rose-dark);font-weight:700;margin-bottom:14px
 }
-.eyebrow::before{content:''; width:20px; height:1px; background:var(--tape);}
-h1,h2,h3{font-family:var(--f-title); font-weight:600; line-height:1.05; letter-spacing:-0.01em;}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:500;line-height:1.04}
+.script{font-family:"Brush Script MT","Segoe Script",cursive;font-style:italic;font-weight:400}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:13px 21px;border-radius:999px;background:var(--rose-dark);color:white;
+  font-weight:700;font-size:.88rem;transition:.25s;box-shadow:0 8px 22px rgba(201,111,103,.18)
+}
+.btn:hover{transform:translateY(-2px);background:#b85f58}
+.btn.light{background:#f8d4cc;color:var(--wine);box-shadow:none}
+.btn.ghost{background:transparent;color:var(--wine);box-shadow:none;padding-left:5px}
+.decor-butterfly{position:absolute;opacity:.35;pointer-events:none;font-size:70px;transform:rotate(-8deg)}
 
-/* film perforation rail */
-.reel-rail{
-  position:fixed; top:0; left:0; width:26px; height:100vh; z-index:40; pointer-events:none;
-  display:flex; flex-direction:column; align-items:center; justify-content:space-evenly;
-  background:linear-gradient(180deg, transparent, rgba(0,0,0,0.25), transparent);
+/* header */
+header{
+  position:sticky;top:0;z-index:50;background:rgba(255,253,251,.94);
+  backdrop-filter:blur(14px);border-bottom:1px solid rgba(234,209,202,.75)
 }
-.reel-rail span{width:8px; height:8px; border-radius:2px; background:var(--ink); opacity:0.18;}
-@media(max-width:860px){.reel-rail{display:none;}}
-
-/* loader */
-#loader{
-  position:fixed; inset:0; background:var(--bg); z-index:9999;
-  display:flex; align-items:center; justify-content:center;
-  transition:opacity .6s ease, visibility .6s ease;
-}
-#loader.hide{opacity:0; visibility:hidden;}
-.loader-mark{font-family:var(--f-mono); font-size:13px; letter-spacing:.2em; color:var(--tape);}
-
-/* nav */
-header.topbar{
-  position:fixed; top:0; left:0; right:0; z-index:50; padding:22px 0;
-  display:flex; justify-content:center;
-  background:linear-gradient(180deg, rgba(22,18,15,0.9), transparent);
-}
-.topbar .wrap{display:flex; align-items:center; justify-content:space-between;}
-.brand{display:flex; align-items:center; gap:10px; font-family:var(--f-title); font-weight:600; font-size:20px;}
-.brand img{height:34px; width:auto;}
-.menu-btn{
-  font-family:var(--f-mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase;
-  border:1px solid var(--line); padding:9px 16px; border-radius:2px; cursor:pointer; background:transparent; color:var(--ink);
-  display:flex; align-items:center; gap:8px;
-}
-.menu-btn:hover{border-color:var(--tape); color:var(--tape);}
-
-#nav-overlay{
-  position:fixed; inset:0; z-index:60; background:var(--bg);
-  display:flex; flex-direction:column; justify-content:center; padding:0 32px;
-  transform:translateY(-100%); transition:transform .55s cubic-bezier(.16,1,.3,1);
-}
-#nav-overlay.open{transform:translateY(0);}
-#nav-overlay a{
-  font-family:var(--f-title); font-size:clamp(32px,7vw,64px); font-weight:600; padding:10px 0;
-  border-bottom:1px solid var(--line); width:fit-content;
-}
-#nav-overlay a:hover{color:var(--tape);}
-.nav-close{
-  position:absolute; top:26px; right:32px; font-family:var(--f-mono); font-size:12px;
-  letter-spacing:.12em; cursor:pointer; border:1px solid var(--line); padding:9px 16px; border-radius:2px;
-}
+.nav{height:76px;display:flex;align-items:center;justify-content:space-between;gap:28px}
+.logo-wrap{display:flex;align-items:center;gap:11px;min-width:230px}
+.logo-wrap img{width:190px;height:auto;object-fit:contain}
+.navlinks{display:flex;gap:34px;font-size:.86rem;color:#704039}
+.navlinks a{position:relative}
+.navlinks a:after{content:"";position:absolute;left:0;bottom:-8px;width:0;height:1.5px;background:var(--rose-dark);transition:.25s}
+.navlinks a:hover:after,.navlinks a.active:after{width:100%}
+.menu-btn{display:none;border:0;background:none;font-size:25px;color:var(--wine);cursor:pointer}
 
 /* hero */
-.hero{
-  min-height:100vh; display:flex; flex-direction:column; justify-content:flex-end;
-  position:relative; overflow:hidden; padding:160px 0 70px;
-  background-image:
-    radial-gradient(ellipse at top right, rgba(193,39,45,0.14), transparent 55%);
+.hero{position:relative;overflow:hidden;background:linear-gradient(105deg,#fff9f6 0%,#fceee9 54%,#f6d6ce 100%)}
+.hero:before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 76% 35%,rgba(255,255,255,.8),transparent 32%),
+             radial-gradient(circle at 15% 100%,rgba(239,179,167,.18),transparent 34%);
 }
-.hero-bg{position:absolute; inset:0; z-index:0; overflow:hidden; background:#000;}
-.hero-bg-media{position:absolute; top:50%; left:50%; width:100%; height:100%; min-width:100%; min-height:100%; transform:translate(-50%,-50%); object-fit:cover; border:0; pointer-events:none;}
-.hero-bg-overlay{
-  position:absolute; inset:0; z-index:1;
-  background:linear-gradient(180deg, rgba(22,18,15,0.45) 0%, rgba(22,18,15,0.6) 55%, var(--bg) 97%);
+.hero-inner{min-height:570px;display:grid;grid-template-columns:1fr 1.06fr;align-items:center;position:relative;z-index:1}
+.hero-copy{padding:65px 0}
+.hero h1{font-size:clamp(3rem,5.5vw,5.25rem);max-width:650px;letter-spacing:-.045em}
+.hero h1 .script{color:var(--rose-dark);font-size:.78em;display:block;margin-top:3px}
+.hero p{max-width:500px;color:#76534d;margin:24px 0 30px;font-size:1rem}
+.hero-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.hero-visual{height:570px;position:relative;overflow:hidden}
+.hero-visual:before{
+  content:"";position:absolute;inset:0;
+  background-image:url('{{ loja.banner1 or url_for('static', filename='doceencanto/colagem.png') }}');
+  background-size:cover;background-position:center 30%;
+  filter:saturate(.92);
 }
-.hero .wrap{width:100%; position:relative; z-index:2;}
-.hero h1{font-size:clamp(40px,7vw,104px); max-width:900px;}
-.hero p.lede{font-size:18px; color:var(--ink-dim); max-width:480px; margin-top:22px; line-height:1.6;}
-@media(max-width:860px){
-  .hero{min-height:auto; padding:140px 0 0 0; justify-content:flex-start;}
-  .hero-bg{position:relative; inset:auto; height:50vh; order:2;}
-  .hero .wrap{order:1; padding-bottom:40px;}
-}
+.hero-visual:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#fceee9 0%,transparent 34%)}
+.hero-tag{position:absolute;z-index:2;right:32px;bottom:34px;background:rgba(255,253,251,.88);padding:13px 17px;border-radius:16px;box-shadow:var(--shadow);font-family:Georgia,serif;font-size:1.05rem}
 
-/* clients marquee */
-.clients{padding:50px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); overflow:hidden;}
-.clients-track{display:flex; gap:70px; width:max-content; animation:scroll 32s linear infinite;}
-.clients-track img{height:26px; width:auto; opacity:.55; filter:grayscale(1) brightness(2);}
-@keyframes scroll{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+/* about */
+.about{background:var(--cream)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}
+.about-image{position:relative;min-height:430px;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.about-image img{width:100%;height:100%;object-fit:cover;object-position:center}
+.about-copy h2{font-size:clamp(2.4rem,4vw,4rem);max-width:580px}
+.about-copy h2 .script{color:var(--rose-dark)}
+.about-copy p{color:#76534d;max-width:560px;margin:22px 0 28px}
+.about-note{margin-top:28px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-family:Georgia,serif;font-size:1.02rem;color:#704039}
 
-/* section shell */
-section.block{padding:120px 0;}
-.block-head{display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:56px; flex-wrap:wrap;}
-.block-head h2{font-size:clamp(30px,4vw,48px);}
+/* products */
+.products{background:#fffdfb}
+.products-head{text-align:center;max-width:650px;margin:0 auto 42px}
+.products-head h2{font-size:clamp(2.4rem,4vw,4rem)}
+.products-head p{color:#80615b;margin-top:14px}
+.product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.product-card{background:var(--white);border:1px solid var(--line);border-radius:20px;overflow:hidden;transition:.25s}
+.product-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.product-photo{height:205px;overflow:hidden;background:#f6ded7}
+.product-photo img{width:100%;height:100%;object-fit:cover;transition:.4s}
+.product-card:hover .product-photo img{transform:scale(1.04)}
+.product-card:nth-child(1) .product-photo img{object-position:center 84%}
+.product-card:nth-child(2) .product-photo img{object-position:center 25%}
+.product-card:nth-child(3) .product-photo img{object-position:20% 65%}
+.product-card:nth-child(4) .product-photo img{object-position:80% 55%}
+.product-body{padding:20px 18px 22px;text-align:center}
+.product-body h3{font-size:1.25rem}
+.product-body p{font-size:.82rem;color:#80615b;min-height:48px;margin:8px 0 15px}
+.product-body a{font-size:.78rem;font-weight:800;color:var(--rose-dark)}
 
-/* quem somos */
-#quemsomos{border-top:1px solid var(--line);}
-.qs-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:70px; align-items:center;}
-.qs-text p{font-size:17px; line-height:1.75; color:var(--ink-dim); white-space:pre-line;}
-.qs-photos{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
-.qs-photos .ph1{grid-column:1/-1; aspect-ratio:16/10; overflow:hidden; border-radius:2px;}
-.qs-photos .ph2,.qs-photos .ph3{aspect-ratio:1/1; overflow:hidden; border-radius:2px;}
-.qs-photos img{width:100%; height:100%; object-fit:cover;}
-@media(max-width:860px){.qs-grid{grid-template-columns:1fr;}}
+/* universe */
+.universe{background:#fcefe9}
+.universe-grid{display:grid;grid-template-columns:1.05fr 1fr 1fr;gap:28px;align-items:center}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gallery .big{grid-column:1/-1;height:240px}
+.gallery .small{height:130px}
+.gallery img{width:100%;height:100%;object-fit:cover;border-radius:15px}
+.universe-copy h2{font-size:clamp(2.2rem,3.5vw,3.6rem)}
+.universe-copy p{color:#76534d;margin:18px 0 24px}
+.points{display:grid;gap:15px}
+.point{display:flex;gap:13px;align-items:flex-start}
+.point-icon{width:38px;height:38px;flex:none;border:1px solid #d78a80;border-radius:50%;display:grid;place-items:center;color:#c96f67;font-size:17px}
+.point strong{display:block;font-size:.92rem}
+.point span{display:block;color:#80615b;font-size:.78rem;margin-top:2px}
+.insta{border-left:1px solid var(--line);padding-left:28px}
+.insta h3{font-size:1.7rem}
+.insta-handle{color:var(--rose-dark);font-size:.85rem;margin:4px 0 15px}
+.insta-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.insta-grid img{height:105px;width:100%;object-fit:cover;border-radius:11px}
 
-/* portfolio */
-#trabalhos{border-top:1px solid var(--line);}
-.filters{display:flex; gap:10px; flex-wrap:wrap;}
-.filter-btn{
-  font-family:var(--f-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase;
-  padding:9px 16px; border:1px solid var(--line); border-radius:2px; cursor:pointer; background:transparent; color:var(--ink-dim);
-}
-.filter-btn.active,.filter-btn:hover{border-color:var(--tape); color:var(--tape);}
-.grid-work{display:grid; grid-template-columns:repeat(2,1fr); gap:3px;}
-.work-card{position:relative; aspect-ratio:4/3; overflow:hidden; cursor:pointer; background:#111;}
-.work-card img{width:100%; height:100%; object-fit:cover; transition:transform .6s ease, opacity .4s ease;}
-.work-card:hover img{transform:scale(1.05); opacity:.55;}
-.work-thumb-fallback{
-  position:absolute; inset:0; background:#141210 center/cover no-repeat;
-  transition:transform .6s ease, opacity .4s ease;
-}
-.work-card:hover .work-thumb-fallback{transform:scale(1.05); opacity:.55;}
-.play-badge{
-  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:54px; height:54px; border-radius:50%; z-index:2; pointer-events:none;
-  background:rgba(22,18,15,0.55); border:1px solid rgba(241,236,224,0.55);
-  display:flex; align-items:center; justify-content:center;
-  transition:transform .3s ease, border-color .3s ease;
-}
-.play-badge svg{width:16px; height:16px; margin-left:3px; fill:var(--ink);}
-.work-card:hover .play-badge{transform:translate(-50%,-50%) scale(1.12); border-color:var(--tape);}
-.work-info{position:absolute; left:0; right:0; bottom:0; padding:22px; background:linear-gradient(0deg, rgba(0,0,0,0.85), transparent); z-index:2;}
-.work-info .yr{font-family:var(--f-mono); font-size:11px; color:var(--tape); letter-spacing:.1em;}
-.work-info h3{font-size:20px; margin-top:6px;}
-.work-info .tag{font-size:13px; color:var(--ink-dim); margin-top:2px;}
-@media(max-width:700px){.grid-work{grid-template-columns:1fr;}}
+/* CTA */
+.cta{position:relative;overflow:hidden;background:linear-gradient(105deg,#f4c7bd,#e99a90)}
+.cta:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 13% 80%,rgba(255,255,255,.48),transparent 25%),radial-gradient(circle at 88% 25%,rgba(255,255,255,.30),transparent 22%)}
+.cta-inner{position:relative;text-align:center;max-width:760px;margin:auto;color:#54251f}
+.cta h2{font-size:clamp(2.8rem,5vw,4.7rem)}
+.cta p{max-width:540px;margin:18px auto 26px;color:#6b3c35}
+.cta .btn{background:#6b332c}
+.cta-butterfly{position:absolute;left:3%;bottom:-20px;font-size:120px;opacity:.22;transform:rotate(-18deg)}
+.cta-butterfly.right{left:auto;right:3%;top:-20px;bottom:auto;transform:rotate(18deg)}
 
-/* servicos */
-#servicos{border-top:1px solid var(--line);}
-.serv-list{border-top:1px solid var(--line);}
-.serv-row{
-  display:grid; grid-template-columns:70px 1fr; gap:24px; padding:32px 0; border-bottom:1px solid var(--line);
-}
-.serv-row .num{font-family:var(--f-mono); color:var(--tape); font-size:14px; padding-top:4px;}
-.serv-row h3{font-size:24px; margin-bottom:8px;}
-.serv-row p{color:var(--ink-dim); font-size:15px; line-height:1.65; max-width:640px;}
+/* footer */
+footer{background:#fffaf7;border-top:1px solid var(--line);padding:34px 0 20px}
+.footer-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:30px;align-items:start}
+.footer-logo{width:190px}
+footer p,footer a{font-size:.8rem;color:#80615b}
+.footer-links{display:flex;gap:18px;flex-wrap:wrap}
+.footer-social{text-align:right}
+.footer-bottom{border-top:1px solid var(--line);margin-top:28px;padding-top:15px;text-align:center;font-size:.72rem;color:#9b7b75}
 
-/* video modal */
-.video-modal{
-  position:fixed; inset:0; z-index:70; background:rgba(0,0,0,.92); display:none;
-  align-items:center; justify-content:center; padding:24px;
+/* responsive */
+@media(max-width:980px){
+  .navlinks{gap:20px}
+  .hero-inner{grid-template-columns:1fr}
+  .hero-copy{padding:62px 0 35px}
+  .hero-visual{height:420px}
+  .hero-visual:after{background:linear-gradient(180deg,#fceee9 0%,transparent 35%)}
+  .about-grid{gap:38px}
+  .product-grid{grid-template-columns:repeat(2,1fr)}
+  .universe-grid{grid-template-columns:1fr 1fr}
+  .insta{border-left:0;padding-left:0}
 }
-.video-modal.open{display:flex;}
-.video-modal .box{width:100%; max-width:960px; aspect-ratio:16/9; position:relative;}
-.video-modal iframe{width:100%; height:100%; border:0;}
-.video-close{position:absolute; top:-40px; right:0; font-family:var(--f-mono); font-size:13px; cursor:pointer; color:var(--ink);}
-
-/* contato / footer */
-footer#contato{border-top:1px solid var(--line); padding:120px 0 50px;}
-.cta-line{font-size:clamp(28px,5vw,56px); font-family:var(--f-title); font-weight:600; max-width:760px; margin-bottom:56px;}
-.cf-grid{display:grid; grid-template-columns:1fr 1fr; gap:60px;}
-.cf-form{display:flex; flex-direction:column; gap:20px;}
-.cf-label{font-family:var(--f-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-dim);}
-.cf-input{
-  background:transparent; border:none; border-bottom:1px solid var(--line); color:var(--ink);
-  font-family:var(--f-body); font-size:17px; padding:10px 0; outline:none;
+@media(max-width:720px){
+  .container{width:min(var(--max),calc(100% - 28px))}
+  .section{padding:68px 0}
+  .nav{height:68px}
+  .logo-wrap img{width:160px}
+  .menu-btn{display:block}
+  .navlinks{display:none;position:absolute;top:68px;left:0;right:0;background:#fffdfb;padding:20px 24px 25px;flex-direction:column;gap:17px;border-bottom:1px solid var(--line);box-shadow:0 15px 30px rgba(90,42,37,.08)}
+  .navlinks.open{display:flex}
+  .nav .btn{display:none}
+  .hero-copy{padding:48px 0 28px}
+  .hero h1{font-size:clamp(2.7rem,13vw,4rem)}
+  .hero p{font-size:.93rem}
+  .hero-visual{height:360px;margin:0 -14px}
+  .hero-tag{right:18px;bottom:18px;font-size:.9rem}
+  .about-grid{grid-template-columns:1fr;gap:28px}
+  .about-image{min-height:340px}
+  .about-copy h2{font-size:2.65rem}
+  .product-grid{grid-template-columns:1fr 1fr;gap:12px}
+  .product-photo{height:145px}
+  .product-body{padding:16px 10px 18px}
+  .product-body h3{font-size:1.05rem}
+  .product-body p{font-size:.74rem;min-height:55px}
+  .universe-grid{grid-template-columns:1fr;gap:28px}
+  .gallery .big{height:210px}
+  .gallery .small{height:105px}
+  .insta{border-top:1px solid var(--line);padding-top:25px}
+  .insta-grid img{height:120px}
+  .cta{padding:72px 0}
+  .cta-butterfly{font-size:85px}
+  .footer-grid{grid-template-columns:1fr;gap:22px}
+  .footer-social{text-align:left}
 }
-.cf-input:focus{border-color:var(--tape);}
-.cf-submit{
-  margin-top:16px; align-self:flex-start; font-family:var(--f-mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase;
-  padding:14px 28px; background:var(--tape); color:#1a0d0d; border:none; border-radius:2px; cursor:pointer;
+@media(max-width:430px){
+  .product-grid{grid-template-columns:1fr}
+  .product-photo{height:190px}
+  .hero-actions .btn{width:100%}
+  .hero-actions .btn.ghost{width:auto}
+  .logo-wrap img{width:145px}
 }
-.cf-submit:hover{opacity:.88;}
-.cf-success{display:none; color:var(--tape); font-family:var(--f-mono); font-size:13px; margin-top:12px;}
-.cf-success.show{display:block;}
-.contact-info{font-family:var(--f-mono); font-size:14px; color:var(--ink-dim); line-height:2.2;}
-.contact-info a:hover{color:var(--tape);}
-.foot-bottom{
-  display:flex; justify-content:space-between; margin-top:100px; padding-top:24px; border-top:1px solid var(--line);
-  font-family:var(--f-mono); font-size:11px; color:var(--ink-dim); flex-wrap:wrap; gap:10px;
-}
-@media(max-width:860px){.cf-grid{grid-template-columns:1fr;}}
-
-.fade-in{opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease;}
-.fade-in.visible{opacity:1; transform:translateY(0);}
 </style>
 </head>
 <body>
 
-<div class="reel-rail">
-  {% for i in range(14) %}<span></span>{% endfor %}
-</div>
-
-<div id="loader"><div class="loader-mark">{{ loja.nome or 'CARREGANDO' }} — REC ●</div></div>
-
-<header class="topbar">
-  <div class="wrap">
-    <a href="#hero" class="brand">
-      {% if loja.logo %}<img src="{{ loja.logo }}" alt="{{ loja.nome }}">{% else %}{{ loja.nome }}{% endif %}
+<header>
+  <div class="container nav">
+    <a class="logo-wrap" href="#inicio" aria-label="Doce Encanto">
+      <img src="{{ loja.logo or url_for('static', filename='doceencanto/logo.png') }}" alt="{{ loja.nome or 'Doce Encanto' }}">
     </a>
-    <button class="menu-btn" id="menuOpenBtn"><i>☰</i> Menu</button>
+    <nav class="navlinks" id="navlinks">
+      <a class="active" href="#inicio">Início</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#produtos">Produtos</a>
+      <a href="#universo">Instagram</a>
+    </nav>
+    <a class="btn" href="#contato">♡ Fale conosco</a>
+    <button class="menu-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
   </div>
 </header>
 
-<div id="nav-overlay">
-  <div class="nav-close" id="menuCloseBtn">Fechar ✕</div>
-  <a href="#quemsomos" class="nav-link">Quem Somos</a>
-  <a href="#trabalhos" class="nav-link">Trabalhos</a>
-  <a href="#servicos" class="nav-link">O Que Fazemos</a>
-  <a href="#contato" class="nav-link">Contato</a>
-</div>
-
-{% set ns = namespace(hero_cat_id=None, hero_produto=None) %}
-{% for cat in categorias %}
-  {% if cat.nome and cat.nome.strip()|lower == 'hero' %}
-    {% set ns.hero_cat_id = cat.id %}
-  {% endif %}
-{% endfor %}
-{% set produtos_grid = [] %}
-{% for p in produtos %}
-  {% if ns.hero_cat_id and (p.categoria_id|string) == (ns.hero_cat_id|string) and not ns.hero_produto %}
-    {% set ns.hero_produto = p %}
-  {% else %}
-    {% set _ = produtos_grid.append(p) %}
-  {% endif %}
-{% endfor %}
-{% set video_exts = ('.mp4', '.webm', '.ogg', '.mov') %}
-{% set ns2 = namespace(mp4_url=None, embed_url=None) %}
-{% if ns.hero_produto %}
-  {% set lp = (ns.hero_produto.link_projeto or '')|lower %}
-  {% if ns.hero_produto.link_projeto and lp.endswith(video_exts) %}
-    {% set ns2.mp4_url = ns.hero_produto.link_projeto %}
-  {% elif ns.hero_produto.whatsapp_projeto %}
-    {% set ns2.embed_url = ns.hero_produto.whatsapp_projeto %}
-  {% elif ns.hero_produto.link_projeto %}
-    {% set ns2.embed_url = ns.hero_produto.link_projeto %}
-  {% endif %}
-{% endif %}
-
-<header class="hero" id="hero">
-  {% if ns.hero_produto %}
-  <div class="hero-bg">
-    {% if ns2.mp4_url %}
-    <video class="hero-bg-media" autoplay muted loop playsinline>
-      <source src="{{ ns2.mp4_url }}" type="video/mp4">
-    </video>
-    {% elif ns2.embed_url %}
-    <iframe class="hero-bg-media" src="{{ ns2.embed_url }}{{ '&' if '?' in ns2.embed_url else '?' }}background=1&autoplay=1&loop=1&muted=1&byline=0&title=0&portrait=0" frameborder="0" allow="autoplay; fullscreen"></iframe>
-    {% endif %}
-    <div class="hero-bg-overlay"></div>
-  </div>
-  {% endif %}
-  <div class="wrap">
-    <h1>{{ loja.sobre_titulo or (loja.nome ~ ' conta histórias que precisam ser vistas.') }}</h1>
-    <p class="lede">{{ loja.sobre_texto[:180] if loja.sobre_texto else 'Filmes, séries e projetos que nascem de território, comunidade e talento real.' }}</p>
-  </div>
-</header>
-
-{% if loja.logos_clientes %}
-<section class="clients fade-in">
-  <div class="clients-track">
-    {% for url in loja.logos_clientes.split('\n') %}{% if url.strip() %}<img src="{{ url.strip() }}" alt="parceiro">{% endif %}{% endfor %}
-    {% for url in loja.logos_clientes.split('\n') %}{% if url.strip() %}<img src="{{ url.strip() }}" alt="parceiro">{% endif %}{% endfor %}
-  </div>
-</section>
-{% endif %}
-
-<section class="block fade-in" id="quemsomos">
-  <div class="wrap">
-    <div class="qs-grid">
-      <div class="qs-text">
-        <div class="eyebrow">Quem somos</div>
-        <h2 style="margin-bottom:24px;">{{ loja.sobre_titulo or 'A produtora' }}</h2>
-        <p>{{ loja.sobre_texto or 'Somos uma produtora audiovisual dedicada a transformar histórias reais em filmes e séries de impacto, unindo técnica, território e talento em cada projeto.' }}</p>
-      </div>
-      <div class="qs-photos">
-        {% if loja.banner1 %}<div class="ph1"><img src="{{ loja.banner1 }}" alt="Time"></div>{% endif %}
-        {% if loja.bannermenor1 %}<div class="ph2"><img src="{{ loja.bannermenor1 }}" alt="Direção"></div>{% endif %}
-        {% if loja.bannermenor2 %}<div class="ph3"><img src="{{ loja.bannermenor2 }}" alt="Direção"></div>{% endif %}
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="block" id="trabalhos">
-  <div class="wrap">
-    <div class="block-head">
-      <div>
-        <div class="eyebrow">Trampos em desenvolvimento</div>
-        <h2>Filmes e séries</h2>
-      </div>
-      <div class="filters" id="filterBar">
-        <button class="filter-btn active" data-cat="all">Todos</button>
-        {% for cat in categorias %}
-        {% if not (cat.nome and cat.nome.strip()|lower == 'hero') %}
-        <button class="filter-btn" data-cat="{{ cat.id }}">{{ cat.nome }}</button>
-        {% endif %}
-        {% endfor %}
-      </div>
-    </div>
-
-    <div class="grid-work" id="workGrid">
-      {% for p in produtos_grid %}
-      <div class="work-card" data-cat="{{ p.categoria_id }}" {% if p.whatsapp_projeto %}data-video="{{ p.whatsapp_projeto }}"{% elif p.link_projeto %}data-link="{{ p.link_projeto }}"{% endif %}>
-        {% if p.imagem %}
-        <img src="{{ p.imagem }}" alt="{{ p.nome }}">
-        {% elif p.whatsapp_projeto %}
-        <div class="work-thumb-fallback" data-vimeo-thumb="{{ p.whatsapp_projeto }}"></div>
-        {% endif %}
-        {% if p.whatsapp_projeto %}
-        <div class="play-badge"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-        {% endif %}
-        <div class="work-info">
-          {% if p.estoque %}<div class="yr">{{ p.estoque }}</div>{% endif %}
-          <h3>{{ p.nome }}</h3>
-          {% if p.descricao %}<div class="tag">{{ p.descricao }}</div>{% endif %}
-        </div>
-      </div>
+<main>
+<section class="hero" id="inicio">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <div class="eyebrow">Detalhes que fazem bem</div>
+      {% set h_partes = (loja.banner1_titulo or '').split('|') %}
+      {% if loja.banner1_titulo %}
+      <h1>{{ h_partes[0]|trim }}{% if h_partes|length > 1 %}<span class="script">{{ h_partes[1]|trim }}</span>{% endif %}</h1>
       {% else %}
-      <p style="color:var(--ink-dim); grid-column:1/-1;">Em breve, os primeiros trabalhos entram aqui.</p>
-      {% endfor %}
+      <h1>Pequenos detalhes,<span class="script">grandes emoções.</span></h1>
+      {% endif %}
+      <p>{{ loja.banner1_subtitulo or 'Presentes artesanais preparados com carinho para transformar momentos especiais em lembranças inesquecíveis.' }}</p>
+      <div class="hero-actions">
+        <a class="btn" href="#produtos">{{ loja.banner1_botao or 'Conheça nossos presentes →' }}</a>
+        <a class="btn ghost" href="#contato">♡ Fale conosco</a>
+      </div>
+    </div>
+    <div class="hero-visual" aria-label="Composição visual Doce Encanto">
+      <div class="hero-tag">Sonho Presenteie Encante ♡</div>
     </div>
   </div>
 </section>
 
-{% if posts %}
-<section class="block" id="servicos">
-  <div class="wrap">
-    <div class="block-head">
+<section class="section about" id="sobre">
+  <div class="container about-grid">
+    <div class="about-image">
+      <img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Universo visual da Doce Encanto">
+    </div>
+    <div class="about-copy">
+      <div class="eyebrow">Sobre a Doce Encanto</div>
+      {% set s_partes = (loja.sobre_titulo or '').split('|') %}
+      {% if loja.sobre_titulo %}
+      <h2>{{ s_partes[0]|trim }}{% if s_partes|length > 1 %}<br><span class="script">{{ s_partes[1]|trim }}</span>{% endif %}</h2>
+      {% else %}
+      <h2>Feito para presentear.<br>Criado para <span class="script">emocionar.</span></h2>
+      {% endif %}
+      {% if loja.sobre_texto %}
+      {% for par in loja.sobre_texto.split('\n') %}{% if par.strip() %}<p>{{ par.strip() }}</p>{% endif %}{% endfor %}
+      {% else %}
+      <p>Na Doce Encanto, cada detalhe é pensado para transformar um simples presente em uma lembrança especial.</p>
+      <p>Kits, oratórios, sabonetes artesanais e outros encantos feitos com cuidado para celebrar pessoas, momentos e sentimentos.</p>
+      {% endif %}
+      <a class="btn light" href="#contato">Conheça nosso encanto →</a>
+      <div class="about-note">“Porque alguns presentes continuam presentes mesmo depois do momento.”</div>
+    </div>
+  </div>
+</section>
+
+<section class="section products" id="produtos">
+  <div class="container">
+    <div class="products-head">
+      <div class="eyebrow">Nossos produtos</div>
+      <h2>Encontre o seu encanto <span class="script">♡</span></h2>
+      <p>Detalhes pensados para surpreender, demonstrar carinho e transformar momentos em memórias.</p>
+    </div>
+    <div class="product-grid">
+      <article class="product-card">
+        <div class="product-photo"><img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Kits Presente"></div>
+        <div class="product-body"><h3>Kits Presente</h3><p>Presentes preparados para surpreender.</p><a href="#contato">Ver detalhes →</a></div>
+      </article>
+      <article class="product-card">
+        <div class="product-photo"><img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Oratórios Artesanais"></div>
+        <div class="product-body"><h3>Oratórios Artesanais</h3><p>Detalhes feitos para momentos especiais.</p><a href="#contato">Ver detalhes →</a></div>
+      </article>
+      <article class="product-card">
+        <div class="product-photo"><img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Sabonetes Artesanais"></div>
+        <div class="product-body"><h3>Sabonetes Artesanais</h3><p>Cuidado, delicadeza e perfume.</p><a href="#contato">Ver detalhes →</a></div>
+      </article>
+      <article class="product-card">
+        <div class="product-photo"><img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Aromas e Lembranças"></div>
+        <div class="product-body"><h3>Aromas &amp; Lembranças</h3><p>Pequenos detalhes que fazem diferença.</p><a href="#contato">Ver detalhes →</a></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section universe" id="universo">
+  <div class="container universe-grid">
+    <div class="gallery">
+      <img class="big" src="{{ url_for('static', filename='doceencanto/galeria.png') }}" alt="Doce Encanto — presentes e detalhes">
+      <img class="small" src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Detalhes Doce Encanto">
+      <img class="small" src="{{ url_for('static', filename='doceencanto/logo.png') }}" alt="Identidade Doce Encanto">
+    </div>
+    <div class="universe-copy">
+      <div class="eyebrow">Um pouco do nosso universo</div>
+      <h2>Detalhes que <span class="script">fazem bem.</span></h2>
+      <div class="points">
+        <div class="point"><div class="point-icon">♡</div><div><strong>Feito artesanalmente</strong><span>Cada peça é preparada com cuidado.</span></div></div>
+        <div class="point"><div class="point-icon">✿</div><div><strong>Preparado com carinho</strong><span>Porque o que é feito com amor sempre encanta.</span></div></div>
+        <div class="point"><div class="point-icon">♧</div><div><strong>Pensado para presentear</strong><span>Mais do que um presente, é um gesto de carinho.</span></div></div>
+      </div>
+    </div>
+    <div class="insta">
+      <div class="eyebrow">Siga a Doce Encanto</div>
+      <h3>@doceencanto</h3>
+      <div class="insta-handle">Um pouco mais do nosso universo ♡</div>
+      <div class="insta-grid">
+        <img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Instagram Doce Encanto 1">
+        <img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Instagram Doce Encanto 2">
+        <img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Instagram Doce Encanto 3">
+        <img src="{{ url_for('static', filename='doceencanto/colagem.png') }}" alt="Instagram Doce Encanto 4">
+      </div>
+      <br>
+      <a class="btn light" href="#" onclick="return false;">Seguir no Instagram →</a>
+    </div>
+  </div>
+</section>
+
+<section class="section cta" id="contato">
+  <div class="cta-butterfly">🦋</div>
+  <div class="cta-butterfly right">🦋</div>
+  <div class="container cta-inner">
+    <div class="eyebrow">Um detalhe especial está esperando por você</div>
+    <h2>Seu próximo presente pode começar aqui.</h2>
+    <p>Escolha um detalhe especial e transforme carinho em uma lembrança.</p>
+    <a class="btn" href="https://wa.me/5500000000000" target="_blank" rel="noopener">◉ Fale conosco pelo WhatsApp</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
       <div>
-        <div class="eyebrow">O que fazemos</div>
-        <h2>Frentes de atuação</h2>
+        <img class="footer-logo" src="{{ loja.logo or url_for('static', filename='doceencanto/logo.png') }}" alt="{{ loja.nome or 'Doce Encanto' }}">
+        <p style="margin-top:8px">Presentes • Artesanato • Carinho</p>
       </div>
-    </div>
-    <div class="serv-list">
-      {% for post in posts %}
-      <div class="serv-row">
-        <div class="num">{{ '%02d'|format(loop.index) }}</div>
-        <div>
-          <h3>{{ post.titulo }}</h3>
-          {% if post.resumo %}<p>{{ post.resumo }}</p>{% endif %}
+      <div>
+        <p style="font-weight:800;color:#5a2a25;margin-bottom:12px">Navegação</p>
+        <div class="footer-links">
+          <a href="#inicio">Início</a><a href="#sobre">Sobre</a><a href="#produtos">Produtos</a><a href="#universo">Instagram</a>
         </div>
       </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-{% endif %}
-
-<div class="video-modal" id="videoModal">
-  <div class="box">
-    <div class="video-close" id="videoCloseBtn">Fechar ✕</div>
-    <iframe id="videoFrame" src="" allow="autoplay; fullscreen" allowfullscreen></iframe>
-  </div>
-</div>
-
-<footer id="contato">
-  <div class="wrap">
-    <div class="eyebrow">Contato</div>
-    <div class="cta-line">Tem um projeto, uma história ou uma ideia? Vamos conversar.</div>
-    <div class="cf-grid">
-      <form class="cf-form" id="cfForm">
-        <div>
-          <label class="cf-label">Nome</label>
-          <input class="cf-input" type="text" name="nome" required>
-        </div>
-        <div>
-          <label class="cf-label">WhatsApp</label>
-          <input class="cf-input" type="text" name="whatsapp" required>
-        </div>
-        <div>
-          <label class="cf-label">E-mail</label>
-          <input class="cf-input" type="email" name="email" required>
-        </div>
-        <div>
-          <label class="cf-label">Sobre o projeto</label>
-          <input class="cf-input" type="text" name="profissao" placeholder="Conte rapidamente do que se trata">
-        </div>
-        <button type="submit" class="cf-submit">Enviar mensagem</button>
-        <div class="cf-success" id="cfSuccess">Recebido! Vamos te responder em breve.</div>
-      </form>
-      <div class="contact-info">
-        {{ loja.nome }}<br>
-        {% if loja.email %}{{ loja.email }}<br>{% endif %}
-        {% if loja.telefone %}{{ loja.telefone }}<br>{% endif %}
-        São Paulo — SP
+      <div class="footer-social">
+        <p style="font-weight:800;color:#5a2a25;margin-bottom:8px">Vamos conversar?</p>
+        <a href="#contato">WhatsApp</a> &nbsp;·&nbsp; <a href="#" onclick="return false;">Instagram</a>
       </div>
     </div>
-    <div class="foot-bottom">
-      <div>© {{ loja.nome }}</div>
-      <div>Produtora audiovisual</div>
-    </div>
+    <div class="footer-bottom">© 2026 Doce Encanto. Todos os direitos reservados.</div>
   </div>
 </footer>
 
 <script>
-window.addEventListener('load', () => { document.getElementById('loader').classList.add('hide'); });
-
-const menuOpen = document.getElementById('menuOpenBtn');
-const menuClose = document.getElementById('menuCloseBtn');
-const navOverlay = document.getElementById('nav-overlay');
-menuOpen.addEventListener('click', () => navOverlay.classList.add('open'));
-menuClose.addEventListener('click', () => navOverlay.classList.remove('open'));
-document.querySelectorAll('.nav-link').forEach(a => a.addEventListener('click', () => navOverlay.classList.remove('open')));
-
-const filterBtns = document.querySelectorAll('.filter-btn');
-const workCards = document.querySelectorAll('.work-card');
-filterBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    filterBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const cat = btn.dataset.cat;
-    workCards.forEach(card => {
-      card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
-    });
-  });
-});
-
-const videoModal = document.getElementById('videoModal');
-const videoFrame = document.getElementById('videoFrame');
-document.getElementById('videoCloseBtn').addEventListener('click', () => {
-  videoModal.classList.remove('open'); videoFrame.src = '';
-});
-workCards.forEach(card => {
-  card.addEventListener('click', () => {
-    if (card.dataset.video) {
-      videoFrame.src = card.dataset.video;
-      videoModal.classList.add('open');
-    } else if (card.dataset.link) {
-      window.open(card.dataset.link, '_blank');
-    }
-  });
-});
-
-const cfForm = document.getElementById('cfForm');
-const cfSuccess = document.getElementById('cfSuccess');
-cfForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const btn = cfForm.querySelector('.cf-submit');
-  btn.textContent = 'Enviando...';
-  try {
-    const formData = new FormData(cfForm);
-    const resp = await fetch('/{{ loja.slug_url }}/captura-lead', { method: 'POST', body: formData });
-    const data = await resp.json();
-    if (data.sucesso) {
-      cfForm.reset();
-      cfSuccess.classList.add('show');
-      btn.textContent = 'Enviar mensagem';
-    } else {
-      btn.textContent = 'Tentar novamente';
-    }
-  } catch (err) {
-    btn.textContent = 'Tentar novamente';
-  }
-});
-
-const io = new IntersectionObserver((entries) => {
-  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
-}, { threshold: 0.12 });
-document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
-document.querySelectorAll('#quemsomos, #trabalhos, #servicos').forEach(el => { el.classList.add('fade-in'); io.observe(el); });
-
-document.querySelectorAll('.work-thumb-fallback[data-vimeo-thumb]').forEach(el => {
-  const vimeoUrl = el.dataset.vimeoThumb;
-  fetch('https://vimeo.com/api/oembed.json?url=' + encodeURIComponent(vimeoUrl))
-    .then(r => r.ok ? r.json() : null)
-    .then(data => {
-      if (data && data.thumbnail_url) {
-        let thumb = data.thumbnail_url.replace(/_\d+x\d+(\.\w+)?$/, '_800x450$1');
-        el.style.backgroundImage = 'url(' + thumb + ')';
-      }
-    })
-    .catch(() => {});
-});
+const btn = document.getElementById('menuBtn');
+const nav = document.getElementById('navlinks');
+btn.addEventListener('click', () => nav.classList.toggle('open'));
+document.querySelectorAll('#navlinks a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
 </script>
-
 </body>
 </html>
