@@ -622,8 +622,8 @@ def index(loja_slug):
     # DEFINE QUAL TEMPLATE RENDERIZAR
     if loja_slug == 'creapes':
         template_name = 'creapes'
-    elif loja_slug == 'variasfita':
-        template_name = 'variasfita'
+    elif loja_slug == 'doceencanto':
+        template_name = 'doceencanto'
     elif loja_slug == 'onepiece':
         template_name = 'onepiece'
     elif loja_slug == 'oscar':
@@ -1029,8 +1029,6 @@ def admin_painel(loja_slug):
 
     template_painel = 'painel.html'
     if loja_slug == 'creapes':
-        template_painel = 'painel_creapes.html'
-    elif loja_slug == 'variasfita':
         template_painel = 'painel_creapes.html'
     elif loja_slug == 'julia':
         template_painel = 'painel_julia.html'
