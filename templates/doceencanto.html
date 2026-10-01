@@ -125,7 +125,7 @@ header{position:relative;z-index:50;background:#fffdfb;border-bottom:1px solid r
 .products-head h2{font-size:clamp(2.4rem,4vw,4rem)}
 .products-head p{color:#80615b;margin-top:14px}
 .product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.product-card{background:var(--white);border:1px solid var(--line);border-radius:20px;overflow:hidden;transition:.25s}
+.product-card{position:relative;background:var(--white);border:1px solid var(--line);border-radius:20px;overflow:hidden;transition:.25s}
 .product-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
 .product-photo{height:205px;overflow:hidden;background:#f6ded7}
 .product-photo img{width:100%;height:100%;object-fit:cover;transition:.4s}
@@ -135,6 +135,7 @@ header{position:relative;z-index:50;background:#fffdfb;border-bottom:1px solid r
 .product-body h3{font-size:1.25rem}
 .product-body p{font-size:.82rem;color:#80615b;min-height:48px;margin:8px 0 15px}
 .product-body a{font-size:.78rem;font-weight:800;color:var(--rose-dark)}
+.product-body a:after{content:"";position:absolute;inset:0}
 
 /* universe */
 .universe{background:#fcefe9}
@@ -173,6 +174,31 @@ footer p,footer a{font-size:.8rem;color:#80615b}
 .footer-social{text-align:right}
 .footer-bottom{border-top:1px solid var(--line);margin-top:28px;padding-top:15px;text-align:center;font-size:.72rem;color:#9b7b75}
 
+
+/* formulario + mapa */
+.contact{background:#fffdfb}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:stretch}
+.contact-head h2{font-size:clamp(2.2rem,3.5vw,3.4rem)}
+.contact-head p{color:#76534d;margin:14px 0 24px}
+.lead-form{display:grid;gap:14px}
+.lead-form label{display:block;font-size:.8rem;font-weight:700;color:var(--brown);margin-bottom:6px}
+.lead-form input,.lead-form textarea{width:100%;font:inherit;font-size:.95rem;color:var(--wine);background:var(--white);border:1px solid var(--line);border-radius:14px;padding:13px 15px;transition:.2s}
+.lead-form textarea{min-height:120px;resize:vertical}
+.lead-form input:focus,.lead-form textarea:focus{outline:0;border-color:var(--rose-dark);box-shadow:0 0 0 3px rgba(201,111,103,.15)}
+.lead-form .btn{border:0;cursor:pointer;font-family:inherit;width:100%;padding:15px 21px;font-size:.95rem}
+.lead-form .btn[disabled]{opacity:.7;cursor:wait;transform:none}
+.form-opt{font-weight:400;color:#9b7b75}
+.form-status{display:none;font-size:.88rem;padding:12px 15px;border-radius:14px}
+.form-status.ok{display:block;background:#fdf0eb;color:var(--wine);border:1px solid var(--line)}
+.form-status.warn{display:block;background:#fff6e8;color:#7a5320;border:1px solid #f0d9ae}
+.map-col .eyebrow{margin-bottom:10px}
+.map-col h3{font-size:clamp(1.8rem,2.6vw,2.4rem);margin-bottom:12px}
+.map-addr{color:#76534d;font-size:.92rem;margin-bottom:16px}
+.map-box{position:relative;width:100%;height:380px;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);background:#f6ded7}
+.map-box iframe{width:100%;height:100%;border:0;display:block}
+.map-box a.map-click{position:absolute;inset:0;z-index:2;background:transparent}
+.map-btn{margin-top:16px}
+
 /* responsive */
 @media(max-width:1080px){
   .hero-banner{display:flex;flex-direction:column}
@@ -195,6 +221,7 @@ footer p,footer a{font-size:.8rem;color:#80615b}
   .product-grid{grid-template-columns:repeat(2,1fr)}
   .universe-grid{grid-template-columns:1fr 1fr}
   .insta{border-left:0;padding-left:0}
+  .contact-grid{grid-template-columns:1fr;gap:42px}
 }
 @media(max-width:720px){
   .container{width:min(var(--max),calc(100% - 28px))}
@@ -223,6 +250,7 @@ footer p,footer a{font-size:.8rem;color:#80615b}
   .cta{padding:72px 0}
   .footer-grid{grid-template-columns:1fr;gap:22px}
   .footer-social{text-align:left}
+  .map-box{height:300px}
 }
 @media(max-width:430px){
   .product-grid{grid-template-columns:1fr}
@@ -246,8 +274,9 @@ footer p,footer a{font-size:.8rem;color:#80615b}
         {% if not loja.ocultar_sobre %}<a href="#sobre">{{ loja.titulo_menu_sobre or 'Sobre' }}</a>{% endif %}
         <a href="#produtos">Produtos</a>
         <a href="#universo">Instagram</a>
+        <a href="#localizacao">Onde estamos</a>
       </nav>
-      <a class="btn" href="#contato">♡ Fale conosco</a>
+      <a class="btn" href="#formulario">♡ Fale conosco</a>
     </div>
   </div>
 </header>
@@ -269,7 +298,7 @@ footer p,footer a{font-size:.8rem;color:#80615b}
       <p>{{ loja.banner1_subtitulo or 'Presentes artesanais preparados com carinho para transformar momentos especiais em lembranças inesquecíveis.' }}</p>
       <div class="hero-actions">
         <a class="btn" href="#produtos">{{ loja.banner1_botao or 'Conheça nossos presentes →' }}</a>
-        <a class="btn ghost" href="#contato">♡ Fale conosco</a>
+        <a class="btn ghost" href="#formulario">♡ Fale conosco</a>
       </div>
         </div>
       </div>
@@ -339,7 +368,7 @@ footer p,footer a{font-size:.8rem;color:#80615b}
       {% for p in lista_produtos %}
       <article class="product-card">
         <div class="product-photo">{% if p.imagem %}<img src="{{ p.imagem }}" alt="{{ p.nome }}" loading="lazy">{% endif %}</div>
-        <div class="product-body"><h3>{{ p.nome }}</h3><p>{{ (p.descricao or '')|striptags|truncate(90) }}</p><a href="#contato">Ver detalhes →</a></div>
+        <div class="product-body"><h3>{{ p.nome }}</h3><p>{{ (p.descricao or '')|striptags|truncate(90) }}</p><a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">Ver detalhes →</a></div>
       </article>
       {% endfor %}
     {% else %}
@@ -391,6 +420,35 @@ footer p,footer a{font-size:.8rem;color:#80615b}
     <a class="btn" href="https://wa.me/{{ wa or '5500000000000' }}" target="_blank" rel="noopener">◉ Fale conosco pelo WhatsApp</a>
   </div>
 </section>
+
+{% set endereco = ((loja.endereco_fisico or '')|string|trim) or 'R. Uhland, 1124 - Vila Ema, São Paulo - SP, 03283-000' %}
+<section class="section contact" id="formulario">
+  <div class="container contact-grid">
+    <div class="contact-head">
+      <div class="eyebrow">Fale conosco</div>
+      <h2>Conte o que você <span class="script">procura.</span></h2>
+      <p>Deixe seu recado e continue a conversa pelo WhatsApp. Vamos adorar ajudar você a escolher o presente perfeito.</p>
+      <form class="lead-form" id="leadForm" action="#" method="post">
+        <div><label for="lf-nome">Nome</label><input id="lf-nome" name="nome" type="text" required maxlength="120" autocomplete="name"></div>
+        <div><label for="lf-whats">WhatsApp</label><input id="lf-whats" name="whatsapp" type="tel" required maxlength="30" autocomplete="tel" placeholder="(11) 99999-9999"></div>
+        <div><label for="lf-email">E-mail</label><input id="lf-email" name="email" type="email" required maxlength="120" autocomplete="email"></div>
+        <div><label for="lf-msg">Mensagem</label><textarea id="lf-msg" name="mensagem" required maxlength="1000"></textarea></div>
+        <button class="btn" type="submit" id="leadBtn">Enviar pelo WhatsApp ♡</button>
+        <div class="form-status" id="leadStatus" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+    <div class="map-col" id="localizacao">
+      <div class="eyebrow">Onde estamos</div>
+      <h3>Venha nos <span class="script">visitar.</span></h3>
+      <p class="map-addr">{{ endereco }}</p>
+      <div class="map-box">
+        <iframe src="https://www.google.com/maps?q={{ endereco|urlencode }}&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa"></iframe>
+        <a class="map-click" href="https://www.google.com/maps/search/?api=1&amp;query={{ endereco|urlencode }}" target="_blank" rel="noopener" aria-label="Abrir no Google Maps"></a>
+      </div>
+      <a class="btn light map-btn" href="https://www.google.com/maps/search/?api=1&amp;query={{ endereco|urlencode }}" target="_blank" rel="noopener">Abrir no Google Maps →</a>
+    </div>
+  </div>
+</section>
 </main>
 
 <footer>
@@ -403,7 +461,7 @@ footer p,footer a{font-size:.8rem;color:#80615b}
       <div>
         <p style="font-weight:800;color:#5a2a25;margin-bottom:12px">Navegação</p>
         <div class="footer-links">
-          <a href="#inicio">Início</a>{% if not loja.ocultar_sobre %}<a href="#sobre">{{ loja.titulo_menu_sobre or 'Sobre' }}</a>{% endif %}<a href="#produtos">Produtos</a><a href="#universo">Instagram</a>
+          <a href="#inicio">Início</a>{% if not loja.ocultar_sobre %}<a href="#sobre">{{ loja.titulo_menu_sobre or 'Sobre' }}</a>{% endif %}<a href="#produtos">Produtos</a><a href="#universo">Instagram</a><a href="#localizacao">Onde estamos</a>
         </div>
       </div>
       <div class="footer-social">
@@ -420,6 +478,58 @@ const btn = document.getElementById('menuBtn');
 const nav = document.getElementById('navbar');
 btn.addEventListener('click', () => nav.classList.toggle('open'));
 document.querySelectorAll('#navbar a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
+
+(function(){
+  const form = document.getElementById('leadForm');
+  if(!form) return;
+  const btnEl = document.getElementById('leadBtn');
+  const status = document.getElementById('leadStatus');
+  const WA = {{ (wa or '')|tojson }};
+  const ENDPOINT = {{ ('/' ~ loja.slug_url ~ '/captura-lead')|tojson }};
+  const LABEL = btnEl.textContent;
+
+  function show(cls, txt){ status.className = 'form-status ' + cls; status.textContent = txt; }
+  function reset(){ btnEl.disabled = false; btnEl.textContent = LABEL; }
+  window.addEventListener('pageshow', reset);
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(!form.reportValidity()) return;
+    const nome = form.nome.value.trim();
+    const whats = form.whatsapp.value.trim();
+    const email = form.email.value.trim();
+    const msg = form.mensagem.value.trim();
+
+    btnEl.disabled = true;
+    btnEl.textContent = 'Enviando...';
+
+    // O back-end atual so le nome, whatsapp, email e profissao.
+    // A mensagem segue em "profissao" (vai para endereco_json.profissao), com prefixo "Mensagem: ".
+    const fd = new FormData();
+    fd.append('nome', nome);
+    fd.append('whatsapp', whats);
+    fd.append('email', email);
+    fd.append('profissao', 'Mensagem: ' + msg.slice(0, 900));
+
+    // sendBeacon sobrevive ao redirecionamento; sem suporte, cai no fetch com keepalive.
+    try {
+      if (navigator.sendBeacon) { navigator.sendBeacon(ENDPOINT, fd); }
+      else { fetch(ENDPOINT, { method: 'POST', body: fd, keepalive: true }).catch(function(){}); }
+    } catch(err) {}
+
+    if(!WA){
+      reset();
+      show('ok', 'Recebemos sua mensagem! Entraremos em contato em breve ♡');
+      form.reset();
+      return;
+    }
+
+    show('ok', 'Obrigada! Estamos abrindo o WhatsApp para você ♡');
+    const texto = 'Olá! Me chamo ' + nome + '. ' + msg + ' (WhatsApp: ' + whats + ')';
+    const url = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(texto);
+    setTimeout(function(){ window.location.href = url; }, 1000);
+  });
+})();
 </script>
 </body>
 </html>
