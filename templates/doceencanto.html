@@ -175,9 +175,9 @@ footer p,footer a{font-size:.8rem;color:#80615b}
 .footer-bottom{border-top:1px solid var(--line);margin-top:28px;padding-top:15px;text-align:center;font-size:.72rem;color:#9b7b75}
 
 
-/* formulario + mapa */
+/* formulario */
 .contact{background:#fffdfb}
-.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:stretch}
+.contact-grid{display:grid;grid-template-columns:1fr;max-width:640px;margin-inline:auto}
 .contact-head h2{font-size:clamp(2.2rem,3.5vw,3.4rem)}
 .contact-head p{color:#76534d;margin:14px 0 24px}
 .lead-form{display:grid;gap:14px}
@@ -191,13 +191,6 @@ footer p,footer a{font-size:.8rem;color:#80615b}
 .form-status{display:none;font-size:.88rem;padding:12px 15px;border-radius:14px}
 .form-status.ok{display:block;background:#fdf0eb;color:var(--wine);border:1px solid var(--line)}
 .form-status.warn{display:block;background:#fff6e8;color:#7a5320;border:1px solid #f0d9ae}
-.map-col .eyebrow{margin-bottom:10px}
-.map-col h3{font-size:clamp(1.8rem,2.6vw,2.4rem);margin-bottom:12px}
-.map-addr{color:#76534d;font-size:.92rem;margin-bottom:16px}
-.map-box{position:relative;width:100%;height:380px;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);background:#f6ded7}
-.map-box iframe{width:100%;height:100%;border:0;display:block}
-.map-box a.map-click{position:absolute;inset:0;z-index:2;background:transparent}
-.map-btn{margin-top:16px}
 
 /* responsive */
 @media(max-width:1080px){
@@ -250,7 +243,6 @@ footer p,footer a{font-size:.8rem;color:#80615b}
   .cta{padding:72px 0}
   .footer-grid{grid-template-columns:1fr;gap:22px}
   .footer-social{text-align:left}
-  .map-box{height:300px}
 }
 @media(max-width:430px){
   .product-grid{grid-template-columns:1fr}
@@ -274,7 +266,6 @@ footer p,footer a{font-size:.8rem;color:#80615b}
         {% if not loja.ocultar_sobre %}<a href="#sobre">{{ loja.titulo_menu_sobre or 'Sobre' }}</a>{% endif %}
         <a href="#produtos">Produtos</a>
         <a href="#universo">Instagram</a>
-        <a href="#localizacao">Onde estamos</a>
       </nav>
       <a class="btn" href="#formulario">♡ Fale conosco</a>
     </div>
@@ -421,7 +412,6 @@ footer p,footer a{font-size:.8rem;color:#80615b}
   </div>
 </section>
 
-{% set endereco = ((loja.endereco_fisico or '')|string|trim) or 'R. Uhland, 1124 - Vila Ema, São Paulo - SP, 03283-000' %}
 <section class="section contact" id="formulario">
   <div class="container contact-grid">
     <div class="contact-head">
@@ -437,16 +427,6 @@ footer p,footer a{font-size:.8rem;color:#80615b}
         <div class="form-status" id="leadStatus" role="status" aria-live="polite"></div>
       </form>
     </div>
-    <div class="map-col" id="localizacao">
-      <div class="eyebrow">Onde estamos</div>
-      <h3>Venha nos <span class="script">visitar.</span></h3>
-      <p class="map-addr">{{ endereco }}</p>
-      <div class="map-box">
-        <iframe src="https://www.google.com/maps?q={{ endereco|urlencode }}&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa"></iframe>
-        <a class="map-click" href="https://www.google.com/maps/search/?api=1&amp;query={{ endereco|urlencode }}" target="_blank" rel="noopener" aria-label="Abrir no Google Maps"></a>
-      </div>
-      <a class="btn light map-btn" href="https://www.google.com/maps/search/?api=1&amp;query={{ endereco|urlencode }}" target="_blank" rel="noopener">Abrir no Google Maps →</a>
-    </div>
   </div>
 </section>
 </main>
@@ -461,7 +441,7 @@ footer p,footer a{font-size:.8rem;color:#80615b}
       <div>
         <p style="font-weight:800;color:#5a2a25;margin-bottom:12px">Navegação</p>
         <div class="footer-links">
-          <a href="#inicio">Início</a>{% if not loja.ocultar_sobre %}<a href="#sobre">{{ loja.titulo_menu_sobre or 'Sobre' }}</a>{% endif %}<a href="#produtos">Produtos</a><a href="#universo">Instagram</a><a href="#localizacao">Onde estamos</a>
+          <a href="#inicio">Início</a>{% if not loja.ocultar_sobre %}<a href="#sobre">{{ loja.titulo_menu_sobre or 'Sobre' }}</a>{% endif %}<a href="#produtos">Produtos</a><a href="#universo">Instagram</a>
         </div>
       </div>
       <div class="footer-social">
