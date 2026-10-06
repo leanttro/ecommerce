@@ -150,12 +150,17 @@ header{position:relative;z-index:50;background:#fffdfb;border-bottom:1px solid r
 .product-photo img{width:100%;height:100%;object-fit:cover;transition:.4s}
 .product-card:hover .product-photo img{transform:scale(1.04)}
 .products-empty{text-align:center;color:#80615b;padding:30px 0}
-.cat-filter{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:0 auto 34px}
-.cat-chip{appearance:none;font:inherit;font-size:.82rem;font-weight:700;color:var(--rose-dark);background:var(--white);border:1px solid var(--line);border-radius:999px;padding:10px 20px;cursor:pointer;transition:.25s;white-space:nowrap}
-.cat-chip:hover{border-color:var(--rose-dark)}
-.cat-chip.active{background:var(--rose-dark);border-color:var(--rose-dark);color:#fff}
+.cat-dd{position:relative;max-width:320px;margin:0 auto 34px;z-index:20}
+.cat-btn{appearance:none;font:inherit;font-size:.9rem;font-weight:700;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--rose-dark);background:var(--white);border:1px solid var(--line);border-radius:999px;padding:13px 22px;cursor:pointer;transition:.25s}
+.cat-btn:hover,.cat-dd.open .cat-btn{border-color:var(--rose-dark)}
+.cat-btn .arr{transition:.25s;font-size:.8em}
+.cat-dd.open .cat-btn .arr{transform:rotate(180deg)}
+.cat-menu{display:none;position:absolute;left:0;right:0;top:calc(100% + 8px);background:var(--white);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:8px;max-height:60vh;overflow-y:auto}
+.cat-dd.open .cat-menu{display:block}
+.cat-chip{appearance:none;font:inherit;font-size:.9rem;font-weight:600;display:block;width:100%;text-align:left;color:#80615b;background:transparent;border:0;border-radius:12px;padding:11px 16px;cursor:pointer;transition:.2s}
+.cat-chip:hover{background:#f6ded7}
+.cat-chip.active{background:var(--rose-dark);color:#fff}
 .product-card[hidden]{display:none}
-@media(max-width:640px){.cat-filter{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;gap:8px;margin:0 -14px 26px;padding:2px 14px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.cat-filter::-webkit-scrollbar{display:none}}
 .product-body{padding:20px 18px 22px;text-align:center}
 .product-body h3{font-size:1.25rem}
 .product-body p{font-size:.82rem;color:#80615b;min-height:48px;margin:8px 0 15px}
@@ -393,9 +398,12 @@ footer p,footer a{font-size:.8rem;color:#80615b}
       {% endif %}
     {% endfor %}
     {% if cats_filtro %}
-    <div class="cat-filter" id="catFilter" role="tablist" aria-label="Categorias de produtos">
-      <button type="button" class="cat-chip active" data-cat="all">Todos</button>
-      {% for cat in cats_filtro %}<button type="button" class="cat-chip" data-cat="{{ cat.id }}">{{ cat.nome|trim }}</button>{% endfor %}
+    <div class="cat-dd" id="catFilter">
+      <button type="button" class="cat-btn" id="catBtn" aria-haspopup="listbox" aria-expanded="false"><span id="catLabel">Todas as categorias</span><span class="arr">▾</span></button>
+      <div class="cat-menu" role="listbox">
+        <button type="button" class="cat-chip active" data-cat="all">Todas as categorias</button>
+        {% for cat in cats_filtro %}<button type="button" class="cat-chip" data-cat="{{ cat.id }}">{{ cat.nome|trim }}</button>{% endfor %}
+      </div>
     </div>
     {% endif %}
     <div class="product-grid">
@@ -559,15 +567,27 @@ document.querySelectorAll('#navbar a').forEach(a => a.addEventListener('click', 
 (function(){
   const bar = document.getElementById('catFilter');
   if(!bar) return;
+  const btn = document.getElementById('catBtn');
+  const label = document.getElementById('catLabel');
   const chips = bar.querySelectorAll('.cat-chip');
   const cards = document.querySelectorAll('.product-card');
+  function close(){ bar.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    const open = bar.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  document.addEventListener('click', function(e){ if(!bar.contains(e.target)) close(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') close(); });
   chips.forEach(function(chip){
     chip.addEventListener('click', function(){
       const cat = chip.getAttribute('data-cat');
       chips.forEach(function(c){ c.classList.toggle('active', c === chip); });
+      label.textContent = chip.textContent;
       cards.forEach(function(card){
         card.hidden = !(cat === 'all' || card.getAttribute('data-cat') === cat);
       });
+      close();
     });
   });
 })();
