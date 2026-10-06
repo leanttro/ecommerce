@@ -3,7 +3,34 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>A.M.S. Executive | Transporte Executivo</title>
+<title>A.M.S. Executive | Transporte Executivo e Transfer em São Paulo</title>
+<script>(function(){var d=document.documentElement;try{d.classList.add(sessionStorage.getItem('ams_splash')?'nosplash':'loading')}catch(e){d.classList.add('loading')}})();</script>
+<meta name="description" content="Transporte executivo em São Paulo com veículo próprio, transfer para GRU, CGH e VCP, atendimento 24h mediante agendamento e emissão de nota fiscal.">
+<meta name="keywords" content="transporte executivo, transfer aeroporto, transfer GRU, transfer Congonhas, transfer Viracopos, motorista executivo, táxi executivo, transporte corporativo, São Paulo, nota fiscal">
+<meta name="author" content="A.M.S. Executive">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<meta name="theme-color" content="#030303">
+<link rel="canonical" href="{{ request.base_url }}">
+<link rel="icon" type="image/webp" href="https://directus.leanttro.com/assets/95d66f65-07de-417d-847d-b014127fbf95?quality=80&amp;format=webp">
+<link rel="shortcut icon" href="https://directus.leanttro.com/assets/95d66f65-07de-417d-847d-b014127fbf95?quality=80&amp;format=webp">
+<link rel="apple-touch-icon" href="https://directus.leanttro.com/assets/95d66f65-07de-417d-847d-b014127fbf95?quality=80&amp;format=webp">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="A.M.S. Executive">
+<meta property="og:title" content="A.M.S. Executive | Transporte Executivo e Transfer em São Paulo">
+<meta property="og:description" content="Transporte executivo em São Paulo com veículo próprio, transfer para GRU, CGH e VCP, atendimento 24h mediante agendamento e emissão de nota fiscal.">
+<meta property="og:url" content="{{ request.base_url }}">
+<meta property="og:image" content="https://directus.leanttro.com/assets/95d66f65-07de-417d-847d-b014127fbf95?quality=80&amp;format=webp">
+<meta property="og:image:alt" content="Logo A.M.S. Executive – Transporte Executivo">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A.M.S. Executive | Transporte Executivo e Transfer em São Paulo">
+<meta name="twitter:description" content="Transporte executivo em São Paulo com veículo próprio, transfer para GRU, CGH e VCP, atendimento 24h mediante agendamento e emissão de nota fiscal.">
+<meta name="twitter:image" content="https://directus.leanttro.com/assets/95d66f65-07de-417d-847d-b014127fbf95?quality=80&amp;format=webp">
+<link rel="preconnect" href="https://directus.leanttro.com">
+<link rel="preload" as="image" href="https://directus.leanttro.com/assets/9ee404e7-72c9-4447-ba8e-3f510cd60f3b?quality=80&amp;format=webp" fetchpriority="high">
+<link rel="preload" as="image" href="https://directus.leanttro.com/assets/ffcebf4e-d01b-4a75-961b-8504bb409390?quality=80&amp;format=webp" fetchpriority="high">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"A.M.S. Executive","alternateName":"A.M.S. Transporte Executivo","description":"Transporte executivo em São Paulo com veículo próprio, transfer para GRU, CGH e VCP, atendimento 24h mediante agendamento e emissão de nota fiscal.","url":"{{ request.base_url }}","image":"https://directus.leanttro.com/assets/95d66f65-07de-417d-847d-b014127fbf95?quality=80&amp;format=webp","logo":"https://directus.leanttro.com/assets/95d66f65-07de-417d-847d-b014127fbf95?quality=80&amp;format=webp","telephone":"+55 11 91547-0351","priceRange":"$$$","areaServed":{"@type":"City","name":"São Paulo"},"founder":{"@type":"Person","name":"Alan Santos"},"openingHoursSpecification":{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"00:00","closes":"23:59"},"sameAs":["https://instagram.com/amstransferexecutivo"],"makesOffer":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Transfer aeroportuário (GRU, CGH, VCP)"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Transporte executivo e corporativo"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Táxi executivo em São Paulo"}}]}</script>
+<noscript><style>#splash{display:none!important}</style></noscript>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600;700&family=Allura&display=swap" rel="stylesheet">
 <style>
@@ -213,6 +240,26 @@ footer.dev i{width:3px;height:3px;border-radius:50%;background:#444;display:bloc
 .cta-btn{width:100%;justify-content:center;padding:15px 20px;font-size:12px}
 }
 
+/* Splash de entrada */
+html.loading{overflow:hidden}
+#splash{display:none;position:fixed;inset:0;z-index:9999;background:radial-gradient(ellipse at 50% 46%,#1b1407 0,#060606 52%,#000 100%);align-items:center;justify-content:center;transition:transform .6s cubic-bezier(.77,0,.18,1);overflow:hidden}
+html.loading #splash{display:flex}
+#splash.out{transform:translateY(-100%)}
+#splash:before{content:"";position:absolute;width:min(380px,100vw);height:min(380px,100vw);border-radius:50%;background:radial-gradient(circle,rgba(245,201,78,.09),transparent 62%);animation:spGlow 2s ease-in-out infinite}
+.sp-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:12px;transition:transform .45s cubic-bezier(.5,0,.2,1),opacity .35s ease}
+#splash.out .sp-inner{transform:scale(1.03);opacity:0}
+.sp-logo{width:min(170px,44vw);height:auto;display:block;animation:spLogo .7s cubic-bezier(.2,.8,.2,1) .1s both}
+.sp-line{width:min(110px,30vw);height:1px;background:rgba(225,173,45,.16);border-radius:2px;overflow:hidden;position:relative;animation:spFade .4s ease .4s both}
+.sp-line:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#d99f19,#fff0a8,#d99f19);transform:translateX(-100%);animation:spBar .8s cubic-bezier(.45,0,.2,1) .4s forwards}
+.sp-tag{font-family:var(--title-font);font-weight:700;font-size:8px;color:var(--gold2);opacity:.8;text-transform:uppercase;letter-spacing:.5em;margin-right:-.5em;animation:spTag .7s cubic-bezier(.2,.8,.2,1) .4s both}
+@keyframes spLogo{0%{opacity:0;transform:scale(.92);filter:blur(8px) brightness(.8)}60%{opacity:1;filter:blur(0) brightness(1.55) drop-shadow(0 0 14px rgba(245,201,78,.35))}100%{opacity:1;transform:none;filter:blur(0) brightness(1) drop-shadow(0 0 10px rgba(245,201,78,.2))}}
+@keyframes spFade{from{opacity:0}to{opacity:1}}
+@keyframes spBar{to{transform:translateX(0)}}
+@keyframes spTag{from{opacity:0;letter-spacing:.8em;margin-right:-.8em}to{opacity:.8;letter-spacing:.5em;margin-right:-.5em}}
+@keyframes spGlow{0%,100%{transform:scale(.9);opacity:.7}50%{transform:scale(1.08);opacity:1}}
+html.loading .hero-in *{animation-play-state:paused}
+@media(max-width:600px){.sp-tag{font-size:7.5px}}
+@media(prefers-reduced-motion:reduce){ #splash,#splash *{animation-duration:.01s!important;animation-delay:0s!important}}
 /* Faixa nota fiscal */
 .nf{background:linear-gradient(90deg,#070707,#17120a 50%,#070707);border-bottom:1px solid var(--line);position:relative;overflow:hidden}
 .nf:after{content:"";position:absolute;top:0;left:-40%;width:30%;height:100%;background:linear-gradient(100deg,transparent,rgba(245,201,78,.14),transparent);transform:skewX(-20deg);animation:nfSweep 6s ease-in-out 1s infinite}
@@ -222,7 +269,8 @@ footer.dev i{width:3px;height:3px;border-radius:50%;background:#444;display:bloc
 .nf p span{color:var(--gold2)}
 .nf p b{font-weight:700;border-bottom:1px solid rgba(245,201,78,.6)}
 @media(prefers-reduced-motion:reduce){.nf:after{animation:none}}
-@media(max-width:600px){.nf-in{gap:10px;padding:14px 4%}/* Nosso compromisso */
+@media(max-width:600px){.nf-in{gap:10px;padding:14px 4%}}
+/* Nosso compromisso */
 .commit{padding:64px 0;background:radial-gradient(ellipse at 50% 0,rgba(225,173,45,.07),transparent 60%),#050505;border-bottom:1px solid rgba(255,255,255,.06)}
 .commit-in{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(28px,5vw,70px);align-items:start}
 .commit-head h2{font-size:clamp(22px,2.7vw,36px);line-height:1.12;margin:10px 0 0;color:#fff}
@@ -282,6 +330,13 @@ section{padding:58px 0}.cards{grid-template-columns:1fr 1fr;gap:9px}.card{min-he
 </style>
 </head>
 <body>
+<div id="splash" aria-hidden="true">
+  <div class="sp-inner">
+    <img class="sp-logo" src="https://directus.leanttro.com/assets/9ee404e7-72c9-4447-ba8e-3f510cd60f3b?quality=80&format=webp" alt="" fetchpriority="high" decoding="async">
+    <div class="sp-line"></div>
+    <div class="sp-tag">Transporte Executivo</div>
+  </div>
+</div>
 <header class="nav">
 <div class="container nav-in">
   <a class="logo" href="#"><img src="https://directus.leanttro.com/assets/9ee404e7-72c9-4447-ba8e-3f510cd60f3b?quality=80&format=webp" alt="A.M.S. Executive"></a>
@@ -426,6 +481,26 @@ section{padding:58px 0}.cards{grid-template-columns:1fr 1fr;gap:9px}.card{min-he
   <i></i><a href="https://wa.me/5511913324827" target="_blank" rel="noopener">11 91332-4827</a>
 </footer>
 <a class="whats" href="https://wa.me/5511915470351" target="_blank" aria-label="Falar no WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.9L2 22l5.3-1.4A9.9 9.9 0 1 0 12.04 2zm0 1.8a8.1 8.1 0 1 1-4.3 15l-.3-.2-3.1.8.8-3-.2-.3A8.1 8.1 0 0 1 12.04 3.8zM8.6 7.5c-.2 0-.5.1-.7.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.2 4.9 4.4 2.4 1 2.9.8 3.4.7.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.4l-1.9-.9c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.8-.8-1.4-1.700-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.200c-.2-.5-.5-.5-.7-.5z"/></svg></a>
+<script>
+(function(){
+var d=document.documentElement,sp=document.getElementById('splash');
+if(!sp)return;
+if(!d.classList.contains('loading')){sp.parentNode.removeChild(sp);return}
+var t0=Date.now(),MIN=1100,MAX=3000,done=false;
+function finish(){
+ if(done)return;done=true;
+ sp.classList.add('out');
+ setTimeout(function(){d.classList.remove('loading')},250);
+ setTimeout(function(){if(sp.parentNode)sp.parentNode.removeChild(sp)},800);
+ try{sessionStorage.setItem('ams_splash','1')}catch(e){}
+}
+function ready(){setTimeout(finish,Math.max(0,MIN-(Date.now()-t0)))}
+var im=new Image();im.onload=ready;im.onerror=ready;
+im.src="https://directus.leanttro.com/assets/ffcebf4e-d01b-4a75-961b-8504bb409390?quality=80&format=webp";
+if(im.complete)ready();
+setTimeout(finish,MAX);
+})();
+</script>
 <script>
 (function(){var h=document.querySelector('.nav'),b=h.querySelector('.burger');
 function set(o){h.classList.toggle('open',o);b.setAttribute('aria-expanded',o);b.setAttribute('aria-label',o?'Fechar menu':'Abrir menu')}
