@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A.M.S. Executive | Transporte Executivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600;700&family=Allura&display=swap" rel="stylesheet">
+<style>
+:root{--title-font:"Open Sans","Segoe UI",Arial,Helvetica,sans-serif;--gold:#e1ad2d;--gold2:#f5c94e;--black:#030303;--black2:#090909;--white:#f7f7f7;--muted:#aaa;--line:rgba(225,173,45,.45)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--black);color:var(--white);font-family:Arial,Helvetica,sans-serif}
+a{color:inherit;text-decoration:none}
+.container{width:min(1180px,92%);margin:auto}
+.nav{height:86px;background:#050505;border-bottom:1px solid rgba(225,173,45,.3);display:flex;align-items:center;position:relative;z-index:100}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:30px}
+.logo{display:flex;align-items:center;gap:9px;color:var(--gold2);font-weight:900;font-size:17px;line-height:.9}
+.logo img{height:66px;width:auto;display:block}
+.logo-car{width:57px;height:26px;border:2px solid var(--gold2);border-radius:55% 45% 48% 40%;position:relative;transform:skew(-8deg)}
+.logo-car:before,.logo-car:after{content:"";position:absolute;border:2px solid var(--gold2);border-radius:50%;width:7px;height:7px;bottom:-6px;background:#050505}
+.logo-car:before{left:7px}.logo-car:after{right:7px}
+nav{display:flex;gap:28px;font-size:11px;font-weight:900;text-transform:uppercase}
+nav a:hover{color:var(--gold2)}
+.burger{display:none;width:42px;height:42px;padding:0;border:1px solid var(--line);border-radius:10px;background:#0b0b0b;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px;flex:none}
+.burger span{display:block;width:20px;height:2px;background:var(--gold2);border-radius:2px;transition:.25s}
+.nav.open .burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav.open .burger span:nth-child(2){opacity:0}
+.nav.open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.t-short{display:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#f7d25d,#d99f19);color:#050505;padding:14px 23px;border-radius:30px;font-size:12px;font-weight:950;text-transform:uppercase;box-shadow:0 9px 30px rgba(225,173,45,.16);transition:.2s}
+.btn:hover{transform:translateY(-2px)}
+
+.hero{--hero-img:url('https://directus.leanttro.com/assets/ffcebf4e-d01b-4a75-961b-8504bb409390?quality=80&format=webp');min-height:clamp(440px,41vw,600px);position:relative;display:flex;align-items:center;overflow:hidden;border-bottom:1px solid var(--line);background:#030303;
+background-image:linear-gradient(90deg,rgba(0,0,0,.9) 0%,rgba(0,0,0,.7) 28%,rgba(0,0,0,.12) 52%,rgba(0,0,0,0) 100%),var(--hero-img);
+background-size:cover;background-position:right center;background-repeat:no-repeat}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#050505 0,transparent 12%,transparent 84%,#050505 100%);pointer-events:none}
+.hero-in{position:relative;z-index:2;padding:16px 0 64px;max-width:none;display:flex;flex-direction:column;align-items:flex-start;text-align:left}
+.eyebrow{font-size:9.6px;letter-spacing:4px;color:var(--gold2);font-weight:950;text-transform:uppercase}
+h1{font-family:var(--title-font);font-size:clamp(26px,3.1vw,43px);line-height:1;letter-spacing:-.5px;margin:14px 0 18px;font-weight:700}
+h1 span,h2 span{color:var(--gold2)}
+.lead{font-size:13.6px;line-height:1.3;max-width:352px;color:#eee;margin:0}
+.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.quick{display:flex;flex-direction:column;gap:9px;margin-top:18px}
+.quick-item{display:flex;align-items:baseline;gap:6px;font-size:10.4px;color:#c9c9c9;border-left:2px solid var(--gold);padding-left:12px;width:max-content;max-width:100%;animation:slideIn .85s cubic-bezier(.2,.8,.2,1) both,glowPulse 3.2s ease-in-out 1.6s infinite;animation-delay:var(--d,0s),calc(var(--d,0s) + 1.6s)}
+.quick-item strong{display:inline;color:#fff;font-size:10.8px;letter-spacing:.2px}
+.quick-item:hover{transform:translateX(6px);transition:transform .25s}
+.hero-in .eyebrow{animation:fadeUp .8s cubic-bezier(.2,.8,.2,1) .05s both}
+.hero-in h1{animation:fadeUp .9s cubic-bezier(.2,.8,.2,1) .2s both}
+.hero-in .lead{animation:fadeUp .9s cubic-bezier(.2,.8,.2,1) .4s both}
+.hero-in .actions{animation:fadeUp .9s cubic-bezier(.2,.8,.2,1) .55s both}
+.hero-in h1 span{background:linear-gradient(100deg,#d99f19 0%,#f5c94e 30%,#fff3b8 50%,#f5c94e 70%,#d99f19 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:shine 4.5s linear 1.2s infinite}
+.hero .btn{position:relative;overflow:hidden;padding:11px 18px;font-size:9.6px;gap:8px}
+.hero .btn:after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);animation:sweep 3.6s ease-in-out 1.8s infinite}
+.hero .btn:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(225,173,45,.35)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-46px)}to{opacity:1;transform:none}}
+@keyframes glowPulse{0%,100%{box-shadow:-5px 0 14px -8px rgba(245,201,78,0)}50%{box-shadow:-7px 0 16px -6px rgba(245,201,78,.75)}}
+@keyframes shine{from{background-position:120% 0}to{background-position:-120% 0}}
+@keyframes sweep{0%{left:-70%}55%,100%{left:130%}}
+@media(prefers-reduced-motion:reduce){.hero-in *{animation:none!important}}
+
+section{padding:78px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:55px;align-items:center}
+.kicker{font-size:12px;letter-spacing:4px;color:var(--gold2);font-weight:950;text-transform:uppercase}
+h2{font-family:var(--title-font);font-size:clamp(32px,4.2vw,54px);line-height:1.05;letter-spacing:-.3px;margin:9px 0 20px;font-weight:700}
+p{font-size:15px;line-height:1.65;color:#d0d0d0}
+.about-img{height:440px;border:1px solid var(--line);padding:8px;background:#070707}
+.about-img img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+.quote{border-left:3px solid var(--gold);padding:17px 0 17px 22px;color:var(--gold2);font-size:20px;line-height:1.35;font-weight:700;margin-top:25px}
+
+/* Seção Nossa prioridade */
+.about{position:relative;overflow:hidden;padding:0;background:#030303;border-bottom:1px solid var(--line)}
+.about:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 8% 75%,rgba(225,173,45,.18),transparent 38%),radial-gradient(ellipse at 100% 20%,rgba(225,173,45,.07),transparent 40%);pointer-events:none}
+.about-grid{position:relative;display:grid;grid-template-columns:36% 36% 28%;align-items:stretch;min-height:460px;gap:0}
+.about-text{align-self:center;padding:60px 20px 60px 0}
+.about-text h2{font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin:0 0 22px;color:#fff}
+.about-text p{font-size:15px;line-height:1.55;color:#f1f1f1;margin:0 0 22px;max-width:420px}
+.about-photo{position:relative;margin:0;min-height:460px}
+.about-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;display:block;
+-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18%,#000 82%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 18%,#000 82%,transparent 100%)}
+.about-photo:after{content:"";position:absolute;left:0;right:0;bottom:0;height:48%;z-index:1;pointer-events:none;background:linear-gradient(0deg,rgba(0,0,0,.92) 0,rgba(0,0,0,.65) 40%,rgba(0,0,0,0) 100%);-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18%,#000 82%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 18%,#000 82%,transparent 100%)}
+.about-photo figcaption{position:absolute;left:50%;transform:translateX(-50%);bottom:24px;z-index:2;text-align:center;width:max-content;max-width:90%}
+.sig{display:block;font-family:var(--title-font);font-weight:700;text-transform:uppercase;font-size:clamp(18px,1.9vw,26px);line-height:1.1;letter-spacing:.5px;color:var(--gold2);margin-bottom:5px;text-shadow:0 2px 12px #000,0 0 4px #000}
+.about-photo figcaption b{display:block;font-size:9.5px;letter-spacing:.4px;line-height:1.35;text-transform:uppercase;color:#fff;font-weight:700;text-shadow:0 2px 10px #000}
+.about-quote{margin:0;align-self:center;padding:40px 0 40px 8%;position:relative}
+.about-quote .qm{position:absolute;left:calc(8% - 22px);top:34px;font-size:46px;line-height:1;color:var(--gold2);font-family:Georgia,serif}
+.about-quote p{font-size:clamp(17px,1.7vw,21px);line-height:1.4;color:var(--gold2);font-weight:500;margin:0}
+@media(max-width:950px){
+.about-grid{grid-template-columns:1fr;min-height:0}
+.about-text{padding:56px 0 20px}
+.about-text p{max-width:none}
+.about-photo{min-height:0;height:420px;margin:0 -4%}
+.about-photo img{object-position:center 15%;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 12%,#000 100%);mask-image:linear-gradient(180deg,transparent 0,#000 12%,#000 100%)}
+.about-photo:after{-webkit-mask-image:none;mask-image:none;height:42%}.about-photo figcaption{bottom:18px}
+.about-quote{padding:26px 0 56px 28px}
+.about-quote .qm{left:0;top:22px}
+}
+
+
+/* Mobilidade diferenciada */
+.mobility{padding:0;display:grid;grid-template-columns:44% minmax(0,1fr) 25%;align-items:stretch;min-height:320px;background:#030303;border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+.mob-img{background:url('https://directus.leanttro.com/assets/8837fea2-e2b4-401b-a354-de17556d384b?quality=80&format=webp') center/cover no-repeat;margin:12px 0 12px 12px;-webkit-mask-image:linear-gradient(90deg,#000 55%,transparent 100%);mask-image:linear-gradient(90deg,#000 55%,transparent 100%)}
+.mob-text{align-self:center;padding:34px 24px 34px 0;margin-left:-8%;position:relative}
+.mob-text h2{font-size:clamp(20px,2.5vw,32px);line-height:1.12;margin:0 0 16px;color:#fff}
+.mob-text h2 .g{background:linear-gradient(90deg,#d99f19,#f5c94e 55%,#ffd869);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.mob-text p{font-size:clamp(12px,1.1vw,14px);line-height:1.5;color:#f1f1f1;margin:0 0 14px}
+.mob-feats{list-style:none;margin:34px 4% 34px 0;padding:0 0 0 clamp(18px,3vw,44px);border-left:1px solid rgba(225,173,45,.55);display:flex;flex-direction:column;justify-content:space-between;gap:14px}
+.mob-feats li{display:flex;align-items:center;gap:16px}
+.mob-feats .mi{width:38px;height:38px;color:var(--gold2);flex:none;filter:drop-shadow(0 0 5px rgba(245,201,78,.3))}
+.mob-feats b{font-family:var(--title-font);font-size:clamp(11px,1.1vw,14px);letter-spacing:.3px;text-transform:uppercase;color:#fff;font-weight:700}
+@media(max-width:950px){
+.mobility{grid-template-columns:1fr;min-height:0}
+.mob-img{height:250px;margin:0;-webkit-mask-image:linear-gradient(180deg,#000 55%,transparent 100%);mask-image:linear-gradient(180deg,#000 55%,transparent 100%)}
+.mob-text{margin:-34px 0 0;padding:0 4% 8px}
+.mob-text h2{font-size:clamp(22px,6vw,32px)}
+.mob-text p{font-size:14px}
+.mob-feats{margin:14px 4% 40px;padding:20px 0 0;border-left:0;border-top:1px solid rgba(225,173,45,.55);display:grid;grid-template-columns:1fr 1fr;gap:20px 14px}
+.mob-feats .mi{width:34px;height:34px}
+.mob-feats li{gap:12px}
+}
+
+.services{background:radial-gradient(ellipse at 50% 0,rgba(225,173,45,.07),transparent 60%),linear-gradient(180deg,#040404,#0a0a0a);padding:52px 0 58px;border-top:1px solid var(--line)}
+.services-head{text-align:center}
+.svc-title{font-family:var(--title-font);font-size:clamp(13px,1.5vw,17px);letter-spacing:.3em;text-transform:uppercase;color:var(--gold2);font-weight:700;margin:0}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:30px}
+.card{min-height:190px;border:1px solid rgba(225,173,45,.55);border-radius:8px;background:linear-gradient(160deg,#101010,#030303 70%);padding:24px 16px 22px;text-align:center;position:relative;overflow:hidden;box-shadow:inset 0 0 36px rgba(225,173,45,.04);transition:transform .3s,box-shadow .3s,border-color .3s}
+.card:before{content:"";position:absolute;left:-30px;bottom:-30px;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(245,201,78,.28),transparent 70%)}
+.card:hover{transform:translateY(-6px);border-color:var(--gold2);box-shadow:0 14px 34px rgba(225,173,45,.18),inset 0 0 36px rgba(225,173,45,.08)}
+.card .ico{width:46px;height:46px;color:var(--gold2);display:block;margin:0 auto 12px;filter:drop-shadow(0 0 6px rgba(245,201,78,.35))}
+.card .ico.plane{transform:rotate(45deg)}
+.card h3{font-family:var(--title-font);font-size:15px;line-height:1.15;margin:0 0 10px;font-weight:700;text-transform:uppercase;color:#fff;position:relative}
+.card p{font-size:11.5px;line-height:1.4;margin:0;color:#d4d4d4;position:relative}
+
+
+
+/* Aeroportos */
+.airports{padding:0;background:#000 url('https://directus.leanttro.com/assets/ac419756-aa49-41c0-9121-fb8389daf438?quality=80&format=webp') left center/cover no-repeat;border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:relative}
+.ap-in{display:flex;align-items:center;gap:clamp(18px,3vw,44px);padding:clamp(26px,3.4vw,44px) 4% clamp(26px,3.4vw,44px) 16%}
+.ap-title{flex:none}
+.ap-title h2{font-size:clamp(14px,1.55vw,20px);line-height:1.15;letter-spacing:.2px;margin:0 0 6px;color:#fff}
+.ap-title span{display:block;font-family:var(--title-font);font-weight:700;font-size:clamp(9px,.85vw,11px);letter-spacing:1.5px;color:var(--gold2)}
+.ap-list{flex:1;display:flex;justify-content:space-around;align-items:center;min-width:0}
+.ap{display:flex;align-items:center;gap:12px;padding:0 clamp(12px,2vw,30px);border-left:1px solid rgba(255,255,255,.16)}
+.ap:first-child{border-left:0}
+.ap-ico{width:clamp(18px,1.8vw,24px);height:clamp(18px,1.8vw,24px);color:#fff;flex:none;transform:rotate(45deg)}
+.ap b{display:block;font-family:var(--title-font);font-size:clamp(18px,2.1vw,28px);line-height:1;color:#fff;font-weight:700}
+.ap small{display:block;margin-top:5px;font-size:clamp(9px,.78vw,10.5px);line-height:1.25;color:#c9c9c9;max-width:120px}
+.ap-btn{flex:none;display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--gold2);color:var(--gold2);border-radius:30px;padding:11px 20px;font-family:var(--title-font);font-weight:700;font-size:clamp(9.5px,.85vw,11px);letter-spacing:.3px;text-transform:uppercase;white-space:nowrap;transition:.25s}
+.ap-btn .wa{width:16px;height:16px}
+.ap-btn:hover{background:var(--gold2);color:#050505;box-shadow:0 8px 24px rgba(225,173,45,.3)}
+@media(min-width:951px){
+.airports:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,0) 6%,rgba(0,0,0,.72) 24%,rgba(0,0,0,.55) 70%,rgba(0,0,0,.2) 100%)}
+.ap-in{position:relative;z-index:1}
+.ap-title h2,.ap-title span,.ap b,.ap small{text-shadow:0 2px 6px #000,0 0 14px rgba(0,0,0,.95),0 0 3px #000}
+.ap-ico{filter:drop-shadow(0 2px 5px #000)}
+}
+@media(max-width:950px){
+.airports{background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.88) 70%),#000 url('https://directus.leanttro.com/assets/ac419756-aa49-41c0-9121-fb8389daf438?quality=80&format=webp') left top/cover no-repeat}
+.ap-in{flex-direction:column;align-items:stretch;gap:22px;padding:70px 4% 34px}
+.ap-title h2{font-size:clamp(18px,5.4vw,24px)}
+.ap-title span{font-size:11px}
+.ap-list{justify-content:space-between;border-top:1px solid rgba(255,255,255,.14);padding-top:20px}
+.ap{flex:1;flex-direction:column;align-items:flex-start;gap:8px;padding:0 10px}
+.ap:first-child{padding-left:0}
+.ap-ico{width:22px;height:22px}
+.ap b{font-size:24px}
+.ap small{font-size:10px;max-width:none}
+.ap-btn{justify-content:center;padding:14px 20px;font-size:11px}
+}
+
+.whats{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:#25d366;color:#fff;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.55);transition:transform .25s}
+.whats svg{width:34px;height:34px;display:block}
+.whats:hover{transform:scale(1.08)}
+.whats:before{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #25d366;animation:waPulse 2.2s ease-out infinite}
+@keyframes waPulse{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.6);opacity:0}}
+@media(prefers-reduced-motion:reduce){.whats:before{animation:none}}
+footer.dev{padding:22px 4%;background:#030303;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 14px;font-size:10.5px;letter-spacing:.4px;color:#6f6f6f;border-top:1px solid rgba(255,255,255,.05)}
+footer.dev a{color:#7d7d7d;transition:color .2s}
+footer.dev a:hover{color:#bdbdbd}
+footer.dev .dev-logo img{height:15px;width:auto;display:block;filter:brightness(0) invert(1);opacity:.55;transition:opacity .2s}
+footer.dev .dev-logo:hover img{opacity:.9}
+footer.dev i{width:3px;height:3px;border-radius:50%;background:#444;display:block}
+@media(max-width:600px){footer.dev{padding-bottom:84px}footer.dev i{display:none}footer.dev{gap:8px 16px}}
+/* CTA final */
+.cta{padding:0;background:#000 url('https://directus.leanttro.com/assets/018e892e-a4e2-49b1-bdbc-0130d59fdfd8?quality=80&format=webp') right center/cover no-repeat;border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:relative}
+.cta:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.92) 0,rgba(0,0,0,.78) 34%,rgba(0,0,0,.25) 55%,rgba(0,0,0,.2) 70%,rgba(0,0,0,.6) 100%)}
+.cta-in{position:relative;z-index:1;display:flex;align-items:center;gap:clamp(18px,3vw,44px);padding:clamp(26px,3.4vw,44px) 4%}
+.cta-logo{width:clamp(110px,12vw,160px);height:auto;flex:none;display:block}
+.cta-title{flex:none}
+.cta-title h2{font-size:clamp(16px,1.9vw,26px);line-height:1.15;margin:0 0 8px;color:#fff;text-shadow:0 2px 8px #000}
+.cta-title p{font-size:clamp(10px,.85vw,12px);color:#e8e8e8;margin:0;line-height:1.4;text-shadow:0 2px 6px #000}
+.cta-contact{margin-left:auto;margin-right:clamp(10px,5vw,80px);padding-left:clamp(18px,2.6vw,36px);border-left:1px solid rgba(255,255,255,.18);display:flex;flex-direction:column;gap:14px;flex:none;position:relative;z-index:1}
+.cta-contact a{display:flex;align-items:center;gap:12px;color:#fff;text-shadow:0 2px 3px #000,0 0 10px #000,0 0 22px rgba(0,0,0,.95),0 0 36px rgba(0,0,0,.8)}
+.cta-contact:before{content:"";position:absolute;inset:-14px -22px -14px 0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 40% 50%,rgba(0,0,0,.7),rgba(0,0,0,.35) 60%,transparent 85%)}
+.cta-contact .cw{filter:drop-shadow(0 2px 6px #000)}
+.cta-contact b{font-family:var(--title-font);font-weight:700;font-size:clamp(16px,1.9vw,26px);letter-spacing:.2px}
+.cta-contact span{font-size:clamp(12px,1.2vw,16px)}
+.cta-contact .cw{width:clamp(20px,1.9vw,26px);height:clamp(20px,1.9vw,26px);flex:none}
+.cta-btn .cw{width:16px;height:16px}
+.cta-btn{background:rgba(0,0,0,.35)}
+@media(max-width:950px){
+.cta{background-position:70% center}
+.cta:before{background:linear-gradient(180deg,rgba(0,0,0,.9),rgba(0,0,0,.8) 45%,rgba(0,0,0,.94))}
+.cta-contact:before{inset:-10px -4% -10px -4%}
+.cta-in{flex-direction:column;align-items:flex-start;gap:20px;padding:40px 4% 44px}
+.cta-logo{width:130px}
+.cta-title h2{font-size:clamp(24px,7vw,32px)}
+.cta-title p{font-size:13px}
+.cta-contact{margin:0;padding:18px 0 0;border-left:0;border-top:1px solid rgba(255,255,255,.18);width:100%}
+.cta-contact b{font-size:22px}
+.cta-contact span{font-size:15px}
+.cta-btn{width:100%;justify-content:center;padding:15px 20px;font-size:12px}
+}
+
+/* Faixa nota fiscal */
+.nf{background:linear-gradient(90deg,#070707,#17120a 50%,#070707);border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+.nf:after{content:"";position:absolute;top:0;left:-40%;width:30%;height:100%;background:linear-gradient(100deg,transparent,rgba(245,201,78,.14),transparent);transform:skewX(-20deg);animation:nfSweep 6s ease-in-out 1s infinite}
+@keyframes nfSweep{0%{left:-40%}60%,100%{left:130%}}
+.nf-in{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:14px;padding:15px 4%}
+.nf p{margin:0;text-align:center;font-family:var(--title-font);font-weight:700;font-size:clamp(12px,1.35vw,17px);letter-spacing:.8px;text-transform:uppercase;color:#fff;line-height:1.3}
+.nf p span{color:var(--gold2)}
+.nf p b{font-weight:700;border-bottom:1px solid rgba(245,201,78,.6)}
+@media(prefers-reduced-motion:reduce){.nf:after{animation:none}}
+@media(max-width:600px){.nf-in{gap:10px;padding:14px 4%}/* Nosso compromisso */
+.commit{padding:64px 0;background:radial-gradient(ellipse at 50% 0,rgba(225,173,45,.07),transparent 60%),#050505;border-bottom:1px solid rgba(255,255,255,.06)}
+.commit-in{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(28px,5vw,70px);align-items:start}
+.commit-head h2{font-size:clamp(22px,2.7vw,36px);line-height:1.12;margin:10px 0 0;color:#fff}
+.commit-body p{font-size:15px;line-height:1.65;color:#d9d9d9;margin:0 0 16px}
+.commit-body blockquote{margin:22px 0 0;padding:6px 0 6px 22px;border-left:3px solid var(--gold);color:var(--gold2);font-size:clamp(15px,1.4vw,18px);line-height:1.5;font-weight:500}
+@media(min-width:951px){
+.commit{padding:60px 0 64px}
+.commit-in{grid-template-columns:1fr;gap:34px}
+.commit-head{text-align:center}
+.commit-head h2{font-size:clamp(26px,2.9vw,38px);max-width:900px;margin-left:auto;margin-right:auto}
+.commit-body{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(24px,3.4vw,52px);align-items:start}
+.commit-body p{margin:0;padding-top:18px;border-top:1px solid rgba(225,173,45,.4);font-size:14.5px;line-height:1.6}
+.commit-body blockquote{margin:0;padding:18px 0 0;border-left:0;border-top:2px solid var(--gold);font-size:clamp(14.5px,1.25vw,17px)}
+}
+@media(max-width:950px){.commit{padding:48px 0}.commit-in{grid-template-columns:1fr;gap:20px}.commit-head h2{font-size:clamp(22px,6.2vw,30px)}}
+/* Frota / parceiros */
+.fleet{padding:0;background:radial-gradient(ellipse at 0 100%,rgba(225,173,45,.16),transparent 30%),radial-gradient(ellipse at 100% 100%,rgba(225,173,45,.2),transparent 26%),#040404;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.fleet-layout{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,2.2fr);gap:clamp(20px,3vw,44px);align-items:center;padding:38px 0}
+.fleet-text h2{font-size:clamp(17px,1.9vw,24px);line-height:1.2;margin:0 0 14px;color:#fff}
+.fleet-text h2 span{background:linear-gradient(90deg,#e1ad2d,#ffd869);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.fleet-text p{font-size:clamp(12px,1vw,13.5px);line-height:1.55;color:#eee;margin:0}
+.fleet-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.fv{margin:0;background:linear-gradient(160deg,#f5c94e,#7a5a14 55%,#e1ad2d);padding:1px;clip-path:polygon(9% 0,100% 0,91% 100%,0 100%);transition:transform .3s,filter .3s}
+.fv:hover{transform:translateY(-5px);filter:drop-shadow(0 8px 16px rgba(225,173,45,.35))}
+.fv-in{background:#070707;clip-path:polygon(9% 0,100% 0,91% 100%,0 100%);display:flex;flex-direction:column;height:100%}
+.fv img{width:100%;aspect-ratio:1.45/1;object-fit:cover;display:block}
+.fv figcaption{text-align:center;color:#fff;font-family:var(--title-font);font-weight:600;font-size:clamp(10px,.95vw,12px);letter-spacing:.3px;padding:10px 4px 11px;background:linear-gradient(180deg,#0b0b0b,#050505)}
+@media(max-width:950px){
+.fleet-layout{grid-template-columns:1fr;padding:44px 0 46px;gap:26px}
+.fleet-text h2{font-size:clamp(20px,5.4vw,26px)}
+.fleet-text p{font-size:14px}
+.fleet-grid{grid-template-columns:1fr 1fr;gap:12px}
+.fv figcaption{font-size:12px}
+}
+
+
+
+
+@media(max-width:950px){
+.burger{display:flex}.nav-in{gap:12px}.nav-btn{margin-left:auto}
+nav{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;background:#050505;border-bottom:1px solid var(--line);padding:6px 4% 14px;box-shadow:0 18px 30px rgba(0,0,0,.6)}
+.nav.open nav{display:flex}
+nav a{padding:16px 4px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.07)}
+nav a:last-child{border-bottom:0}
+.cards{grid-template-columns:repeat(2,1fr)}.card:last-child{grid-column:1/-1}.two{grid-template-columns:1fr}
+
+}
+@media(max-width:600px){
+.nav{height:64px}.nav .nav-btn{padding:10px 14px;font-size:10px;gap:6px;white-space:nowrap;box-shadow:none}.t-long{display:none}.t-short{display:inline}.logo img{height:40px}
+.hero{height:auto;min-height:0;align-items:flex-start;background-image:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,0) 120px,#030303 235px),var(--hero-img);background-size:100% 100%,auto 250px;background-position:0 0,72% 0}.hero-in{padding:215px 0 44px}h1{font-size:28px}.lead{font-size:13.5px}.hero-in{padding:215px 0 40px}.quick{gap:15px}
+section{padding:58px 0}.cards{grid-template-columns:1fr 1fr;gap:9px}.card{min-height:190px;padding:20px 10px}
+.card h3{font-size:13px}.card p{font-size:11px}.card .ico{width:40px;height:40px}
+
+
+
+}
+</style>
+</head>
+<body>
+<header class="nav">
+<div class="container nav-in">
+  <a class="logo" href="#"><img src="https://directus.leanttro.com/assets/9ee404e7-72c9-4447-ba8e-3f510cd60f3b?quality=80&format=webp" alt="A.M.S. Executive"></a>
+  <nav id="menu">
+    <a href="#inicio">Início</a><a href="#servicos">Serviços</a><a href="#sobre">Sobre</a><a href="#frota">Frota / Parceiros</a><a href="#contato">Contato</a>
+  </nav>
+  <a class="btn nav-btn" href="https://wa.me/5511915470351" target="_blank">◉ <span class="t-long">Solicitar meu transfer</span><span class="t-short">Solicitar</span></a>
+  <button class="burger" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+</div>
+</header>
+
+<section id="inicio" class="hero">
+<div class="container hero-in">
+  <div class="eyebrow">Transporte executivo</div>
+  <h1>MAIS QUE UM<br><span>TRANSPORTE.</span><br>UMA EXPERIÊNCIA<br>EXECUTIVA.</h1>
+  <p class="lead">Conforto, segurança, discrição e pontualidade em cada trajeto.</p>
+  <div class="actions"><a class="btn" href="https://wa.me/5511915470351" target="_blank">◉ &nbsp; Solicitar meu transfer &nbsp; →</a></div>
+  <div class="quick">
+    <div class="quick-item" style="--d:.75s"><strong>◷ Atendimento</strong>24 horas</div>
+    <div class="quick-item" style="--d:.95s"><strong>⌖ São Paulo</strong>e região</div>
+    <div class="quick-item" style="--d:1.15s"><strong>▣ Mediante</strong>agendamento</div>
+  </div>
+</div>
+</section>
+
+<section id="sobre" class="about">
+<div class="about-glow"></div>
+<div class="container about-grid">
+  <div class="about-text">
+    <h2>SEU DESTINO.<br><span>NOSSA PRIORIDADE.</span></h2>
+    <p>A A.M.S. Transporte Executivo oferece uma experiência diferenciada para quem valoriza conforto, segurança, discrição e pontualidade.</p>
+    <p>À frente da operação está Alan Santos, responsável pelo atendimento e pelo transporte em veículo executivo próprio, proporcionando uma experiência personalizada e profissional em cada viagem.</p>
+  </div>
+  <figure class="about-photo">
+    <img src="https://directus.leanttro.com/assets/85f68515-f9f4-4152-98fd-30ff1ab512dd?quality=80&format=webp" alt="Alan Santos, fundador e responsável pela A.M.S. Executive">
+    <figcaption><span class="sig">Alan Santos</span><b>Fundador e responsável<br>pela A.M.S. Executive</b></figcaption>
+  </figure>
+  <blockquote class="about-quote">
+    <span class="qm">&ldquo;</span>
+    <p>Mais do que conduzir, meu objetivo é proporcionar uma experiência executiva diferenciada em cada viagem.&rdquo;</p>
+  </blockquote>
+</div>
+</section>
+
+<section id="servicos" class="services">
+<div class="container">
+  <div class="services-head"><h2 class="svc-title">Um serviço para cada momento</h2></div>
+  <div class="cards">
+    <article class="card"><svg class="ico plane" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg><h3>Transfer<br>aeroportuário</h3><p>GRU • CGH • VCP</p></article>
+    <article class="card"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18M10.5 12h3v2.5h-3z"/></svg><h3>Transporte<br>executivo</h3><p>Compromissos profissionais, reuniões e deslocamentos.</p></article>
+    <article class="card"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V8h8v13M12 21V3h8v18M2 21h20M7 11h2M7 14h2M7 17h2M15 6h2M15 9h2M15 12h2M15 15h2"/></svg><h3>Viagens<br>corporativas</h3><p>Conforto e pontualidade para sua rotina.</p></article>
+    <article class="card"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M12 12.5l1.1 2.3 2.5.3-1.8 1.7.5 2.5-2.3-1.2-2.3 1.2.5-2.5-1.8-1.7 2.5-.3z"/></svg><h3>Eventos e<br>deslocamentos</h3><p>Atendimento personalizado para cada ocasião.</p></article>
+    <article class="card"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><h3>Táxi<br>executivo</h3><p>Mobilidade diferenciada pela cidade de São Paulo.</p></article>
+  </div>
+</div>
+</section>
+
+<section id="compromisso" class="commit">
+  <div class="container commit-in">
+    <div class="commit-head">
+      <div class="kicker">Nosso compromisso</div>
+      <h2>TRANQUILIDADE E SEGURANÇA <span>EM TODOS OS DESLOCAMENTOS.</span></h2>
+    </div>
+    <div class="commit-body">
+      <p>A A.M.S. Transporte Executivo atua na prestação de serviços de transporte executivo, oferecendo conforto, segurança, discrição, pontualidade e atendimento personalizado. Sob a responsabilidade de Alan Santos, a A.M.S. oferece atendimento profissional e transporte em veículo executivo próprio, proporcionando uma experiência diferenciada em cada deslocamento.</p>
+      <p>O atendimento é realizado 24 horas, mediante agendamento, para transfers aeroportuários, compromissos profissionais, viagens e demais deslocamentos.</p>
+      <blockquote>Nosso compromisso é oferecer um serviço de transporte executivo pautado pela pontualidade, discrição, conforto e excelência no atendimento, visando proporcionar tranquilidade e segurança em todos os deslocamentos.</blockquote>
+    </div>
+  </div>
+</section>
+
+<section id="mobilidade" class="mobility">
+  <div class="mob-img" role="img" aria-label="Veículo executivo A.M.S. em São Paulo"></div>
+  <div class="mob-text">
+    <h2><span class="g">MOBILIDADE DIFERENCIADA</span><br>EM SÃO PAULO.</h2>
+    <p>A A.M.S. conta com veículo executivo próprio, unindo conforto, segurança e sofisticação à mobilidade proporcionada pela modalidade táxi.</p>
+    <p>Essa característica permite maior agilidade nos deslocamentos pela cidade de São Paulo, inclusive com utilização das faixas exclusivas e corredores de ônibus nos locais e horários permitidos pela legislação vigente.</p>
+  </div>
+  <ul class="mob-feats">
+    <li><svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4.5A2.5 2.5 0 0 1 9.5 2h2A2.5 2.5 0 0 1 14 4.5L14.8 12H17a2 2 0 0 1 2 2v2.5H8.6L6.2 8z"/><path d="M8.5 16.5V21h9v-4.5M10.5 6.5h2"/></svg><b>Conforto</b></li>
+    <li><svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17a9 9 0 1 1 18 0"/><path d="M12 17l4.2-5.2"/><circle cx="12" cy="17" r="1.2"/><path d="M5.6 11.6l1.3.8M8.3 7.6l1 1.1M12 6.2V8M15.7 7.6l-1 1.1M18.4 11.6l-1.3.8"/></svg><b>Agilidade</b></li>
+    <li><svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg><b>Segurança</b></li>
+    <li><svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.2 1.8"/></svg><b>Pontualidade</b></li>
+  </ul>
+</section>
+
+<div class="nf" role="note">
+  <div class="nf-in"><p><span>Atendimento corporativo</span> com <b>emissão de nota fiscal.</b></p></div>
+</div>
+
+
+<section id="frota" class="fleet">
+<div class="container fleet-layout">
+  <div class="fleet-text">
+    <h2>QUANDO VOCÊ PRECISA DE MAIS,<br><span>A GENTE ENCONTRA A SOLUÇÃO.</span></h2>
+    <p>Para necessidades específicas, contamos com uma rede de parceiros de confiança e veículos selecionados, incluindo SUVs, blindados, vans e outras categorias, conforme a disponibilidade e necessidade de cada serviço.</p>
+  </div>
+  <div class="fleet-grid">
+    <figure class="fv"><div class="fv-in"><img src="https://directus.leanttro.com/assets/fc424170-e77e-447d-99ba-d58c7cbd4d24?quality=80&format=webp" alt="SUVs" loading="lazy"><figcaption>SUVs</figcaption></div></figure>
+    <figure class="fv"><div class="fv-in"><img src="https://directus.leanttro.com/assets/ac1fa961-ee74-44ac-a453-e973d8b3c605?quality=80&format=webp" alt="Blindados" loading="lazy"><figcaption>BLINDADOS</figcaption></div></figure>
+    <figure class="fv"><div class="fv-in"><img src="https://directus.leanttro.com/assets/99b77fcf-8dbb-4d03-87d3-1435229f5128?quality=80&format=webp" alt="Vans" loading="lazy"><figcaption>VANS</figcaption></div></figure>
+    <figure class="fv"><div class="fv-in"><img src="https://directus.leanttro.com/assets/de78f904-5532-43b4-a8da-6fafb2ec00f3?quality=80&format=webp" alt="Executivo" loading="lazy"><figcaption>EXECUTIVO</figcaption></div></figure>
+  </div>
+</div>
+</section>
+
+<section class="airports">
+  <div class="ap-in">
+    <div class="ap-title">
+      <h2>TRANSFER AEROPORTUÁRIO</h2>
+      <span>AEROPORTOS ATENDIDOS</span>
+    </div>
+    <div class="ap-list">
+      <div class="ap"><svg class="ap-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg><div><b>GRU</b><small>Aeroporto Internacional de São Paulo</small></div></div>
+      <div class="ap"><svg class="ap-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg><div><b>CGH</b><small>Aeroporto de Congonhas</small></div></div>
+      <div class="ap"><svg class="ap-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg><div><b>VCP</b><small>Aeroporto Internacional de Viracopos</small></div></div>
+    </div>
+    <a class="ap-btn" href="https://wa.me/5511915470351" target="_blank"><svg class="wa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z"/><path d="M9 8.5c0 3 2.5 5.5 5.5 5.5l1-1.3-1.8-1-.8.7a3.5 3.5 0 0 1-1.6-1.6l.7-.8-1-1.8z"/></svg> Solicitar meu transfer</a>
+  </div>
+</section>
+
+<section id="contato" class="cta">
+  <div class="cta-in">
+    <img class="cta-logo" src="https://directus.leanttro.com/assets/9ee404e7-72c9-4447-ba8e-3f510cd60f3b?quality=80&format=webp" alt="A.M.S. Executive">
+    <div class="cta-title">
+      <h2>PRONTO PARA SEU<br><span>PRÓXIMO DESTINO?</span></h2>
+      <p>Atendimento 24 horas mediante agendamento.</p>
+    </div>
+    <div class="cta-contact">
+      <a href="https://wa.me/5511915470351" target="_blank"><svg class="cw" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.9L2 22l5.3-1.4A9.9 9.9 0 1 0 12.04 2zm0 1.8a8.1 8.1 0 1 1-4.3 15l-.3-.2-3.1.8.8-3-.2-.3A8.1 8.1 0 0 1 12.04 3.8zM8.6 7.5c-.2 0-.5.1-.7.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.2 4.9 4.4 2.4 1 2.9.8 3.4.7.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.4l-1.9-.9c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.8-.8-1.4-1.700-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.200c-.2-.5-.5-.5-.7-.5z"/></svg><b>(11) 91547-0351</b></a>
+      <a href="https://instagram.com/amstransferexecutivo" target="_blank"><svg class="cw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".9" fill="currentColor" stroke="none"/></svg><span>@amstransferexecutivo</span></a>
+    </div>
+    <a class="ap-btn cta-btn" href="https://wa.me/5511915470351" target="_blank"><svg class="cw" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.9L2 22l5.3-1.4A9.9 9.9 0 1 0 12.04 2zm0 1.8a8.1 8.1 0 1 1-4.3 15l-.3-.2-3.1.8.8-3-.2-.3A8.1 8.1 0 0 1 12.04 3.8zM8.6 7.5c-.2 0-.5.1-.7.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.2 4.9 4.4 2.4 1 2.9.8 3.4.7.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.4l-1.9-.9c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.8-.8-1.4-1.700-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.200c-.2-.5-.5-.5-.7-.5z"/></svg> Solicitar meu transfer</a>
+  </div>
+</section>
+
+<footer class="dev">
+  <span>Desenvolvido por</span>
+  <a class="dev-logo" href="https://www.leanttro.com" target="_blank" rel="noopener"><img src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1779207400/leanttro_bohuce.png" alt="Leanttro" loading="lazy"></a>
+  <i></i><a href="https://www.leanttro.com" target="_blank" rel="noopener">www.leanttro.com</a>
+  <i></i><a href="https://instagram.com/leanttro.com" target="_blank" rel="noopener">@leanttro.com</a>
+  <i></i><a href="https://wa.me/5511913324827" target="_blank" rel="noopener">11 91332-4827</a>
+</footer>
+<a class="whats" href="https://wa.me/5511915470351" target="_blank" aria-label="Falar no WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.9L2 22l5.3-1.4A9.9 9.9 0 1 0 12.04 2zm0 1.8a8.1 8.1 0 1 1-4.3 15l-.3-.2-3.1.8.8-3-.2-.3A8.1 8.1 0 0 1 12.04 3.8zM8.6 7.5c-.2 0-.5.1-.7.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.2 4.9 4.4 2.4 1 2.9.8 3.4.7.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.4l-1.9-.9c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.8-.8-1.4-1.700-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.200c-.2-.5-.5-.5-.7-.5z"/></svg></a>
+<script>
+(function(){var h=document.querySelector('.nav'),b=h.querySelector('.burger');
+function set(o){h.classList.toggle('open',o);b.setAttribute('aria-expanded',o);b.setAttribute('aria-label',o?'Fechar menu':'Abrir menu')}
+b.addEventListener('click',function(){set(!h.classList.contains('open'))});
+h.querySelectorAll('nav a').forEach(function(a){a.addEventListener('click',function(){set(false)})});
+window.addEventListener('resize',function(){if(innerWidth>950)set(false)});
+})();
+</script>
+</body>
+</html>
