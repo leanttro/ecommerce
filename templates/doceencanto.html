@@ -150,6 +150,12 @@ header{position:relative;z-index:50;background:#fffdfb;border-bottom:1px solid r
 .product-photo img{width:100%;height:100%;object-fit:cover;transition:.4s}
 .product-card:hover .product-photo img{transform:scale(1.04)}
 .products-empty{text-align:center;color:#80615b;padding:30px 0}
+.cat-filter{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:0 auto 34px}
+.cat-chip{appearance:none;font:inherit;font-size:.82rem;font-weight:700;color:var(--rose-dark);background:var(--white);border:1px solid var(--line);border-radius:999px;padding:10px 20px;cursor:pointer;transition:.25s;white-space:nowrap}
+.cat-chip:hover{border-color:var(--rose-dark)}
+.cat-chip.active{background:var(--rose-dark);border-color:var(--rose-dark);color:#fff}
+.product-card[hidden]{display:none}
+@media(max-width:640px){.cat-filter{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;gap:8px;margin:0 -14px 26px;padding:2px 14px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.cat-filter::-webkit-scrollbar{display:none}}
 .product-body{padding:20px 18px 22px;text-align:center}
 .product-body h3{font-size:1.25rem}
 .product-body p{font-size:.82rem;color:#80615b;min-height:48px;margin:8px 0 15px}
@@ -362,12 +368,6 @@ footer p,footer a{font-size:.8rem;color:#80615b}
     {% for cat in categorias %}
       {% if cat.nome and cat.nome|trim|lower == 'produtos' %}{% set ns_prod.cat_id = cat.id %}{% endif %}
     {% endfor %}
-    {% set lista_produtos = [] %}
-    {% if ns_prod.cat_id %}
-      {% for p in produtos %}
-        {% if (p.categoria_id|string) == (ns_prod.cat_id|string) %}{% set _ = lista_produtos.append(p) %}{% endif %}
-      {% endfor %}
-    {% endif %}
     {% set ns_fotos = namespace(cat_id=None) %}
     {% for cat in categorias %}
       {% if cat.nome and cat.nome|trim|lower == 'fotos do site' %}{% set ns_fotos.cat_id = cat.id %}{% endif %}
@@ -378,10 +378,30 @@ footer p,footer a{font-size:.8rem;color:#80615b}
         {% if (p.categoria_id|string) == (ns_fotos.cat_id|string) and p.imagem %}{% set _ = fotos_site.append(p) %}{% endif %}
       {% endfor %}
     {% endif %}
+    {# Produtos de todas as categorias, exceto "Fotos do Site" #}
+    {% set lista_produtos = [] %}
+    {% for p in produtos %}
+      {% if not ns_fotos.cat_id or (p.categoria_id|string) != (ns_fotos.cat_id|string) %}{% set _ = lista_produtos.append(p) %}{% endif %}
+    {% endfor %}
+    {# Slicer de categorias (so categorias que tem produtos) #}
+    {% set cats_filtro = [] %}
+    {% for cat in categorias %}
+      {% if cat.nome and cat.nome|trim|lower not in ['fotos do site','produtos'] %}
+        {% set ns_c = namespace(n=0) %}
+        {% for p in lista_produtos %}{% if (p.categoria_id|string) == (cat.id|string) %}{% set ns_c.n = ns_c.n + 1 %}{% endif %}{% endfor %}
+        {% if ns_c.n > 0 %}{% set _ = cats_filtro.append(cat) %}{% endif %}
+      {% endif %}
+    {% endfor %}
+    {% if cats_filtro %}
+    <div class="cat-filter" id="catFilter" role="tablist" aria-label="Categorias de produtos">
+      <button type="button" class="cat-chip active" data-cat="all">Todos</button>
+      {% for cat in cats_filtro %}<button type="button" class="cat-chip" data-cat="{{ cat.id }}">{{ cat.nome|trim }}</button>{% endfor %}
+    </div>
+    {% endif %}
     <div class="product-grid">
     {% if lista_produtos %}
       {% for p in lista_produtos %}
-      <article class="product-card">
+      <article class="product-card" data-cat="{{ p.categoria_id }}">
         <div class="product-photo">{% if p.imagem %}<img src="{{ p.imagem }}" alt="{{ p.nome }}" loading="lazy">{% endif %}</div>
         <div class="product-body"><h3>{{ p.nome }}</h3><p>{{ (p.descricao or '')|striptags|truncate(90) }}</p><a href="/{{ loja.slug_url }}/produto/{{ p.slug }}">Ver detalhes →</a></div>
       </article>
@@ -532,6 +552,23 @@ document.querySelectorAll('#navbar a').forEach(a => a.addEventListener('click', 
     const texto = 'Olá! Me chamo ' + nome + '. ' + msg + ' (WhatsApp: ' + whats + ')';
     const url = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(texto);
     setTimeout(function(){ window.location.href = url; }, 1000);
+  });
+})();
+</script>
+<script>
+(function(){
+  const bar = document.getElementById('catFilter');
+  if(!bar) return;
+  const chips = bar.querySelectorAll('.cat-chip');
+  const cards = document.querySelectorAll('.product-card');
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      const cat = chip.getAttribute('data-cat');
+      chips.forEach(function(c){ c.classList.toggle('active', c === chip); });
+      cards.forEach(function(card){
+        card.hidden = !(cat === 'all' || card.getAttribute('data-cat') === cat);
+      });
+    });
   });
 })();
 </script>
