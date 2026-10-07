@@ -151,7 +151,7 @@ p{font-size:15px;line-height:1.65;color:#d0d0d0}
 .services-head{text-align:center}
 .svc-title{font-family:var(--title-font);font-size:clamp(13px,1.5vw,17px);letter-spacing:.3em;text-transform:uppercase;color:var(--gold2);font-weight:700;margin:0}
 .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:30px}
-.card{min-height:190px;border:1px solid rgba(225,173,45,.55);border-radius:8px;background:linear-gradient(160deg,#101010,#030303 70%);padding:24px 16px 22px;text-align:center;position:relative;overflow:hidden;box-shadow:inset 0 0 36px rgba(225,173,45,.04);transition:transform .3s,box-shadow .3s,border-color .3s}
+.card{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:190px;border:1px solid rgba(225,173,45,.55);border-radius:8px;background:linear-gradient(160deg,#101010,#030303 70%);padding:24px 16px 22px;text-align:center;position:relative;overflow:hidden;box-shadow:inset 0 0 36px rgba(225,173,45,.04);transition:transform .3s,box-shadow .3s,border-color .3s}
 .card:before{content:"";position:absolute;left:-30px;bottom:-30px;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(245,201,78,.28),transparent 70%)}
 .card:hover{transform:translateY(-6px);border-color:var(--gold2);box-shadow:0 14px 34px rgba(225,173,45,.18),inset 0 0 36px rgba(225,173,45,.08)}
 .card .ico{width:46px;height:46px;color:var(--gold2);display:block;margin:0 auto 12px;filter:drop-shadow(0 0 6px rgba(245,201,78,.35))}
@@ -319,13 +319,47 @@ nav a:last-child{border-bottom:0}
 
 }
 @media(max-width:600px){
-.nav{height:64px}.nav .nav-btn{padding:10px 14px;font-size:10px;gap:6px;white-space:nowrap;box-shadow:none}.t-long{display:none}.t-short{display:inline}.logo img{height:40px}
+.nav{height:64px}.nav .nav-btn{padding:10px 14px;font-size:10px;gap:6px;white-space:nowrap;box-shadow:none}.t-long{display:none}.t-short{display:inline}.logo img{height:48px}
 .hero{height:auto;min-height:0;align-items:flex-start;background-image:linear-gradient(180deg,rgba(0,0,0,0) 0,rgba(0,0,0,0) 120px,#030303 235px),var(--hero-img);background-size:100% 100%,auto 250px;background-position:0 0,72% 0}.hero-in{padding:215px 0 44px}h1{font-size:28px}.lead{font-size:13.5px}.hero-in{padding:215px 0 40px}.quick{gap:15px}
 section{padding:58px 0}.cards{grid-template-columns:1fr 1fr;gap:9px}.card{min-height:190px;padding:20px 10px}
 .card h3{font-size:13px}.card p{font-size:11px}.card .ico{width:40px;height:40px}
 
 
 
+}
+
+/* Nossa história / experiência */
+.story{position:relative;overflow:hidden;padding:84px 0 80px;background:radial-gradient(ellipse at 100% 0,rgba(225,173,45,.13),transparent 46%),radial-gradient(ellipse at 0 100%,rgba(225,173,45,.10),transparent 42%),#050505;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.story-head{text-align:center;max-width:920px;margin:0 auto 50px}
+.story-head h2{font-size:clamp(26px,3.7vw,50px);line-height:1.07;margin:12px 0 0;color:#fff}
+.story-top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(24px,4vw,64px);align-items:center;max-width:1000px;margin:0 auto 22px;padding:34px clamp(22px,3.4vw,52px);border:1px solid rgba(225,173,45,.55);border-radius:10px;background:linear-gradient(160deg,#111,#040404 72%);box-shadow:inset 0 0 40px rgba(225,173,45,.05)}
+.st-num{display:flex;align-items:flex-end;gap:14px;padding-right:clamp(24px,4vw,60px);border-right:1px solid rgba(225,173,45,.4)}
+.st-num b{font-family:var(--title-font);font-weight:700;font-size:clamp(88px,11vw,150px);line-height:.82;letter-spacing:-4px;background:linear-gradient(100deg,#d99f19 0%,#f5c94e 45%,#fff3b8 60%,#f5c94e 80%,#d99f19 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.st-num span{font-family:var(--title-font);font-weight:700;font-size:clamp(10.5px,1vw,13px);letter-spacing:.26em;text-transform:uppercase;color:#fff;line-height:1.7;padding-bottom:4px}
+.st-intro{margin:0;font-size:clamp(16px,1.55vw,20px);line-height:1.5;color:#f1f1f1}
+.st-intro strong{color:var(--gold2);font-weight:700}
+.st-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;max-width:1000px;margin:0 auto 60px}
+.st-card{position:relative;overflow:hidden;padding:30px 24px 28px;border:1px solid rgba(225,173,45,.45);border-radius:8px;background:linear-gradient(160deg,#101010,#030303 70%);transition:transform .3s,box-shadow .3s,border-color .3s}
+.st-card:before{content:"";position:absolute;left:-30px;bottom:-30px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(245,201,78,.24),transparent 70%)}
+.st-card:hover{transform:translateY(-6px);border-color:var(--gold2);box-shadow:0 14px 34px rgba(225,173,45,.18)}
+.st-n{position:absolute;right:16px;top:6px;font-family:var(--title-font);font-weight:700;font-size:56px;line-height:1;color:transparent;-webkit-text-stroke:1px rgba(225,173,45,.3)}
+.st-ico{position:relative;width:44px;height:44px;color:var(--gold2);display:block;margin-bottom:18px;filter:drop-shadow(0 0 6px rgba(245,201,78,.35))}
+.st-card h3{position:relative;font-family:var(--title-font);font-size:15px;line-height:1.2;letter-spacing:.4px;text-transform:uppercase;font-weight:700;color:#fff;margin:0 0 12px}
+.st-card p{position:relative;font-size:13.5px;line-height:1.6;color:#d4d4d4;margin:0}
+.st-close{max-width:860px;margin:0 auto;text-align:center}
+.st-close blockquote{position:relative;margin:0;padding:0 clamp(0px,2vw,24px)}
+.st-close blockquote:before{content:"\201C";display:block;font-family:Georgia,serif;font-size:64px;line-height:.6;color:var(--gold2);margin-bottom:6px}
+.st-close blockquote p{margin:0;font-size:clamp(19px,2.3vw,30px);line-height:1.35;font-weight:700;font-family:var(--title-font);color:#fff}
+.st-close blockquote p em{font-style:normal;color:var(--gold2)}
+.st-sign{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:30px;font-family:var(--title-font);font-weight:700;font-size:clamp(9.5px,.9vw,11.5px);letter-spacing:.28em;text-transform:uppercase;color:var(--gold2)}
+.st-sign:before,.st-sign:after{content:"";height:1px;width:clamp(24px,6vw,70px);background:rgba(225,173,45,.55)}
+@media(max-width:950px){
+.story{padding:56px 0 54px}
+.story-head{margin-bottom:34px}
+.story-top{grid-template-columns:1fr;gap:20px;padding:26px 22px}
+.st-num{padding:0 0 18px;border-right:0;border-bottom:1px solid rgba(225,173,45,.4)}
+.st-cards{grid-template-columns:1fr;gap:14px;margin-bottom:44px}
+.st-sign{letter-spacing:.18em;text-align:center}
 }
 </style>
 </head>
@@ -378,6 +412,37 @@ section{padding:58px 0}.cards{grid-template-columns:1fr 1fr;gap:9px}.card{min-he
     <span class="qm">&ldquo;</span>
     <p>Mais do que conduzir, meu objetivo é proporcionar uma experiência executiva diferenciada em cada viagem.&rdquo;</p>
   </blockquote>
+</div>
+</section>
+
+<section id="historia" class="story">
+<div class="container">
+  <div class="story-head">
+    <div class="kicker">Quem está ao volante</div>
+    <h2>EXPERIÊNCIA, CONHECIMENTO E <span>EXCELÊNCIA</span> EM CADA DESLOCAMENTO.</h2>
+  </div>
+  <div class="story-top">
+    <div class="st-num"><b>12</b><span>anos como<br>motorista<br>profissional</span></div>
+    <p class="st-intro"><strong>Alan de Moura Santos</strong>, fundador da AMS Transfer, é <strong>nascido e criado em Guarulhos</strong>, São Paulo, e atua na cidade de São Paulo e região.</p>
+  </div>
+  <div class="st-cards">
+    <article class="st-card"><span class="st-n">01</span>
+      <svg class="st-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>
+      <h3>Rotas e trânsito<br>sob domínio</h3>
+      <p>Amplo conhecimento dos principais acessos e da dinâmica do trânsito da capital e região metropolitana, para escolher o melhor itinerário de cada destino e de cada condição.</p></article>
+    <article class="st-card"><span class="st-n">02</span>
+      <svg class="st-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform:rotate(45deg)"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
+      <h3>Aeroportos e<br>terminais</h3>
+      <p>Conhecimento operacional dos principais aeroportos e do embarque e desembarque de cada companhia aérea. Com os dados do voo, o deslocamento já sai planejado para o terminal certo.</p></article>
+    <article class="st-card"><span class="st-n">03</span>
+      <svg class="st-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
+      <h3>Nosso<br>propósito</h3>
+      <p>A AMS Transfer nasceu dessa experiência para oferecer transporte executivo e transfers com atendimento personalizado, mais tranquilidade e segurança em cada viagem.</p></article>
+  </div>
+  <div class="st-close">
+    <blockquote><p>Mais do que transportar passageiros, buscamos uma experiência <em>tranquila e eficiente</em> do início ao fim, com atenção aos detalhes que fazem a diferença em uma viagem.</p></blockquote>
+    <div class="st-sign">AMS Transfer</div>
+  </div>
 </div>
 </section>
 
