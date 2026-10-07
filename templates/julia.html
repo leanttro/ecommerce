@@ -1143,7 +1143,12 @@
 
   .community-copy .feature-list{ grid-template-columns: 1fr 1fr; gap: 20px 24px; margin: 0 0 clamp(24px, 3vw, 34px); }
   @media (max-width: 560px){ .community-copy .feature-list{ grid-template-columns: 1fr; text-align: left; } }
+  .community-copy .feature-item{ display: flex; align-items: flex-start; gap: 12px; }
+  .community-copy .feature-item span.mark{ flex: 0 0 8px; margin: 8px 0 0; }
+  .community-copy .feature-item p{ flex: 1 1 auto; }
   .community-note{ font-size: 0.85rem; color: var(--text-soft); margin: 10px 0 0; }
+  .community-next{ font-size: 0.95rem; font-weight: 700; color: var(--community-orange-dark); margin: 14px 0 0; }
+  @media (max-width: 860px){ .community-next{ text-align: center; } }
   @media (max-width: 860px){ .community-note{ text-align: center; } }
   .community-actions{
     display: flex;
@@ -3221,8 +3226,8 @@
       <div class="community-copy">
         <div class="community-head">
           <img class="community-dbc-logo" src="https://directus.leanttro.com/assets/c92b3497-b002-4a01-95f0-1ff3061fdb22?quality=80&format=webp" alt="DBC - De Boa com a Comida" loading="lazy">
-          <h2>Respira. É só Comida!</h2>
-          <p>Uma comunidade para mulheres que querem aprender a comer melhor sem viver de dieta — encontros, trocas e conteúdo criados pela nutricionista Julia Theila.</p>
+          <h2>Respira. É só comida!</h2>
+          <p>Uma comunidade para mulheres que querem aprender a comer melhor sem viver de dieta — encontros, trocas e conteúdos que eu crio para deixar esse caminho mais leve.</p>
         </div>
 
         <div class="feature-list">
@@ -3247,6 +3252,7 @@
         <div class="community-actions">
           <a href="https://dbc.juliatheila.com.br/?utm_source=site&utm_medium=botao&utm_campaign=comunidade_dbc" class="btn-primary" target="_blank" rel="noopener">Quero conhecer a comunidade DBC →</a>
         </div>
+        {% if (loja.titulo_agenda or '')|trim %}<p class="community-next">{{ loja.titulo_agenda|trim }}</p>{% endif %}
         <p class="community-note">Não precisa ser minha paciente para participar.</p>
       </div>
 
