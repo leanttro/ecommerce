@@ -607,6 +607,16 @@ E cuidar da alimentação, que poderia ser algo natural, começa a parecer cada 
           </div>
         </div>
         {% endif %}
+        {% if loja.slug_url == 'julia' %}
+        <div class="card">
+          <h3>Bloco da DBC (seção "Respira. É só comida!")</h3>
+          <div class="field full">
+            <label for="f-proxenc">Linha do próximo encontro (abaixo do botão)</label>
+            <input type="text" id="f-proxenc" name="titulo_agenda" value="{{ loja.titulo_agenda or '' }}" placeholder="Ex: Próximo encontro: 08/10, às 19h">
+            <span class="hint">Escreva a linha inteira, do jeito que quer que apareça. Se ficar vazio, nenhuma linha aparece.</span>
+          </div>
+        </div>
+        {% endif %}
       </section>
       {% else %}
       <!-- ═══════════════ TEXTOS DA PÁGINA — LOJA "bio" ═══════════════
@@ -834,7 +844,7 @@ E cuidar da alimentação, que poderia ser algo natural, começa a parecer cada 
       <input type="hidden" name="logos_clientes" value="{{ loja.logos_clientes or '' }}">
       <input type="hidden" name="mostrar_mapa" value="{{ '1' if loja.mostrar_mapa else '' }}">
       <input type="hidden" name="ocultar_agenda" value="{{ '1' if loja.ocultar_agenda else '' }}">
-      <input type="hidden" name="titulo_agenda" value="{{ loja.titulo_agenda or '' }}">
+      {% if loja.slug_url != 'julia' %}<input type="hidden" name="titulo_agenda" value="{{ loja.titulo_agenda or '' }}">{% endif %}
 
       <section class="card-section" id="seguranca">
         <h2>Senha de acesso</h2>
