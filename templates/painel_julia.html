@@ -1,4 +1,10 @@
 <!--
+  ATUALIZAÇÃO (loja dbc) — sem alterar o app.py: os campos do painel que
+  não faziam nada agora estão ligados no dbc.html (Pixel/GA4, Sobre a DBC,
+  frase do rodapé, destino do formulário e FAQ via conteudo_extra_json).
+  O que a DBC não usa fica oculto (display:none) mas continua sendo
+  enviado no save, para o app.py não zerar nada no Directus.
+
   TEMPLATE: painel_julia.html
   ─────────────────────────────────────────────────────────────
   Painel administrativo bespoke para a loja "julia" (Julia Theila,
@@ -323,6 +329,15 @@
 <body>
 {# Loja "bio" (página de links da Julia) reaproveita este mesmo painel. is_bio liga os ramos abaixo. #}
 {% set is_bio = (loja.slug_url == 'bio') %}
+{% set is_dbc = (loja.slug_url == 'dbc') %}
+{% set dbc_hero_default = 'Uma comunidade para quem quer aprender mais sobre alimentação e saúde, trocar experiências e construir hábitos possíveis para a vida — com informação confiável e sem precisar fazer tudo perfeitamente.' %}
+{% set dbc_sobre_t1 = 'Talvez não esteja faltando informação.' %}
+{% set dbc_sobre_t2 = 'Talvez esteja faltando um lugar onde toda essa informação faça sentido.' %}
+{% set dbc_sobre_txt %}Você abre as redes sociais e encontra alguém dizendo para cortar um alimento. Depois, outra pessoa dizendo exatamente o contrário. Surge uma dieta nova. Uma regra nova. Um alimento milagroso. Outro que virou vilão.
+
+E cuidar da alimentação, que poderia ser algo natural, começa a parecer cada vez mais complicado.
+
+**A DBC nasce para tornar essa conversa mais simples, próxima e confiável.**{% endset %}
 
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
@@ -349,6 +364,7 @@
       <a href="#dados-gerais">Dados gerais</a>
       {% if loja.slug_url == 'dbc' %}
       <a href="#textos-site">Fotos e textos da página</a>
+      <a href="#conteudo-extra">Perguntas frequentes (FAQ)</a>
       <a href="#leads-dbc">Inscritos (leads)</a>
       {% elif is_bio %}
       <a href="#textos-site">Textos da página</a>
@@ -388,22 +404,22 @@
               <label for="f-nome">Nome da loja</label>
               <input type="text" id="f-nome" name="nome" value="{{ loja.nome or '' }}">
             </div>
-            <div class="field">
+            <div class="field"{% if is_dbc %} style="display:none"{% endif %}>
               <label for="f-whatsapp">WhatsApp comercial</label>
               <input type="text" id="f-whatsapp" name="whatsapp" value="{{ loja.whatsapp_comercial or '' }}" placeholder="Ex: 5519971541008">
               <span class="hint">Só números, com DDI e DDD (usado em todos os links de WhatsApp do site).</span>
             </div>
-            <div class="field">
+            <div class="field"{% if is_dbc %} style="display:none"{% endif %}>
               <label for="f-email">E-mail de contato</label>
               <input type="email" id="f-email" name="email" value="{{ loja.email or '' }}">
               <span class="hint">Aparece no rodapé. Se ficar vazio, o link de e-mail fica oculto.</span>
             </div>
-            <div class="field">
+            <div class="field"{% if is_dbc %} style="display:none"{% endif %}>
               <label for="f-instagram">Link do Instagram</label>
               <input type="url" id="f-instagram" name="instagram_url" value="{{ loja.instagram_url or '' }}" placeholder="https://instagram.com/seuusuario">
               <span class="hint">Aparece no rodapé. Se ficar vazio, o link fica oculto.</span>
             </div>
-            <div class="field full">
+            <div class="field full"{% if is_dbc %} style="display:none"{% endif %}>
               <label for="f-endereco">{% if is_bio %}Linha do rodapé (abaixo do nome){% else %}Endereço físico{% endif %}</label>
               <input type="text" id="f-endereco" name="endereco_fisico" value="{{ loja.endereco_fisico or '' }}"{% if is_bio %} placeholder="Ex: Nutricionista Clínica · CRN 93914/P"{% endif %}>
               {% if is_bio %}<span class="hint">Se ficar vazio, usa "Nutricionista Clínica · CRN 93914/P".</span>{% endif %}
@@ -421,11 +437,11 @@
           <div class="grid-2">
             <div class="field">
               <label for="f-ga4">Google Analytics 4 (ID)</label>
-              <input type="text" id="f-ga4" name="ga4_id" value="{{ loja.ga4_id or '' }}" placeholder="G-XXXXXXXXXX">
+              <input type="text" id="f-ga4" name="ga4_id" value="{{ loja.ga4_id or ('G-XX6MEX0MLQ' if is_dbc else '') }}" placeholder="G-XXXXXXXXXX">
             </div>
             <div class="field">
               <label for="f-pixel">Meta Pixel (ID)</label>
-              <input type="text" id="f-pixel" name="facebook_pixel" value="{{ loja.facebook_pixel or '' }}" placeholder="123456789012345">
+              <input type="text" id="f-pixel" name="facebook_pixel" value="{{ loja.facebook_pixel or ('1674029103660926' if is_dbc else '') }}" placeholder="123456789012345">
             </div>
           </div>
         </div>
@@ -453,8 +469,8 @@
           </div>
           <div class="field">
             <label for="f-b1s">{% if loja.slug_url == 'dbc' %}Texto de apoio (abaixo do título "DE BOA COM A COMIDA"){% else %}Subtítulo{% endif %}</label>
-            <textarea id="f-b1s" name="banner1_subtitulo">{{ loja.banner1_subtitulo or '' }}</textarea>
-            {% if loja.slug_url == 'dbc' %}<span class="hint">Se deixar em branco, usa o texto padrão da página.</span>{% endif %}
+            <textarea id="f-b1s" name="banner1_subtitulo">{{ loja.banner1_subtitulo or (dbc_hero_default if is_dbc else '') }}</textarea>
+            {% if loja.slug_url == 'dbc' %}<span class="hint">Apague tudo para voltar ao texto original da página.</span>{% endif %}
           </div>
           <div class="field" {% if loja.slug_url == 'dbc' %}style="display:none"{% endif %}>
             <label for="f-b1b">Texto do botão</label>
@@ -475,10 +491,26 @@
           {% else %}
           <h3>Banner "Filosofia" (Sem dieta. Sem pressa.)</h3>
           {% endif %}
-          <div class="field" {% if loja.slug_url == 'dbc' %}style="display:none"{% endif %}>
+          {% if is_dbc %}
+          <div class="field">
+            <label for="f-sobretit">Título da seção — 1ª parte</label>
+            <input type="text" id="f-sobretit" name="sobre_titulo" value="{{ loja.sobre_titulo or dbc_sobre_t1 }}">
+          </div>
+          <div class="field">
+            <label for="f-b2t">Título da seção — parte em destaque (vermelha)</label>
+            <input type="text" id="f-b2t" name="banner2_titulo" value="{{ (loja.banner2_titulo or '') if loja.sobre_titulo else dbc_sobre_t2 }}">
+          </div>
+          <div class="field">
+            <label for="f-sobretexto">Parágrafos da seção</label>
+            <textarea id="f-sobretexto" name="sobre_texto" style="min-height:220px">{{ loja.sobre_texto or dbc_sobre_txt }}</textarea>
+            <span class="hint">Cada linha vira um parágrafo. Para deixar uma linha em negrito, coloque ** no começo e no fim dela. Apague tudo para voltar ao texto original.</span>
+          </div>
+          {% else %}
+          <div class="field">
             <label for="f-b2t">Título</label>
             <input type="text" id="f-b2t" name="banner2_titulo" value="{{ loja.banner2_titulo or '' }}">
           </div>
+          {% endif %}
           <div class="field" {% if loja.slug_url == 'dbc' %}style="display:none"{% endif %}>
             <label for="f-b2s">Texto</label>
             <textarea id="f-b2s" name="banner2_subtitulo">{{ loja.banner2_subtitulo or '' }}</textarea>
@@ -515,33 +547,26 @@
         </div>
 
         <div class="card">
-          {% if loja.slug_url == 'dbc' %}
+          {% if is_dbc %}
           <h3>Foto da Julia (seção "Quem está por trás da DBC")</h3>
+          <input type="hidden" name="titulo_menu_sobre" value="{{ loja.titulo_menu_sobre or '' }}">
           {% else %}
           <h3>Seção "Sobre"</h3>
-          {% endif %}
-          <div class="grid-2" {% if loja.slug_url == 'dbc' %}style="display:none"{% endif %}>
+          <div class="grid-2">
             <div class="field">
               <label for="f-menusobre">Texto do item "Sobre" no menu</label>
               <input type="text" id="f-menusobre" name="titulo_menu_sobre" value="{{ loja.titulo_menu_sobre or '' }}">
             </div>
             <div class="field">
-              <label for="f-sobretit">{% if loja.slug_url == 'dbc' %}Título da seção "Sobre a DBC"{% else %}Título{% endif %}</label>
+              <label for="f-sobretit">Título</label>
               <input type="text" id="f-sobretit" name="sobre_titulo" value="{{ loja.sobre_titulo or '' }}">
             </div>
           </div>
-          {% if loja.slug_url == 'dbc' %}
           <div class="field">
-            <label for="f-sobretit">Título da seção "Sobre a DBC"</label>
-            <input type="text" id="f-sobretit-dbc" name="sobre_titulo" value="{{ loja.sobre_titulo or '' }}" style="display:none">
-            <span class="hint">Esse campo tem input duplicado escondido acima por causa do grid — ignore, é o mesmo.</span>
+            <label for="f-sobretexto">Parágrafo</label>
+            <textarea id="f-sobretexto" name="sobre_texto">{{ loja.sobre_texto or '' }}</textarea>
           </div>
           {% endif %}
-          <div class="field">
-            <label for="f-sobretexto">{% if loja.slug_url == 'dbc' %}Parágrafo da seção "Sobre a DBC"{% else %}Parágrafo{% endif %}</label>
-            <textarea id="f-sobretexto" name="sobre_texto">{{ loja.sobre_texto or '' }}</textarea>
-            {% if loja.slug_url == 'dbc' %}<span class="hint">Se deixar em branco, usa o texto padrão da página.</span>{% endif %}
-          </div>
           <div class="img-preview">
             {% if loja.sobre_imagem_url %}<img src="{{ loja.sobre_imagem_url }}" alt="Foto atual">{% else %}<span class="hint">Sem foto cadastrada ainda — a página usa a foto padrão.</span>{% endif %}
             <div class="field" style="margin-bottom:0;">
@@ -564,7 +589,7 @@
           </div>
           <div class="field full">
             <label for="f-chamada">{% if loja.slug_url == 'dbc' %}Frase do rodapé ("1% melhor a cada dia ♥"){% else %}Citação ("Mudanças reais acontecem sem pressa..."){% endif %}</label>
-            <textarea id="f-chamada" name="chamada_rodape">{{ loja.chamada_rodape or '' }}</textarea>
+            <textarea id="f-chamada" name="chamada_rodape">{{ loja.chamada_rodape or ('1% melhor a cada dia ♥' if is_dbc else '') }}</textarea>
             {% if loja.slug_url == 'dbc' %}
             <span class="hint">Se deixar em branco, usa "1% melhor a cada dia ♥".</span>
             {% else %}
@@ -572,6 +597,16 @@
             {% endif %}
           </div>
         </div>
+        {% if is_dbc %}
+        <div class="card">
+          <h3>Depois da inscrição (formulário)</h3>
+          <div class="field full">
+            <label for="f-linkdestino">Para onde a pessoa vai depois de preencher o formulário</label>
+            <input type="url" id="f-linkdestino" name="link1" value="{{ loja.linkbannerprincipal1 or 'https://www.asaas.com/000/c/qz34c3v9e8jhrj2b' }}" placeholder="https://...">
+            <span class="hint">Cole o link completo, começando com https://. Se ficar vazio, o site usa o link de pagamento atual.</span>
+          </div>
+        </div>
+        {% endif %}
       </section>
       {% else %}
       <!-- ═══════════════ TEXTOS DA PÁGINA — LOJA "bio" ═══════════════
@@ -617,7 +652,7 @@
           <span class="hint" style="display:block; margin:-6px 0 16px;">Se o título ficar em branco, a página usa o título padrão inteiro (com o destaque).</span>
           <div class="field" style="margin-bottom:0;">
             <label for="f-b1s">Descrição</label>
-            <textarea id="f-b1s" name="banner1_subtitulo">{{ loja.banner1_subtitulo or '' }}</textarea>
+            <textarea id="f-b1s" name="banner1_subtitulo">{{ loja.banner1_subtitulo or (dbc_hero_default if is_dbc else '') }}</textarea>
           </div>
         </div>
 
@@ -714,22 +749,27 @@
 
       <!-- ═══════════════ CONSTRUTOR: conteudo_extra_json ═══════════════ -->
       <section class="card-section" id="conteudo-extra" {% if is_bio %}style="display:none"{% endif %}>
+        {% if is_dbc %}
+        <h2>Perguntas frequentes (FAQ)</h2>
+        <div class="section-sub">São as perguntas que aparecem no final da página. Edite, apague ou adicione. Se apagar todas, o site volta às perguntas originais.</div>
+        {% else %}
         <h2>Acordeão, Comunidade &amp; FAQ</h2>
         <div class="section-sub">Se você não mexer aqui, o site continua mostrando o conteúdo padrão já existente.</div>
+        {% endif %}
 
-        <div class="card">
+        <div class="card"{% if is_dbc %} style="display:none"{% endif %}>
           <h3>Acordeão (seção "Sobre")</h3>
           <div id="acordeao-list"></div>
           <button type="button" class="add-link" data-add="acordeao">+ Adicionar item do acordeão</button>
         </div>
 
-        <div class="card">
+        <div class="card"{% if is_dbc %} style="display:none"{% endif %}>
           <h3>Recursos da Comunidade (lista de frases)</h3>
           <div id="features-list"></div>
           <button type="button" class="add-link" data-add="features">+ Adicionar recurso</button>
         </div>
 
-        <div class="card">
+        <div class="card"{% if is_dbc %} style="display:none"{% endif %}>
           <h3>Citação em destaque da Comunidade</h3>
           <div class="field">
             <label for="q-titulo">Título</label>
@@ -772,7 +812,7 @@
       <input type="hidden" name="font_tamanho_base" value="{{ loja.font_tamanho_base or '' }}">
       <input type="hidden" name="font_titulo" value="{{ loja.font_titulo or '' }}">
       <input type="hidden" name="font_corpo" value="{{ loja.font_corpo or '' }}">
-      <input type="hidden" name="link1" value="{{ loja.linkbannerprincipal1 or '' }}">
+      {% if not is_dbc %}<input type="hidden" name="link1" value="{{ loja.linkbannerprincipal1 or '' }}">{% endif %}
       <input type="hidden" name="link2" value="{{ loja.linkbannerprincipal2 or '' }}">
       <input type="hidden" name="linkbannermenor1" value="{{ loja.linkbannermenor1 or '' }}">
       <input type="hidden" name="linkbannermenor2" value="{{ loja.linkbannermenor2 or '' }}">
@@ -852,7 +892,7 @@
     {% endif %}
 
     <!-- ═══════════════ GRUPOS (categorias de produto) ═══════════════ -->
-    <section class="card-section" id="grupos">
+    <section class="card-section" id="grupos" {% if is_dbc %}style="display:none"{% endif %}>
       {% if is_bio %}
       <h2>Rótulos dos links</h2>
       <div class="section-sub">O nome do grupo vira a palavrinha pequena acima do título de cada link (ex: Consulta, Comunidade, Blog). É opcional: link sem grupo aparece sem rótulo.</div>
@@ -908,7 +948,7 @@
     {% set objetivos_produtos = produtos | selectattr('categoria_id', 'equalto', objetivos_cat_id) | list if objetivos_cat_id else [] %}
     {% set destaques_produtos = produtos | selectattr('categoria_id', 'equalto', destaques_cat_id) | list if destaques_cat_id else [] %}
     {% set jornada_produtos = produtos | selectattr('categoria_id', 'equalto', jornada_cat_id) | list if jornada_cat_id else [] %}
-    <section class="card-section" id="planos">
+    <section class="card-section" id="planos" {% if is_dbc %}style="display:none"{% endif %}>
       {% if is_bio %}
       <h2>Links</h2>
       <div class="section-sub">Cada item vira um card com foto na página de links. A ordem segue o campo "Ordem de exibição".</div>
@@ -1010,7 +1050,7 @@
     </section>
 
     <!-- ═══════════════ BANCO DE FOTOS (categoria "Fotos" — não aparece no site) ═══════════════ -->
-    <section class="card-section" id="fotos-galeria" {% if is_bio %}style="display:none"{% endif %}>
+    <section class="card-section" id="fotos-galeria" {% if is_bio or is_dbc %}style="display:none"{% endif %}>
       <h2>Banco de Fotos</h2>
       <div class="section-sub">Itens do grupo "Fotos" — nunca aparecem no site, servem só pra você guardar a imagem e copiar o link direto do Directus.</div>
 
@@ -1043,7 +1083,7 @@
     </section>
 
     <!-- ═══════════════ OBJETIVOS DE ATUAÇÃO (categoria "Objetivos" — aparece no site) ═══════════════ -->
-    <section class="card-section" id="objetivos-galeria" {% if is_bio %}style="display:none"{% endif %}>
+    <section class="card-section" id="objetivos-galeria" {% if is_bio or is_dbc %}style="display:none"{% endif %}>
       <h2>Objetivos de Atuação</h2>
       <div class="section-sub">Itens do grupo "Objetivos" — aparecem no site na seção "Onde posso te ajudar", como colunas com foto e legenda. A ordem de exibição segue o campo "Ordem" de cada item.</div>
 
@@ -1073,7 +1113,7 @@
     </section>
 
     <!-- ═══════════════ CARDS DO TOPO (categoria "Destaques" — aparece no site) ═══════════════ -->
-    <section class="card-section" id="destaques-galeria" {% if is_bio %}style="display:none"{% endif %}>
+    <section class="card-section" id="destaques-galeria" {% if is_bio or is_dbc %}style="display:none"{% endif %}>
       <h2>Cards do topo (Destaques)</h2>
       <div class="section-sub">Os 3 cards coloridos logo abaixo do banner principal. Cada item do grupo "Destaques" vira um card: <strong>Nome</strong> = título · <strong>1ª linha da descrição</strong> = texto · <strong>2ª linha</strong> = texto do botão · <strong>Link</strong> = pra onde leva · <strong>Imagem</strong> = logo pequeno (opcional). Se o grupo estiver vazio, o site mostra os 3 cards padrão.</div>
       <div class="card">
@@ -1112,7 +1152,7 @@
     </section>
 
     <!-- ═══════════════ JORNADA (categoria "Jornada" — aparece no site) ═══════════════ -->
-    <section class="card-section" id="jornada-galeria" {% if is_bio %}style="display:none"{% endif %}>
+    <section class="card-section" id="jornada-galeria" {% if is_bio or is_dbc %}style="display:none"{% endif %}>
       <h2>Jornada do Acompanhamento</h2>
       <div class="section-sub">Os passos do carrossel "A Jornada do Seu Acompanhamento Nutricional". Cada item do grupo "Jornada" vira um passo: <strong>Nome</strong> = título · <strong>1ª linha da descrição</strong> = texto · <strong>2ª linha</strong> (opcional) = nome da fase, ex: "Fase Inicial" / "Fase de Execução" · <strong>Ordem</strong> = posição no carrossel. Os ícones são automáticos. Se o grupo estiver vazio, o site mostra os 8 passos padrão.</div>
       <div class="card">
@@ -1147,7 +1187,7 @@
     </section>
 
     <!-- ═══════════════ BLOG (posts) ═══════════════ -->
-    <section class="card-section" id="blog" {% if is_bio %}style="display:none"{% endif %}>
+    <section class="card-section" id="blog" {% if is_bio or is_dbc %}style="display:none"{% endif %}>
       <h2>Blog</h2>
       <div class="section-sub">Artigos publicados na seção de blog do site.</div>
 
@@ -1203,6 +1243,7 @@
 
 <!-- Estado atual de conteudo_extra_json, serializado com segurança via filtro nativo
      `tojson` do Flask/Jinja (não requer nenhuma alteração em app.py). -->
+<script type="application/json" id="dbc-faq-padrao">[{"pergunta": "Do que a gente vai falar por lá?", "resposta": "Fome e saciedade, comer emocional, organização da rotina, relação com o corpo, exercício físico, saúde da mulher, mitos da alimentação, sono, comportamento alimentar, receitas, exames e saúde, movimento, aquelas dúvidas que aparecem no meio da vida e muito mais."}, {"pergunta": "Perdeu um conteúdo? Não participou de uma conversa?", "resposta": "Tudo bem. A DBC não foi criada para ser mais uma cobrança na sua rotina. Você participa e aproveita a comunidade do jeito que fizer sentido para você."}, {"pergunta": "Onde a comunidade vai funcionar?", "resposta": "A DBC ficará hospedada no Circle, uma plataforma própria para comunidades, onde você encontrará conteúdos, materiais e informações sobre os encontros."}, {"pergunta": "Os encontros serão ao vivo?", "resposta": "Sim! Teremos encontros ao vivo 1 ou 2 vezes por mês, com as datas avisadas com antecedência."}, {"pergunta": "Os encontros ficarão gravados?", "resposta": "A princípio, não. A ideia é que os encontros sejam momentos de troca e participação ao vivo."}, {"pergunta": "Preciso ser paciente da Julia para participar?", "resposta": "Não! A DBC é aberta para qualquer pessoa que queira aprender mais sobre alimentação, saúde e bem-estar e fazer parte dessa troca."}, {"pergunta": "A DBC substitui uma consulta nutricional?", "resposta": "Não. A comunidade é um espaço de educação, informação e troca. Avaliações, orientações e condutas individualizadas continuam sendo realizadas em consulta nutricional."}, {"pergunta": "Posso cancelar minha assinatura?", "resposta": "Sim. A assinatura pode ser cancelada a qualquer momento, sem multa."}, {"pergunta": "Onde encontro os materiais?", "resposta": "Tudo ficará organizado dentro do Circle. É por lá que você terá acesso aos materiais, conteúdos e demais recursos."}, {"pergunta": "Só consigo acessar pelo computador?", "resposta": "Não! Além do navegador, você também poderá acompanhar a comunidade pelo aplicativo do Circle no celular."}, {"pergunta": "Quando começam os encontros?", "resposta": "Já na primeira semana da DBC! A proposta é que você entre e já tenha uma primeira experiência de encontro e troca com a comunidade."}]</script>
 <script type="application/json" id="extra-data-inicial">{{ (loja.conteudo_extra_json if loja.conteudo_extra_json else none) | tojson }}</script>
 
 <script>
@@ -1285,6 +1326,9 @@
   }
 
   var initialExtra = readInitialExtra() || {};
+  var IS_DBC = {{ 'true' if is_dbc else 'false' }};
+  var DBC_FAQ_PADRAO = [];
+  try { DBC_FAQ_PADRAO = JSON.parse(document.getElementById('dbc-faq-padrao').textContent); } catch(e){}
 
   // ---- Acordeão ----
   var acordeaoList = document.getElementById('acordeao-list');
@@ -1426,7 +1470,7 @@
     return wrap;
   }
 
-  (Array.isArray(initialExtra.faq) && initialExtra.faq.length ? initialExtra.faq : [null]).forEach(function(item){
+  (Array.isArray(initialExtra.faq) && initialExtra.faq.length ? initialExtra.faq : (IS_DBC && DBC_FAQ_PADRAO.length ? DBC_FAQ_PADRAO : [null])).forEach(function(item){
     faqList.appendChild(makeFaqBlock(item));
   });
 
