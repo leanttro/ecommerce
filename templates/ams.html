@@ -361,6 +361,51 @@ section{padding:58px 0}.cards{grid-template-columns:1fr 1fr;gap:9px}.card{min-he
 .st-cards{grid-template-columns:1fr;gap:14px;margin-bottom:44px}
 .st-sign{letter-spacing:.18em;text-align:center}
 }
+
+.st-card p strong{color:var(--gold2);font-weight:700}
+/* Diferencial: corredores de onibus */
+.lane{position:relative;overflow:hidden;padding:76px 0 72px;background:radial-gradient(ellipse at 0 0,rgba(225,173,45,.14),transparent 46%),radial-gradient(ellipse at 100% 100%,rgba(225,173,45,.09),transparent 42%),#040404;border-bottom:1px solid var(--line)}
+.lane-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(28px,5vw,72px);align-items:center}
+.lane-txt h2{font-size:clamp(30px,3.7vw,50px);line-height:1.04;margin:12px 0 22px;color:#fff;letter-spacing:-.5px}
+.lane-txt h2 span{display:block;background:linear-gradient(100deg,#d99f19 0%,#f5c94e 40%,#fff3b8 55%,#f5c94e 75%,#d99f19 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.lane-lead{font-size:clamp(15px,1.4vw,18px);line-height:1.55;color:#ececec;margin:0 0 26px;max-width:520px}
+.lane-lead b{color:var(--gold2)}
+.lane-list{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:14px}
+.lane-list li{display:flex;gap:16px;align-items:flex-start;padding:14px 16px;border:1px solid rgba(225,173,45,.35);border-radius:8px;background:linear-gradient(160deg,#101010,#050505)}
+.lane-list svg{width:34px;height:34px;flex:none;color:var(--gold2);filter:drop-shadow(0 0 5px rgba(245,201,78,.3))}
+.lane-list b{display:block;font-family:var(--title-font);font-size:14px;letter-spacing:.4px;text-transform:uppercase;color:#fff;margin-bottom:3px}
+.lane-list span{font-size:13px;line-height:1.5;color:#cfcfcf}
+.lane-note{font-size:11.5px;color:#9a9a9a;margin:0;line-height:1.5}
+.ln-panel{position:relative;padding:22px clamp(14px,2.4vw,28px) 26px;border:1px solid rgba(225,173,45,.55);border-radius:10px;background:linear-gradient(160deg,#111,#040404 75%);box-shadow:0 20px 50px rgba(0,0,0,.5),inset 0 0 40px rgba(225,173,45,.05)}
+.ln-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;font-family:var(--title-font);font-weight:700;font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:#bdbdbd}
+.ln-title em{font-style:normal;color:var(--gold2)}
+.ln-row{margin-bottom:18px}
+.ln-row:last-of-type{margin-bottom:0}
+.ln-tag{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-family:var(--title-font);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#d8d8d8}
+.ln-tag i{font-style:normal;font-size:10px;letter-spacing:.12em;padding:3px 9px;border-radius:30px;background:rgba(255,80,80,.14);color:#ff8a8a;border:1px solid rgba(255,100,100,.35)}
+.ln-fast .ln-tag{color:var(--gold2)}
+.ln-fast .ln-tag i{background:rgba(245,201,78,.14);color:var(--gold2);border-color:rgba(245,201,78,.5)}
+.ln-road{position:relative;height:62px;border-radius:6px;overflow:hidden;background:#0d0d0d;border:1px solid #222}
+.ln-road:before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.28) 0 18px,transparent 18px 40px)}
+.ln-fast .ln-road{background:linear-gradient(180deg,rgba(225,173,45,.12),rgba(225,173,45,.04));border-color:rgba(245,201,78,.6);box-shadow:inset 0 0 22px rgba(245,201,78,.12),0 0 22px rgba(245,201,78,.12)}
+.ln-fast .ln-road:before{background:repeating-linear-gradient(90deg,rgba(245,201,78,.7) 0 18px,transparent 18px 40px);animation:lnDash .7s linear infinite}
+.ln-road .ln-txt{position:absolute;right:12px;bottom:5px;font-family:var(--title-font);font-weight:700;font-size:9px;letter-spacing:.3em;color:rgba(245,201,78,.5)}
+.ln-jam{position:absolute;inset:0;display:flex;align-items:center;gap:7px;padding:0 10px;animation:lnCrawl 5s ease-in-out infinite alternate}
+.ln-jam svg{width:62px;height:28px;flex:none;color:#4d4d4d;filter:drop-shadow(-4px 0 5px rgba(255,60,60,.55))}
+.ln-go{position:absolute;top:50%;margin-top:-15px;width:68px;height:30px;color:var(--gold2);left:-90px;animation:lnDrive 3.6s cubic-bezier(.45,.05,.55,.95) infinite;filter:drop-shadow(0 0 8px rgba(245,201,78,.7))}
+.ln-go:before{content:"";position:absolute;right:100%;top:8px;width:120px;height:14px;background:linear-gradient(90deg,transparent,rgba(245,201,78,.45));border-radius:10px;margin-right:-4px}
+.ln-go svg{position:relative;width:100%;height:100%;display:block}
+@keyframes lnDash{to{background-position:-40px 0}}
+@keyframes lnCrawl{from{transform:translateX(0)}to{transform:translateX(12px)}}
+@keyframes lnDrive{0%{left:-200px}100%{left:calc(100% + 40px)}}
+@media(prefers-reduced-motion:reduce){.ln-jam,.ln-go,.ln-fast .ln-road:before{animation:none!important}.ln-go{left:55%}}
+@media(max-width:950px){
+.lane{padding:52px 0 50px}
+.lane-in{grid-template-columns:1fr;gap:30px}
+.lane-txt h2{font-size:clamp(30px,9vw,44px)}
+.ln-jam svg{width:50px;height:23px}
+.ln-go{width:56px;height:25px;margin-top:-12px}
+}
 </style>
 </head>
 <body>
@@ -392,6 +437,36 @@ section{padding:58px 0}.cards{grid-template-columns:1fr 1fr;gap:9px}.card{min-he
     <div class="quick-item" style="--d:.75s"><strong>◷ Atendimento</strong>24 horas</div>
     <div class="quick-item" style="--d:.95s"><strong>⌖ São Paulo</strong>e região</div>
     <div class="quick-item" style="--d:1.15s"><strong>▣ Mediante</strong>agendamento</div>
+  </div>
+</div>
+</section>
+
+<section id="diferencial" class="lane">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="ln-car" viewBox="0 0 64 28"><rect x="1" y="2" width="62" height="24" rx="10" fill="currentColor"/><rect x="39" y="5" width="13" height="18" rx="3" fill="#000" opacity=".55"/><rect x="12" y="5" width="11" height="18" rx="2.5" fill="#000" opacity=".4"/><rect x="58" y="5" width="4" height="4.5" rx="1" fill="#fff" opacity=".9"/><rect x="58" y="18.5" width="4" height="4.5" rx="1" fill="#fff" opacity=".9"/></symbol></defs></svg>
+<div class="container lane-in">
+  <div class="lane-txt">
+    <div class="kicker">Nosso diferencial</div>
+    <h2>O TRÂNSITO PARA.<span>A GENTE SEGUE.</span></h2>
+    <p class="lane-lead">Em São Paulo, cada minuto parado vira atraso. Como táxi executivo, a AMS pode <b>usar as faixas exclusivas e os corredores de ônibus</b>, enquanto a via comum anda e para.</p>
+    <ul class="lane-list">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.2 1.8"/></svg><div><b>Menos tempo parado</b><span>Menos minutos presos no congestionamento, mais minutos a seu favor.</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg><div><b>Chegada mais previsível</b><span>Um trajeto que flui permite planejar o horário com mais segurança.</span></div></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg><div><b>Voos e compromissos sem correria</b><span>Agilidade com segurança, sem abrir mão do conforto.</span></div></li>
+    </ul>
+    <p class="lane-note">Utilização nos locais e horários permitidos pela legislação vigente.</p>
+  </div>
+  <div class="ln-panel" role="img" aria-label="Comparação: via comum com trânsito parado e corredor de ônibus com o veículo fluindo">
+    <div class="ln-title"><span>Mesmo trajeto</span><em>Dois ritmos</em></div>
+    <div class="ln-row ln-slow">
+      <div class="ln-tag">Via comum <i>anda e para</i></div>
+      <div class="ln-road"><div class="ln-jam">
+        <svg viewBox="0 0 64 28"><use href="#ln-car"/></svg><svg viewBox="0 0 64 28"><use href="#ln-car"/></svg><svg viewBox="0 0 64 28"><use href="#ln-car"/></svg><svg viewBox="0 0 64 28"><use href="#ln-car"/></svg><svg viewBox="0 0 64 28"><use href="#ln-car"/></svg><svg viewBox="0 0 64 28"><use href="#ln-car"/></svg>
+      </div></div>
+    </div>
+    <div class="ln-row ln-fast">
+      <div class="ln-tag">Corredor de ônibus <i>fluindo</i></div>
+      <div class="ln-road"><span class="ln-txt">ÔNIBUS</span><div class="ln-go"><svg viewBox="0 0 64 28"><use href="#ln-car"/></svg></div></div>
+    </div>
   </div>
 </div>
 </section>
@@ -429,7 +504,7 @@ section{padding:58px 0}.cards{grid-template-columns:1fr 1fr;gap:9px}.card{min-he
     <article class="st-card"><span class="st-n">01</span>
       <svg class="st-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>
       <h3>Rotas e trânsito<br>sob domínio</h3>
-      <p>Amplo conhecimento dos principais acessos e da dinâmica do trânsito da capital e região metropolitana, para escolher o melhor itinerário de cada destino e de cada condição.</p></article>
+      <p>Amplo conhecimento dos principais acessos e da dinâmica do trânsito da capital e região, <strong>explorando inclusive os corredores de ônibus</strong>, visando sempre <strong>agilidade com segurança</strong>.</p></article>
     <article class="st-card"><span class="st-n">02</span>
       <svg class="st-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform:rotate(45deg)"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
       <h3>Aeroportos e<br>terminais</h3>
