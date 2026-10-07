@@ -24,6 +24,15 @@
   HTML original (que estava com elas embutidas em base64, ~17MB)
   e salvas como arquivos separados — veja "ANTES DE SUBIR" abaixo.
 
+  LIGADO AO PAINEL (painel_julia.html) — sem alterar o app.py:
+  - Pixel e GA4 (campos do painel; se vazios, usa os IDs padrão).
+  - "Sobre a DBC": título (sobre_titulo + banner2_titulo em vermelho) e
+    parágrafos (sobre_texto). Vazio = texto original.
+  - Frase do rodapé (chamada_rodape). Vazio = "1% melhor a cada dia".
+  - Destino do formulário (linkbannerprincipal1). Vazio = link padrão.
+  - FAQ: lista em conteudo_extra_json {"faq":[{pergunta,resposta}]}.
+    Vazio = FAQ original abaixo (HTML fixo).
+
   ANTES DE SUBIR PARA PRODUÇÃO:
   1) Salvar este arquivo como /templates/dbc.html
   2) Subir os 3 arquivos de imagem (entregues junto com este
@@ -43,6 +52,10 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
+{% set px_id = ((loja.facebook_pixel or '')|string|trim) or '1674029103660926' %}
+{% set ga_id = ((loja.ga4_id or '')|string|trim) or 'G-XX6MEX0MLQ' %}
+{% set destino_padrao = 'https://www.asaas.com/000/c/qz34c3v9e8jhrj2b' %}
+{% set destino = ((loja.linkbannerprincipal1 or '')|trim) if ((loja.linkbannerprincipal1 or '')|trim).startswith('http') else destino_padrao %}
 <!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -53,22 +66,22 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1674029103660926');
+fbq('init', {{ px_id|tojson }});
 fbq('track', 'PageView');
 </script>
 <noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1674029103660926&ev=PageView&noscript=1"
+src="https://www.facebook.com/tr?id={{ px_id|urlencode }}&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
 
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XX6MEX0MLQ"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ ga_id|urlencode }}"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-XX6MEX0MLQ');
+  gtag('config', {{ ga_id|tojson }});
 </script>
 
 <meta charset="utf-8">
@@ -334,10 +347,20 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
 <div class="container two">
   <div>
     <div class="eyebrow">Sobre a DBC</div>
+    {% if (loja.sobre_titulo or '')|trim %}
+    <h2>{{ loja.sobre_titulo|trim }}{% if (loja.banner2_titulo or '')|trim %}<br><em>{{ loja.banner2_titulo|trim }}</em>{% endif %}</h2>
+    {% else %}
     <h2>Talvez não esteja faltando informação.<br><em>Talvez esteja faltando um lugar onde toda essa informação faça sentido.</em></h2>
+    {% endif %}
+    {% if (loja.sobre_texto or '')|trim %}
+    {% for par in loja.sobre_texto.split('\n') if par.strip() %}{% set p = par.strip() %}
+    <p class="copy">{% if p.startswith('**') and p.endswith('**') and p|length > 4 %}<strong>{{ p[2:-2] }}</strong>{% else %}{{ p }}{% endif %}</p>
+    {% endfor %}
+    {% else %}
     <p class="copy">Você abre as redes sociais e encontra alguém dizendo para cortar um alimento. Depois, outra pessoa dizendo exatamente o contrário. Surge uma dieta nova. Uma regra nova. Um alimento milagroso. Outro que virou vilão.</p>
     <p class="copy">E cuidar da alimentação, que poderia ser algo natural, começa a parecer cada vez mais complicado.</p>
     <p class="copy"><strong>A DBC nasce para tornar essa conversa mais simples, próxima e confiável.</strong></p>
+    {% endif %}
   </div>
   <div class="collage">
     <img src="{{ loja.banner2 or url_for('static', filename='dbc/dbc-collage.png') }}" alt="Arte DBC">
@@ -488,7 +511,7 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
          Depois de salvar o lead, o usuário é redirecionado direto pro
          link do GRUPO do WhatsApp (data-grupo-whatsapp) — não é mais
          gerado um link wa.me individual a partir do número da loja. -->
-    <form id="dbc-lead-form" class="lead-form" action="/{{ loja.slug_url }}/captura-lead" method="POST" data-grupo-whatsapp="https://www.asaas.com/000/c/qz34c3v9e8jhrj2b">
+    <form id="dbc-lead-form" class="lead-form" action="/{{ loja.slug_url }}/captura-lead" method="POST" data-grupo-whatsapp="{{ destino }}">
       <input type="text" name="nome" placeholder="Seu nome" required>
       <input type="tel" name="whatsapp" placeholder="WhatsApp (com DDD)" required>
       <input type="email" name="email" placeholder="Seu e-mail" required>
@@ -507,7 +530,7 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
 <div class="container">
   <div class="eyebrow">Dúvidas frequentes</div>
   <h2>Antes de entrar, <em>tudo bem perguntar:</em></h2>
-  <div class="faq">
+  <div class="faq" id="faq-lista">
     <details><summary>Do que a gente vai falar por lá?</summary><p>Fome e saciedade, comer emocional, organização da rotina, relação com o corpo, exercício físico, saúde da mulher, mitos da alimentação, sono, comportamento alimentar, receitas, exames e saúde, movimento, aquelas dúvidas que aparecem no meio da vida e muito mais.</p></details>
     <details><summary>Perdeu um conteúdo? Não participou de uma conversa?</summary><p>Tudo bem. A DBC não foi criada para ser mais uma cobrança na sua rotina. Você participa e aproveita a comunidade do jeito que fizer sentido para você.</p></details>
     <details><summary>Onde a comunidade vai funcionar?</summary><p>A DBC ficará hospedada no Circle, uma plataforma própria para comunidades, onde você encontrará conteúdos, materiais e informações sobre os encontros.</p></details>
@@ -537,7 +560,7 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
     </div>
     <div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase">De Boa com a Comida</div>
   </div>
-  <div class="footer-note">1% melhor a cada dia ♥</div>
+  <div class="footer-note">{{ (loja.chamada_rodape or '')|trim or '1% melhor a cada dia ♥' }}</div>
 </div>
 </footer>
 
@@ -591,6 +614,31 @@ footer{background:var(--wine);color:var(--paper);padding:40px 0}
       btn.disabled = false;
       btn.textContent = originalText;
     });
+  });
+})();
+</script>
+
+<!-- FAQ editável pelo painel: se conteudo_extra_json trouxer "faq", substitui a lista acima. -->
+<script type="application/json" id="dbc-extra">{{ (loja.conteudo_extra_json or none) | tojson }}</script>
+<script>
+(function(){
+  var el = document.getElementById('dbc-extra');
+  var box = document.getElementById('faq-lista');
+  if (!el || !box) return;
+  var raw;
+  try { raw = JSON.parse(el.textContent); } catch(e){ return; }
+  if (typeof raw === 'string') { try { raw = JSON.parse(raw); } catch(e){ return; } }
+  if (!raw || !Array.isArray(raw.faq)) return;
+  var itens = raw.faq.filter(function(i){ return i && (i.pergunta || i.resposta); });
+  if (!itens.length) return;
+  box.textContent = '';
+  itens.forEach(function(i){
+    var det = document.createElement('details');
+    var sum = document.createElement('summary');
+    var p = document.createElement('p');
+    sum.textContent = i.pergunta || '';
+    p.textContent = i.resposta || '';
+    det.appendChild(sum); det.appendChild(p); box.appendChild(det);
   });
 })();
 </script>
