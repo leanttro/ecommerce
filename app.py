@@ -634,6 +634,8 @@ def index(loja_slug):
         template_name = 'bio'
     elif loja_slug == 'ams':
         template_name = 'ams'
+    elif loja_slug == 'oceanoetiquetas':
+        template_name = 'oceano'
     else:
         template_name = g.loja.get('template_ativo') or 'index'
         if template_name not in ['index', 'pascoa', 'direto', 'direto_index', 'institucional', 'institucional2', 'tecnologia', 'onepiece', 'oscar', 'portal_cliente','iot', 'life', 'micasa', 'leanttro', 'zanvia', 'julia']:
