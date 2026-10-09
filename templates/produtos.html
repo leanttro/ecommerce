@@ -259,7 +259,7 @@
                 {% if p.descricao %}
                     <div class="p-8 rounded-[2rem] shadow-xl transition-all" style="background-color: var(--color-bg); border: 1px solid rgba(0,0,0,0.05);">
                         <h2 class="text-2xl font-bold custom-title-color leading-tight tracking-tight mb-6">Detalhes do Produto</h2>
-                        <div class="prose prose-lg max-w-none prose-p:custom-title-color prose-p:opacity-80 prose-li:custom-title-color prose-strong:custom-title-color leading-relaxed font-light" style="color: var(--color-text);">
+                        <div class="prose prose-lg max-w-none prose-p:custom-title-color prose-p:opacity-80 prose-li:custom-title-color prose-strong:custom-title-color leading-relaxed font-light" style="color: var(--color-text); white-space: pre-line;">
                             {{ p.descricao|safe }}
                         </div>
                     </div>
