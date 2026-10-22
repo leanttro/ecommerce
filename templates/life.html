@@ -34,6 +34,15 @@
 
   gtag('config', 'AW-18531187262');
 </script>
+<!-- Conversão: clique no WhatsApp (Agendar consulta) -->
+<script>
+document.addEventListener('click', function(e){
+  var a = e.target.closest('a[href*="wa.me"]');
+  if (a) {
+    gtag('event', 'conversion', {'send_to': 'AW-18531187262/Je-aCM_j7KUdEL70rYRF', 'value': 1.0, 'currency': 'BRL'});
+  }
+});
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
