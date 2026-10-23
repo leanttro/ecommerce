@@ -1254,21 +1254,84 @@ function setBlogView(view){
   }
 }
 
-// PREVIEW ESTÁTICO: sem app.py rodando aqui, então só simula o envio.
-// Na versão final publicada como template Flask, isto volta a chamar
-// fetch('/<loja>/captura-lead', ...) — rota que já existe no app.py.
+// FORMULÁRIO DE AGENDAMENTO
+// 1) Salva no painel (rota /captura-lead do app.py)
+// 2) Avisa por e-mail via FormSubmit (contato@lifehealth.com.br)
+// 3) Abre o WhatsApp da clínica com a solicitação já preenchida
 const leadForm = document.getElementById('leadForm');
 if(leadForm){
-  leadForm.addEventListener('submit', function(e){
+  const WA_NUMERO = '5511971899972';
+  const EMAIL_AVISO = 'contato@lifehealth.com.br';
+  const LEAD_URL = '/{{ loja.slug_url }}/captura-lead';
+
+  leadForm.addEventListener('submit', async function(e){
     e.preventDefault();
-    const btn = this.querySelector('button[type=submit]');
+    const form = this;
+    const btn = form.querySelector('button[type=submit]');
     const textWrapper = btn.querySelector('.btn-text-wrapper');
+    const textoOriginal = textWrapper.innerHTML;
+    if(btn.disabled) return;
+
+    const nome = form.nome.value.trim();
+    const whatsapp = form.whatsapp.value.trim();
+    const email = form.email.value.trim();
+
     textWrapper.innerHTML = 'ENVIANDO...';
     btn.disabled = true;
-    setTimeout(() => {
-      this.style.display = 'none';
-      document.getElementById('leadSuccessMsg').style.display = 'flex';
-    }, 600);
+
+    const msgWa = 'Olá! Vim pelo site da Life Health e gostaria de solicitar um agendamento.\n\n' +
+                  'Nome: ' + nome + '\nWhatsApp: ' + whatsapp + '\nE-mail: ' + email;
+    const waUrl = 'https://wa.me/' + WA_NUMERO + '?text=' + encodeURIComponent(msgWa);
+
+    // Abre a aba do WhatsApp agora (dentro do clique) para o navegador não bloquear o pop-up
+    const waWin = window.open('', '_blank');
+
+    // 1) Painel
+    const pPainel = fetch(LEAD_URL, { method: 'POST', body: new FormData(form) })
+      .then(r => { if(!r.ok) throw new Error('painel'); return r.json(); });
+
+    // 2) E-mail de aviso (FormSubmit)
+    const emailData = new FormData();
+    emailData.append('Nome', nome);
+    emailData.append('WhatsApp', whatsapp);
+    emailData.append('E-mail', email);
+    emailData.append('_subject', 'Nova solicitação de agendamento - Life Health');
+    emailData.append('_template', 'table');
+    emailData.append('_captcha', 'false');
+    emailData.append('_replyto', email);
+    const pEmail = fetch('https://formsubmit.co/ajax/' + EMAIL_AVISO, {
+      method: 'POST', headers: { 'Accept': 'application/json' }, body: emailData
+    }).then(r => { if(!r.ok) throw new Error('email'); return r.json(); });
+
+    const [rPainel, rEmail] = await Promise.allSettled([pPainel, pEmail]);
+
+    if(rPainel.status === 'rejected' && rEmail.status === 'rejected'){
+      // Nada funcionou: fecha a aba, deixa tentar de novo
+      if(waWin) waWin.close();
+      textWrapper.innerHTML = textoOriginal;
+      btn.disabled = false;
+      let err = form.querySelector('.form-erro');
+      if(!err){
+        err = document.createElement('p');
+        err.className = 'form-erro';
+        err.style.cssText = 'color:#b3261e;font-size:.85rem;margin-top:.6rem;';
+        form.appendChild(err);
+      }
+      err.innerHTML = 'Não foi possível enviar agora. Tente novamente ou <a href="' + waUrl + '" target="_blank" style="text-decoration:underline">fale pelo WhatsApp</a>.';
+      return;
+    }
+
+    // 3) WhatsApp
+    if(waWin){ waWin.location.href = waUrl; }
+
+    form.style.display = 'none';
+    const ok = document.getElementById('leadSuccessMsg');
+    ok.style.display = 'flex';
+    if(!waWin){
+      // Pop-up bloqueado: oferece o link manual
+      const info = ok.querySelector('span');
+      info.innerHTML = 'Nossa equipe vai entrar em contato em breve. <a href="' + waUrl + '" target="_blank" style="text-decoration:underline">Clique aqui para abrir o WhatsApp</a>.';
+    }
   });
 }
 </script>
