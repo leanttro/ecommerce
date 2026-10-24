@@ -1613,6 +1613,21 @@
     links.style.borderBottom = '1px solid rgba(10,27,54,0.12)';
   });
 
+  // Aviso por e-mail (FormSubmit) - cada lead novo chega no e-mail do cliente.
+  // Trocar pelo e-mail do cliente (ou pelo código aleatório que o FormSubmit gera após ativar).
+  const ZV_AVISO_URL = 'https://formsubmit.co/ajax/zanviaconsultoria@gmail.com';
+  function zvAvisoEmail(formData, origem){
+    try {
+      const fd = new FormData();
+      formData.forEach(function(v, k){ fd.append(k, v); });
+      fd.append('origem', origem);
+      fd.append('_subject', 'Novo lead pelo site Zanvia (' + origem + ')');
+      fd.append('_template', 'table');
+      fd.append('_captcha', 'false');
+      fetch(ZV_AVISO_URL, { method: 'POST', body: fd, keepalive: true, mode: 'no-cors' }).catch(function(){});
+    } catch(e) {}
+  }
+
   const leadForm = document.getElementById('leadForm');
   if (leadForm) {
     leadForm.addEventListener('submit', function(e){
@@ -1635,6 +1650,8 @@
       } else {
         fetch('/{{ loja.slug_url }}/captura-lead', { method: 'POST', body: formData, keepalive: true }).catch(function(){});
       }
+
+      zvAvisoEmail(formData, 'Formulário final');
 
       const mensagem = 'Olá! Vim pelo site da Zanvia e preenchi o formulário de cotação.\n\n' +
         'Nome: ' + nome + '\n' +
@@ -1667,6 +1684,8 @@
       } else {
         fetch('/{{ loja.slug_url }}/captura-lead', { method: 'POST', body: formData, keepalive: true }).catch(function(){});
       }
+
+      zvAvisoEmail(formData, 'Mini cotação');
 
       const mensagem = 'Olá! Vim pelo site da Zanvia e preenchi o formulário de cotação.\n\n' +
         'Nome: ' + nome + '\n' +
